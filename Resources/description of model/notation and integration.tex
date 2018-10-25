@@ -1,0 +1,468 @@
+\documentclass[a4paper, 12pt]{memoir}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\renewcommand{\danishhyphenmins}{22}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\xdot}{x_{\cdot}}
+\usepackage{SASnRdisplay}
+\usepackage{mathtools}
+\newcommand{\Rroom}[2]{\mathbb R^{#1 \times #2}}
+\renewcommand{\i}{^{-1}}
+\newcommand{\tr}{\textup{tr}}
+\usepackage{bm}
+
+\begin{document}
+
+Lad $\omega$ være en amerikaner. Definer
+\begin{align*}
+F_i(\omega)&= \textup{ værdien af faktoren } i \textup{`te faktor for } \omega\\
+D(\omega)&= \textup{ dødsårsag for } \omega\\
+L(\omega)&= \textup{  dødsalder for } \omega
+\end{align*}
+I det kommende undertrykkes afhængigheden af $\omega$. 
+\subsection{Faktorsandsynligheder}
+
+Vi har blandt andet brug for størrelserne
+\begin{gather*}
+P(F_i\in f), \textup{ for forskellige mængder } f\in \mathcal F_i\\
+P(F_{i_1}\in f_1, F_{i_2}\in f_2, \dots F_{i_n}\in f_n) \textup{ for } f_i, i=1, \dots, n
+\end{gather*}
+hvor $f_i$ er mængder der giver mening for deres tilhørende faktor. I filerne i mappen Factor\_frequencies ligger filer af typen.
+\begin{align*}
+ i_1 \textup{`te faktor} \quad& \cdots&  i_n\textup{`te faktor} \qquad& 	\textup{freq}\\
+f_1^0 \quad & \cdots& f_n^0 \qquad&  P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^0)\\
+f_1^0 \quad & \cdots& f_n^1 \qquad&  P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^1)\\
+\vdots\quad &\cdots &\vdots \qquad &\vdots\\
+f_1^0 \quad & \cdots& f_n^{n_k} \qquad&  P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^{n_k})\\
+\vdots\quad &\cdots &\vdots \qquad &\vdots\\
+f_1^{n_1} \quad & \cdots& f_n^{n_k} \qquad& P(F_{i_1}\in f_1^{n_1}, F_{i_2}\in f_2^{n_2}, \dots F_{i_n}\in f_n^{n_k})
+\end{align*}
+Alternativt kan man skrive $F=(F_{i_1}, \dots , F_{i_n})$
+\subsection{Incidents}
+
+Dernæst har vi sandsynlighederne for at dø af en dødsårsag i løbet af et år.
+\begin{gather*}
+p_d(l)=P(D=d, L\leq l \mid L> l-1), d\in \mathcal D, l\in \mathbb R_+
+\end{gather*}
+hvor $\mathcal D$ er en mængde af alle dødsårsager i programmet. For beregning, kender vi $p_d(l)$ som stykvis konstant funktion på mængderne
+\begin{equation*}
+l_1,l_2, \dots, l_{22}=[0,1), [1,5), [5,10),\dots, [95,100), [100,\infty)
+\end{equation*}
+Vi er interesserede i vektoren
+\begin{alignat*}{4}
+p_d(l_1)\quad & p_d(l_2)\quad & \cdots \quad & p_d(l_{22})
+\end{alignat*}
+hvor jeg, med den lidt misbrugte notation $p_d(l_i)$, mener $p_d(l)$ for et $l\in l_i$. Disse estimeres med
+\begin{equation*}
+p_d(l_i)\leftarrow \frac{\textup{antal amerikanere døde af } d \textup{ i aldersgruppen } l_i \textup{ i år } Y_1}{\textup{antal amerikanere i aldersgruppen } l_i \textup{ i år } Y_2 }=:\frac{a_{di}}{a_i}
+\end{equation*}
+(Lige nu har vi $Y_1=2014, Y_2=2013$). Filerne af formen \emph{ICDcode.txt} indikerer et $d$ med deres titel og indholdet er
+\begin{alignat*}{4}
+a_{d1} \quad &a_{d2} \quad &\cdots \quad &a_{d22}  
+\end{alignat*}
+Og filen \emph{population.txt} indeholder
+\begin{alignat*}{4}
+a_{1} \quad &a_{2} \quad &\cdots \quad &a_{22}  
+\end{alignat*}
+
+\subsection{Risk ratios}
+Lad $F_1, \dots, F_k$ være nogle faktorer. Risk ratios i dette program fortolkes som
+\begin{align*}
+\textup{RR}_{d}(f):=\frac{P\bigl(D=d, L \leq l \mid L>l-1, (F_1, \dots, F_k)\in f \bigr)}{P\bigl(D=d, L \leq l \mid L>l-1, (F_1, \dots, F_k)\in f_0\bigr)}
+\end{align*}
+Egentlig skulle der et $f_0$ på i notationen for $\textup{RR}_{d}(f)$, for at indikere at det er riskratio med hensyn til baselinen $f_0$. Det er en antagelse, at riskratioen ikke afhænger af $l$. Risk ratioerne er kendt for en mængde af faktorinddelinger $f\in \mathcal F$. Vi kræver mere eller mindre at $\mathcal F$ kan skrives på formen
+\begin{equation*}
+\mathcal F=\mathcal F_1 \times \mathcal F_2 \times \cdots \mathcal F_k
+\end{equation*}
+hvor 
+\begin{equation*}
+\mathcal F_i = \{f_1^0, f_1^1, \dots, f_1^{n_i}\}
+\end{equation*}
+og så er de kodet ved hjælp af 
+\begin{align*}
+ i_1 \textup{`te faktor} \quad& \cdots&  i_k\textup{`te faktor} \qquad& 	\textup{RR}\\
+f_1^0 \quad & \cdots& f_k^0 \qquad&  RR_d((f_1^0, \dots, f_k^0))\\
+f_1^0 \quad & \cdots& f_k^1 \qquad&  RR_d((f_1^0, \dots, f_k^1))\\
+\vdots\quad &\cdots &\vdots \qquad &\vdots\\
+f_1^0 \quad & \cdots& f_k^{n_k} \qquad&  RR_d((f_1^0, \dots, f_k^{n_k}))\\
+\vdots\quad &\cdots &\vdots \qquad &\vdots\\
+f_1^{n_1} \quad & \cdots& f_k^{n_k} \qquad& RR_d((f_1^{n_1}, \dots, f_k^{n_k}))
+\end{align*}
+
+\section{Udregning}
+I første omgang vil vi gerne udregne
+\begin{align}
+P\bigl(D=d, L\leq l \mid L>l-1, F=f\bigr), \, \textup{for } f\in \mathcal F \label{firstpart}
+\end{align}
+hvor $F$ er en vektor af faktorer og $\mathcal F$ er den endelige mængder af faktorsammensætninger. \eqref{firstpart} kan senere(i javascript-delen) bruges til at udregne
+\begin{equation}
+P\bigl(D=d, L\leq l \mid L>l-1, F=f_{\textup{personal}}\bigr)\label{lastpart}
+\end{equation}
+hvor $f_{\textup{personal}}$ ikke (nødvendigvis) ligger i $\mathcal F$.
+Det gøres ved
+\begin{align}
+\eqref{firstpart}=\frac{\textup{RR}_{d}(f)}{\sum_{f\in \mathcal F} RR_d(f)\cdot P(F=f)}p_d(l) \label{rr_calc}
+\end{align}
+
+Der er dog nogle forhindringer før vi bare kan stoppe tallene fra filerne ind i \eqref{rr_calc}.
+\begin{itemize}
+\item
+Vi ikke har nok information til at kende $P(F=f), f\in \mathcal F$ 100\%.
+\item
+Vi har flere riskratio filer for samme $d$. 
+\item
+Hvordan man skal tage højde for alders specifikke riskratios og alders specifikke $P(F=f)$'er
+\end{itemize}
+Lad os tage dem i voksende sværhedsgrad
+
+\subsection{Flere risk ratio filer}
+Hvis vi der er to riskratiofiler baseret på to vektorer af faktorer $F^1$, $F^2$ og to tilhørende krydsmængder, $\mathcal F^1$ og $\mathcal F^2$, så ville den mest rigtige måde at kombinere dem på være
+\begin{align}
+P\bigl(D=d&, L\leq l \mid L>l-1, (F^1,F^2)=(f^1,f^2)\bigr)\label{trueRR}\\
+&=\frac{g(\textup{RR}_{d}(f^1),\textup{RR}_{d}(f^2))}{\sum_{f^1,f^2\in \mathcal F^1\times \mathcal F^2} g(\textup{RR}_{d}(f^1),\textup{RR}_{d}(f^2))\cdot P((F^1,F^2)=(f^1,f^2))}p_d(l)\nonumber
+\end{align}
+hvor $g$ er en passende interaktionsfunktion. Hvis $F^1$ og $F^2$ er uafhængige og $g(x,y)=x\cdot y$, kan man dog skrive det som
+\begin{align}
+P\bigl(D=d&, L\leq l \mid L>l-1, (F^1,F^2)=(f^1,f^2)\bigr)\label{prodRR}\\
+&=\frac{\textup{RR}_{d}(f^1)}{\sum_{f^1\in \mathcal F^1} RR_d(f^1)\cdot P(F^1=f^1)}\frac{\textup{RR}_{d}(f^2)}{\sum_{f^2\in \mathcal F^2} RR_d(f^2)\cdot P(F^2=f^2)}p_d(l)\nonumber
+\end{align}
+Fordelen ved \eqref{prodRR} er, at man kan lægge et tallene 
+\begin{equation*}
+\frac{\textup{RR}_{d}(f^1)}{\sum_{f^1\in \mathcal F^1} RR_d(f^1)\cdot P(F^1=f^1)}, f^1\in \mathcal F^1
+\end{equation*}
+i en fil og tallene
+\begin{equation*}
+\frac{\textup{RR}_{d}(f^2)}{\sum_{f^2\in \mathcal F^2} RR_d(f^2)\cdot P(F^2=f^2)}, f^2\in \mathcal F^2
+\end{equation*}
+i en anden fil og tallene
+\begin{equation*}
+p_d(l_i), \, i=1, \dots, 22
+\end{equation*}
+i en tredje fil. Selvom betingelserne for at bruge \eqref{prodRR} ikke er helt er opfyldt, kan det måske alligevel være en god ide at bruge den. 
+
+\subsection{Vi kender ikke $\bm{P(F=f), f\in \mathcal F}$}
+Her tænkes $\mathcal F$ som den mængde hvor vi kender $\textup{RR}_d(f)$ hvis og kun hvis $f\in \mathcal F$.
+
+Der er flere slags udfordringer her. 
+\begin{enumerate}
+\item
+Det hænder at vi kun kender
+\begin{equation*}
+P(F=f), f \in \mathcal F'
+\end{equation*}
+hvor $\mathcal F'\not\supseteq \mathcal F$.
+\item
+Vi har $\mathcal F=\mathcal F_1 \times \mathcal F_2$ og $F=(F_1,F_2)$, hvor $F_1$ og $F_2$ er hver deres faktor. Her hænder det at vi kun kender
+\begin{equation*}
+P(F_i=f_i), f_i\in \mathcal F_i 
+\end{equation*}
+for $i=1,2$ og altså ingenting om den simultane fordeling af $(F_1,F_2)$
+\item
+Vi har $\mathcal F= \mathcal F_1\times \mathcal F_2\times F_3$ og $F=(F_1,F_2,F_3)$. Det hænder, at vi kun kender
+\begin{align*}
+P((F_1,F_2)&=(f_1,f_2)), \, f_1\in \mathcal F_1, f_2\in \mathcal F_2\\
+P((F_1,F_3)&=(f_1,f_3)), \, f_1\in \mathcal F_1, f_3\in \mathcal F_3
+\end{align*}
+\item
+Vi har $\mathcal F= \mathcal F_1$ og $F=F_1$. Det hænder, at vi kender
+\begin{align*}
+P((F_1,F_2)&=(f_1,f_2)), \, f_1\in \mathcal F_1, f_2\in \mathcal F_2
+\end{align*}
+men ikke (umiddelbart)
+\begin{align*}
+P(F_1&=f_1), \, f_1\in \mathcal F_1
+\end{align*}
+så vi så om sige har for meget
+\item
+Vi har $\mathcal F= \mathcal F_1$ og $F=F_1$. Det hænder, at vi slet ikke kender noget til
+\begin{align*}
+P(F_1\in f)
+\end{align*}
+\end{enumerate}
+Problemerne findes også i flere flere dimensioner og med kombinationer. 
+
+\subsubsection*{En løsning af problem 4}
+Vi laver en funktion som marginaliserer, dvs
+\begin{equation*}
+P(F_1=f_1)=\sum_{f_2\in \mathcal F_2} P((F_1,F_2)=(f_1,f_2))
+\end{equation*}
+
+\subsubsection*{En løsning af problem 1}
+
+Hvis vi laver en funktion, som laver transformationen
+\begin{align*}
+w:\{P(F=f_1), &P(F=f_2), \dots, P(F=f_n)\}\\&\mapsto \{P(F=f_1'), P(F=f_2'), \dots, P(F=f_k')\}
+\end{align*}
+kan vi løse det første problem. Hvis vi antager 
+\begin{equation}
+\bigcup_{i=1}^nf_i\subseteq\bigcup_{j=1}^k f_j'\label{condFaktorCoverage}
+\end{equation}
+kan man lave løsningen
+\begin{align*}
+P(F=f_j')=&w\bigl( P(F=f_1), P(F=f_2), \dots, P(F=f_n)\bigr)\\
+&=\sum_{i=1}^n\frac{P(F=f_i) \cdot |f_i\cap f_j'|}{|f_i|}
+\end{align*}
+hvor $|\cdot|$ repræsenterer et mål. Det vil dog nok altid være muligt at bruge Lebesguemålet eller tællemålet og nogle gange kan man måske være nødt til at bruge en mikstur af de to. Det ses foreksempel ved rygning, hvor der er en kategori, der hedder 0 cigaretter. Betingelsen \eqref{condFaktorCoverage} er nødvendig for at $P(F=f_j'), j=1,\dots, k$ summer til 1(det er nemlig antaget at $P(F=f_i), i=1, \dots ,n$ summer til 1). 
+
+
+
+
+\subsubsection*{En løsning af problem 2,3 og 5}
+For at løse problem 2,3 og 5 kan man bruge tilpasning af marginaler. Man har den ønskede fordeling
+\begin{equation*}
+P(F=f), f\in \mathcal F
+\end{equation*}
+hvor $F=(F_1, \dots, F_k)$ og $\mathcal F = \mathcal F_1 \times \cdots \times \mathcal F_k$, og man kender
+\begin{align*}
+P(F^1=f^1)&, f^1\in \mathcal F^1\\
+&\vdots\\
+ P(F^m=f^m)&, f^m\in \mathcal F^m
+\end{align*}
+hvor $\mathcal F^l=\mathcal F_{i^l_1}\times \mathcal F_{i^l_2}\times \cdots \times \mathcal F_{i^l_{r_l}}$. Man starter med en standard uniformfordeling
+\begin{equation*}
+p(f)=\frac{1}{\#\mathcal F},\,  f\in \mathcal F 
+\end{equation*}
+som estimater for $P(F=f)$. Dernæst \emph{tilpasser man med marginalen} $\mathcal F^1$
+\begin{equation*}
+p^{ny}(f)=p(f)\frac{P(F^1=f^1(f))}{\sum_{f': f^1(f')=f^1(f)}p(f')}
+\end{equation*}
+og derefter med marginalen $\mathcal F^2, \mathcal F^3$ og så videre (indtil man når til hvad?). 
+
+\subsubsection{Forskellige credibilities}
+Vi har mængder, $f\in \mathcal F$, for hvilke vi vil finde $P(F=f)$. $F$ kan her skrives $(F_i)_{i\in I}$, hvor $I$ er en mængde i $\{1, \dots, n\}$. Vi kender da `binnede' fordelinger af $(F_i)_{i\in I_j}$ for $j=1, \dots, k$, hvor $I_j$ også er mængder i  $\{1, \dots, n\}$. Credibility-scoren er en funktion $c: \{I_j\}_{j=1, \dots, k} \to \mathbb R_+$. De binnede fordelinger, der indgår i konstruktionen $P(F=f)$ er
+\begin{equation*}
+\Bigl\{            (F_i)_{i\in I_j} \mid I_j\cap I\neq \emptyset \wedge \bigl(\not\exists k : I\cap I_j\subseteq I\cap I_k \wedge c(I_k)>c(I_j)  \bigr)           \Bigr\}
+\end{equation*}•
+
+
+\subsection{Aldersspecifikke $\bm{P(F=f)}$'er eller riskratioer}
+I princippet burde alle ovenstående udregninger laves separat for alle aldersgrupper. Det gøres også, og der er nogle genveje. Definer $A$ til at være den stokastiske variabel der angiver alderen på personen. De nye faktorsandsynlighedsfiler har specificerende kolonner ved
+\begin{align*}
+ i_1 \textup{`te faktor} \quad& \cdots&  i_n\textup{`te faktor}\quad & \textup{aldersgr.}\\
+f_1^0 \quad & \cdots& f_n^0 \qquad& A_1 \\
+f_1^0 \quad & \cdots& f_n^1 \qquad&  A_1\\
+\vdots\quad &\cdots &\vdots \qquad &\\
+f_1^0 \quad & \cdots& f_n^{n_k} \qquad&  A_1 \\
+\vdots\quad &\cdots &\vdots \qquad &\\
+f_1^{n_1} \quad & \cdots& f_n^{n_k} \qquad& A_h\\
+\end{align*}
+og freq kolonnen indeholder
+\begin{align*}
+& \textup{freq}\\
+&P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^0\mid A\in A_1)\\
+&P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^1\mid A\in A_1)\\
+&\vdots\\
+& P(F_{i_1}\in f_1^0, F_{i_2}\in f_2^0, \dots F_{i_n}\in f_n^{n_k}\mid A\in A_1)\\
+&\vdots\\
+&P(F_{i_1}\in f_1^{n_1}, F_{i_2}\in f_2^{n_2}, \dots F_{i_n}\in f_n^{n_k}\mid A\in A_h)
+\end{align*}
+Det vil sige, at freq-kolonnen skal summe til $h$. Når man konstruerer $P(F=f)$, bør man konstruere 
+
+\section{Javascript delen}
+Til hver cause hører noget data på formen
+\begin{align*}
+d, \bigl(p_d(l_i)\bigr)_{i=1, \dots, 22} \textup{ dataframe}, \textup{risk ratio data}_d
+\end{align*}
+hvor $d$ bare er en string, $\bigl(p_d(l_i)\bigr)_{i=1, \dots, 22}$ er en data frame udskrevet som liste og risk ratio data'et har formen
+\begin{equation*}
+(\textup{Risk ratio datagruppe})^d_1,(\textup{Risk ratio datagruppe})^d_2,\dots,  (\textup{Risk ratio datagruppe})^d_{n_d}
+\end{equation*}
+En risk ratio datagruppe - indekseret ved $(j,d)$ - består af
+\begin{equation*}
+(\textup{norm}^{j,d}(l_i))_{i=1, \dots, 22}, (\textup{risk ratio dataframe}_i^{j,d})_{i=1, \dots, k_{j,d}}, g_{j,d}
+\end{equation*}
+hvor $(\textup{norm}^j(l_i))_{i=1, \dots, 22}$ er en liste af 22 tal som normaliserer for hver af de 22 aldersgrupper, $\textup{list of risk ratio dataframes}$ er en liste af risk ratio dataframes udskrevet som lister og $g_{j,d}$ er en string, som siger hvilken interaktion der mellem $(j,d)$ dataframesne. En risk ratio dataframe for en faktor $F^{i,j,d}$ har formen
+\begin{equation*}
+(r^{i,j,d}(f))_{f\in \mathcal F^{i,j,d}}
+\end{equation*}
+hvor $\mathcal F^{i,j,d}$ er en endelig mængde af faktor levels. Dette $r$ er blot en diskretisering af den underliggende riskfaktor funktion
+\begin{equation*}
+R^{i,j,d}(\psi), \psi \in  \Psi^{i,j,d}
+\end{equation*}
+hvor $\Psi^{i,j,d}$ er en mængde af alle tænkelige værdier af faktoren $F^{i,j,d}$, og derfor kan den være uendelig. Vi vil lave en \emph{polating} funktion, pol, til at evaluere funktionen
+\begin{equation*}
+R^{i,j,d}(\psi)=\textup{pol}((r^{i,j,d}(f))_{f\in \mathcal F^{i,j,d}}, \psi)
+\end{equation*}
+
+Lad nu $\psi$ være alle en persons faktorværdier, og lad $\phi^{i,j,d}$ være vektoren af faktorer der er relevante for den $(i,j,d)$'te risk ratio fil, dvs. en delvektor af $\psi$. Lad $a$ være en vilkårlig alder og lad $l(a)$ være den af de 22 alderskategorier, som $a$ falder i. Så defineres
+
+\begin{equation}
+P_{d}(a,\psi)=P_{d}(a) \cdot \prod_{j=1}^{n_d} \frac{g_{j,d}(R^{1,j,d}(\psi^{1,j,d}),  \dots , R^{k_{j,d},j,d}(\psi^{k_{j,d},j,d}) )}{\textup{norm}^{j,d}(l(a))}\label{pda_calculation}
+\end{equation}
+
+hvor $P_d(a)$ er `afdiskretiseringen' af $p_d(l)$. Det kunne måske defineres som
+\begin{equation*}
+P_d(a)=\max\bigl(1,\textup{pol}(\bigl(p_d(l_i)\bigr)_{i=1, \dots, 22}, a)\bigr)
+\end{equation*}
+
+Størrelsen $P_d(a,\psi)$ tænkes at være det samme som \eqref{lastpart}, dvs.
+\begin{equation}
+P_d(a,\psi) =P\bigl(D=d, L\leq a \mid L>a-1, F=\psi\bigr)\label{base_prob}
+\end{equation}
+
+\subsection{Kombinationer af $P_d(a)$'er}
+
+Vi definerer nu
+\begin{equation*}
+p(a,\psi)=\sum_{d\in \mathcal D}p_d(a,\psi)
+\end{equation*}
+hvor $\mathcal D$ er mængden af alle dødsårsager. Hvis \eqref{base_prob} faktisk gælder, er
+\begin{equation*}
+p(a,\psi)=P(L\leq a \mid L>a-1, F=\psi\bigr)
+\end{equation*}
+
+
+\subsubsection{Liste over mest interessante kombinationer}
+Lad nu $\tilde{\mathcal D}  \subseteq \mathcal D$ være en vilkårlig delmængde af dødsårsagerne. Alle de følgende størrelser kan varieres ved at tilføje $d\in  \tilde{\mathcal D}$ og/eller $L\in [a,b]$ til betingningen
+\begin{itemize}
+\item
+Forventet levealder
+\begin{equation*}
+E[L\mid \psi] = \sum_{a=0}^\infty a \cdot p(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi))
+\end{equation*}
+\item
+Forventet antal år mistet til sygdom $d$
+\begin{equation*}
+E[L\mid \psi, D\in \mathcal D\setminus \{d\}]-E[L\mid \psi]
+\end{equation*}
+\item
+Sandsynligheden for at dø af $d$
+\begin{equation*}
+P(D=d\mid \psi)= \sum_{a=0}^\infty  p_d(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi))
+\end{equation*}
+\item
+Ens overlevelseskurve
+\begin{align*}
+(P(L\geq a \mid \psi))_{a\in \mathbb N_0} = \biggl(\prod_{b=0}^{a-1} (1-p(b,\psi))\biggr)_{a\in \mathbb N_0}
+\end{align*}
+\end{itemize}
+
+\subsection{Forklare døden ved hjælp af ens faktorer}
+
+Vi vil nu også lave en optimal $\psi$-værdi som man kan måle brugerens $\psi$ op imod. Dette er dog en udfordring, fordi en faktor som forårsager en sygdom kan hæmme fremkomsten af en anden sygdom. Det gælder foreksempel rygning, lungekræft og Parkinson's. Vi definerer derfor $\psi_0$ så $\psi_0^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$. Det vil sige at i en lungekræftssammenhæng har $\psi_0$ rygning på 0, mens i en Parkinson's sammenhæng har $\psi_0$ rygning på 2 (cig/day). Lad nu $\psi_{F,0}$ opfylde at $\psi_{F,0}^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$ for faktorerne i vektoren af faktorer, $F$. Så hvis man vælger $F$ stor nok får man $\psi_{F,0}=\psi_0$. Betragt nu følgende dekomposition
+
+\begin{align*}
+P\bigl(D=d \mid  F=\psi\bigr)&=\sum_{a=0}^\infty p_d(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi)) \\
+&=\begin{lgathered}[t]\sum_{a=0}^\infty (p_d(a, \psi)-p_d(a,\psi_{0,F}))\prod_{b=0}^{a-1} (1-p(b,\psi))\\
++\sum_{a=0}^\infty p_d(a,\psi_{0,F})\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+\end{lgathered}
+\end{align*}
+Definitionen af $\psi_{0,F}$ gør begge de to led positive. Vi fortolker det første led som sandsynligheden for død på grund af ens faktorværdier, mens det andet led er \emph{death by chance/age/destiny}. Bemærk at andet led ikke er identisk med $P(D=d\mid F=\psi_{0,F})$ fordi parameteren $\psi$ stadig indgår i leddet. Vi er nu interesserede i at dekomponere
+\begin{align*}
+p_d(a, \psi)-p_d(a,\psi_{0,F})
+\end{align*}
+for da kan vi dekompenere $P(D=d\mid F=\psi)$ i flere led. 
+
+Hvis $F$ bare er en enkelt faktor dvs., $F=(F_1)$, er den fuldt dekomponeret. Men hvis $F$ er en vektor $F=(F_1, F_2, \dots, F_n)$ ville vi ideelt have positive tal 
+\begin{equation*}
+s_d(a, \psi_{0,  F_J}), J\subseteq \{1, \dots, n\}
+\end{equation*}
+sådan at
+\begin{align}
+p_d(a, \psi)-p_d(a,\psi_{0,F_I})&=\sum_{J\subseteq I, J\neq \emptyset} s_d(a, \psi_{0,  F_J})\label{decomp}
+\end{align}
+for alle $I\subseteq \{1, \dots, n\}$. Antag $p_d$ splitter pænt multiplikativt op 
+\begin{equation}
+p_d(a, \psi)=P_{d}(a)\prod_{j=1}^n \frac{R^{1,j,d}(a,\psi^{F_j})}{{\textup{norm}^{j,d}(l(a))}}\label{nice_structure}
+\end{equation}
+hvor $\psi^{F_j}$ er $\psi$-vektorens værdi hørende til $F_j$-faktoren. En løsning til \eqref{decomp} er da
+\begin{equation*}
+s_d(a, \psi_{0,F_J})=\begin{lgathered}[t] P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}\\
+\cdot \prod_{j\in J}\bigl[R^{1,j,d}(a,\psi^{F_j})-R^{1,j,d}(a,\psi_{F_j,0}^{F_j})\bigr] \prod_{j\notin J} R^{1,j,d}(a, \psi_{F_j,0}^{F_j})\end{lgathered}
+\end{equation*}
+Jeg kan ikke lige bevise det på stående fod, men skal lige se hvad min `Hierarkiske og grafiske kontigenstabeller'- bog siger om et meget lignende resultat. 
+
+Konstanten $P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}$ skal altid ganges på så definer nu $\tilde s_d$ ved
+\begin{equation*}
+s_d(a, \psi_{0,F_J})= P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}} \tilde s_d(a, \psi_{0,F_J})
+\end{equation*}
+
+I tilfælde hvor vi ikke har den pæne struktur i \eqref{nice_structure}, kan man udnytte den pæne struktur risk ratio grupperne imellem. Indenfor riskratiogrupperne må man tilpasse dekompositionen interaktionsfunktionen - hvis interaktionsfunktionen er \emph{multiplicative} er det hurtigt klaret. Inden for hver risk ratio fil, må vi finde en heurestik - helst sådan at der gælder
+\begin{equation}
+p_d(a, \psi)-p_d(a,\psi_{0,F_i})= s_d(a, \psi_{0,  F_i})\label{desire}
+\end{equation}
+for alle $i$. Det vigtigste krav er dog
+\begin{equation}
+p_d(a, \psi)-p_d(a,\psi_{0,F_{\{1, \dots, n\}}})=\sum_{J\subseteq \{1, \dots, n\}, J\neq \emptyset} s_d(a, \psi_{0,  F_J})\label{ultimate_demand}
+\end{equation}
+fordi ellers summer alle komponenterne ikke til $p_d(a,\psi)$. 
+
+\subsubsection{Overvejelse}
+Betragt de simple riskratiointeraktioner
+\begin{table}[!ht]
+\centering
+\begin{tabular}{l | rr}
+& $f_1^1$&$f_1^2$ \\
+\midrule
+$f_2^1$& 1.0& 1.1\\
+$f_2^2$&1.1 & 2.1
+\end{tabular}
+\caption{Her er der en positiv interaktion mellem $F_1$ og $F_2$}\label{positiv_interaktion}
+\end{table}
+
+\begin{table}[!ht]
+\centering
+\begin{tabular}{l | rr}
+& $f_1^1$&$f_1^2$ \\
+\midrule
+$f_2^1$& 1.0& 2.0\\
+$f_2^2$&2.0 & 2.1
+\end{tabular}
+\caption{Her er der en negativ interaktion mellem $F_1$ og $F_2$}\label{negativ_interaktion}
+\end{table}
+
+Ved at bruge \eqref{desire} på den Tabel \ref{positiv_interaktion} får man
+
+\begin{gather*}
+\tilde s_d(a, \psi_{F_1,0})=0.1\\
+\tilde s_d(a, \psi_{F_2,0})=0.1\\
+\stackrel{\eqref{ultimate_demand}}{\Rightarrow}\tilde s_d(a, \psi_{(F_1,F_2),0})=0.9
+\end{gather*}
+
+Reglen kan ikke bruges på Tabel \ref{negativ_interaktion} for da er
+
+\begin{gather*}
+\tilde s_d(a, \psi_{F_1,0})=1.0\\
+\tilde s_d(a, \psi_{F_2,0})=1.0\\
+\stackrel{\eqref{ultimate_demand}}{\Rightarrow}\tilde s_d(a, \psi_{(F_1,F_2),0})=-0.9
+\end{gather*}
+
+Og da der ikke må være negative $\tilde s_d$ er den ikke gyldig. I den gamle 
+
+\subsubsection{Løsninger}
+?
+
+
+%
+%
+%
+%\begin{itemize}
+%\item
+%Sandsynligheden for at dø af $\tilde{\mathcal D}$, der kunne være undgået ved at have en anden faktorværdi for faktorerne, $F$.
+%\begin{equation}
+%\sum_{d\in \tilde{\mathcal D}}\sum_{a=0}^\infty (p_d(a, \psi)-p_d(a,\psi_{F,0}))\prod_{b=0}^{a-1} (1-p(b,\psi))\label{all_causes}
+%\end{equation}
+%\end{itemize}
+%
+%For hver dødsårsag er vi interesserede i at kortlægge de underliggende grunde til den dødsårsag. Hvis der kun er 1 faktor, $F=F_1$, er det nemt at angive sandsynligheden for at dø af netop den grund ved at bruge \eqref{all_causes}, men hvis $F$ er længere end 1 indgang, er vi interesserede i at dekomponere sandsynligheden for at dø af sine faktorer i deres enkelte underdele. For en enkelt dødsårsag, $d$, har vi
+%
+%\begin{align*}
+%P\bigl(D=d&, L\leq a \mid L>a-1, F=\psi\bigr)\\
+%&=\sum_{a=0}^\infty p_d(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+%&=\begin{lgathered}[t]\sum_{a=0}^\infty (p_d(a, \psi)-p_d(a,\psi_{0,F}))\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+%+\sum_{a=0}^\infty p_d(a,\psi_{0,F})\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+%\end{lgathered}
+%\end{align*}
+%Definitionen af $\psi_{0,F}$ gør det første af de to led positivt. Da fortolker vi første led som død på grund af ens faktorværdier, mens det andet led er \emph{death by chance/age/destiny}. 
+
+\subsection{den polerende funktion}
+Valget her er ikke taget, og der er sikkert mange gode valg
+
+
+
+
+
+\end{document}
