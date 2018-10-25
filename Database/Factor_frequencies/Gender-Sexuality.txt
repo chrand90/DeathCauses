@@ -1,0 +1,16 @@
+#credibility=1
+#1 is standard credibility, because it was difficult to follow the references
+#
+#The numbers are from lgbtnumbers.pdf aka  Gary J. Gates, Williams Distinguished Scholar, 
+#"How many people are lesbian, gay, bisexual, and transgender?"
+#
+#
+Gender	Sexuality	freq
+Male	Male	0.010828059
+Male	Both	0.006890583
+Male 	Female	0.474465858
+Female	Female	0.00558597
+Female	Both	0.01117194
+Female	Male	0.49105759
+Male	None	0.0
+Female	None	0.0

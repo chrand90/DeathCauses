@@ -1,0 +1,7 @@
+#credibility=23.3
+#
+# Auto generated file
+#
+FamilyHistoryParkinson	freq
+No	0.9372549
+Yes	0.0627451

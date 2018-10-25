@@ -1,0 +1,3 @@
+FamilyHistoryParkinson	RR
+No	1.0
+Yes	4.45

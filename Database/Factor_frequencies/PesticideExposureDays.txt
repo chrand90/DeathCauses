@@ -1,0 +1,10 @@
+#credibility=23.3
+#
+# Auto generated file
+#
+PesticideExposureDays	freq
+0.0	0.5396996
+0.0-45.0	0.1555794
+45.0-215.0	0.1738197
+215.0-400.0	0.1309013
+400.0+	0

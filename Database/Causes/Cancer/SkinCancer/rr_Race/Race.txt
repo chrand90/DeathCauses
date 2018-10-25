@@ -1,0 +1,5 @@
+Race	RR
+White	1.0
+Asian	0.03461538
+Pacific	0.07692308
+Black	0.05384615

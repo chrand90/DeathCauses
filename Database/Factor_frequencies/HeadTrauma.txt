@@ -1,0 +1,9 @@
+#credibility=23.3
+#
+# Auto generated file
+#
+HeadTrauma	freq
+0.0	0.7700965
+0.0-1.5	0.1922829
+1.5-2.5	0.0376206
+2.5+	0

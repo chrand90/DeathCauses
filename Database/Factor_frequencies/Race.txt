@@ -1,0 +1,10 @@
+#credibility=23.3
+#
+# Auto generated file
+#
+Race	freq
+white	0.7783559
+asian	0.0582726
+american_indian	0.0176899
+pacific	0.0041623
+black	0.1415193
