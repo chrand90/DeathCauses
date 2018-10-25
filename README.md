@@ -5,7 +5,7 @@ The goal of this project is to develop a method for estimating life expectancy b
 Note: this project is not finished yet, as the javascript part has not been developed yet.
 
 ### Author
-The idea and theory has been developed by Svend V. Nielsen. The Python code has been developed by Svend V. Nielsen and Christian Andersen in collaboration.
+The idea and theory has been developed primarily by Svend V. Nielsen. The Python code has been developed by Svend V. Nielsen and Christian Andersen in collaboration.
 
 ### Prerequisites
 The python code in /compile/ is written for Python 2.7. The program uses standard python packages only.
