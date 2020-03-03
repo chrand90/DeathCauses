@@ -38,6 +38,7 @@ def run(age_intervals=None):
     if age_intervals is None:
         age_intervals= get_age_totals()[0]
     transform_to_json(integrate_all_in_folder(age_intervals, "Causes"), "Causes_for_json")
+    transform_to_json(get_cause_hierarchy('Causes'), 'cause_hierarchy_for_json')
     #transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
 
@@ -100,8 +101,6 @@ def getAllCategories(listOfDataframes):
 
 # def similarize_rrs(rrs):
 #     return rrs
-    
-
 
 def search_for_writtenF_directories(folder):
     writtenF_dirs=[]
@@ -112,12 +111,31 @@ def search_for_writtenF_directories(folder):
             writtenF_dirs.append((path+os.sep+"ICDfiles",rr_dirs))
     return writtenF_dirs
 
+def get_ancestor_chain(path, stop_string):
+    ad=path.split(stop_string)[1]
+    chain=ad.split(os.sep)
+    return(chain)
+
+def get_cause_hierarchy(folder):
+    parents={}
+    start_folder=os.path.join(os.pardir, "Database", folder)
+    list_of_files=os.walk(start_folder)
+    for path,dirs_within,_ in list_of_files: 
+        if "ICDfiles" in dirs_within:
+            ch=get_ancestor_chain(path, start_folder)
+            if len(ch)>1:
+                for p,c in zip(ch[:-1], ch[1:]):
+                    parents[c]=p
+    return parents
    
 
 if __name__ == "__main__":
     start=time.time()
-    alist = search_for_writtenF_directories("Causes")
+    print [f for f in os.walk(os.path.join(os.pardir, "Database", 'Causes'))]
+    print get_cause_hierarchy('Causes')
+    alist= search_for_writtenF_directories("Causes")
     #print alist
+    #run()
     run()
 #     res=[]
 #     for a in alist[:2]:    
