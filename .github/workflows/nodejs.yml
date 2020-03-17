@@ -29,6 +29,5 @@ jobs:
       working-directory: ${{env.working-directory}}
     - run: npm --prefix my-app/ run build --if-present
     - run: npm --prefix my-app/ test a
-      working-directory: ${{env.working-directory}}
       env:
         CI: true
