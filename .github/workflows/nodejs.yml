@@ -13,7 +13,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
-
+    env: 
+      working-directory: ./my-app
     strategy:
       matrix:
         node-version: [12.x]
@@ -25,7 +26,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
+      working-directory: ${{env.working-directory}}
     - run: npm --prefix my-app/ run build --if-present
+      working-directory: ${{env.working-directory}}
     - run: npm --prefix my-app/ test a
+      working-directory: ${{env.working-directory}}
       env:
         CI: true
