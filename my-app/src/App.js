@@ -1,5 +1,4 @@
-import React, {Suspense} from 'react';
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
 import Header from './Components/Header.js';
 import QuestionMenu from './Components/QuestionMenu.js';
@@ -9,7 +8,7 @@ class App extends React.Component {
 
   visualize(){
     //this should re-render the view with the new factor values that was changed by QuestionMenu. 
-    this.setState({ factor_answes: this.state.factor_answers}); 
+    this.setState({ factor_answers: this.state.factor_answers}); 
   };
 
   loadFactorAnswers(){
