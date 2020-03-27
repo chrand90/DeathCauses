@@ -1,5 +1,6 @@
 import React from 'react';
 import './VizWindow.css';
+import BarChartWrapper from './BarChartWrapper';
 
 class VizWindow extends React.Component {
 
@@ -25,6 +26,7 @@ class VizWindow extends React.Component {
                 <option value="allcauses">Probability of dying of all causes</option>
                 <option value="allages">Probability of dying at all ages</option>
             </select>
+            <BarChartWrapper database={this.props.database}/>
         </div>);
     };
 }

@@ -3,8 +3,11 @@ import './App.css';
 import Header from './Components/Header.js';
 import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
+import {Container, Row, Col} from 'reactstrap';
+import { json} from 'd3';
 
 class App extends React.Component {
+
 
   visualize(){
     //this should re-render the view with the new factor values that was changed by QuestionMenu. 
@@ -19,6 +22,7 @@ class App extends React.Component {
   loadDatabase(){
     // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
     // This will load the data and then it will update the rendered view using setState.
+    this.setState({ database:json('../compile/Causes_for_json'), hasLoadedDatabase:true});
   }
 
   loadFactorDatabase(){
@@ -27,10 +31,14 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    this.loadFactorAnswers();
-    this.loadDatabase();
-    this.loadFactorDatabase();
-    this.setState()
+    Promise.all( 
+      [json("https://raw.githubusercontent.com/chrand90/DeathCauses/master/compile/Causes_for_json")]//,
+      //json('../factor_database'), NOT IMPLEMENTED
+      //json('../basic_factor_answers') NOT IMPLEMENTED
+    ).then((databases) => {
+      console.log(databases[0])
+      this.setState({database:databases[0], hasLoadedDatabase:true});
+    });
     //Probably better to use: Promise all then
   }
 
@@ -40,7 +48,7 @@ class App extends React.Component {
     super();
     this.state= { 
       hasLoadedFactorAnswers: true, //indicates whether the initial factors havent been read from the file. In the
-      hasLoadedDatabase: true, //indicates whether the database hasnt been loaded from the file
+      hasLoadedDatabase: false, //indicates whether the database hasnt been loaded from the file
       hasLoadedFactorDatabase: true,
       factor_database: null, //indicates any data about the factors. For example, how should the question be formulated.
       factor_answers: null, //the current answers of 
@@ -61,11 +69,18 @@ class App extends React.Component {
   }
 
   render(){
+    console.log(this.state)
     return (
       <div className="App">
         <Header />
-        {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"} 
-        {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"} 
+        <Row>
+          <Col md={3} xs={3} lg={3} sm={3} xl={3}>
+          {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"} 
+          </Col>
+          <Col md={9} xs={9} lg={9} sm={9} xl={9}>
+          {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"} 
+          </Col>
+        </Row>
       </div>
     );
   }

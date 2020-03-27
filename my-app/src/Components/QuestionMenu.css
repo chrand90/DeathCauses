@@ -1,7 +1,4 @@
 .questionmenu{
-    float: left;
-    height: 500pt;
-    width: 30%;
+    min-height: 600px;
     background: #dff179;
-    margin: 0pt;
 }

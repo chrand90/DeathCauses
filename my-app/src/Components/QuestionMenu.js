@@ -7,7 +7,7 @@ class QuestionMenu extends React.Component {
         //this should make a list of questions. At its disposal, it has the this.props.factor_database and this.props.factor_answers.
         return (
             <div>
-    <p>Please selcet your gender:</p> 
+    <p>Please selcet your gender:</p>  
     <input type="radio" id="male" name="gender" value="Male" />
     <label htmlFor="male">Male</label>
     <input type="radio" id="female" name="gender" value="Female" />
