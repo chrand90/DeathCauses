@@ -3,7 +3,7 @@ import './App.css';
 import Header from './Components/Header.js';
 import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
-import {Container, Row, Col} from 'reactstrap';
+import { Row, Col} from 'reactstrap';
 import { json} from 'd3';
 
 class App extends React.Component {
