@@ -13,7 +13,19 @@
 \renewcommand{\i}{^{-1}}
 \newcommand{\tr}{\textup{tr}}
 \usepackage{bm}
+\usepackage{tikz}
+\definecolor{blue1}{rgb}{0.7,0.8,1}
+\definecolor{blue2}{rgb}{0.6,0.8,1}
+\definecolor{blue3}{rgb}{0.7,0.9,1}
+\definecolor{blue4}{rgb}{0.6,0.7,1}
 
+\definecolor{red1}{rgb}{1,0.5,0.7}
+\definecolor{red2}{rgb}{1,0.7,0.75}
+\definecolor{red3}{rgb}{1,0.7,0.5}
+\definecolor{red4}{rgb}{1,0.8,0.7}
+\definecolor{red5}{rgb}{1,0.5,0.5}
+
+\definecolor{gron}{rgb}{0,0.6,0}
 \begin{document}
 
 Lad $\omega$ være en amerikaner. Definer
@@ -55,7 +67,7 @@ Vi er interesserede i vektoren
 \begin{alignat*}{4}
 p_d(l_1)\quad & p_d(l_2)\quad & \cdots \quad & p_d(l_{22})
 \end{alignat*}
-hvor jeg, med den lidt misbrugte notation $p_d(l_i)$, mener $p_d(l)$ for et $l\in l_i$. Disse estimeres med
+hvor vi, med den lidt misbrugte notation $p_d(l_i)$, mener $p_d(l)$ for et $l\in l_i$. Disse estimeres med
 \begin{equation*}
 p_d(l_i)\leftarrow \frac{\textup{antal amerikanere døde af } d \textup{ i aldersgruppen } l_i \textup{ i år } Y_1}{\textup{antal amerikanere i aldersgruppen } l_i \textup{ i år } Y_2 }=:\frac{a_{di}}{a_i}
 \end{equation*}
@@ -283,9 +295,9 @@ hvor $\mathcal F^{i,j,d}$ er en endelig mængde af faktor levels. Dette $r$ er b
 R^{i,j,d}(\psi), \psi \in  \Psi^{i,j,d}
 \end{equation*}
 hvor $\Psi^{i,j,d}$ er en mængde af alle tænkelige værdier af faktoren $F^{i,j,d}$, og derfor kan den være uendelig. Vi vil lave en \emph{polating} funktion, pol, til at evaluere funktionen
-\begin{equation*}
-R^{i,j,d}(\psi)=\textup{pol}((r^{i,j,d}(f))_{f\in \mathcal F^{i,j,d}}, \psi)
-\end{equation*}
+\begin{equation}
+R^{i,j,d}(\psi)=\textup{pol}((r^{i,j,d}(f))_{f\in \mathcal F^{i,j,d}}, \psi) \label{polating}
+\end{equation}
 
 Lad nu $\psi$ være alle en persons faktorværdier, og lad $\phi^{i,j,d}$ være vektoren af faktorer der er relevante for den $(i,j,d)$'te risk ratio fil, dvs. en delvektor af $\psi$. Lad $a$ være en vilkårlig alder og lad $l(a)$ være den af de 22 alderskategorier, som $a$ falder i. Så defineres
 
@@ -342,53 +354,67 @@ Ens overlevelseskurve
 
 \subsection{Forklare døden ved hjælp af ens faktorer}
 
-Vi vil nu også lave en optimal $\psi$-værdi som man kan måle brugerens $\psi$ op imod. Dette er dog en udfordring, fordi en faktor som forårsager en sygdom kan hæmme fremkomsten af en anden sygdom. Det gælder foreksempel rygning, lungekræft og Parkinson's. Vi definerer derfor $\psi_0$ så $\psi_0^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$. Det vil sige at i en lungekræftssammenhæng har $\psi_0$ rygning på 0, mens i en Parkinson's sammenhæng har $\psi_0$ rygning på 2 (cig/day). Lad nu $\psi_{F,0}$ opfylde at $\psi_{F,0}^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$ for faktorerne i vektoren af faktorer, $F$. Så hvis man vælger $F$ stor nok får man $\psi_{F,0}=\psi_0$. Betragt nu følgende dekomposition
+Vi vil nu også lave en optimal $\psi$-værdi som man kan måle brugerens $\psi$ op imod. Dette er dog en udfordring, fordi en faktor som forårsager en sygdom kan hæmme fremkomsten af en anden sygdom. Det gælder foreksempel rygning, lungekræft og Parkinson's. Vi definerer derfor $\psi_0$ så $\psi_0^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$. Det vil sige at i en lungekræftssammenhæng har $\psi_0$ rygning på 0, mens i en Parkinson's sammenhæng har $\psi_0$ rygning på 2 (cig/day). Antag af $\psi$ er gjort op af $n$ faktorer. Vi definerer nu for et $J\subseteq \{1,\dots, n\}$ faktorværdivektoren $\psi_{0,F_J}$. For en indang $i$ er
+\begin{equation}
+(\psi_{0,F_J})_i=(\psi_{0,\{F_j\}_{j\in J}})_i=\begin{cases}
+(\psi)_i \qquad & \textup{hvis } i\in J\\
+\Bigl(\arg\min_{\tilde \psi: \tilde \psi_j=(\psi)_j \textup{ for }j \in J} R(\tilde\psi) \Bigr)_i & \textup{ellers}
+\end{cases}
+\end{equation}
+Så vi har $\psi_{\emptyset}=\psi_0$ og $\psi_{0,F_{\{1, \dots, n\}}}=\psi$ . Betragt nu følgende dekomposition
 
 \begin{align*}
 P\bigl(D=d \mid  F=\psi\bigr)&=\sum_{a=0}^\infty p_d(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi)) \\
-&=\begin{lgathered}[t]\sum_{a=0}^\infty (p_d(a, \psi)-p_d(a,\psi_{0,F}))\prod_{b=0}^{a-1} (1-p(b,\psi))\\
-+\sum_{a=0}^\infty p_d(a,\psi_{0,F})\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+&=\begin{lgathered}[t]\sum_{a=0}^\infty (p_d(a, \psi)-p_d(a,\psi_{0}))\prod_{b=0}^{a-1} (1-p(b,\psi))\\
++\sum_{a=0}^\infty p_d(a,\psi_{0})\prod_{b=0}^{a-1} (1-p(b,\psi))\\
 \end{lgathered}
 \end{align*}
-Definitionen af $\psi_{0,F}$ gør begge de to led positive. Vi fortolker det første led som sandsynligheden for død på grund af ens faktorværdier, mens det andet led er \emph{death by chance/age/destiny}. Bemærk at andet led ikke er identisk med $P(D=d\mid F=\psi_{0,F})$ fordi parameteren $\psi$ stadig indgår i leddet. Vi er nu interesserede i at dekomponere
+Definitionen af $\psi_{0}$ gør begge de to led positive. Vi fortolker det første led som sandsynligheden for død på grund af ens faktorværdier, mens det andet led er \emph{death by chance/age/destiny}. Bemærk at andet led ikke er identisk med $P(D=d\mid F=\psi_{0,F})$ fordi parameteren $\psi$ stadig indgår i leddet. Vi er nu interesserede i at dekomponere
 \begin{align*}
-p_d(a, \psi)-p_d(a,\psi_{0,F})
+p_d(a, \psi)-p_d(a,\psi_{0})
 \end{align*}
-for da kan vi dekompenere $P(D=d\mid F=\psi)$ i flere led. 
+for da kan vi dekompenere $P(D=d\mid F=\psi)$ i flere led. Fra nu af holder vi $a$ og $d$ fast og ser på ovenstående størrelse og definerer $U_*=p_d(a, \psi)-p_d(a,\psi_{0})$.
 
 Hvis $F$ bare er en enkelt faktor dvs., $F=(F_1)$, er den fuldt dekomponeret. Men hvis $F$ er en vektor $F=(F_1, F_2, \dots, F_n)$ ville vi ideelt have positive tal 
 \begin{equation*}
-s_d(a, \psi_{0,  F_J}), J\subseteq \{1, \dots, n\}
+S(F_J)=S(\{F_j\}_{j\in J}), J\subseteq \{1, \dots, n\}
 \end{equation*}
 sådan at
+\begin{equation}
+U_*=\sum_{J\subseteq \{1, \dots, N\}, J\neq \emptyset}S(F_J)
+\end{equation}
+og hver af $S(F_J)$'erne havde en pæn fortolkning; gerne sådan at 
 \begin{align}
-p_d(a, \psi)-p_d(a,\psi_{0,F_I})&=\sum_{J\subseteq I, J\neq \emptyset} s_d(a, \psi_{0,  F_J})\label{decomp}
+p_d(a,\psi_{0,F_I})-p_d(a, \psi_0)&=\sum_{J\subseteq I, J\neq \emptyset} S(F_J)\label{decomp}
 \end{align}
-for alle $I\subseteq \{1, \dots, n\}$. Antag $p_d$ splitter pænt multiplikativt op 
-\begin{equation}
-p_d(a, \psi)=P_{d}(a)\prod_{j=1}^n \frac{R^{1,j,d}(a,\psi^{F_j})}{{\textup{norm}^{j,d}(l(a))}}\label{nice_structure}
-\end{equation}
-hvor $\psi^{F_j}$ er $\psi$-vektorens værdi hørende til $F_j$-faktoren. En løsning til \eqref{decomp} er da
-\begin{equation*}
-s_d(a, \psi_{0,F_J})=\begin{lgathered}[t] P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}\\
-\cdot \prod_{j\in J}\bigl[R^{1,j,d}(a,\psi^{F_j})-R^{1,j,d}(a,\psi_{F_j,0}^{F_j})\bigr] \prod_{j\notin J} R^{1,j,d}(a, \psi_{F_j,0}^{F_j})\end{lgathered}
-\end{equation*}
-Jeg kan ikke lige bevise det på stående fod, men skal lige se hvad min `Hierarkiske og grafiske kontigenstabeller'- bog siger om et meget lignende resultat. 
-
-Konstanten $P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}$ skal altid ganges på så definer nu $\tilde s_d$ ved
-\begin{equation*}
-s_d(a, \psi_{0,F_J})= P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}} \tilde s_d(a, \psi_{0,F_J})
-\end{equation*}
-
-I tilfælde hvor vi ikke har den pæne struktur i \eqref{nice_structure}, kan man udnytte den pæne struktur risk ratio grupperne imellem. Indenfor riskratiogrupperne må man tilpasse dekompositionen interaktionsfunktionen - hvis interaktionsfunktionen er \emph{multiplicative} er det hurtigt klaret. Inden for hver risk ratio fil, må vi finde en heurestik - helst sådan at der gælder
-\begin{equation}
-p_d(a, \psi)-p_d(a,\psi_{0,F_i})= s_d(a, \psi_{0,  F_i})\label{desire}
-\end{equation}
-for alle $i$. Det vigtigste krav er dog
-\begin{equation}
-p_d(a, \psi)-p_d(a,\psi_{0,F_{\{1, \dots, n\}}})=\sum_{J\subseteq \{1, \dots, n\}, J\neq \emptyset} s_d(a, \psi_{0,  F_J})\label{ultimate_demand}
-\end{equation}
-fordi ellers summer alle komponenterne ikke til $p_d(a,\psi)$. 
+for alle $I\subseteq \{1, \dots, n\}$. Definer for simplicitet $U(F_I)=p_d(a,\psi_{0,F_I})-p_d(a, \psi_0)$.
+%Antag $p_d$ splitter pænt multiplikativt op 
+%\begin{equation}
+%p_d(a, \psi)=P_{d}(a)\prod_{j=1}^n \frac{R^{1,j,d}(a,\psi^{F_j})}{{\textup{norm}^{j,d}(l(a))}}\label{nice_structure}
+%\end{equation}
+%hvor $\psi^{F_j}$ er $\psi$-vektorens værdi hørende til $F_j$-faktoren. En løsning til \eqref{decomp} er da
+%\begin{equation*}
+%s_d(a, \psi_{0,F_J})=\begin{lgathered}[t] P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}\\
+%\cdot \prod_{j\in J}\bigl[R^{1,j,d}(a,\psi^{F_j})-R^{1,j,d}(a,\psi_{F_j,0}^{F_j})\bigr] \prod_{j\notin J} R^{1,j,d}(a, \psi_{F_j,0}^{F_j})\end{lgathered}
+%\end{equation*}
+%Jeg kan ikke lige bevise det på stående fod, men skal lige se hvad min `Hierarkiske og grafiske kontigenstabeller'- bog siger om et meget lignende resultat. 
+%
+%Konstanten $P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}}$ skal altid ganges på så definer nu $\tilde s_d$ ved
+%\begin{equation*}
+%s_d(a, \psi_{0,F_J})= P_d(a)\frac{1}{\prod_{j=1}^n {\textup{norm}^{j,d}(l(a))}} \tilde s_d(a, \psi_{0,F_J})
+%\end{equation*}
+%
+%I tilfælde hvor vi ikke har den pæne struktur i \eqref{nice_structure}, kan man udnytte den pæne struktur risk ratio grupperne imellem. Indenfor riskratiogrupperne må man tilpasse dekompositionen interaktionsfunktionen - hvis interaktionsfunktionen er \emph{multiplicative} er det hurtigt klaret. Inden for hver risk ratio fil, må vi finde en heurestik - helst sådan at der gælder
+%\begin{equation}
+%p_d(a, \psi)-p_d(a,\psi_{0,F_i})= s_d(a, \psi_{0,  F_i})\label{desire}
+%\end{equation}
+%for alle $i$. 
+%
+%Det vigtigste krav er dog
+%\begin{equation}
+%p_d(a, \psi)-p_d(a,\psi_{0,F_{\{1, \dots, n\}}})=\sum_{J\subseteq \{1, \dots, n\}, J\neq \emptyset} s_d(a, \psi_{0,  F_J})\label{ultimate_demand}
+%\end{equation}
+%fordi ellers summer alle komponenterne ikke til $p_d(a,\psi)$. 
 
 \subsubsection{Overvejelse}
 Betragt de simple riskratiointeraktioner
@@ -414,26 +440,279 @@ $f_2^2$&2.0 & 2.1
 \caption{Her er der en negativ interaktion mellem $F_1$ og $F_2$}\label{negativ_interaktion}
 \end{table}
 
-Ved at bruge \eqref{desire} på den Tabel \ref{positiv_interaktion} får man
+For at undgå komplicerede subskripts definerer vi $S(F_{i_1}, \dots, F_{i_k})=S(F_{\{i_1,\dots, i_k\}})$. Ved at bruge \eqref{decomp} på Tabel \ref{positiv_interaktion} får man
 
 \begin{gather*}
-\tilde s_d(a, \psi_{F_1,0})=0.1\\
-\tilde s_d(a, \psi_{F_2,0})=0.1\\
-\stackrel{\eqref{ultimate_demand}}{\Rightarrow}\tilde s_d(a, \psi_{(F_1,F_2),0})=0.9
+ \tilde S(F_1)=0.1\\
+\tilde S(F_2)=0.1\\
+\stackrel{\eqref{decomp}}{\Rightarrow} \tilde S(F_1,F_2)=0.9
 \end{gather*}
 
-Reglen kan ikke bruges på Tabel \ref{negativ_interaktion} for da er
+hvor $\tilde S=S/p_d(a,\psi_0)$. \eqref{decomp}  virker ikke lige så god på Tabel \ref{negativ_interaktion} for da er
 
 \begin{gather*}
-\tilde s_d(a, \psi_{F_1,0})=1.0\\
-\tilde s_d(a, \psi_{F_2,0})=1.0\\
-\stackrel{\eqref{ultimate_demand}}{\Rightarrow}\tilde s_d(a, \psi_{(F_1,F_2),0})=-0.9
+S(F_1)=1.0\\
+S(F_2)=1.0\\
+\stackrel{\eqref{decomp}}{\Rightarrow}S(F_1,F_2)=-0.9
 \end{gather*}
 
-Og da der ikke må være negative $\tilde s_d$ er den ikke gyldig. I den gamle 
+Og den negative værdi besværliggører fortolkningen, så det er måske problematisk at bruge \eqref{decomp}.
 
-\subsubsection{Løsninger}
-?
+\subsubsection{Løsningsforslag}
+
+Man kan godt få lidt mening ud af de negative værdi der kan forekomme under systemet i \eqref{decomp}. Systemet medfører at
+\begin{equation}
+S(F_I)=U(F_I)-\sum_{J\subseteq I, J\neq \emptyset, J\neq I}S(F_J)\label{base_decomposition}
+\end{equation}
+hvilket ikke ikke leder til en cirkeldefinition, fordi alle led i summen har færre elementer end antallet af elementer i $I$. For at få mening ud af $S$'erne foreslås følgende fortolkninger/omregninger, som inddeles i forskellige kompleksitet
+\begin{enumerate}[(i)]
+\item
+1. ordensfortolkning, $S^{(1)}$. Dette er den simpleste fortolkning for her undgår vi at have interaktioner mellem faktorårsagerne. Det kan opnås ved at normalisere $S(F_i)$'erne
+\begin{align*}
+S(F_i)&=U(F_i)\\
+S^{(1)}(F_i)&=\frac{S(F_i)}{\sum_{j=1}^{n}S(F_j)}\cdot U_*
+\end{align*}
+for $i=1,\dots, n$. Man kunne sige $S^{(1)}(F_J)=0$ for $|J|>1$. Faktoren $\tfrac{U_*}{\sum_{j=1}^{n}S(F_j)}$ ganges på for at $S^{(1)}(F_i)$'erne fungerer som en fuld dekomposition.
+\item
+Næst kigger vi på interaktioner mellem par af faktorårsagerne, der udregnes som
+\begin{align*}
+S(F_i, F_j)=U(F_i,F_j)- S(F_i)-S(F_j).
+\end{align*}
+Problemet er her, at det er muligt at $S(F_i, F_j)<0$. Vi ved dog at 
+\begin{gather}
+U(F_1,F_j)>\max \bigl[S(F_i), S(F_j)\bigr]\label{s_bound}
+\end{gather}
+og dermed at hvis $S(F_i,F_j)<0$ så er 
+\begin{gather}
+|S(F_i,F_j)|<S(F_i) \label{s_bound2}
+\end{gather}
+Et negativt $S(F_i,F_j)$ betyder at niveauerne af $F_i$ og $F_j$ ikke forstærker hinanden. Tværtimod, de dækker over de samme sygdomstilfælde. Antag fx 
+\begin{align*}
+D&=\{\textup{drukne i havnen}\}\\
+F_1&=\{\textup{genstande drukket om ugen}\}\\
+F_2&=\{\textup{max genstande drukket på en enkelt dag om ugen}\}
+\end{align*}
+Folk der drikker meget har større sandsynlighed for at falde i havnen og drukne fordi de ikke kan komme op. Derfor forventer vi at højere værdier af $F_1$ og $F_2$ øger sandsynligheden for $D$. Vi forventer at man har en endnu højere risiko for at drukne i havnen hvis man gør begge dele, men vi forventer ikke at den er meget højere end hvis man kun gjorde en af tingene. Vi kan derfor godt være i situationen som i Tabel \ref{negativ_interaktion}. Man kan forstå det som at nogle af de dødsfald som ville være sket på grund af $F_1$, stadig ville være sket på grund af $F_2$ - og omvendt. Derfor foreslås en ny slags faktorårsag; et ELLER led, noteret med $T(F_1,F_2)$. For $n=2$ ville vi definere det således:
+\begin{align}
+T(F_1,F_2)&=\begin{cases}|S(F_1,F_2)| \qquad &\textup{hvis } S(F_1,F_2)<0\\
+0 &\textup{ellers}
+\end{cases}\\
+\tilde S(F_1,F_2)&=\begin{cases}0 \qquad &\textup{hvis } S(F_1,F_2)<0\\
+S(F_1,F_2) &\textup{ellers}
+\end{cases}\\
+\tilde S(F_i)&= S(F_i)-T(F_i, F_{j}), \qquad \textup{for } i,j=1,2, j\neq i\label{marginalizing}\\
+C&=\frac{U_*}{\sum_{i\neq j}^n \tilde S(F_i,F_j)+T(F_i,F_j)+\sum_i \tilde S(F_i)}\\
+S^{(2)}(F_i)&=C\tilde S(F_i)\\
+S^{(2)}(F_i,F_j)&=C\tilde S(F_i,F_j)\\
+T^{(2)}(F_i,F_j)&=C\tilde T(F_i,F_j).
+\end{align}
+
+
+Men der er et problem; hvis $n>2$ er der mange forskellige par af faktorer og så ved man ikke hvilket $j$ man skal vælge i \eqref{marginalizing}. For at undgå de problemer kan vi udvide ELLER-leddene til at inkludere så mange led at det ikke bliver et problem. Dertil definerer vi for hvert $i=1, \dots, n$ mængden af inhiberende faktorer af anden orden
+\begin{equation*}
+\mathcal H_i^2=\Bigl\{\begin{lgathered}[t]
+j\in \{1, \dots, n\}: \exists k, i_1,\dots, i_k\in \mathcal \{1, \dots, n\} \textup{ hvor } \\
+S(F_j, F_{i_1})<0, S(F_{i_1}, F_{i_2})<0, \dots, \\
+S(F_{i_{k-1}}, F_{i_k}),<0, S(F_{i_k}, i)<0\Bigr\}.
+\end{lgathered}
+\end{equation*}
+Alle $S$'er mellem faktorer inden for $\mathcal H_i^2$ og faktorer uden for $\mathcal H_i^2$, er positive, hvilket vil sige at der er ingen ELLER-led at tage højde for. Definer nu $V(F_{J})=U(F_J)-\sum_{j\in J}S(F_j)$.  Man derfor vælge faktorårsags-størrelserne som
+\begin{align}
+T(F_{\mathcal H_i^2})&=\begin{cases}|V(F_{\mathcal H_i^2})| \qquad &\textup{hvis } V(F_{\mathcal H_i^2})<0, |\mathcal H_i^2|>1\\
+0 &\textup{ellers}
+\end{cases}\\
+\tilde S(F_i,F_j)&=\begin{cases}0 \qquad &\textup{hvis } i\in \mathcal H_j^2\\
+S(F_i,F_j) &\textup{ellers}
+\end{cases}\\
+\tilde S(F_{\mathcal H_i^2})&=\begin{cases}
+V(F_{\mathcal H_i^2}) \qquad &\textup{hvis } V(F_{\mathcal H_i^2})>0, |\mathcal H_i^2|>2\\
+0 &\textup{ellers}
+\end{cases}
+\end{align}
+Størrelserne $T(F_{\mathcal H_i^2})$ fanger nu den evt. negative interaktion der er mellem grupper af faktorer. Ud fra definitionen af $\mathcal H_i^2$ er vi dog ikke sikre på at $V(F_{\mathcal H_i^2})<0$, og i det tilfælde tager vi den med som en positiv interaktion i $\tilde S$. Da vi tog højde for den negative interaktion i \eqref{marginalizing} havde vi uligheden i \eqref{s_bound2} til at sikre os at $\tilde S(F_i)$ blev positiv. Det har vi ikke længere, hvorfor det foreslås at vi gør det følgende:
+
+\begin{enumerate}[a.]
+\item
+Hvis 
+\begin{equation}
+T(F_{\mathcal H_i^2})\cdot \frac{2}{|\mathcal H_i^2|}\leq \min_{j\in \mathcal H_i^2}S(F_i)
+\end{equation}
+sættes 
+\begin{equation}
+\tilde S(F_i) =S(F_i)- T(F_{\mathcal H_i^2})\cdot \frac{2}{|\mathcal H_i^2|}
+\end{equation}
+Det vil sige at den negative interaktion mellem variablene $F_{\mathcal H_i^2}$ ikke er større end at den kan repræsenteres med en bar der kan tages uniformt fra alle faktorer i $F_{\mathcal H_i^2}$. 
+\item
+Hvis 
+\begin{gather}
+T(F_{\mathcal H_i^2})\cdot \frac{2}{|\mathcal H_i^2|}>\min_{j\in \mathcal H_i^2}S(F_i) \textup{ og }\\ 2\cdot T(F_{\mathcal H_i^2})\leq\sum_{j\in \mathcal H_i^2}S(F_j)\label{total_negative_interaction_limit}
+\end{gather}
+definerer vi flere, nye $T$-led der kan ``tages'' uniformt fra deres marginale $S(F_i)$'er. Lad $S^{(k)}$ være den $k$'te mindste værdi fra mængden $\{S(F_i)\}_{i\in \mathcal H_i^2}$ og lad $h^{(k)}$ være det tilsvarende faktorindeks. Dvs. $S(F_{h^{(k)}})=S^{(k)} $. Så defineres
+\begin{align}
+\tilde T(F_{\mathcal H_i^2})&=S^{(1)}\cdot \frac{|\mathcal H_i^2|}{2}\label{b_initS}
+\end{align}
+Derefter defineres 
+\begin{equation}
+\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})=\Bigl(S^{(k+1)}-S^{(k)}\Bigr)\frac{|\mathcal H_i^2|-k}{2} \label{b_S}
+\end{equation}
+for $k=1, \dots, k_0$, hvor $k_0\equiv k_0(i)$ er det største tal der ville opfylde denne ulighed:
+\begin{align}
+\sum_{k=1}^{k_0}\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})< T(F_{\mathcal H_i^2})\label{k0b}
+\end{align}
+Til sidst defineres 
+\begin{equation}
+\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k_0+1)}\}})=T(F_{\mathcal H_i^2})-\sum_{k=1}^{k_0}\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})\label{T_decomp_final_term}
+\end{equation}
+Ideen er, at vi nu har dekomponeret $T(F_{\mathcal H_i^2})$ i flere mindre ELLER-led. På grund \eqref{total_negative_interaction_limit} ved vi at $l_0< k$. Det kan ske at $|\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(l)}\}|=1$ i hvilket tilfælde det sidste led ikke er et rigtigt ELLER-led, men blot et normalt led.
+\item
+Hvis 
+\begin{gather}
+T(F_{\mathcal H_i^2})\cdot \frac{2}{|\mathcal H_i^2|}>\min_{j\in \mathcal H_i^2}S(F_i) \textup{ og }\\ 
+2\cdot T(F_{\mathcal H_i^2})>\sum_{j\in \mathcal H_i^2}S(F_j)\label{total_negative_interaction_limit}
+\end{gather}
+kan vi ikke længere repræsentere den fulde negative interaktion med ELLER-led. En oplagt måde at imødekomme det, er at ændre $k_0$ til at blive udregnet fra \eqref{k0b} til at være det største tal der opfylder
+\begin{align}
+\sum_{k=1}^{k_0}\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})< \frac{\sum_{j\in \mathcal H_i^2} S(F_j)}{2}\label{k0c}
+\end{align}
+og dermed sætte 
+\begin{equation}
+\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k_0+1)}\}})=\frac{\sum_{j\in \mathcal H_i^2} S(F_j)}{2}-\sum_{k=1}^{k_0}\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})\label{tildeTc}
+\end{equation}
+\end{enumerate}
+Tilfældet b. kan ses som en generalisering af a. og c. er en generalisering af b. Derfor beskriver jeg kun normaliseringen for c.-tilfældet (hvor $\frac{\sum_{j\in \mathcal H_i^2} S(F_j)}{2}$ erstattes af $\min\Bigl(\frac{\sum_{j\in \mathcal H_i^2} S(F_j)}{2}, T(F_{\mathcal H_i^2})\Bigr)$ i \eqref{k0c} og \eqref{tildeTc}). 
+
+Normaliseringen bør være
+\begin{align}
+\tilde S(F_i)&=S(F_i)-
+\sum_{\substack{k\in \{0, \dots, k_0+1\}:\\ i\in \mathcal H_i^2\setminus \{h^{(1)}, \dots, h^{(k)}\}}} 
+\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots, h^{(k}\}})\frac{2}{|\mathcal H_i^2|-k}\\
+C&=\frac{U_*}{\Biggl(\substack{\sum_{i\neq j}^n \tilde S(F_i,F_j)+\sum_i \tilde S(F_i)+\\\sum_{\{H_i^2\}_{i=1, \dots, n}}\bigl(\tilde T(F_{\mathcal H_i^2})+\tilde S(F_{\mathcal H_i^2})+\\\sum_{k=1}^{k_0(i)} \tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})\bigr)}\Biggr)}\\
+S^{(2)}(F_i)&=C\tilde S(F_i)\\
+S^{(2)}(F_i,F_j)&=C\tilde S(F_i,F_j)\\
+T^{(2)}(F_{\mathcal H_i^2})&=C\tilde T(F_{\mathcal H_i^2})\\
+S^{(2)}(F_{\mathcal H_i^2})&=C\tilde T(F_{\mathcal H_i^2}), \quad |\mathcal H_i^2|>2\\
+\end{align}
+og
+\begin{equation}
+T^{(2)}(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}})=C\tilde T(F_{\mathcal H_i^2\setminus \{h^{(1)}, \dots h^{(k)}\}}) 
+\end{equation}
+for $k=1, \dots, k_0(i)$. Se evt. nedenstående eksempel
+\end{enumerate}
+\subsubsection{Eksempel}
+Betragt følgende Risk-ratio tabel for en sygdom $d$ og en alder $A$:
+\begin{center}
+\begin{tabular}{|l|cc|cc|}
+\hline
+&\multicolumn{2}{c|}{$F_1=a$}&\multicolumn{2}{c|}{$F_1=b$}\\
+&$F_2=a$&$F_2=b$& $F_2=a$& $F_2=b$\\
+\hline
+$F_3=a$ & 1.0 &2.0 & 1.8 & 1.8\\
+$F_3=b$ & 1.5 &1.9 & 1.9 & 2.1\\
+\hline
+\end{tabular}
+\end{center}
+Antag $\psi=(b,b,b)$. Vi har tydeligvis $\psi_0=(a,a,a)$. Vi vil nu dekomponere
+\begin{equation}
+p_d(A, \psi)-p_d(A, \psi_0)
+\end{equation}
+som er det samme som at dekomponere
+\begin{equation}
+\frac{p_d(A, \psi)-p_d(A, \psi_0)}{p_d(A, \psi_0)}=R(\psi)-R(\psi_0)
+\end{equation}
+hvor $R$ er ovenstående risk-ratio-tabel. Fremover antager vi derfor uden tab af generalitet at sandsynlighederne $S, T, U, V, $ osv. er riskratios. Fra \eqref{base_decomposition} får vi
+\begin{align*}
+S(F_1)&=R(\psi_{0,F_1})-R(\psi_0)=R(b,a,a)-R(a,a,a)=1.8-1.0=0.8\\
+S(F_2)&=R(\psi_{0,F_2})-R(\psi_0)=R(a,b,b)-R(a,a,a)=1.9-1.0=0.9\\
+S(F_3)&=R(\psi_{0,F_3})-R(\psi_0)=R(a,a,b)-R(a,a,a)=1.5-1.0=0.5\\
+\end{align*}
+Vi har også
+\begin{equation*}
+U_*=R(\psi-R(\psi_0)=R(b,b,b)-R(a,a,a)=2.1-1.0=1.1
+\end{equation*}
+Derfor er 
+\begin{equation*}
+C=\frac{U_*}{\sum_{i=1}^2S(F_i)}=\frac{1.1}{2.2}=0.5
+\end{equation*}
+Dermed får vi 
+\begin{align*}
+S^{(1)}(F_1)&=0.8\cdot 0.5= 0.4\\
+S^{(2)}(F_2)&=0.9\cdot 0.5=  0.45 \\
+S^{(3)}(F_3)&=0.5\cdot 0.5 = 0.25
+\end{align*}
+Når vi husker at $R(a,a,a)=1.0$ får vi sandsynligheden at dø af 
+\begin{align*}
+\textup{Ukendt grund: }&\frac{1.0}{1.0+0.4+0.45+0.25}\approx 48\%\\
+\textup{$F_1$: }&\frac{0.4}{1.0+0.4+0.45+0.25}\approx 19\%\\
+\textup{$F_2$: }&\frac{0.45}{1.0+0.4+0.45+0.25}\approx 21\%\\
+\textup{$F_3$: }&\frac{0.25}{1.0+0.4+0.45+0.25}\approx 12\%\\
+\end{align*}•
+For at udregne 2. ordens interaktioner starter vi igen med \eqref{base_decomposition}
+\begin{align*}
+S(F_1,F_2)&=R(\psi_{0,F_{\{1,2\}}})-R(\psi_0)-2.2\\
+&=R(b,b,a)-R(a,a,a)-2.2\\
+&=1.8-1.0-2.2\\
+&=-1.4\\
+S(F_2,F_3)&=R(a,b,b)-R(a,a,a)-2.2\\
+&=-1.3\\
+S(F_1,F_3)&=R(b,a,b)-R(a,a,a)-2.2\\
+&=-1.3
+\end{align*}
+Altså er 
+\begin{equation*}
+\mathcal H_1^2=\mathcal H_2^2=\mathcal H_3^2=\{1,2,3\}
+\end{equation*}
+Så udregner vi $T(F_{\mathcal H_i^2})$
+\begin{align*}
+R(b,b,b)-R(a,a,a)-\sum_{i=1}^3 S(F_i)&=2.1-1.0-2.2\\
+&=-1.1
+\end{align*}
+Da $-1.1<0$ sætter vi $T(F_{\mathcal H_i^2})=|-1.1|=1.1$ og da $1.1>\min_{j\in \mathcal H_1^2} S(F_j)=S(F_3)=0.5$ bruger vi formel \eqref{b_initS} til at udregne $\tilde T(F_{\mathcal H_i^2})$
+\begin{align*}
+\tilde T(F_{\mathcal H_i^2})&=S^{(1)}\cdot \frac{|\mathcal H_i^2|}{2}\\
+&=0.5\cdot \frac{3}{2}\\
+&=0.75
+\end{align*}
+Nu tjekker vi om vi er færdige med at udregne $\tilde T$-led ved at undersøge kriterium \eqref{k0b}, dvs. sammenligne summen af $\tilde T$'erne og $T(F_{\mathcal H_i^2})$.  Vi har $0.75<1.1$, så vi udregner endnu et $\tilde T$-led vha. \eqref{b_S}. 
+\begin{align*}
+\tilde T(F_{\mathcal H_i^2\setminus\{3\}})&=\Bigl(S^{(2)}-S^{(1)}\Bigr)\frac{|\mathcal H_1^2|-1}{2}\\
+&=0.8-0.5\\
+&=0.3
+\end{align*}
+Da $0.3+0.75<1.1$, fortsætter vi selvom det sidste \( \tilde T \)-led kun indeholder en faktor og derfor ikke er et almindeligt ELLER-led. 
+\begin{align*}
+\tilde T(F_{\mathcal H_i^2\setminus\{3,1\}})&=\Bigl(S^{(3)}-S^{(2)}\Bigr)\frac{|\mathcal H_1^2|-2}{2}\\
+&=(0.9-0.8)\cdot \frac{1}{2}\\
+&=0.05
+\end{align*}
+Vi har $0.05+0.75+0.35\not<T(F_{\mathcal H_i^2})$, så vi kan godt stoppe nu og behøver ikke lave nogen korrektion fra c. tilfældet fordi $0.05+0.75+0.35=T(F_{\mathcal H_i^2})$. Korrektion fra c. ville have været at omdefinere $\tilde T(F_{\mathcal H_i^2\setminus\{3,1\}})$ til 
+\begin{equation*}
+\frac{\sum_{j\in \mathcal H_i^2}S(F_j)}{2}-\tilde T(F_{\mathcal H_i^2\setminus\{3\}})-\tilde T(F_{\mathcal H_i^2})
+\end{equation*}
+hvilket også havde givet 0.05. Til sidst, normaliseringerne
+\begin{align*}
+\tilde S(F_1)&=S(F_1)-\tilde T(F_{\mathcal H_1^2})\frac{2}{3}- \tilde T(F_{\mathcal H_1^2\setminus\{3\}})\\
+&=0.8-0.5-0.3\\
+&=0
+\end{align*}
+og 
+\begin{align*}
+\tilde S(F_2)&=S(F_2)-\tilde T(F_{\mathcal H_2^2})\frac{2}{3}- \tilde T(F_{\mathcal H_2^2\setminus\{3\}})-2\tilde T(F_{\mathcal H_2^2\setminus\{3,1\}}\\
+&=0.9-0.5-0.3-0.1\\
+&=0.0
+\end{align*}
+og
+\begin{align*}
+\tilde S(F_3)&=S(F_3)-\tilde T(F_{\mathcal H_2^2})\frac{2}{3}\\
+&=0.5-0.5\\
+&=0
+\end{align*}
+Det vil sige vi har følgende fortolkning af sandsynligheden for at dø af 
+\begin{align}
+\textup{Ukendt grund: } \frac{1.0}{2.1}&\approx 48 \%\\
+\textup{$F_1$, $F_2$ eller $F_3$: } \frac{0.75}{2.1}&\approx 36 \%\\
+\textup{$F_1$ eller $F_2$: } \frac{0.3}{2.1}&\approx 14 \%\\
+\textup{$F_2$: }=\frac{0.05}{2.1}&\approx 2 \%
+\end{align}
 
 
 %
@@ -458,11 +737,419 @@ Og da der ikke må være negative $\tilde s_d$ er den ikke gyldig. I den gamle
 %\end{align*}
 %Definitionen af $\psi_{0,F}$ gør det første af de to led positivt. Da fortolker vi første led som død på grund af ens faktorværdier, mens det andet led er \emph{death by chance/age/destiny}. 
 
-\subsection{den polerende funktion}
-Valget her er ikke taget, og der er sikkert mange gode valg
+\subsection{Forslag til polerende funktion}
+For hver dødsårsag, $d$, er der en række riskratiofiler (indekseret med $j$). I formel \eqref{polating} diskuterede vi udregningen af en interpolerende funktion
+\begin{equation*}
+R^{i,j,d}(\psi)=\textup{pol}((r^{i,j,d}(f))_{f\in \mathcal F^{i,j,d}}, \psi).
+\end{equation*}
+Her er $i$ en (vistnok overflødig) indeksering der angiver aldersgruppen. $\mathcal F^{i,j,d}$ er de binnede faktorer i risk ratio-filen og $\psi$ er et niveau af faktorer (som ikke er binnede). For at gøre det efterfølgende mere simpelt bruger vi notationen
+\begin{align*}
+R(\psi)=\textup{pol}(r,\psi)
+\end{align*}
+hvor vi altså tænker at $r$ må afhænge af $\mathcal F^{i,j,d}$ som vi omdøber til $\mathcal F$. For hvert niveau i $\mathcal F$ udregner vi et midtpunkt for de kontinuerte variable, $\textup{mid}: \mathcal F \mapsto \mathcal S$. Her skal også tages nogle valg. Hvis $f\in \mathcal F$ er på formen
+\begin{equation*}
+\{0\}\times [15,32] \times [\textup{``Yes''}] \times [4, \infty)
+\end{equation*}
+er det tyer det meget naturligt at midtpunkterne for de tre første faktorer er 0, 16 og ``Yes'' hhv. Det sidste interval er her lidt tricky da det ikke har noget midtpunkt. Jeg ser to valg
+\begin{enumerate}[(A)]
+\item
+Vælg tallet 4
+\item
+Kig på det foregående interval, som måske er på formen $[1,4)$, noter at dets midtpunkt er 1.5 væk fra 4, og sig at midtpunktet for $[4,\infty)$ bør være $4+1.5=5.5$
+\end{enumerate}
+Generelt har vi kun brug for at interpolere og finde midtpunkter, når faktorniveauerne er intervaller. Det antages derfor i det efterfølgende. Når vi har valgt midtpunkterne er det nemmere at bruge standard interpolations metoder til at estimere \( R\).  Hvis vi brugte dem direkte ville vi have
+\begin{align}
+R(\textup{mid}(f))&=r(f) \quad\forall f\in \mathcal F\label{midpoint_equality}\\
+\intertext{Men vi ville ikke vide med sikkerhed om følgende ligning var sand:}
+\int_fR(x) \textup{d}x &\stackrel{?}{=} r(f) \quad \forall f \in \mathcal F\label{integral_equality}
+\end{align}
+Vi ville hellere have at det var omvendt; altså at \eqref{integral_equality} gjaldt altid, mens vi er lidt ligeglade med \eqref{midpoint_equality}. For at opnå det foreslås det følgende:
+Lad $g: (\mathbb{R}^n \times \mathbb{R}^{(n+1)\cdot k}) \mapsto \mathbb{R}$ være en interpolationsmetode der bruger $k=\#\mathcal F$ punkter af formen $(x_i,y_i)$, hvor $x_i\in \mathbb{R}^n, y_i\in \mathbb{R}$ til at kunne forudsige en $y$-værdi når man kommer med et nyt $x$-punkt. Vi har allerede $x_i$-punkterne fra vores udregning af midtpunkterne, men vi mangler $y_i$-værdierne. Dem vil vi bestemme ud fra \eqref{integral_equality}, dvs. løse ligningerne
+\begin{align}
+r(f)=\int_f g(x, \bigl\{(x_1,y_1),\dots, (x_k,y_k)\bigr\} \textup{ d}x \qquad \forall f\in \mathcal F\label{integral_equations}
+\end{align}
+med hensyn til $y_1, \dots, y_k$.
+En specielt attraktiv interpolationsfunktion kunne være den n-dimensionelle lineære interpolation, hvilket vil sige at $g$ inddeler området i et antal begrænsede $n$ dimensionale hyber-rektangler. Hver hyperrektangel er afgrænset af $2^n$ punkter fra $\bigl\{x_1,\dots, x_k\bigr\}$. Vi kan skrive de $2^n$ punkter 
+\begin{equation}
+(z_{1}^{\pm},z_{2}^{\pm},\dots, z_{n}^{\pm}).\label{hypercube}
+\end{equation}
+Et eksempel ses i Figur \ref{xminus_xplus}. 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\draw[->, thick] (0,0) --(4,0) node[below] {1. axis};
+\draw[->, thick] (0,0) --(0,4) node[above] {2. axis};
+\draw[dashed] (1.1,4) --  (1.1,0) node[below] {$z_1^-$} ;
+\draw[dashed] (2.2,0) node[below] {$z_1^+$} -- (2.2,4) ;
+\draw[dashed] (0,2.2) node[left] {$z_2^-$} -- (4,2.2);
+\draw[dashed] (0,3.3)  node[left] {$z_2^+$}-- (4,3.3);
+\draw[fill=black] (1.1,2.2) circle (0.1);
+\draw[fill=black] (2.2,2.2) circle (0.1);
+\draw[fill=black] (2.2,3.3) circle (0.1);
+\draw[fill=black] (1.1,3.3) circle (0.1);
+\end{tikzpicture}
+\caption{A hypercupe in 2 dimensions encapsulated by $(z_1^-, z_2^-)$, $(z_1^+, z_2^-)$, $(z_1^-, z_2^+)$, and $(z_1^+, z_2^+)$.}\label{xminus_xplus}
+\end{figure}
+Lad $y_1, \dots, y_{2^n}$ være de korresponderende y-værdier for hjørnerne i hyperkuben. Så kan man skrive interpolationsoverfladen som
+\begin{equation}
+f(z)=f((z_1, \dots, z_n))=\sum_{J\subseteq \{1,\dots, n\}} a_J \prod_{j\in J} z_j \label{nlinear_interpolation}
+\end{equation}
+hvor 
+\begin{equation}
+\begin{pmatrix}
+a_{\emptyset}\\
+a_{\{1\}}\\
+\vdots\\
+a_{\{1, \dots, n\}}
+\end{pmatrix}=\begin{pmatrix}
+\vec{v}(z_1^{-},z_2^-, \dots, z_n^-)\\
+\vec{v}(z_1^{+},z_2^-, \dots, z_n^-)\\
+\vdots\\
+\vec{v}(z_1^{+},z_2^+, \dots, z_n^+)\\
+\end{pmatrix}^{-1}
+\begin{pmatrix}
+y_1\\
+y_2\\
+\vdots\\
+y_{2^n}
+\end{pmatrix}
+\end{equation}
+hvor
+\begin{equation*}
+\vec{v}(w_1, \dots, w_n)=\begin{pmatrix}
+1 & w_1 & w_2 & \dots & w_n & w_1w_2 & w_1w_3 & \dots & \prod_{i=1}^nw_i
+\end{pmatrix}.
+\end{equation*}
+Det gør at hvert $a$ i \eqref{nlinear_interpolation} kan skrives som en linearkombination af $y_i$'er, og dermed kan de $k$ ligninger i \eqref{integral_equations} skrives som en linearkombinationer af $y_1, \dots, y_k$. Med andre ord kan \eqref{integral_equations} (formodentlig) løses entydigt. Hvordan hyperkuberne skal lægges er illustreret i 2 dimensioner i Figur \ref{hypercubes_placement}. 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[anchor=east] at (-0.5,0){
+\begin{tikzpicture}
+\node[above] at (2.5,4) {\Large (A)};
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (3,3) rectangle (4,4);
+\draw (1,2) rectangle (2,3);
+\draw (2,3) rectangle (3,4);
+\draw (2,1) rectangle (3,2);
+\draw (3,2) rectangle (4,3);
+\draw (1,3) rectangle (2,4);
+\draw (3,1) rectangle (4,2);
+\end{tikzpicture}};
+\node[anchor=west] at (1.5,0) {
+\begin{tikzpicture}
+\node[above] at (2.5,4) {\Large (B)};
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (3,3) rectangle (4,4);
+\draw (1,2) rectangle (2,3);
+\draw (2,3) rectangle (3,4);
+\draw (2,1) rectangle (3,2);
+\draw (3,2) rectangle (4,3);
+\draw (1,3) rectangle (2,4);
+\draw (3,1) rectangle (4,2);
+\foreach \x in {1.5,2.5,3.5}
+\foreach \y in {1.5,2.5,3.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}
+};
+\node[anchor=east] at (-0.5,-5){
+\begin{tikzpicture}
+\node[above] at (2.5,4) {\Large (C)};
+\fill[color=blue1] (1.5, 1.5) rectangle (2.5,2.5);
+\fill[color=blue2] (1.5, 2.5) rectangle (2.5,3.5);
+\fill[color=blue3] (2.5, 1.5) rectangle (3.5,2.5);
+\fill[color=blue4] (2.5, 2.5) rectangle (3.5,3.5);
+\foreach \x in {1.5,2.5}
+\foreach \y in {1.5,2.5}
+{
+\draw[dashed] (\x, \y) rectangle (\x+1,\y+1);
+}
+
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (3,3) rectangle (4,4);
+\draw (1,2) rectangle (2,3);
+\draw (2,3) rectangle (3,4);
+\draw (2,1) rectangle (3,2);
+\draw (3,2) rectangle (4,3);
+\draw (1,3) rectangle (2,4);
+\draw (3,1) rectangle (4,2);
+\foreach \x in {1.5,2.5,3.5}
+\foreach \y in {1.5,2.5,3.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}};
+\node[anchor=west] at (1.5, -5) {
+\begin{tikzpicture}
+\node[above] at (2.5,4) {\Large (D)};
+\fill[color=blue1] (0.8, 0.8) rectangle (2.5,2.5);
+\fill[color=blue2] (0.8, 2.5) rectangle (2.5,4.2);
+\fill[color=blue3] (2.5, 0.8) rectangle (4.2,2.5);
+\fill[color=blue4] (2.5, 2.5) rectangle (4.2,4.2);
+\foreach \x in {1.5,2.5}
+\foreach \y in {1.5,2.5}
+{
+\draw[dashed] (\x, \y) rectangle (\x+1,\y+1);
+}
+
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (3,3) rectangle (4,4);
+\draw (1,2) rectangle (2,3);
+\draw (2,3) rectangle (3,4);
+\draw (2,1) rectangle (3,2);
+\draw (3,2) rectangle (4,3);
+\draw (1,3) rectangle (2,4);
+\draw (3,1) rectangle (4,2);
+\foreach \x in {1.5,2.5,3.5}
+\foreach \y in {1.5,2.5,3.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}};
+\end{tikzpicture}
+\caption{(A) viser faktorerne i $\mathcal F$, når der er tale om et grid af endelige faktorlevels med positivt lebesguemål (i $\mathbb R^2$). (B) viser midtpunkterne. (C) viser de 4 interpolationsflader der kan laves af de 9 punkter.  (D) viser ekstrapoleringen af de 4 interpolationsområder som potentialt går ud i hele $\mathbb R^2$.
+}\label{hypercubes_placement}
+\end{figure}
 
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[anchor=east] at (-0.5,0){
+\begin{tikzpicture}
+\node[above] at (2,3) {\Large (A)};
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (1,2) rectangle (2,3);
+\draw (2,1) rectangle (3,2);
+\draw[fill=black] (1,1) circle (0.12);
+\draw[ultra thick] (1,1.2) -- (1,1.9);
+\draw[ultra thick] (1,2.1) -- (1,2.9);
+\draw[ultra thick] (1.2,1) -- (1.9,1);
+\draw[ultra thick] (2.1,1) -- (2.9,1);
+\end{tikzpicture}};
+\node[anchor=west] at (1.5,0) {
+\begin{tikzpicture}
+\node[above] at (2,3) {\Large (B)};
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (1,2) rectangle (2,3);
+\draw (2,1) rectangle (3,2);
+\draw[fill=black] (1,1) circle (0.12);
+\draw[ultra thick] (1,1.2) -- (1,1.9);
+\draw[ultra thick] (1,2.1) -- (1,2.9);
+\draw[ultra thick] (1.2,1) -- (1.9,1);
+\draw[ultra thick] (2.1,1) -- (2.9,1);
+\foreach \x in {1,1.5,2.5}
+\foreach \y in {1,1.5,2.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}
+};
+\node[anchor=east] at (-0.5,-5){
+\begin{tikzpicture}
+\node[above] at (2,3) {\Large (C)};
+\draw[dashed, fill=blue1] (1,1) rectangle (1.5,1.5);
+\draw[dashed, fill=blue2] (1,1.5) rectangle (1.5,2.5);
+\draw[dashed, fill=blue3] (1.5,1) rectangle (2.5,1.5);
+\draw[dashed, fill=blue4] (1.5,1.5) rectangle (2.5,2.5);
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (1,2) rectangle (2,3);
+\draw (2,1) rectangle (3,2);
+\draw[fill=black] (1,1) circle (0.12);
+\draw[ultra thick] (1,1.2) -- (1,1.9);
+\draw[ultra thick] (1,2.1) -- (1,2.9);
+\draw[ultra thick] (1.2,1) -- (1.9,1);
+\draw[ultra thick] (2.1,1) -- (2.9,1);
+\foreach \x in {1,1.5,2.5}
+\foreach \y in {1,1.5,2.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}};
+\node[anchor=west] at (1.5, -5) {
+\begin{tikzpicture}
+\node[above] at (2,3) {\Large (D)};
+\fill[color=blue2] (1,1.5) rectangle (1.5,3.2);
+\fill[color=blue3] (1.5,1) rectangle (3.2,1.5);
+\fill[color=blue4] (1.5,1.5) rectangle (3.2,3.2);
+\draw[dashed, fill=blue1] (1,1) rectangle (1.5,1.5);
+\draw[dashed, fill=blue2] (1,1.5) rectangle (1.5,2.5);
+\draw[dashed, fill=blue3] (1.5,1) rectangle (2.5,1.5);
+\draw[dashed, fill=blue4] (1.5,1.5) rectangle (2.5,2.5);
 
+\draw (1,1) rectangle (2,2);
+\draw (2,2) rectangle (3,3);
+\draw (1,2) rectangle (2,3);
+\draw (2,1) rectangle (3,2);
+\draw[fill=black] (1,1) circle (0.12);
+\draw[ultra thick] (1,1.2) -- (1,1.9);
+\draw[ultra thick] (1,2.1) -- (1,2.9);
+\draw[ultra thick] (1.2,1) -- (1.9,1);
+\draw[ultra thick] (2.1,1) -- (2.9,1);
+\foreach \x in {1,1.5,2.5}
+\foreach \y in {1,1.5,2.5}
+{
+\draw[fill=red, color=red] (\x,\y) circle (0.1);
+}
+\end{tikzpicture}};
+\end{tikzpicture}
+\caption{(A) viser faktorerne i $\mathcal F$, når der er tale om et endeligt grid af faktorlevels hvor der dog er punkter og linjer med positivt mål (markeret med sort prik og fed linje, hhv.). (B) viser midtpunkterne. (C) viser de 4 interpolationsflader der kan laves af de 9 punkter.  (D) viser ekstrapoleringen af de 4 interpolationsområder som potentialt går ud i hele $\mathbb R^2$. Læg mærke til at y-værdien i nedre venstre hjørne er kendt, og at der derfor ikke er grund til at opstille integralligningen for den.
+}\label{hypercubes_placement2}
+\end{figure}
 
+\begin{figure}
+\centering
+\begin{tikzpicture}
+\node[anchor=center] at (-4.5,0){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (A)};
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\end{tikzpicture}};
+\node[anchor=center] at (0,0){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (B1)};
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=red, color=red] (1,2) circle (0.1);
+\draw[fill=red, color=red] (1.5,2) circle (0.1);
+\draw[fill=red, color=red] (2,2) circle (0.1);
+\draw[fill=red, color=red] (2,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+\node[anchor=center] at (4.5, 0) {
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (B2)};
+\draw[color=gron] (2,1) rectangle (3,2);
+\draw[color=gron] (2,2) rectangle (3,3);
+\draw[color=gron] (1,2) rectangle (2,3);
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=gron, color=gron] (1,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (1.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+
+\node[anchor=center] at (-4.5,-4){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (C1)};
+\fill[color=blue1] (1,1.5) rectangle (1.5,2);
+\fill[color=blue3] (1.5,1.5) rectangle (2,2);
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=red, color=red] (1,2) circle (0.1);
+\draw[fill=red, color=red] (1.5,2) circle (0.1);
+\draw[fill=red, color=red] (2,2) circle (0.1);
+\draw[fill=red, color=red] (2,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+
+\node[anchor=center] at (0,-4){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (C2)};
+\fill[color=blue3] (1,1.5) rectangle (1.5,2.5);
+\fill[color=blue4] (1.5,1.5) rectangle (2.5,2.5);
+\draw[color=gron] (2,1) rectangle (3,2);
+\draw[color=gron] (2,2) rectangle (3,3);
+\draw[color=gron] (1,2) rectangle (2,3);
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=gron, color=gron] (1,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (1.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+
+\node[anchor=center] at (4.5,-4){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (D1)};
+\fill[color=blue1] (1,1) rectangle (1.5,2);
+\fill[color=blue3] (1.5,1) rectangle (2,2);
+\fill[left color=red1, right color=red2] (1,2) rectangle (2,3.2);
+\fill[bottom color=red3, top color=red4] (2,1) rectangle (3.2,2);
+\fill[color=red5] (2,2) rectangle (3.2,3.2);
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=red, color=red] (1,2) circle (0.1);
+\draw[fill=red, color=red] (1.5,2) circle (0.1);
+\draw[fill=red, color=red] (2,2) circle (0.1);
+\draw[fill=red, color=red] (2,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+
+\node[anchor=center] at (-4.5,-8){
+\begin{tikzpicture}
+\node[above] at (2,3.5) {\Large (D2)};
+\fill[color=blue3] (1,1) rectangle (1.5,3.2);
+\fill[color=blue4] (1.5,1) rectangle (3.2,3.2);
+\draw[color=gron] (2,1) rectangle (3,2);
+\draw[color=gron] (2,2) rectangle (3,3);
+\draw[color=gron] (1,2) rectangle (2,3);
+\draw (1,1) rectangle (2,2);
+\draw[dashed] (1,2) -- (1,3.5);
+\draw[dashed] (2,2) -- (2,3.5);
+\draw[dashed] (2,1) -- (3.5,1);
+\draw[dashed] (2,2) -- (3.5,2);
+\draw[dashed, ultra thick] (1,2.1) -- (1,3.5);
+\draw[ultra thick] (1,1.1) -- (1,1.9);
+\draw[fill=red, color=red] (1,1.5) circle (0.1);
+\draw[fill=gron, color=gron] (1,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (1.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,2.5) circle (0.1);
+\draw[fill=gron, color=gron] (2.5,1.5) circle (0.1);
+\draw[fill=red, color=red] (1.5,1.5) circle (0.1);
+\end{tikzpicture}};
+
+\end{tikzpicture}
+\caption{(A) viser faktorerne i $\mathcal F$, når der er tale om et grid af faktorlevels hvor der er linjer med positivt mål og faktorniveauer der breder sig ud mod uendelig (markeret med fed linje og stiplet linje, hhv.). (B1) viser en metode for midtpunkterne, mens (B2) viser en anden. I (B2) er der også sat markeringer af et pseudo-område for (B2). (D1) og (D2) viser, hvad vi ser som den mest naturlige måde at udvide interpolationsfladerne. I (D1) angiver det store røde felt at interpolationsværdien bliver sat til konstanten $r(f)$. De to gradientfelter (hhv. orange og lyserød) indikerer at interpolationsværdien bliver udregnet ved at projicere ned på kanten af den endelige hyperkube. 
+}\label{hypercubes_placement2}
+\end{figure}
 
 \end{document}
