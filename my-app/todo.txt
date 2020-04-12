@@ -1,0 +1,20 @@
+# TODO:
+- Interpolation i Python (SVN)
+	- Løs integralet eq. (54)
+	- Lav udregningerne i python eq. (57)
+	- Implementer handlers i javascript til udregning R
+- React
+	- Question menu
+	- Funktionalitet til at håndtere opdatering af visualisering
+- Javascript (CA)
+	- Dekomponer Risk Ratios 
+	- Udregn sandsynligheder for de 4 interessante egenskaber.
+- D3
+	- Implementer visualisering
+	- Mouse over information
+	
+# Næste iteration:
+- On-click/embedded visualisering
+- \psi_0 ?
+- Settings menu
+- 
