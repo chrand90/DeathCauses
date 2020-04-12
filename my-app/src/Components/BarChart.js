@@ -1,6 +1,6 @@
 import * as d3 from 'd3';
 import d3Tip from "d3-tip";
-import make_squares from './ComputationEngine';
+import {make_squares} from './ComputationEngine';
 import './BarChart.css';
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }

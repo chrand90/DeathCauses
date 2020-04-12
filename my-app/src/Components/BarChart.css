@@ -9,6 +9,7 @@
   }
   
   /* Creates a small triangle extender for the tooltip 
+  It says that width is ignored, but it is not!
   */
   .d3-tip:before {
     box-sizing: border-box;
