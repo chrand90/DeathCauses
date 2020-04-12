@@ -1,8 +1,32 @@
 import { sum } from "d3";
+import Cause from './Cause.js';
 
 
 
-function make_squares(res_dat){
+export class Database {
+    constructor(database){
+        this.db=this.initialize_database(database)
+    }
+
+    initialize_database(database){
+        this.db = database.map( cause => {
+            return new Cause(cause);
+        })
+    }
+
+    compute_bar_chart_probs(age_from, age_to, factor_answers){
+        return '';
+    }
+
+    compute_per_year_probs(age_from, age_to, factor_answers){
+        return '';
+    }
+
+    
+}
+
+
+export function make_squares(res_dat){
     let r= res_dat.map( p_object => {
         let new_res=[];
         const total_explained= Object.values(p_object.inner_causes).reduce((a, b) => a + b,0);
@@ -28,5 +52,3 @@ function make_squares(res_dat){
     let flattened_array = [].concat.apply([],r);
     return flattened_array;
 };
-
-export default make_squares;

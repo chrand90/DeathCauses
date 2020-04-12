@@ -6,6 +6,42 @@ import VizWindow from './Components/VizWindow.js';
 import { Row, Col} from 'reactstrap';
 import { json} from 'd3';
 
+const factor_defaults= {
+  Age:38,
+  Vegetables: 2,
+  Fish:0.5,
+  Caffeine:5,
+  SmokeCumulative:10,
+  Fluids:1000,
+  HeadTrauma:1,
+  Drinking:20,
+  Gender:"Female",
+  OralContraceptiveTypicalAmmount:"Yes",
+  OralContraceptiveSinceStop:0,
+  PhysicalActivityTotal:60,
+  ReadMeat:90,
+  BMI:29,
+  HCVHistory:"No",
+  Diabetes:"No",
+  SmokeTypicalAmmount:2,
+  SmokeSinceStop:2,
+  SmokeIntensity:0,
+  Race:"White",
+  IndoorTanning:5,
+  MaxDrinking:10,
+  Greens:4,
+  PhysicalActivityHard:3,
+  HIVHistory:"No",
+  FamilyHistoryParkinson:'No',
+  PesticideExposureDays:5,
+  Depression:"No"
+  };
+  
+  
+  
+  
+
+
 class App extends React.Component {
 
 
@@ -37,7 +73,8 @@ class App extends React.Component {
       //json('../basic_factor_answers') NOT IMPLEMENTED
     ).then((databases) => {
       console.log(databases[0])
-      this.setState({database:databases[0], hasLoadedDatabase:true});
+      this.setState({database:databases[0], hasLoadedDatabase:true,
+      hasLoadedFactorAnswers:true, factor_answers:factor_defaults});
     });
     //Probably better to use: Promise all then
   }
@@ -47,11 +84,11 @@ class App extends React.Component {
   constructor(props){
     super();
     this.state= { 
-      hasLoadedFactorAnswers: true, //indicates whether the initial factors havent been read from the file. In the
+      hasLoadedFactorAnswers: false, //indicates whether the initial factors havent been read from the file. In the
       hasLoadedDatabase: false, //indicates whether the database hasnt been loaded from the file
       hasLoadedFactorDatabase: true,
       factor_database: null, //indicates any data about the factors. For example, how should the question be formulated.
-      factor_answers: null, //the current answers of 
+      factor_answers: factor_defaults, //the current answers of 
       database: null
     };
   };

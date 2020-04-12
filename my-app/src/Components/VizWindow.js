@@ -1,18 +1,30 @@
 import React from 'react';
 import './VizWindow.css';
 import BarChartWrapper from './BarChartWrapper';
+import {Database} from './ComputationEngine';
 
 class VizWindow extends React.Component {
 
     constructor(){
         super();
         this.state={
-            selected_visualization: "allcauses"
+            selected_visualization: "allcauses",
+            selected_causes: 'all',
+            database: null,
         };
     }
 
+
     renderVisualization(){
-        //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
+        if(this.state.database===null){
+            this.state.database= new Database(this.props.database)
+        }
+        switch(this.state.selected_visualization){
+            case 'allcauses':
+                let c=this.state.database.compute_bar_chart_probs(null,null,null);
+                return <BarChartWrapper database={c}/>
+        }
+        
     }
 
     handleChange= (selectObject) => {
@@ -26,7 +38,8 @@ class VizWindow extends React.Component {
                 <option value="allcauses">Probability of dying of all causes</option>
                 <option value="allages">Probability of dying at all ages</option>
             </select>
-            <BarChartWrapper database={this.props.database}/>
+            {this.renderVisualization()}
+            
         </div>);
     };
 }
