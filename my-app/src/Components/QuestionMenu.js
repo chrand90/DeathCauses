@@ -1,7 +1,7 @@
 import React from 'react';
 import './QuestionMenu.css';
 import Button from 'react-bootstrap/Button';
-import { Row, Col, Form} from 'react-bootstrap';
+import { Row, Col, Form } from 'react-bootstrap';
 
 
 class QuestionMenu extends React.Component {
@@ -57,7 +57,26 @@ class QuestionMenu extends React.Component {
                 <Form.Control type="text" placeholder="Age" name="age" value={this.props.bmi} onChange={this.props.callbackFunction} />
               </Col>
             </Form.Row>
-            </Form.Group>
+            <Form.Row>
+              <Form.Label column sm={4}>
+                Gender</Form.Label>
+              <Col>
+                <Form.Control as="select" placeholder="Gender" name="gender" value={this.props.gender} onChange={this.props.callbackFunction}>
+                  <option defaultValue disabled>Select gender</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </Form.Control>
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column sm={4}>
+                Diabetes</Form.Label>
+              <Col>
+                <Form.Control type="checkbox" name="diabetes" checked={this.props.diabetes} onChange={this.props.callbackFunction} />
+              </Col>
+            </Form.Row>
+          </Form.Group>
           {/* <label>Gender
       <input type="radio" id="male" name="gender" value="Male" />
             <label htmlFor="male">Male</label> <br />
@@ -105,7 +124,7 @@ class QuestionMenu extends React.Component {
           <br />
       Your waist circumference?
       <input type="text" name="waist" placeholder="cm" value={this.props.waist} onChange={this.handleCallback} /> */}
-        </form></div>
+        </form></div >
     );
   }
 

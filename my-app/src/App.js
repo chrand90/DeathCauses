@@ -19,8 +19,8 @@ class App extends React.Component {
       data: {
         bmi: "",
         waist: "",
-        caffeine:"",
-        fish:"",
+        caffeine: "",
+        fish: "",
         vegetables: "",
         SmokeCumulative: "",
         fluids: "",
@@ -29,8 +29,8 @@ class App extends React.Component {
         gender: "",
         oralContraceptiveTypicalAmmount: "",
         oralContraceptiveSinceStop: "",
-        physicalActivityTotal:"",
-        physicalActivityHard:"",
+        physicalActivityTotal: "",
+        physicalActivityHard: "",
         redMeat: "",
         hCVHistory: "",
         iIVHistory: "",
@@ -51,7 +51,7 @@ class App extends React.Component {
   };
 
   test = () => {
-      console.log(this.state.data)
+    console.log(this.state.data)
   }
 
   // callbackFunction(event) {
@@ -65,13 +65,15 @@ class App extends React.Component {
 
 
   callbackFunction(event) {
-    const { name, value } = event.target
+    var value
+    const { name, type } = event.target
+    type === "checkbox" ? value = event.target.checked : value = event.target.value
     this.setState(prevState => {
       return {
         ...prevState,
         data: {
           ...prevState.data,
-           [name]: value
+          [name]: value
         }
       }
     })
@@ -116,7 +118,7 @@ class App extends React.Component {
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu onNewVisualization={(x) => this.visualize(x)} factor_answers={this.state.factor_answers} factor_database={this.factor_database} callbackFunction={this.callbackFunction} test={this.test}/>
+      <QuestionMenu onNewVisualization={(x) => this.visualize(x)} factor_answers={this.state.factor_answers} factor_database={this.factor_database} callbackFunction={this.callbackFunction} test={this.test} />
     );
   }
 
