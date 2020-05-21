@@ -9,18 +9,16 @@ class QuestionMenu extends React.Component {
   constructor(props) {
     super(props)
 
-    this.handleCallback = this.handleCallback.bind(this)
     // this.handleCallback = this.handleCallback.bind(this)
   }
 
-  // handleChange(event) {
-  //   const { name, value, type, checked } = event.target
-  //   type === "checkbox" ? this.setState({ [name]: checked }) : this.setState({ [name]: value })
+  // handleCallback(event) {
+  //   this.props.handleChange(event)
   // }
 
-  handleCallback(event) {
-    this.props.callbackFunction(event)
-  }
+  // handleCallback2 = (event) => {
+  //   this.props.handleChange(event)
+  // }
 
   renderQuestionList() {
     //this should make a list of questions. At its disposal, it has the this.props.factor_database and this.props.factor_answers.
@@ -33,35 +31,35 @@ class QuestionMenu extends React.Component {
               <Form.Label column sm={4}>
                 BMI</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="BMI" name="bmi" value={this.props.bmi} onChange={this.props.callbackFunction} />
+                <Form.Control type="text" placeholder="BMI" name="bmi" value={this.props.bmi} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
               <Form.Label column sm={4}>
                 Fish consumed / week</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="grams of fish" name="fish" value={this.props.bmi} onChange={this.props.callbackFunction} />
+                <Form.Control type="text" placeholder="grams of fish" name="fish" value={this.props.bmi} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
               <Form.Label column sm={4}>
                 Waist circumference</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="waist cm" name="waist" value={this.props.bmi} onChange={this.props.callbackFunction} />
+                <Form.Control type="text" placeholder="waist cm" name="waist" value={this.props.bmi} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
               <Form.Label column sm={4}>
                 BMI</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="Age" name="age" value={this.props.bmi} onChange={this.props.callbackFunction} />
+                <Form.Control type="text" placeholder="Age" name="age" value={this.props.bmi} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
               <Form.Label column sm={4}>
                 Gender</Form.Label>
               <Col>
-                <Form.Control as="select" placeholder="Gender" name="gender" value={this.props.gender} onChange={this.props.callbackFunction}>
+                <Form.Control as="select" placeholder="Gender" name="gender" value={this.props.gender} onChange={this.props.handleChange}>
                   <option defaultValue disabled>Select gender</option>
                   <option value="male">Male</option>
                   <option value="female">Female</option>
@@ -73,10 +71,11 @@ class QuestionMenu extends React.Component {
               <Form.Label column sm={4}>
                 Diabetes</Form.Label>
               <Col>
-                <Form.Control type="checkbox" name="diabetes" checked={this.props.diabetes} onChange={this.props.callbackFunction} />
+                <Form.Control type="checkbox" name="diabetes" checked={this.props.diabetes} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
           </Form.Group>
+          <Button variant="primary" type="submit" onClick={this.props.handleSubmit}> Re-visualize </Button>
           {/* <label>Gender
       <input type="radio" id="male" name="gender" value="Male" />
             <label htmlFor="male">Male</label> <br />
@@ -94,7 +93,7 @@ class QuestionMenu extends React.Component {
           <div class="line">
             <label for="input">What is your BMI?</label>
             <div>
-              <input type="text" placeholder="BMI: 18-25" name="bmi" value={this.props.bmi} onChange={this.props.callbackFunction} />
+              <input type="text" placeholder="BMI: 18-25" name="bmi" value={this.props.bmi} onChange={this.props.handleChange} />
             </div>
           </div>
           <br />
@@ -132,7 +131,6 @@ class QuestionMenu extends React.Component {
     return (<div className='questionmenu'>
       <h4> Risk factors  </h4>
       {this.renderQuestionList()}
-      <Button variant="primary" onClick={this.props.test}> Re-visualize </Button>
     </div>);
   };
 }
