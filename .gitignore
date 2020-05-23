@@ -23,3 +23,10 @@
 /my-app/yarn-error.log*
 
 *.pyc
+
+/my-app/.vscode
+/.vscode
+.project
+.pydevproject
+npm-debug.log
+
