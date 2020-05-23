@@ -812,7 +812,7 @@ y_1\\
 y_2\\
 \vdots\\
 y_{2^n}
-\end{pmatrix}
+\end{pmatrix}\label{a_solution}
 \end{equation}
 hvor
 \begin{equation*}
@@ -1149,7 +1149,173 @@ Det gør at hvert $a$ i \eqref{nlinear_interpolation} kan skrives som en lineark
 
 \end{tikzpicture}
 \caption{(A) viser faktorerne i $\mathcal F$, når der er tale om et grid af faktorlevels hvor der er linjer med positivt mål og faktorniveauer der breder sig ud mod uendelig (markeret med fed linje og stiplet linje, hhv.). (B1) viser en metode for midtpunkterne, mens (B2) viser en anden. I (B2) er der også sat markeringer af et pseudo-område for (B2). (D1) og (D2) viser, hvad vi ser som den mest naturlige måde at udvide interpolationsfladerne. I (D1) angiver det store røde felt at interpolationsværdien bliver sat til konstanten $r(f)$. De to gradientfelter (hhv. orange og lyserød) indikerer at interpolationsværdien bliver udregnet ved at projicere ned på kanten af den endelige hyperkube. 
-}\label{hypercubes_placement2}
+}\label{hypercubes_placement3}
 \end{figure}
+\subsubsection{Løsning af Integralsystem}
+Vi løser nu \eqref{integral_equations}. Vi ser fra \eqref{nlinear_interpolation} at vi bør integrere
+\begin{align}
+&\int_{[z_1^-, z_1^+]\times \cdots \times [ z_n^-,z_n^+]}  z_1\cdot z_2\cdots z_m \textup{ d}(z_1, \dots, z_n)\nonumber\\
+&=\int_{[z_2^-, z_2^+]\times \cdots \times [ z_n^-,z_n^+]} \frac{1}{2}\Bigl(\bigl(z_1^+\bigr)^2-\bigl(z_1^-\bigr)^2\Bigr)z_2\cdots z_m  \textup{ d}(z_2, \dots, z_n)\nonumber\\
+&=\cdots\nonumber\\
+&=\frac{1}{2^m}\prod_{i=1}^m \Bigl(\bigl(z_i^+\bigr)^2-\bigl(z_i^-\bigr)^2\Bigr)\int_{[z_{m+1}^-, z_{m+1}^+]\times \cdots \times [ z_n^-,z_n^+]}  1 \textup{ d}(z_1, \dots, z_n)\nonumber\\
+&=\frac{1}{2^m}\prod_{i=1}^m \Bigl(\bigl(z_i^+\bigr)^2-\bigl(z_i^-\bigr)^2\Bigr)\prod_{i={m+1}}^n \bigl(z_i^+-z_i^-\bigr)\label{integral_prodz_intervals}
+\end{align}
+under antagelsen at $z_i^+>z_i^-$. I det mere generelle tilfælde, hvor $z_i^+ \geq z_i^-$ antager vi at når $z_i^+=z_i^-$ integrerer vi med hensyn til dirac-målet koncentreret i $z_i^{+}$. I så fald bliver \eqref{integral_prodz_intervals} i stedet
+\begin{gather} 
+H\bigl([(z_1^-, z_1^+),\dots, ( z_n^-,z_n^+)], \{1, \dots, m\}\bigr):=\nonumber\\
+\prod_{i=1, z_i^{-}\neq z_i^+}^m \Bigl(\frac{1}{2}\bigl(z_i^+\bigr)^2-\frac{1}{2}\bigl(z_i^-\bigr)^2\Bigr)\prod_{i=1,z_i^{-}= z_i^+ } z_i^+ \prod_{i={m+1},z_i^{-}\neq z_i^+ }^n \bigl(z_i^+-z_i^-\bigr)\label{integral_prodz}
+\end{gather}
+Nu udvider vi notationen lidt. Lad 
+\begin{equation}
+\textup{mid}(f)=(\textup{mid}_1(f_1), \dots, \textup{mid}_n(f_n))
+\end{equation}
+være midtpunktet for faktorniveau $f=(f_1, \dots, f_n)\in \mathcal F$. Vi antager at $\mathcal F$ er et grid, dvs.
+\begin{equation}
+\mathcal F= \Bigl\{\begin{lgathered}[t] [a_1^-(j_1), a_1^+(j_1)]\times \cdots \times [a_n^-(j_n), a_n^+(j_n)]:\\
+j_1\in \{1, \dots, k_1\}, \dots j_n\in \{1, \dots, k_n\}\Bigr\}\end{lgathered}
+\end{equation}
+hvor $a_i^{\pm}(j)$ er passende konstanter i $\mathbb R \cup \{-\infty, \infty\}$, der opfylder
+\begin{equation*}
+a_i^+(j)=a_i^-(j+1), \quad j=1, \dots, k_i-1
+\end{equation*}
+Per definition af midpoint ved vi
+\begin{equation}
+a_i^-(j)\leq \textup{mid}_i\bigl([a_i^-(j), a_i^+(j)]\bigr) \leq a_i^+(j)
+\end{equation}
+Vi forkorter notationen yderligere med 
+\begin{equation*}
+z(i,j)=\textup{mid}_i\bigl([a_i^-(j), a_i^+(j)]\bigr).
+\end{equation*}
+og dermed kan et midtpunkt skrives som
+\begin{equation}
+\bigl(z(1,j_1), z(2,j_2), \dots, z(n, j_n)\bigr)
+\end{equation}
+for passende $j_1\dots, j_n $. En interpolationsflade (noteret $f$ i \eqref{nlinear_interpolation}), kan nu skrives mere præcist som
+\begin{align}
+h^{j_1, \dots, j_n}(z)=\sum_{J\subseteq\{1, \dots, n\}} a_J(j_1, \dots, j_n) \prod_{j\in J} z_j \label{more_explicit_interpolation}
+\end{align}
+for $j_i\in \{1, \dots, k_{i}-1\}$, hvilket giver $(k_1-1)\cdots (k_n-1)$ forskellige interpolationsflader. Interpolationsfladen i  \eqref{more_explicit_interpolation} gælder umiddelbart kun for $z$ i mængden
+\begin{align}
+& [z(1,j_1), z(1,j_1+1)]\times \cdots \times [z(n,j_n), z(n,j_n+1)]
+\end{align}
+Dog udvider vi ofte denne mængde, se Figur \ref{hypercubes_placement}, \ref{hypercubes_placement2} og \ref{hypercubes_placement3}. For at løse ligningssystemet \eqref{integral_equations} med (B2)-midpoints sætter vi
+\begin{align}
+\tilde z(i,j) =\begin{cases} a_i^-(1)\quad &\textup{hvis } j=1, a_i^-(j)>-\infty\\
+a_i^+(1)-\bigl(a_i^+(2)-a_i^-(2)\bigr)&\textup{hvis } j=1, a_i^-(j)=-\infty\\
+a_i^+(k_j)\quad &\textup{hvis } j=k_j, a_i^+(k_j)<\infty\\
+a_i^+(k_j)+\bigl(a_i^+(k_j-1)-a_i^-(k_j-1)\bigr)&\textup{hvis } j=k_j, a_i^+(j)=\infty\\
+z(i,j) & \textup{ellers.}
+\end{cases}
+\end{align}
+og lader \eqref{more_explicit_interpolation} være gældende for $z$ i mængden
+\begin{equation*}
+[\tilde z(1,j_1), \tilde z(1,j_1+1)]\times \cdots \times [\tilde z(n,j_n), \tilde z(n,j_n+1)].
+\end{equation*}
+I integralet i \eqref{integral_equations} skal vi integrere over $f$. Hvis vi bruger (B2) er det nemmest at formulere integralet ved at justere $a_i^{\pm}$'erne. Det gøres med
+\begin{align*}
+\tilde a_i^-(j) =\begin{cases} 
+a_i^+(1)-\bigl(a_i^+(2)-a_i^-(2)\bigr)&\textup{hvis } j=1, a_i^-(j)=-\infty\\
+a_i^-(j) & \textup{ellers.}
+\end{cases}
+\end{align*}
+og
+\begin{align*}
+\tilde a_i^+(j) =\begin{cases} 
+a_i^+(k_j)+\bigl(a_i^+(k_j-1)-a_i^-(k_j-1)\bigr)&\textup{hvis } j=k_j, a_i^+(j)=\infty\\
+a_i^+(j) & \textup{ellers.}
+\end{cases}
+\end{align*}
+For at gøre notationen nemmere i kanterne af grid'et, sættes også
+\begin{align}
+h^{j_1, \dots, j_n}&=h^{(j_1 \wedge k_1-1)\vee 1, \dots, (j_n \wedge k_n-1)\vee 1},\\
+a_J({j_1, \dots, j_n})&=a_J\bigl((j_1 \wedge k_1-1)\vee 1, \dots, (j_n \wedge k_n-1)\vee 1\bigr)
+\end{align}
+for $ j_i\in \{0, \dots, k_i\}, i=1, \dots, n, J\subseteq \{1, \dots, n\}$
+
+Bemærk at et $f\in\mathcal F$ er kendetegnet ved $j_1,\dots, j_n$. Da kan vi skrive ligningssystemet \eqref{integral_equations} som $k$ ligninger, der hver består af en sum af $2^n$ integraler.
+\begin{align}
+r(j_1,\dots, j_n)&=\begin{lgathered}[t]\int_{[\tilde a_1^-(j_1), z(1,j_1)]\times \cdots \times [\tilde a_n^-(j_n),  z(n,j_n)]} \hspace{-2cm} h^{j_1-1, \dots, j_n-1}(z) \textup{ d}z\\
++\int_{[z(1,j_1), \tilde a_1^+(j_1)]\times [\tilde a_2^-(j_2), z(2,j_2)]\times \cdots \times [\tilde a_n^-(j_n),  z(n,j_n)]} \hspace{-4cm}h^{j_1,j_2-1 \dots, j_n-1}(z) \textup{ d}z\\
+\vdots\\
++\int_{[z(1,j_1), \tilde a_1^+(j_1), ]\times \cdots \times [z(n,j_n), \tilde a_n^+(j_n)]} 
+\hspace{-2cm}h^{j_1,j_2 \dots, j_n}(z) \textup{ d}z
+\end{lgathered}\label{integral_equations_by_js}
+\end{align}
+Ved at bruge $H$ fra tidligere kan vi sætte
+\begin{align}
+&\int_{[\tilde a_1^-(j_1), z(1,j_1)]\times \cdots \times [\tilde a_n^-(j_n),  z(n,j_n)]} \hspace{-2cm} h^{j_1-1, \dots, j_n-1}(z) \textup{ d}z\nonumber\\
+&=\sum_{J\subseteq\{1, \dots, n\}}\Bigl( \begin{lgathered}[t]a_J(j_1-1, \dots, j_n-1)\\
+\cdot H\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)], J\bigr)\Bigr)\end{lgathered}\label{integral_computation_before_matrices}
+\end{align}
+Definer nu
+\begin{equation}
+\mathbf{V}(j_1, \dots, j_n)=\begin{pmatrix}
+\vec{v}(z(1,j_1),z(2,j_2), \dots, z(n,j_n))\\
+\vec{v}(z(1,j_1+1),z(2,j_2), \dots, z(n,j_n))\\
+\vec{v}(z(1,j_1),z(2,j_2+1), \dots, z(n,j_n))\\
+\vdots\\
+\vec{v}(z(1,j_1+1),z(2,j_2+1), \dots, z(n,j_n+1))\\
+\end{pmatrix}.
+\end{equation}
+med 
+\begin{equation}
+\mathbf{V}({j_1, \dots, j_n})=\mathbf{V}\bigl((j_1 \wedge [k_1-1])\vee 1, \dots, (j_n \wedge [k_n-1])\vee 1\bigr)
+\end{equation}
+for $ j_i\in \{0, \dots, k_i\}, i=1, \dots, n$, samt
+\begin{equation}
+\mathbf{y}(j_1, \dots, j_n)=\begin{pmatrix}
+y(j_1,j_2, \dots, j_n)\\
+y(j_1+1, j_2,\dots, j_n)\\
+\vdots\\
+y(j_1+1, \dots, j_n+1)
+\end{pmatrix}
+\end{equation}
+for $j_i \in \{1,\dots, k_i-1\}, i=1, \dots, n$. Vi definerer
+\begin{equation}
+\mathbf y(j_1, \dots, j_n)=\mathbf y \bigl((j_1 \wedge [k_1-1])\vee 1, \dots, (j_n \wedge [k_n-1])\vee 1\bigr)
+\end{equation}
+for generelle $j_i \in \{0,\dots, k_i\}, i=1, \dots, n$.
+
+Vi fortolker $y(j_1, \dots, j_n)$ som interpolationens y-værdi i $(z(1,j_1), \dots, z(n,j_n))$. Altså er $\mathbf {y}$ vektoren af y-værdier, der indgår i $h^{j_1, \dots, j_n}$. Indsat i \eqref{integral_computation_before_matrices} giver det
+\begin{equation}
+\sum_{J\subseteq\{1, \dots, n\}}\Bigl( \begin{lgathered}[t]\mathbf{e}_J^T \mathbf{V}(j_1-1, \dots, j_n-1)^{-1} \mathbf{y}(j_1-1, \dots, j_n-1)\\
+\cdot H\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)], J\bigr)\Bigr)\end{lgathered}\label{integral_computation_matrix1}
+\end{equation}
+hvor $\mathbf{e}_J$ er en vektor af 0'er på nær et 1-tal i den indgang der svarer til den koordinat der svarer til $J$. Hvis vi definerer vektoren af længde $2^n$ 
+\begin{align}
+\mathbf{H}\bigl(&[(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)]\bigr)\\
+&=\begin{pmatrix}
+H\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)], \emptyset \bigr)\\
+H\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)], \{1\} \bigr)\\
+\vdots \\
+H\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)], \{1, \dots, n\} \bigr)
+\end{pmatrix}
+\end{align}
+kan vi skrive \eqref{integral_computation_matrix1} som
+\begin{equation}
+\Bigl[\begin{lgathered}[t] \mathbf{H}\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)]\bigr)^T\\
+\cdot \mathbf{V}(j_1-1, \dots, j_n-1)^{-1} \Bigr] \mathbf{y}(j_1-1, \dots, j_n-1) \end{lgathered}\label{integral_computation_matrix2}
+\end{equation}
+Vi kan derfor skrive ligningssystemet fra \eqref{integral_equations_by_js} som
+\begin{align}
+r(j_1, \dots, j_n)&=\Biggl\{\begin{lgathered}[t]\Bigl[\begin{lgathered}[t] \mathbf{H}\bigl([(\tilde a_1^-(j_1), z(1,j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)]\bigr)^T\\
+\cdot \mathbf{V}(j_1-1, \dots, j_n-1)^{-1} \Bigr] \mathbf{y}(j_1-1, \dots, j_n-1) \end{lgathered}\\
++
+\Bigl[\begin{lgathered}[t] \mathbf{H}\bigl([(z(1,j_1), \tilde a_1^+(j_1)), \dots, (\tilde a_n^-(j_n), z(n,j_n)]\bigr)^T\\
+\cdot \mathbf{V}(j_1,j_2-1 \dots, j_n-1)^{-1} \Bigr] \mathbf{y}(j_1,j_2-1 \dots, j_n-1)+ \end{lgathered} \\
+\vdots\\
++\Bigl[\begin{lgathered}[t] \mathbf{H}\bigl([( z(1,j_1), \tilde a_1^+(j_1)), \dots, (z(n,j_n), \tilde a_n^+(j_n))]\bigr)^T\\
+\cdot \mathbf{V}(j_1, \dots, j_n)^{-1} \Bigr] \mathbf{y}(j_1, \dots, j_n) \Biggr\}\end{lgathered}\\
+\end{lgathered}\label{integral_computation_matrix3}
+\end{align}
+Ud fra \eqref{integral_computation_matrix3} kræver det et stykke (trivielt) omrokeringsarbejde at få det på formen
+\begin{equation}
+\bigl\{r(j_1, \dots, j_n)\bigr\}_{j_i\in\{1, \dots, k_i\}, i=1, \dots, n}=B\bigl\{y(j_1, \dots, j_n)\bigr\}_{j_i\in\{1, \dots, k_i\}, i=1, \dots, n}
+\end{equation}
+som løses ved at invertere $k\times k$ matricen $B$. Når de $k$ y-værdier er fundet regnes matrix produkterne
+\begin{align}
+\mathbf{V}(j_1, \dots, j_n)^{-1} \mathbf{y}(j_1, \dots, j_n)
+\end{align}
+og koefficienterne sættes ind i risk ratio filerne.
 
 \end{document}
