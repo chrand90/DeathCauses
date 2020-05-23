@@ -1,0 +1,13 @@
+Drinking,SmokeIntensity,Value
+0.0000-3.0000,0.0000-10.0000,1.000000+0.113958*Drinking+0.113103*SmokeIntensity+-0.053673*Drinking*SmokeIntensity
+0.0000-3.0000,10.0000-30.0000,2.724138+-1.001628*Drinking+-0.059310*SmokeIntensity+0.057886*Drinking*SmokeIntensity
+0.0000-3.0000,30.0000-60.0000,-8.737931+6.423299*Drinking+0.322759*SmokeIntensity+-0.189612*Drinking*SmokeIntensity
+3.0000-11.0000,0.0000-10.0000,1.167495+0.058126*Drinking+-0.085450*SmokeIntensity+0.012512*Drinking*SmokeIntensity
+3.0000-11.0000,10.0000-30.0000,-0.674706+0.131320*Drinking+0.098771*SmokeIntensity+0.005192*Drinking*SmokeIntensity
+3.0000-11.0000,30.0000-60.0000,11.252003+-0.240012*Drinking+-0.298786*SmokeIntensity+0.017570*Drinking*SmokeIntensity
+11.0000-22.5000,0.0000-10.0000,2.988069+-0.107380*Drinking+-0.633710*SmokeIntensity+0.062354*Drinking*SmokeIntensity
+11.0000-22.5000,10.0000-30.0000,-9.558256+0.938916*Drinking+0.620922*SmokeIntensity+-0.042276*Drinking*SmokeIntensity
+11.0000-22.5000,30.0000-60.0000,42.247475+-3.057782*Drinking+-1.105936*SmokeIntensity+0.090947*Drinking*SmokeIntensity
+22.5000-42.0000,0.0000-10.0000,-8.476441+0.402153*Drinking+2.168079*SmokeIntensity+-0.062170*Drinking*SmokeIntensity
+22.5000-42.0000,10.0000-30.0000,38.785365+-1.209690*Drinking+-2.558101*SmokeIntensity+0.099014*Drinking*SmokeIntensity
+22.5000-42.0000,30.0000-60.0000,-80.852608+2.413332*Drinking+1.429831*SmokeIntensity+-0.021753*Drinking*SmokeIntensity

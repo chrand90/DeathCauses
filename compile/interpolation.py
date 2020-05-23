@@ -452,7 +452,7 @@ if __name__=='__main__':
     RRs=loadRRs('../Database/Causes/Cancer/MouthCancer/rr_Drinking-SmokeIntensity')
     for rr in RRs:
         rd=interpolate_one(rr)
-        rd.save_to_file('rrds.txt')
+        rd.save_to_file('../Testing/rrds.txt')
         #for k, v in rd.items():
          #   print k, ':'
          #   print v
