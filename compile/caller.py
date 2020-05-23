@@ -5,6 +5,7 @@ import os
 import time
 import risk_ratios as rr
 import json
+from data_frame import initialize_data_frame_by_columns
 
 from age_numbers import get_age_distribution, get_age_totals # to adjust the risk ratio to the age intervals
 
@@ -17,19 +18,33 @@ def integrate_all_in_folder(age_intervals, folder):
     
     age_distribution=get_age_distribution()
     
-
+    Ages=age_distribution.get_col("Age")
     
-    to_be_jsoned=[]
+    to_be_jsoned={}
     for ICD_dir,rr_dirs in writtenF_dirs:
         cause_name=extract_cause_name(ICD_dir)
         rr_norms=[]
         for rr_dir in rr_dirs:
             #print rr_dir
+            riskfactorgroup={}
             normalizers, RRs, string_interaction_name=integrate_one(rr_dir,age_intervals, age_distribution)
-            interpolatedRRs=interpolate_list_of_RRs(RRs)
-            rr_norms.append((normalizers,RRs,string_interaction_name))
+            
+            normalizer_age_object=initialize_data_frame_by_columns(values_list=normalizers, Age=Ages).get_as_standard_age_prevalences()
+            riskfactorgroup['normalisingFactors']=normalizer_age_object
+            riskfactorgroup['interactionFunction']=string_interaction_name
+            riskratiotables=[]
+            for RR in RRs:
+                RRlist=RR.get_as_list_of_lists()
+                factor_names=RR.get_FactorNames()
+                riskratiotable={'riskRatioTable':RRlist,
+                                'riskFactorNames':factor_names,
+                                'interpolationTable':[]}
+                riskratiotables.append(riskratiotable)
+            riskfactorgroup['riskRatioTables']=riskratiotables            
+            rr_norms.append(riskfactorgroup)
         frequencies=getFrequencies(ICD_dir+os.sep)#, total_population)
-        to_be_jsoned.append((cause_name, frequencies, rr_norms))
+        to_be_jsoned[cause_name]={'Age':frequencies.get_as_standard_age_prevalences(),
+                                  'RiskFactorGroups':rr_norms}
     return to_be_jsoned
             
 def extract_cause_name(ICD_dir):
@@ -39,13 +54,13 @@ def extract_cause_name(ICD_dir):
 def run(age_intervals=None):
     if age_intervals is None:
         age_intervals= get_age_totals()[0]
-    transform_to_json(integrate_all_in_folder(age_intervals, "Causes"), "Causes_for_json")
-    transform_to_json(get_cause_hierarchy('Causes'), 'cause_hierarchy_for_json')
+    transform_to_json(integrate_all_in_folder(age_intervals, "Causes"), "Causes.json")
+    transform_to_json(get_cause_hierarchy('Causes'), 'CauseHierarchy.json')
     #transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
 
 def transform_to_json(inp, filename):
-    print inp
+    #print inp
     with open(filename, 'w') as f:
         f.write(json.dumps(inp, default=lambda df: df.getDataframeAsList()))
 
@@ -111,7 +126,7 @@ def search_for_writtenF_directories(folder):
     list_of_files=os.walk(os.path.join(os.pardir, "Database", folder))
     for path,dirs_within,_ in list_of_files: 
         if "ICDfiles" in dirs_within:
-            rr_dirs=[path+os.sep+direc for direc in dirs_within if direc!="ICDfiles"]
+            rr_dirs=[path+os.sep+direc for direc in dirs_within if direc.startswith('rr_')]
             writtenF_dirs.append((path+os.sep+"ICDfiles",rr_dirs))
     return writtenF_dirs
 

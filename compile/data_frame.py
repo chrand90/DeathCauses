@@ -1,3 +1,11 @@
+def initialize_data_frame_by_columns(values_list, **kwargs):
+    keys=kwargs.keys()
+    df=data_frame(keys, credibility=0)
+    assert keys, 'no keyword arguments passed to this function. Why do you want to make an empty dataframe?'
+    n=len(kwargs[keys[0]])
+    for i in range(n):
+        df.addRow([kwargs[k][i] for k in keys]+[values_list[i]])
+    return df
 
 class data_frame:  # svend
 
@@ -6,6 +14,12 @@ class data_frame:  # svend
         self.reverse_factornames = {factor:index for index, factor in enumerate(factornames)}
         self.credibility = credibility
         self.listOfRowsInTheDataFrame = []
+        
+    def get_as_list_of_lists(self):
+        res=[]
+        for r in self.listOfRowsInTheDataFrame:
+            res.append([r[:-1],r[-1]])
+        return res
         
     def addRow(self, row):
         assert len(row) == len(self.factornames) + 1, "Row does not fit data frame."
@@ -32,6 +46,13 @@ class data_frame:  # svend
             df.addRow(list(key)+[val*oth[key]])
         return df
     
+    def get_col(self, factor_name):
+        i=next((n for n,f in enumerate(self.factornames) if f==factor_name))
+        res=[]
+        for r in self.listOfRowsInTheDataFrame:
+            res.append(r[i])
+        return res
+    
     def sum(self):
         return sum([ r[-1] for r in self.listOfRowsInTheDataFrame])
     
@@ -53,6 +74,12 @@ class data_frame:  # svend
     def getDataframeAsList(self):
         res=[row for row in self.listOfRowsInTheDataFrame]
         res.insert(0,self.factornames)
+        return res
+    
+    def get_as_standard_age_prevalences(self):
+        res={'age_classification':[]}
+        age_prevalences=[r[-1] for r in self.listOfRowsInTheDataFrame]
+        res['age_prevalences']=age_prevalences
         return res
     
     def save_to_file(self, fil):
