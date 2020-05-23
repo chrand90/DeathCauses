@@ -22,11 +22,19 @@
 /my-app/yarn-debug.log*
 /my-app/yarn-error.log*
 
+# compiled python class
 *.pyc
 
+#vs code folders
 /my-app/.vscode
 /.vscode
+
+#eclipse folders
 .project
 .pydevproject
+
+# debug folders
 npm-debug.log
 
+# intellij ide
+/.idea
