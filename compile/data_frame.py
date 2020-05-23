@@ -19,14 +19,14 @@ class data_frame:  # svend
         receives two dataframes with identical factor categories and factor values (in arbitrary order). 
         Returns the one where the value column has been multplied with each other.
         '''
-        print self.factornames, other.factornames
+        #print self.factornames, other.factornames
         assert set(self.factornames)==set(other.factornames), "the two dataframes are not compatible because of different factor categories."
         factornames=self.factornames #arbritrary that it is not other.factornames - only the order matters here.
         oth=other.getDataframeAsDictionary(factornames)
         sel=self.getDataframeAsDictionary(factornames)
         df=data_frame(factornames, min(other.credibility,self.credibility))
-        print sel
-        print oth
+        #print sel
+        #print oth
         for key, val in sel.items():
             assert key in oth, "the two data frames are not compatible because of different factor values"
             df.addRow(list(key)+[val*oth[key]])
@@ -45,11 +45,23 @@ class data_frame:  # svend
         for row in self.listOfRowsInTheDataFrame:
             res[ tuple( row[indices[i]] for i in range(len(row)-1)) ]= row[-1]
         return res
+    
+    def get_last_column_in_specific_order(self, factor_keys):
+        df_dic=self.getDataframeAsDictionary(self.factornames)
+        return [df_dic[fkey] for fkey in factor_keys]
         
     def getDataframeAsList(self):
         res=[row for row in self.listOfRowsInTheDataFrame]
         res.insert(0,self.factornames)
         return res
+    
+    def save_to_file(self, fil):
+        df=self.getDataframeAsList()
+        with open(fil, 'w') as f:
+            f.write(','.join(df[0]+['Value'])+'\n')
+            for r in df[1:]:
+                f.write(','.join(r[:-1]+[r[-1][1]])+'\n')
+                
         
     def __dict__(self):
         self.getDataframeAsList()
@@ -63,6 +75,25 @@ class data_frame:  # svend
         for row in self.listOfRowsInTheDataFrame:
             str1 += "\t".join(map(str, row)) + "\n"
         return str1
+    
+    def group_by(self, variables):
+        not_variables=list(set(self.factornames)-set(variables))
+        newly_created_dataframes={}
+        indices=[i for i,s in enumerate(self.factornames) if s in variables]
+        not_indices=[i for i,s in enumerate(self.factornames) if s in not_variables]
+        if len(indices)==0:
+            return { tuple():self}
+        for row in self.listOfRowsInTheDataFrame:
+            factor_tuple=tuple((row[i] for i in indices))
+            row_to_add=[row[i] for i in not_indices]+[row[-1]]
+            if factor_tuple in newly_created_dataframes:
+                newly_created_dataframes[factor_tuple].addRow(row_to_add)
+            else:
+                new_data_frame=data_frame(not_variables,self.credibility)
+                new_data_frame.addRow(row_to_add)
+                newly_created_dataframes[factor_tuple]=new_data_frame
+        return newly_created_dataframes
+        
         
         
     def subset(self, conditions):

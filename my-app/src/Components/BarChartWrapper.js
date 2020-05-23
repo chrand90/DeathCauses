@@ -1,7 +1,7 @@
-import React, { Component } from 'react';
+import React from 'react';
 import BarChart from './BarChart';
 
-export default class ChartWrapper extends Component {
+export default class ChartWrapper extends React.PureComponent {
 
 	constructor(){
 		super();

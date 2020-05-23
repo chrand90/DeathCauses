@@ -6,7 +6,7 @@ function make_squares(res_dat){
     let r= res_dat.map( p_object => {
         let new_res=[];
         const total_explained= Object.values(p_object.inner_causes).reduce((a, b) => a + b,0);
-        console.log(total_explained);
+        // console.log(total_explained);
         let explained=1-total_explained;
         new_res.push({
             name: p_object.name,

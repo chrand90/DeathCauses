@@ -1,4 +1,5 @@
 from frequencies import getFrequencies
+from interpolation import interpolate_list_of_RRs
 import factor_probabilities
 import os
 import time
@@ -25,6 +26,7 @@ def integrate_all_in_folder(age_intervals, folder):
         for rr_dir in rr_dirs:
             #print rr_dir
             normalizers, RRs, string_interaction_name=integrate_one(rr_dir,age_intervals, age_distribution)
+            interpolatedRRs=interpolate_list_of_RRs(RRs)
             rr_norms.append((normalizers,RRs,string_interaction_name))
         frequencies=getFrequencies(ICD_dir+os.sep)#, total_population)
         to_be_jsoned.append((cause_name, frequencies, rr_norms))
@@ -68,6 +70,8 @@ def integrate_one(writtenF_dir, age_intervals,age_distribution):
         #print  RRage
         combined_df=factor_prob_data_frame*RRage
         normalizers.append(combined_df.sum())
+        
+    
     
     #RRs_as_dictionaries=[RR.getDataframeAsDictionary(RR.factornames) for RR in RRs]
     

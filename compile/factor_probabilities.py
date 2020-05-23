@@ -25,35 +25,35 @@ def get_factor_probabilities_for_one_age_interval(writtenF, age_interval):
     input: writtenF. Type: dictionary of {'factorname_1': ['f_1^1', 'f_1^2',..., 'f_1^n'], ... , 'factorname_k': ['f_k^1', 'f_k^2',..., 'f_k^n']}
     output: data frame where it is easy to extract P(F=f) for f in written F
     '''
-    print writtenF
+    #print writtenF
     
     listOfDataframes, not_included = load_and_thin_out(writtenF.keys(), FACTOR_PROB_PATH)
     
     age_dist=get_age_distribution()
     
-    print listOfDataframes
+    #print listOfDataframes
     
     #adjust_to_age_interval
     listOfDataframes = [adjust_to_age_group(dat_frame, age_interval, age_dist) for dat_frame in listOfDataframes]
     
-    print listOfDataframes
+    #print listOfDataframes
     
     # marginalize each relevant dataframe
     listOfDataframes=[marginalize(dat_frame, writtenF.keys()) for dat_frame in listOfDataframes]
     
 
-    print listOfDataframes
+    #print listOfDataframes
     
     # adjust to RR categories
     listOfDataframes = [adjust_to_RR_categories(writtenF, dat_frame) for dat_frame in listOfDataframes]
     
-    print listOfDataframes
+    #print listOfDataframes
     
     #add the data frames corresponding to the factors that did not find a matching file
     listOfDataframes.extend([trivial_data_frame(writtenF[factor], factor) for factor in not_included])
     
     
-    print listOfDataframes
+    #print listOfDataframes
     # get one big dataframe
     return make_simultane(listOfDataframes)  
 
@@ -298,7 +298,7 @@ def make_simultane(listOfdataframes):
     factorDicValues=factorDic.values()
     
     #The resulting dataframe is created and 
-    print listOfdataframes
+    #print listOfdataframes
     minimum_credibility= sorted_dfs[0][1]
     res = data_frame(factorDicKeys, minimum_credibility)
     cartesianProducts = list(itertools.product(*factorDicValues))
