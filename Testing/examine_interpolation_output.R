@@ -1,4 +1,4 @@
-rd=read.table('C:/Users/Svend/git/DeathCauses/compile/rrds.txt', header=T, sep=',')
+rd=read.table('rrds.txt', header=T, sep=',')
 get_interval=function(val){
   RV=strsplit(val, split='-', fixed=T)[[1]]
   if(length(RV)==1){
@@ -13,7 +13,7 @@ get_interval=function(val){
 z_in_interval=function(intervals, z){
   for(i in 1:length(intervals)){
     interval=intervals[[i]]
-    if(z>interval[2]+1e-7 || z<interval[1]-1e-7){
+    if(z[i]>interval[2]+1e-7 || z[i]<interval[1]-1e-7){
       return(F)
     }
   }
@@ -35,9 +35,11 @@ construct_f=function(fromtos, formulas){
     }
     intervals[[i]] <- intervals_for_area
   }
+  print(intervals)
   interpol_function=function(z){
     for(i in 1:length(intervals)){
       if(z_in_interval(intervals[[i]], z)){
+        #print(paste(i, intervals[[i]],z))
         return(r[[i]](z))
       }
     }
@@ -90,16 +92,16 @@ f=construct_f(fromtos,as.character(vals))
 
 
 valmat=matrix(0,nrow=0,ncol=3)
-x=seq(0,42, length.out = 100)
-y=seq(0,60, length.out=100)
+x=seq(0,35.5, length.out = 100)
+y=seq(0,50, length.out=100)
 z=matrix(0, nrow=100,ncol=100)
 for(i in 1:100){
   for(j in 1:100){
     z[i,j]=f(c(x[i],y[j]))
   }
 }
-xv=runif(10000)*42
-yv=runif(10000)*60
+xv=runif(10000)*35.5
+yv=runif(10000)*50
 zv=numeric(10000)
 for(i in 1:10000){
   zv[i]=f(c(xv[i],yv[i]))
@@ -142,3 +144,8 @@ tester=function(from_tos){
 }
 r=rbind(c(29,42), c(40,60))
 tester(r)
+
+l=sapply(seq(0, 50, length.out = 1000), function(x) {f(c(1,x))})
+l=sapply(seq(0, 35.5, length.out = 1000), function(x) {f(c(x,40))})
+plot(l)
+f

@@ -38,3 +38,6 @@ npm-debug.log
 
 # intellij ide
 /.idea
+
+# any R histories that may be saved
+*.Rhistory
