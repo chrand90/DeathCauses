@@ -5,7 +5,8 @@ import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
-import customDate from './Causes.json'
+import data from './data/Causes_for_json.json'
+import testdata from './data/test_data.json'
 
 class App extends React.Component {
   constructor(props) {
@@ -75,7 +76,8 @@ class App extends React.Component {
         familyHistoryParkinson: "",
         pesticideExposureDays: "",
         depression: "",
-      }
+      },
+      tmp: ""
     };
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -148,7 +150,8 @@ class App extends React.Component {
     // });
     //Probably better to use: Promise all then
     this.setState({
-      database: customDate
+      database: data,
+      tmp: testdata
     }
     )
   }
