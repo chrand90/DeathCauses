@@ -1,5 +1,5 @@
 from frequencies import getFrequencies
-from interpolation import interpolate_list_of_RRs
+from interpolation import interpolate_one
 import factor_probabilities
 import os
 import time
@@ -36,9 +36,14 @@ def integrate_all_in_folder(age_intervals, folder):
             for RR in RRs:
                 RRlist=RR.get_as_list_of_lists()
                 factor_names=RR.get_FactorNames()
+                interpolated_RR_or_empty=interpolate_one(RR)
+                if interpolated_RR_or_empty is None: #checking if there was something to interpolate
+                    interpolated_RR=[]
+                else:
+                    interpolated_RR=interpolated_RR_or_empty.get_as_list_of_lists()
                 riskratiotable={'riskRatioTable':RRlist,
                                 'riskFactorNames':factor_names,
-                                'interpolationTable':[]}
+                                'interpolationTable':interpolated_RR}
                 riskratiotables.append(riskratiotable)
             riskfactorgroup['riskRatioTables']=riskratiotables            
             rr_norms.append(riskfactorgroup)

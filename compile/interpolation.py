@@ -387,7 +387,8 @@ def interpolate_one(RR):
                                             Bi=Bi,
                                             factor_tuples_to_k_index_dic=order_dic)
         return res
-        
+    else:
+        return None    
             
         #tildeAs_andZs=[compute_midpoints(lev_vec) for lev_vec in interpolation_levels]
         
