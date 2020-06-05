@@ -100,13 +100,18 @@ for(i in 1:100){
     z[i,j]=f(c(x[i],y[j]))
   }
 }
-xv=runif(10000)*35.5
-yv=runif(10000)*50
-zv=numeric(10000)
-for(i in 1:10000){
+xv=runif(100000)*35.5
+yv=runif(100000)*50
+zv=numeric(100000)
+for(i in 1:100000){
   zv[i]=f(c(xv[i],yv[i]))
 }
-library(dplyr)
+df=data.frame(x=xv, y=yv, z=zv)
+library(tidyverse)
+df %>% mutate(xb=cut(x, breaks=c(0,6,16,29,42)),
+              yb=cut(y, breaks=c(0,20,40,60))) %>%
+  group_by(xb,yb) %>%
+  summarise(r=mean(z))
 persp(x,y,z)
 
 
