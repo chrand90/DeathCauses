@@ -1,0 +1,6 @@
+Factorname;question;question_tip;type;values;default
+BMI;What is your BMI?;your bmi is calculated as weight(in kg) divided by height squared (in meters);numeric;[18:40];25
+Fluids;How many ml fluids do you drink per day;This includes any liquid drunk from a cup - water, milk, beer, coffee etc. Soup does not count however;numeric;[0:3000];1500
+
+
+
