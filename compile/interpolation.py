@@ -386,6 +386,7 @@ def interpolate_one(RR):
                                             sorted_string_factors=sorted_string_factors,
                                             Bi=Bi,
                                             factor_tuples_to_k_index_dic=order_dic)
+        res.order_columns(factor_names)
         return res
     else:
         return None    

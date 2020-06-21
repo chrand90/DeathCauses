@@ -483,6 +483,7 @@ plot_interpolation_file=function(interpolationtable, riskratio_names){
   #print('res=')
   #print(res)
   sfacts=sort_factors(factors)
+  print(sfacts)
   interpolation_dimension=nrow(filter(sfacts, type=='numeric'))
   if(interpolation_dimension==0){
     stop('tried plotting an interpolation file without numeric variables.')
@@ -588,6 +589,12 @@ if(F){
   g=dat$BreastCancer$RiskFactorGroups[[2]]$riskRatioTables[[1]] #gender
   riskratio_names=g$riskFactorNames
   interpolationtable=g$interpolationTable
+}
+
+if(F){
+  g=dat$LiverCancer$RiskFactorGroups[[1]]$riskRatioTables[[1]]
+  interpolationtable=g$interpolationTable
+  riskratio_names=g$riskFactorNames
 }
 
 
