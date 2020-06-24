@@ -5,7 +5,9 @@ import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
-import customDate from './Causes.json'
+import database from './data/Causes.json'
+import testData from './data/testData.json'
+import Database from './database/Database.ts'
 
 class App extends React.Component {
   constructor(props) {
@@ -75,7 +77,8 @@ class App extends React.Component {
         familyHistoryParkinson: "",
         pesticideExposureDays: "",
         depression: "",
-      }
+      },
+      tmp: ""
     };
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -148,9 +151,11 @@ class App extends React.Component {
     // });
     //Probably better to use: Promise all then
     this.setState({
-      database: customDate
-    }
-    )
+      database: database,
+    })
+    var tmp = new Database().deserialize(testData)
+    console.log(tmp)
+    //tmp[0].age.calculate()
   }
 
 
