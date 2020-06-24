@@ -85,7 +85,7 @@ def set_interpolation_area_bounds(interpolation_corner_dic, interpolation_keys, 
                 lower_bound=corner.get_lower_of_factor_point(n)
             else:
                 lower_bound=corner.get_midpoint_of_factor_point(n)
-            if j==k-2:
+            if j==k-1:
                 upper_bound=superior_corner.get_upper_of_factor_point(n)
             else:
                 upper_bound=superior_corner.get_midpoint_of_factor_point(n)
@@ -313,6 +313,7 @@ def compute_midpoints(levels_vector):
     #for n, (typ, numbers) in enumerate(levs_full_sorted):
 
 def sort_and_expand(levels_vector):
+    '''this function sorts the factor levels inside the levels_vector'''
     levs_full=map(factor_level, levels_vector)
     unsorted_avgs=[f.average() for f in levs_full]
     return [x for _,x in sorted(zip(unsorted_avgs,levs_full))]
@@ -386,7 +387,8 @@ def interpolate_one(RR):
                                             Bi=Bi,
                                             factor_tuples_to_k_index_dic=order_dic)
         return res
-        
+    else:
+        return None    
             
         #tildeAs_andZs=[compute_midpoints(lev_vec) for lev_vec in interpolation_levels]
         
@@ -427,6 +429,62 @@ def format_coefficients(coefficients, factors,minv, maxv):
     res.append('+'.join(formula_parts))
     res.append([minv,maxv])
     return res
+
+def tester():
+    '''Here we dont use the H and B matrix. We test with the interpolation regardless'''
+    xfacts=['0-2','2+','0']
+    yfacts=['-3','3-5','5+']
+    x=sort_and_expand(xfacts)
+    y=sort_and_expand(yfacts)
+    print [str(f) for f in x]
+    print [str(f) for f in y]
+    compute_midpoints(x)
+    compute_midpoints(y)
+    print ''
+    print [str(f) for f in x]
+    print [str(f) for f in y]
+    corner_dic={
+        (0,0): InterpolationCorner([x[0],y[0]],(0,0)),
+        (0,1): InterpolationCorner([x[0],y[1]],(0,1)),
+        (0,2): InterpolationCorner([x[0],y[2]],(0,2)),
+        (1,0): InterpolationCorner([x[1],y[0]],(1,0)),
+        (1,1): InterpolationCorner([x[1],y[1]],(1,1)),
+        (1,2): InterpolationCorner([x[1],y[2]],(1,2)),
+        (2,0): InterpolationCorner([x[2],y[0]],(2,0)),
+        (2,1): InterpolationCorner([x[2],y[1]],(2,1)),
+        (2,2): InterpolationCorner([x[2],y[2]],(2,2)),
+        }
+    corner_dic[(0,0)].add_OtherCorners([corner_dic[(1,0)], 
+                                        corner_dic[(0,1)], 
+                                        corner_dic[(1,1)]])
+    corner_dic[(1,0)].add_OtherCorners([corner_dic[(2,0)], 
+                                    corner_dic[(1,1)], 
+                                    corner_dic[(2,1)]])
+    corner_dic[(0,1)].add_OtherCorners([corner_dic[(1,1)], 
+                                    corner_dic[(0,2)], 
+                                    corner_dic[(1,2)]])
+    corner_dic[(1,1)].add_OtherCorners([corner_dic[(2,1)], 
+                                corner_dic[(1,2)], 
+                                corner_dic[(2,2)]])
+    for k,v in corner_dic.items():
+        print k, v.str_risk_ratio_area()
+        
+    for j in [(0,0),(1,0),(0,1),(1,1)]:
+        v=corner_dic[j]
+        v.computeV()
+        v.invertV()
+        print v.V
+        
+    set_interpolation_area_bounds(corner_dic,  [(0,0),(1,0),(0,1),(1,1)], [2,2])
+    
+    yvals=array([1,2,1,1])
+    
+    for k,v in corner_dic.items():
+        if k in [(0,0),(1,0),(0,1),(1,1)]:
+            print k, v.str_interpolation_area()
+            print v.iV.dot(yvals)
+    
+        
             
     
     
@@ -437,6 +495,12 @@ def compute_V(list_midpoints):
 
         
 if __name__=='__main__':
+#     j=(0,0)
+#     for i in range(1, 2**len(j)):
+#         print tuple( j[sub_i]+1 if include else j[sub_i] for sub_i,include in enumerate(get_subset_iterator_full(i,len(j))))
+#     tester()
+#     import sys
+#     sys.exit()
     from risk_ratios import loadRRs
     
 #     RRs=loadRRs('rr_test')
