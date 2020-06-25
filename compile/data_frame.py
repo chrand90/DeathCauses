@@ -187,7 +187,17 @@ class data_frame:  # svend
     def get_credibility(self):
         return self.credibility
     
-    
+    def order_columns(self, factorname_order):
+        assert set(factorname_order)==set(self.factornames), 'The specified columns did not match the columns of the data frame'
+        if all(f1==f2 for f1,f2 in zip(self.factornames, factorname_order)):
+            return None #ignores the rest of the code.    
+        column_indexes={v:k for k,v in enumerate(self.factornames)}
+        reordering=[column_indexes[g] for g in factorname_order]
+        reordering.append(len(reordering)) # adding the last column with the values
+        for i in range(len(self.listOfRowsInTheDataFrame)):
+            self.listOfRowsInTheDataFrame[i]=[self.listOfRowsInTheDataFrame[i][j] for j in reordering]
+        self.factornames=factorname_order
+        
     def frequency_for_row(self, conditions):
         '''
         Input: dictionary conditions of the form 
