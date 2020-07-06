@@ -1,14 +1,15 @@
 import SerializableDisease from './SerializableDisease';
-import Age from './Age';
+import FrequencyTable from './FrequencyTable';
+import RiskFactorGroup from './RiskFactorGroup';
 
 class Disease implements SerializableDisease<Disease> {
     diseaseName: String | undefined
-    age: Age | undefined
-    riskFactorGroups: Object | undefined
+    diseaseFrequency: FrequencyTable | undefined
+    riskFactorGroups: RiskFactorGroup[] | undefined
 
-    deserialize(input: { age: { ageClassification: number[]; agePrevalences: number[]; }; riskFactorGroups: Object | undefined; }, diseaseName: String) {
+    deserialize(input: { diseaseFrequency: { ageClassification: number[], agePrevalences: number[]; }; riskFactorGroups: RiskFactorGroup[] | undefined; }, diseaseName: String) {
         this.diseaseName = diseaseName;
-        this.age = new Age().deserialize(input.age)
+        this.diseaseFrequency = new FrequencyTable().deserialize(input.diseaseFrequency)
         this.riskFactorGroups = input.riskFactorGroups
 
         return this

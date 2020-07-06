@@ -1,6 +1,6 @@
 {
 	"mouthCancer" : {
-		"age": {
+		"diseaseFrequency": {
 			"ageClassification" : [1,2,3],
 			"agePrevalences": [0.1, 0.2, 0.3, 0.4]
         },
@@ -28,7 +28,7 @@
 		]
     },
     "bladderCancer" : {
-		"age": {
+		"diseaseFrequency": {
 			"ageClassification" : [],
 			"agePrevalences": [0.1, 0.2, 0.3, 0.4]
         },
