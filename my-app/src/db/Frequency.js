@@ -1,5 +1,5 @@
 class Frequency {
-    constructor(ageClassification, agePrevalences){
+    constructor({ageClassification, agePrevalences}){
         this.agePrevalences = agePrevalences
         this.ageClassification = ageClassification
     }

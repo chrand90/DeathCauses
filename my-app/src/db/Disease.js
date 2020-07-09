@@ -1,9 +1,12 @@
 import Frequency from "./Frequency"
+import RiskFactorGroup from "./RiskFactorGroup"
 
 class Disease {
-    constructor({ diseaseFrequency: { ageClassification, agePrevalences }, riskFactorGroups }) {
-        this.diseaseFrequency = new Frequency(agePrevalences, ageClassification)
-        this.riskFactorGroups = riskFactorGroups
+    constructor({ diseaseFrequency, riskFactorGroups }) {
+        this.diseaseFrequency = new Frequency(diseaseFrequency)
+        this.riskFactorGroups = riskFactorGroups.map(
+            rfg => new RiskFactorGroup(rfg)
+        )
     }
 
     testme() {
