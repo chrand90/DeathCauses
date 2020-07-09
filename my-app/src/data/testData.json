@@ -1,0 +1,58 @@
+{
+	"mouthCancer" : {
+		"diseaseFrequency": {
+			"ageClassification" : [1,2,3],
+			"agePrevalences": [0.1, 0.2, 0.3, 0.4]
+        },
+		"riskFactorGroups": [
+			{
+				"normalizingFactors" : {
+                    "ageClassification" : [],
+                    "agePrevalences": [0.1, 0.2, 0.3, 0.4]
+                },
+				"interactionFunction" : "multiplicative",
+				"riskRatioTables" : [
+					{
+						"riskFactorNames" : ["drinking", "smoking"],
+						"riskRatioTable" : [
+							[["0","0"], 0 ],
+							[["1","1"], 1 ]
+						],
+						"interactionTable" : [
+							[["0","0"], ["a","b","c","d"] ],
+							[["1","1"], ["e","f","g","h"] ]
+						]
+					}
+				]
+			}
+		]
+    },
+    "bladderCancer" : {
+		"diseaseFrequency": {
+			"ageClassification" : [],
+			"agePrevalences": [0.1, 0.2, 0.3, 0.4]
+        },
+		"riskFactorGroups": [
+			{
+				"normalizingFactors" : {
+                    "AgeClassification" : [],
+                    "agePrevalences": [0.1, 0.2, 0.3, 0.4]
+                },
+				"interactionFunction" : "multiplicative",
+				"riskRatioTables" : [
+					{
+						"riskFactorNames" : ["drinking", "smoking"],
+						"riskRatioTable" : [
+							[["0","0"], 0 ],
+							[["1","1"], 1 ]
+						],
+						"interactionTable" : [
+							[["0","0"], ["a","b","c","d"] ],
+							[["1","1"], ["e","f","g","h"] ]
+						]
+					}
+				]
+			}
+		]
+	}
+}

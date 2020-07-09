@@ -5,7 +5,9 @@ import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
-import customDate from './Causes.json'
+import testData from './data/testData.json'
+import DatabaseTest from './db/database';
+import Database from './db/Database2';
 
 class App extends React.Component {
   constructor(props) {
@@ -148,9 +150,11 @@ class App extends React.Component {
     // });
     //Probably better to use: Promise all then
     this.setState({
-      database: customDate
+      database: testData
     }
     )
+    var tmp = new Database(testData)
+    console.log(tmp)
   }
 
 
