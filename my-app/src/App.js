@@ -6,8 +6,7 @@ import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
 import testData from './data/testData.json'
-import DatabaseTest from './db/database';
-import Database from './db/Database2';
+import { parseDatabase } from './db/ParseDatabase';
 
 class App extends React.Component {
   constructor(props) {
@@ -87,20 +86,12 @@ class App extends React.Component {
     console.log(this.state.database)
   }
 
-  // callbackFunction(event) {
-  //   const { name, value } = event.target
-  //   this.setState({
-  //     data: {
-  //       waist: value,
-  //     }
-  //   })
-  // }´
-
   handleSubmit(event) {
     event.preventDefault()
     this.setState({
       factorAnswersSubmitted: this.state.factor_answers
     })
+    console.log(this.state.database.get("mouthCancer"))
   }
 
   handleChange(event) {
@@ -112,7 +103,7 @@ class App extends React.Component {
         factor_answers: {
           ...prevState.factor_answers,
           [name]: value
-        }
+        },
       }
     })
     console.log(this.state)
@@ -131,35 +122,21 @@ class App extends React.Component {
   loadDatabase() {
     // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
     // This will load the data and then it will update the rendered view using setState.
-    this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
+    this.setState({
+      database: parseDatabase(testData),
+      hasLoadedDatabase: true
+    })
+    console.log(this.state.database)
   }
 
-  loadFactorDatabase() {
-    // load_factor_db.then((loaded_factor_data=> this.setState({hasLoadedFactorDatabase: false, factor_answers:loaded_factor_database})).
-    // This will load the data and then it will update the rendered view using setState.
-  }
+  // loadFactorDatabase() {
+  //   // load_factor_db.then((loaded_factor_data=> this.setState({hasLoadedFactorDatabase: false, factor_answers:loaded_factor_database})).
+  //   // This will load the data and then it will update the rendered view using setState.
+  // }
 
   componentDidMount() {
-    // Promise.all(
-    //   [json("https://raw.githubusercontent.com/chrand90/DeathCauses/master/compile/Causes_for_json")]//,
-    //   //json('../factor_database'), NOT IMPLEMENTED
-    //   //json('../basic_factor_answers') NOT IMPLEMENTED
-    // ).then((databases) => {
-    //   console.log(databases[0])
-    //   this.setState({ database: databases[0], hasLoadedDatabase: true });
-    // });
-    //Probably better to use: Promise all then
-    this.setState({
-      database: testData
-    }
-    )
-    var tmp = new Database(testData)
-    console.log(tmp)
+    this.loadDatabase()
   }
-
-
-
-
 
   renderQuestionMenu() {
     return (
@@ -188,7 +165,6 @@ class App extends React.Component {
       </div>
     );
   }
-
 }
 
 export default App;

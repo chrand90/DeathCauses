@@ -8,10 +8,6 @@ class Disease {
             rfg => new RiskFactorGroup(rfg)
         )
     }
-
-    testme() {
-        console.log("12345 it 67890 works")
-    }
 }
 
 export default Disease

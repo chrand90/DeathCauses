@@ -1,16 +1,14 @@
 import Frequency from "./Frequency"
-import {InteractionFunctions} from "./IntertactionFunctionEnum"
+import {Interactions} from "./IntertactionFunctionEnum"
+import RiskRatioTable from './RiskRatioTable'
 
 class RiskFactorGroup {
     constructor({normalizingFactors, interactionFunction, riskRatioTables}){
         this.normalizingFactors = new Frequency(normalizingFactors)
-
-        const INTERACTIONS = Object.freeze({
-            MULTIPLICATIVE: Symbol("multiplicative")
-        })
-
-        this.interactionFunction = INTERACTIONS[interactionFunction]
-        this.riskRatioTables = riskRatioTables
+        this.interactionFunction = Interactions.valueOf(interactionFunction)
+        this.riskRatioTables = riskRatioTables.map(
+            rrt =>new RiskRatioTable(rrt)
+        )
     }
 }
 

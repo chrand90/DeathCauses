@@ -20,7 +20,6 @@ class VizWindow extends React.PureComponent {
     };
 
     render() {
-        console.log(this.props)
         return (<div className='vizwindow'>
             <h4> Visualization Menu </h4>
                 
