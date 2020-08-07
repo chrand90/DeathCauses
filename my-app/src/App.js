@@ -5,7 +5,7 @@ import QuestionMenu from './Components/QuestionMenu.js';
 import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
-import customDate from './Causes.json'
+// import customDate from './Causes.json'
 
 class App extends React.Component {
   constructor(props) {
@@ -18,33 +18,38 @@ class App extends React.Component {
       database: null,
       factor_answers: {
         bmi: "",
+        gender: "",
         waist: "", //livvidde
+        race: "",
+
         caffeine: "", // kop kaffe, svarende til XYZ [mg koffein / dag]. Eventuelt hover over box med typiske koffein indhold i forskellige kaffetyper.
         fish: "", // [g fisk/uge]
         vegetables: "",
         fluids: "",
-        headTrauma: "",
-        drinking: "",
-        gender: "",
-        oralContraceptiveTypicalAmmount: "",
-        oralContraceptiveSinceStop: "",
-        physicalActivityTotal: "",
-        physicalActivityHard: "",
         redMeat: "",
-        hCVHistory: "",
-        iIVHistory: "",
-        diabetes: "",
+        greens: "",
+        indoorTanning: "",
+        pesticideExposureDays: "",
+
+        drinking: "",
+        maxDrinking: "",
+        
         smokeSinceStop: "", // afhænger af smokeIntensity. Tidsperiode i år.
         smokeTypicalAmmount: "", // [smøger / dag] mens man røg
         smokeIntensity: "", // nuværende forbrug af røg [smøger/dag]
         SmokeCumulative: "", // pack years. 1 pakke per dag i et år = 1 pack year. eventuelt erstart med smokeStart. 
-        indoorTanning: "",
-        race: "",
-        maxDrinking: "",
-        greens: "",
+
+        headTrauma: "",
+        hCVHistory: "",
+        iIVHistory: "",
+        diabetes: "",
         familyHistoryParkinson: "",
-        pesticideExposureDays: "",
         depression: "",
+
+        oralContraceptiveTypicalAmmount: "",
+        oralContraceptiveSinceStop: "",
+        physicalActivityTotal: "",
+        physicalActivityHard: "",
       },
       factorAnswersSubmitted: {
         bmi: "",
@@ -99,6 +104,7 @@ class App extends React.Component {
     this.setState({
       factorAnswersSubmitted: this.state.factor_answers
     })
+    console.log(this.state)
   }
 
   handleChange(event) {
@@ -113,7 +119,6 @@ class App extends React.Component {
         }
       }
     })
-    console.log(this.state)
   }
 
   visualize() {
@@ -129,7 +134,7 @@ class App extends React.Component {
   loadDatabase() {
     // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
     // This will load the data and then it will update the rendered view using setState.
-    this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
+    // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
   }
 
   loadFactorDatabase() {
@@ -147,10 +152,10 @@ class App extends React.Component {
     //   this.setState({ database: databases[0], hasLoadedDatabase: true });
     // });
     //Probably better to use: Promise all then
-    this.setState({
-      database: customDate
-    }
-    )
+    // this.setState({
+    //   database: customDate
+    // }
+    // )
   }
 
 
@@ -174,10 +179,10 @@ class App extends React.Component {
       <div className="App">
         <Header />
         <Row>
-          <Col md={3} xs={3} lg={3} sm={3} xl={3}>
+          <Col md={6} xs={6} lg={6} sm={6} xl={6}>
             {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
           </Col>
-          <Col md={9} xs={9} lg={9} sm={9} xl={9}>
+          <Col md={6} xs={6} lg={6} sm={6} xl={6}>
             {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"}
           </Col>
         </Row>

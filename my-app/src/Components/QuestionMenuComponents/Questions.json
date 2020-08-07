@@ -1,0 +1,20 @@
+{
+    "fish": {
+        "type": "checkbox",
+        "placeholder": "fish per week"
+    },
+    "Gender": {
+        "type": "select",
+        "placeholder": "Select gender",
+        "Options": [
+            {
+                "value": "male",
+                "text": "Male"
+            },
+            {
+                "value": "female",
+                "text": "Female"
+            }
+        ]
+    }
+}

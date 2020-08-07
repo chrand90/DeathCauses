@@ -2,16 +2,23 @@
     min-height: 600px;
     background: #dff179;
 }
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
 .form-inline {
-    width: 100%;
+    width: 90%;
   }
   
   .form-group {
-    width: 80%;
+    width: 96%;
+    align-items: center;
+    align-self: center;
   }
   
   .input-group {
-    width: 80% !important;
+    width: 60% !important;
   }
   
   .form-control {
