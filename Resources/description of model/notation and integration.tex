@@ -26,6 +26,11 @@
 \definecolor{red5}{rgb}{1,0.5,0.5}
 
 \definecolor{gron}{rgb}{0,0.6,0}
+
+\newcommand{\bigzero}{\mbox{\normalfont\Large\bfseries 0}}
+\newcommand{\rvline}{\hspace*{-\arraycolsep}\vline\hspace*{-\arraycolsep}}
+
+
 \begin{document}
 
 Lad $\omega$ være en amerikaner. Definer
@@ -1317,5 +1322,224 @@ som løses ved at invertere $k\times k$ matricen $B$. Når de $k$ y-værdier er 
 \mathbf{V}(j_1, \dots, j_n)^{-1} \mathbf{y}(j_1, \dots, j_n)
 \end{align}
 og koefficienterne sættes ind i risk ratio filerne.
+
+\subsection{Multivariate splines}
+
+\begin{figure}
+\centering
+\includegraphics[width=\textwidth]{natural_cubic_splines.pdf}
+\caption{For 6 punkter i $\{1,2,3,4,5,6\}$ vises her de De 4 sidste basisfunktioner for natural cubic splines.}\label{natural_cubic_spline}
+\end{figure}
+
+
+I stedet for eksplicit at modellere midtpunkterne mellem stykkerne, kan vi også modellere funktionen direkte. Hvis vi for eksempel tager den naturlige kubiske spline (se Figur \ref{natural_cubic_spline}) har den i en enkelt dimension basis
+\begin{align*}
+N_1(X)&=1\\, N_2(X)&=X\\
+N_{k+2}(X)&=\frac{(X-x_k)_+^3-(X-x_K)_+^3}{x_K-x_k}-\frac{(X-x_{K-1})^3_+-(X-x_K)^3_+}{x_K-x_{K-1}}\\
+&=\begin{lgathered}[t]\mathbb{I}(x_{K}\geq X>x_k)\frac{X^3-x_k^3+3Xx_k^2-3X^2x_k}{x_K-x_k}\\
+-\mathbb{I}(x_K\geq X>x_{K-1})\frac{X^3-x_{K-1}^3+3Xx_{K-1}^2-3X^2x_{K-1}}{x_K-x_{K-1}}\\
++\mathbb{I}(X>x_K)\frac{-x_k^3+x_K^3+3X(x_k^2-x_K^2)-3X^2(x_k-x_K)}{x_K-x_k}\\
+-\mathbb{I}(X>x_K)\frac{-x_{K-1}^3+x_K^3+3X(x_{K-1}^2-x_K^2)-3X^2(x_{K-1}-x_K)}{x_K-x_{K-1}}\\\end{lgathered}\\
+&=\begin{lgathered}[t]X^3\mathbb{I}(x_{K}\geq X>x_k) \Bigl(\frac{1}{x_K-x_k}-\frac{\mathbb{I}(X>x_{K-1})}{x_K-x_{K-1}}\Bigr)\\
++X^2\mathbb{I}(x_{K}\geq X>x_k) \Bigl(  \frac{-3x_k}{x_K-x_k}-\mathbb{I}( X>x_{K-1})\frac{-3x_{K-1}}{x_K-x_{K-1}}  \Bigr)\\
++X\mathbb{I}(X>x_k)\Bigl(
+           \begin{lgathered}[t]
+                        \frac{\mathbb{I}(X\leq x_K) 3x_k^2}{x_K-x_k}-\frac{\mathbb{I}(x_K\geq X>x_{K-1})3x_{K-1}^2}{x_{K}-x_{K-1}}\\
+                        +\mathbb{I}(X>x_K) \bigl(-3(x_K+x_k)+3(x_K+x_{K-1})\bigr)
+           \Bigr)
+ \end{lgathered}\\
+ + \mathbb{I}(x_{K}\geq X>x_k)\frac{-x_k^3}{x_K-x_k}-\mathbb{I}(x_{K}\geq X>x_{K-1})\frac{-x_{K-1}^3}{x_K-x_{K-1}}\\
++ \mathbb{I}(X>x_K)\Bigl(\frac{-x_k^3+x_K^3}{x_K-x_{k}}-\frac{-x_{K-1}^3+x_K^3}{x_K-x_{K-1}}\Bigr)
+\end{lgathered}
+\end{align*}
+Hvis vi har flere dimensioner dvs. $X_1, X_2, \dots X_N$ tager vi da basisen
+\begin{equation}
+\{1\}\cup \{N_k(X_i)\}_{i=1,\dots, N, k=2, \dots, K_i}\cup\Bigl\{N_k(X_i)N_l(X_j)\Bigr\}_{i\neq j\in \{1, \dots, N\}, k=2, \dots, K_i, l=2, \dots, K_j}
+\end{equation}
+Vi estimerer altså funktionen
+\begin{equation*}
+g(X_1, \dots, X_N)=\beta_1+\sum_{i=1}^N\sum_{j>i}^N \sum_{k=2}^{K_i}\sum_{l=2}^{K_j} \beta_{ijkl}N_k(X_i)N_l(X_j)+\sum_{i=1}^N\sum_{k=1}^{K_i}\beta_{ik}N_k(X_i)
+\end{equation*}
+hvor vi som likelihoodfunktion har
+\begin{equation*}
+r(f)|f| \sim N\Biggl(\int_f g(X_1, \dots, X_N) \textup{ d}(X_1, \dots, X_N), \sigma^2\Biggr)
+\end{equation*}
+for alle $f\in\mathcal F$. For at reducere overfitningen, bruger vi regulariseringen
+\begin{equation}
+\lambda \sum_{f\in\mathcal F} \int_f \sum_{i=1}^N \sum_{j=1}^N \Bigl(\frac{\partial g}{\partial X_i\partial X_j}\Bigr)^2  \textup{ d}(X_1, \dots, X_N)\label{regul}
+\end{equation}
+For $r\neq s$ er den inderste del på formen
+\begin{align*}
+\frac{\partial g}{\partial X_r\partial X_s} &= \sum_{i=1}^N\sum_{j>i}^N \sum_{k=2}^{K_i}\sum_{j=2}^{K_j} \beta_{ijkl}\frac{\partial }{\partial X_r\partial X_s} N_k(X_i)N_l(X_j)\\
+&=\sum_{k=2}^{K_r}\sum_{l=2}^{K_s} \beta_{rskl}N_k'(X_r)N_l'(X_s)
+\end{align*}
+og for $r= s$ på formen
+\begin{align}
+\frac{\partial g}{\partial X_r\partial X_r} &= \begin{lgathered}[t]\sum_{i=1}^N\sum_{j>i}^N \sum_{k=2}^{K_i}\sum_{j=2}^{K_j} \beta_{ijkl}\frac{\partial }{\partial X_r\partial X_r} N_k(X_i)N_l(X_j)\\
++\sum_{k=1}^{K_r}\beta_{rk}N_k''(X_r)
+\end{lgathered}\\
+&=\begin{lgathered}[t] \sum_{i=1}^{r-1} \sum_{k=2}^{K_r}\sum_{l=2}^{K_r} \beta_{irkl} N_k(X_i)N_l''(X_r)\\
++\sum_{j=r+1}^N \sum_{k=2}^{K_r}\sum_{l=2}^{K_r} \beta_{rjkl} N_k''(X_r)N_l(X_j)\\
++\sum_{k=1}^{K_r}\beta_{rk}N_k''(X_r)
+\end{lgathered}
+\end{align}
+%
+%Vi skriver da
+%\begin{align*}
+%\sum_{i=1}^{r-1}& \sum_{k=2}^{K_r}\sum_{l=2}^{K_r} \beta_{irkl} N_k(X_i)N_l''(X_r)+\sum_{j=r+1}^N \sum_{k=2}^{K_r}\sum_{l=2}^{K_r} \beta_{rjkl} N_k''(X_r)N_l(X_j)\\
+%&=\sum_{i=1, i\neq r}^{N} \sum_{k=2}^{K_r}\sum_{l=2}^{K_r} \beta_{irkl} N_k(X_i)N_l''(X_r)
+%\end{align*}
+%med konventionen $\beta_{irkl}=\beta_{rilk}$ når $r>i$. 
+
+Det vil sige at indmaden i \eqref{regul} bliver for $r\neq s$
+\begin{align}
+\sum_{k_1=2}^{K_r}\sum_{k_2=2}^{K_s}\sum_{l_1=2}^{K_r}\sum_{l_2=2}^{K_s} \beta_{rsk_1l_1}N_{k_1}'(X_r)N_{k_2}'(X_r)N_{l_1}'(X_s)N_{l_2}'(X_s)\beta_{rsk_2l_2} \label{regul_rneqs}
+\end{align}
+og for $r=s$ bliver den
+\begin{align}
+&\sum_{j_1=r+1}^N \sum_{k_1=2}^{K_r}\sum_{l_1=2}^{K_{j_1}} \sum_{j_2=r+1}^N \sum_{k_2=2}^{K_r}\sum_{l_2=2}^{K_{j_2}}
+ \beta_{rj_1k_1l_1} N_{k_1}''(X_r)N_{l_1}(X_{j_1})  N_{k_2}''(X_r)N_{l_2}(X_{j_2})\beta_{rj_2k_2l_2} \label{regul_reqs_j1j2}\\
+ &+\sum_{i_1=1}^{r-1} \sum_{k_1=2}^{K_{i_1}}\sum_{l_1=2}^{K_{r}} \sum_{i_2=1}^{r-1} \sum_{k_2=2}^{K_{i_2}}\sum_{l_2=2}^{K_{r}}
+ \beta_{i_1rk_1l_1} N_{k_1}(X_{i_1})N_{l_1}''(X_{r})  N_{k_2}(X_{i_2})N_{l_2}''(X_{r})\beta_{i_2rk_2l_2} \label{regul_reqs_i1i2}\\
+   &+ \sum_{k_1=2}^{K_r}\sum_{k_2=2}^{K_r}  \beta_{rk_1} N_{k_1}''(X_r)N_{k_2}''(X_r) \beta_{rk_2} \label{regul_reqs_k1k2}\\
+   &+2 \sum_{k_1=2}^{K_r}\sum_{j=r+1}^N\sum_{k_2=2}^{K_r}\sum_{l_2=2}^{K_{j}} \beta_{rk_1} \beta_{rjk_2l_2} N_{k_1}''(X_r)N_{k_2}''(X_r)N_{l_2}(X_j)\label{regul_reqs_k1j}\\
+   &+2 \sum_{k_1=2}^{K_r}\sum_{i=1}^{r-1}\sum_{k_2=2}^{K_{i}}\sum_{l_2=2}^{K_{r}} \beta_{rk_1} \beta_{irk_2l_2} N_{k_1}''(X_r)N_{k_2}(X_i)N_{l_2}''(X_r)\label{regul_reqs_k1i}\\
+      &+2 \sum_{j=r+1}^N \sum_{k_1=2}^{K_r} \sum_{l_2=2}^{K_{j}} \sum_{i=1}^{r-1}\sum_{k_2=2}^{K_{i}}\sum_{l_2=2}^{K_{r}} \beta_{rjk_1l_1} \beta_{irk_2l_2} N_{k_1}''(X_r)N_{l_1}(X_j)N_{k_2}(X_i)N_{l_2}''(X_r)\label{regul_reqs_k1i}
+ %&+2\sum_{j_1=1, j_1\neq r}^N \sum_{k_1=2}^{K_r}\sum_{l_1=2}^{K_{j_1}}\sum_{k_2=2}^{K_r} \beta_{rjkl} N_{k_1}''(X_r)N_{l_1}(X_{j_1})N_{k_2}''(X_r) \beta_{rk_2} \label{regul_reqs_j1}\\
+\end{align}
+
+Målet er nu at skrive \eqref{regul} på formen
+\begin{equation*}
+\lambda \beta^* W \beta.
+\end{equation*}
+Hvis vi betragter situationen udtrykket \eqref{regul_rneqs} ser vi at vi hvis vi definerer 
+\begin{equation*}
+\beta_{rs\bullet\bullet}^T=\begin{pmatrix}
+\beta_{rs2,2} &\beta_{rs2,3} &\dots & \beta_{rs2,K_s} &\beta_{rs3,2} & \dots & \beta_{rsK_rK_s}
+\end{pmatrix}
+\end{equation*}
+kan vi skrive \eqref{regul_rneqs} som 
+\begin{equation*}
+\beta_{rs\bullet\bullet}^TW_{rs}\beta_{rs\bullet\bullet}
+\end{equation*}
+hvor 
+\begin{equation}
+W_{rs}=\begin{pmatrix}
+w_{rs2,2,2,2} & w_{rs2,2,2,3}& \dots & w_{rs2,2,2,K_s} & w_{rs2,2,3,2} &\dots &w_{rs2,2,K_r,K_s}\\
+w_{rs2,3,2,2} &  w_{rs2,3,2,3} & \dots &&&&w_{rs2,3,K_r,K_s}\\
+\vdots &&\ddots &&&&\vdots\\
+w_{rsK_rK_s,2,2}&\dots &&&&&w_{rsK_rK_sK_rK_s}
+\end{pmatrix}
+\end{equation}
+hvor
+\begin{equation}
+w_{rsk_1,l_1,k_2,l_2}=N_{k_1}'(X_r)N_{l_1}'(X_s)N_{k_2}'(X_r)N_{l_2}'(X_s)
+\end{equation}
+
+Lad nu 
+\begin{align}
+\tilde w_{rsk_1,l_1,k_2,l_2}&= \sum_{f\in \mathcal F} \int_f w_{rsk_1,l_1,k_2,l_2} \textup{ d}(X_1, \dots, X_N)\\
+\tilde W_{rs}&=\sum_{f\in \mathcal F} \int_f W_{rs} \textup{ d}(X_1, \dots, X_N)\\
+\beta&= \begin{pmatrix}
+\beta_1\\
+\beta_{1,1}\\
+\beta_{1,2}\\
+\vdots\\
+\beta_{N,K_N}\\
+ \beta_{1,2\bullet\bullet}\\
+  \vdots\\
+   \beta_{N-1,N\bullet\bullet}
+\end{pmatrix}
+\end{align}
+Dimensionen af \(\beta\) er 
+\begin{equation*}
+1+\sum_{i=1}^N(K_i-1)+\sum_{i=1}^N\sum_{j>i}^N (K_i-1)(K_j-1)
+\end{equation*}
+For at finde bidraget af $r\neq s$ leddene fra \eqref{regul_rneqs}  i den samlede regularisering, \eqref{regul}, definerer jeg
+\begin{align}
+\tilde W_1&=\begin{pmatrix}
+\bigzero &\rvline &\cdot&\cdot&\cdot&\cdot\\
+\hline
+\cdot & \rvline& \tilde W_{12} &0 & \dots & 0 \\
+\cdot & \rvline&0 & \tilde W_{13} &  & \vdots \\
+\cdot &\rvline & \vdots &&\ddots &\\
+\cdot & \rvline & 0 &\dots & & \tilde W_{N-1,N}
+\end{pmatrix}
+\end{align}
+og da er regulariseringen fra $r\neq s$ leddene
+\begin{equation}
+\lambda \beta^T (2\tilde W_1) \beta
+\end{equation}
+For $r=s$ bliver det mere kompliceret. Når man kigger på leddene i \eqref{regul_reqs_j1j2} ser man at der er for et fast $j_1$ og $j_2$ står tilbage
+\begin{align*}
+\sum_{k_1=2}^{K_r}&\sum_{l_1=2}^{K_r} \sum_{k_2=2}^{K_r}\sum_{l_2=2}^{K_r}
+\beta_{rj_1k_1l_1} N_{k_1}''(X_r)N_{l_1}(X_{j_1})  N_{k_2}''(X_r)N_{l_2}(X_{j_2})\beta_{rj_2k_2l_2}\\
+\end{align*}
+For $r<j_1, r<j_2$ ses det at være
+\begin{equation}
+\beta_{rj_1\bullet \bullet}^T W_{(r,j_1),(r,j_2)} \beta_{rj_2\bullet\bullet}
+\end{equation}
+hvor $W_{(r,j_1), (r,j_2)}$ er matricen
+\begin{align}
+\begin{pmatrix}
+w_{rj_1rj_22,2,2,2} & w_{rj_1rj_22,2,2,3}& \dots & w_{rj_1rj_22,2,2,K_{j_2}}  &\dots &w_{rj_1rj_22,2,K_r,K_{j_2}}\\
+w_{rj_1rj_22,3,2,2} &  w_{rj_1rj_22,3,2,3} & \dots &&&w_{rj_1rj_22,3,K_r,K_{j_2}}\\
+\vdots &&\ddots &&&\vdots\\
+w_{rj_1rj_2K_rK_{j_1},2,2}&\dots &&&&w_{rj_1rj_2K_rK_{j_1}K_rK_{j_2}}
+\end{pmatrix}
+\end{align}
+hvor 
+\begin{equation}
+w_{rj_1rj_2k_1l_1k_2l_2}=N_{k_1}''(X_r)N_{l_1}(X_{j_1})  N_{k_2}''(X_r)N_{l_2}(X_{j_2})
+\end{equation}
+Når fx $r>j_1$ er problemet, at der ikke findes en $\beta_{rj_1\bullet\bullet}$. Der findes dog 
+
+
+Betragt nu \eqref{regul_reqs_j1} for et fast $j_1$. 
+\begin{equation}
+2 \sum_{k_1=2}^{K_r}\sum_{l_1=2}^{K_{j_1}}\sum_{k_2=2}^{K_r} \beta_{rj_1kl} N_{k_1}''(X_r)N_{l_1}(X_{j_1})N_{k_2}''(X_r) \beta_{rk_2}\label{regul_reqs_fixedj1}
+\end{equation}
+Lad nu 
+\begin{equation}
+\beta_{r\bullet}^T=\begin{pmatrix}
+\beta_{r2} &\dots & \beta_{rK_r}
+\end{pmatrix}=\begin{pmatrix}
+\beta_{rj2,1} &\beta_{rj3,1} & \dots & \beta_{rjK_r1}
+\end{pmatrix}
+\end{equation}
+og definer
+\begin{align}
+&W_{(r,0), (r,j_2)}\nonumber\\
+&=\begin{pmatrix}
+w_{r0rj_22,1,2,2} & w_{r0rj_22,1,2,3}& \dots & w_{r0rj_22,1,2,K_{j_2}}  &\dots &w_{r0rj_22,1,K_r,K_{j_2}}\\
+w_{r0rj_23,1,2,2} &  w_{r0rj_22,1,2,3} & \dots &&&w_{r0rj_22,1,K_r,K_{j_2}}\\
+\vdots &&\ddots &&&\vdots\\
+w_{r0rj_2K_r1,2,2}&\dots &&&&w_{r0rj_2K_r1K_rK_{j_2}}
+\end{pmatrix}\\
+&W_{(r,j_1),(r,0)}=W_{(r,0), (r,j_1)}^T
+\end{align}
+hvor 
+\begin{equation}
+w_{r0rjk_1,1,k_2,l_2}=N_{k_1}''(X_r)N_{l_1}(X_{j_1})N_{k_2}''(X_r)
+\end{equation}
+Da kan vi skrive \eqref{regul_reqs_fixedj1} som
+\begin{equation}
+2\beta_{rj_1\bullet\bullet}^T W_{(r,0),(r,j_1)} \beta_{r\bullet}=\beta_{rj_1\bullet\bullet}^TW_{(r,0),(r,j_1)}\beta_{r\bullet}+\beta_{r\bullet}^T W_{(r,j_1),(r,0)}\beta_{rj_1\bullet\bullet}
+\end{equation}
+
+Det sidste led, \eqref{regul_reqs} ses at være
+\begin{equation}
+\beta_{r\bullet}^T \Bigl\{N_{k_1}''(X_r)N_{k_2}(X_r)\Bigr\}_{k_1,k_2=2, \dots, K_r} \beta_{r\bullet}
+\end{equation}
+Vi kalder matricen $\Bigl\{N_{k_1}''(X_r)N_{k_2}(X_r)\Bigr\}_{k_1,k_2=2, \dots, K_r}$ for $W_0$. 
+
+
+
+For at udtrykke den fulde regularisering, \eqref{regul}, i formen $\beta^TW\beta$ mangler vi kun at få sat 
+
+
+
+
+
 
 \end{document}
