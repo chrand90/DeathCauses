@@ -39,7 +39,7 @@ def intersect_of_one_coordinate(*factor):
     '''
     factors=list(*factor) #making a list of all the factors.
     size,fact=intersect_and_size_of_one_coordinate(factors[0],factors[1])
-    for i in xrange(2,len(factors)):
+    for i in range(2,len(factors)):
         #print fact
         if fact is None:
             break
@@ -132,6 +132,12 @@ class factor_level(object):
             self.upperBound=None
             self.midPoint=None
             self.length=None
+
+    def asFiniteInterval(self):
+        if self.type=='x':
+            return [self.midPoint]
+        else:
+            return [self.lowerBound, self.upperBound]
     
     def getInterval(self, after_midpoint=False):
         if after_midpoint:
@@ -191,7 +197,7 @@ class factor_level(object):
 def interval_length(output_from_factor_type):
     assert output_from_factor_type[0]!='str', 'passed a string factor to interval_length'
     typ=output_from_factor_type[0]
-    print 'typ', typ
+    print('typ', typ)
     if typ=='x':
         return 0
     if typ=='-x' or typ=='y+':

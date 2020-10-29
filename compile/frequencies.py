@@ -4,7 +4,7 @@ import age_numbers
 import data_frame
 
 def getFrequencies(loc):
-    print loc
+    print(loc)
     files=[]
     data=[]
     
@@ -37,5 +37,6 @@ def getFrequencies(loc):
     return df
 
 if __name__=="__main__":
-    loc="D:\Users\Christian\Dropbox\Eclipse\DeathCauses3\Database\Causes\Alzheimers\ICDfiles"+os.sep
-    print getFrequencies(loc)
+    #loc="D:\Users\Christian\Dropbox\Eclipse\DeathCauses3\Database\Causes\Alzheimers\ICDfiles"+os.sep
+    #print(getFrequencies(loc))
+    pass

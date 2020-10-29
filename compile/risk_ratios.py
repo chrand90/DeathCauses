@@ -154,11 +154,11 @@ def tester_basic_intersection():
                             list_of_lists_of_factor_names,
                             list_of_resulting_factor_names)
     
-    print list_of_lists_of_factor_names
-    print list_of_lists_of_factor_levels
-    print "TEST1:", a==["0.5-2.0", "tr","5.0-6.0","2.0","0-1"]
+    print(list_of_lists_of_factor_names)
+    print(list_of_lists_of_factor_levels)
+    print("TEST1:", a==["0.5-2.0", "tr","5.0-6.0","2.0","0-1"])
     
-    print a
+    print(a)
     
 if __name__=="__main__":
     tester_basic_intersection()

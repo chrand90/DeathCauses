@@ -462,8 +462,8 @@ if __name__ == "__main__":
 #     print intersect_size_of_one_coordinate('10-20','20-30'),0
     writtenF={"Gender":["Male","Female"], "Sexuality":["Female","Male","Both","None"], "Drinking":["-5","5-10","10-20","20+"]}
     ldf= get_factor_probabilities(writtenF, "40-50")
-    print ldf
+    print(ldf)
     r=0
     for f in ldf.listOfRowsInTheDataFrame:
         r=r+float(f[-1])
-    print r
+    print(r)

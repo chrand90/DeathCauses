@@ -364,10 +364,43 @@ parse_formulas=function(function_equations){
   return(res)
 }
 
+parse_spline_formulas=function(function_equations){
+  res=list()
+  parse_formula=function(form){
+    parts=strsplit(form,split='+', fixed = T)[[1]]
+    nested_list=strsplit(parts, split='*', fixed=T)
+    evaluate_function_part=function(element, x){
+      if(substr(element,1,1)=='x'){
+        index=as.numeric(substr(element,2,nchar(element)-2))
+        degree=as.numeric(substr(element,nchar(element), nchar(element)))
+        return(x[index+1]^degree)
+      }
+      else{
+        return(as.numeric(element))
+      }
+    }
+    res_f=function(x){
+      res=0
+      for(i in 1:length(nested_list)){
+        mult=1
+        for(element in nested_list[[i]]){
+          mult=mult*evaluate_function_part(element, x)
+        }
+        res=res+mult
+      }
+      return(res)
+    }
+    return(res_f)
+  }
+  res=lapply(function_equations, parse_formula)
+  names(res) <- function_equations
+  return(res)
+}
+
 make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='function_equation'){
   rownames(df) <- df[,paste(fname,'factorlevel', sep='.')]
   function_equations=df[names(f$remapper),output]
-  funcs=parse_formulas(as.character(function_equations))
+  funcs=parse_spline_formulas(as.character(function_equations))
   yvals=funcs[[1]](f$plotting_limits[1])
   for(i in 1:length(funcs)){
     yvals=c(yvals, funcs[[i]](f$plotting_limits[i+1]))
@@ -388,7 +421,7 @@ make_two_dimensional_interpolation_plotting_file=function(df, fs, fnames, output
   colnames(res_df) <- fnames
   res_df %>% mutate(identifier=do.call(interaction, c(sapply(fnames, function(x) sym(x)), list(sep=',')))) -> res_df
   function_equations= df2[as.character(res_df$identifier),output]
-  funcs=parse_formulas(as.character(function_equations))
+  funcs=parse_spline_formulas(as.character(function_equations))
   list_of_pieces=list()
   for(i in 1:nrow(res_df)){
     cat1=res_df[i,fnames[1]]

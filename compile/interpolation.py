@@ -3,6 +3,10 @@ from numpy.linalg import inv
 from factor_levels import factor_type, NUMERICAL_FACTOR_TYPES, interval_length, factor_level
 from itertools import product
 from data_frame import data_frame
+from spline import make_spline_system, get_maximum_likelihood_estimate
+
+
+
 
 def get_subset(i):
     '''
@@ -165,7 +169,7 @@ class InterpolationCorner(object):
         return res
         
     def fill_Bmatrix(self):
-        print self.factor_point_index
+        print(self.factor_point_index)
         for i,h in enumerate(self.H):
             j=[fi if include else fi-1 for fi,include in zip(self.factor_point_index, get_subset_iterator_full(i,len(self.factor_point_index)))]
                                                     
@@ -245,7 +249,7 @@ def Hfunction(in_pairs, out_pairs):
         
         
 
-def get_interpolatable(factor_levels):
+def get_interpolatable(factor_levels, order_factor_names=None):
     '''
     input: dictionary {factor1: ['f_1^1', ..., 'f_{k_1}^1'],
                        factor2: ['f_1^2', ..., 'f_{k_2}^2'],
@@ -256,12 +260,17 @@ def get_interpolatable(factor_levels):
     This function returns the factors that are egligible for interpolation, that is, all of the values are numeric
     '''
     interpolatable_factors=[]
-    for factor_name, factor_values in factor_levels.items():
+    if order_factor_names is None:
+        factor_names=list(factor_levels.keys())
+    else:
+        factor_names=order_factor_names
+    for factor_name in factor_names:
+        factor_values=factor_levels[factor_name]
         all_numeric=True
         seen_interval=False
         for f in factor_values:
             ft=factor_type(f)[0]
-            print f, ft
+            print(f, ft)
             if not ft in NUMERICAL_FACTOR_TYPES:
                 all_numeric=False
             if ft=='x-y':
@@ -314,7 +323,7 @@ def compute_midpoints(levels_vector):
 
 def sort_and_expand(levels_vector):
     '''this function sorts the factor levels inside the levels_vector'''
-    levs_full=map(factor_level, levels_vector)
+    levs_full=list(map(factor_level, levels_vector))
     unsorted_avgs=[f.average() for f in levs_full]
     return [x for _,x in sorted(zip(unsorted_avgs,levs_full))]
 
@@ -351,7 +360,54 @@ def get_string_factors_sorted(reverse_order_dic, corner_dic):
         factor_l=tuple((f.string for f in fp))
         res.append(factor_l)
     return res
-        
+
+def interpolate_one_spline(RR):
+    factor_names=RR.get_FactorNames()
+    factor_levels=RR.get_categories(factor_names)
+    interpolatable_factors=get_interpolatable(factor_levels, factor_names)
+    if interpolatable_factors:
+        non_interpolatable_factors=[f for f in factor_names if f not in interpolatable_factors]
+        RRs= RR.group_by(non_interpolatable_factors)
+        interpolation_levels=[sort_and_expand(factor_levels[v]) for v in factor_names if v in interpolatable_factors]
+        for i_levs in interpolation_levels:
+            compute_midpoints(i_levs)
+        k_vec = list(map(len, interpolation_levels))
+        k = prod(k_vec)
+        check_grid(RRs.values(), k)
+        level_dics = []
+        for interpolation_levels_d in interpolation_levels:
+            ndic = {interpolation_level.string: interpolation_level for interpolation_level in interpolation_levels_d}
+            level_dics.append(ndic)
+        ss=make_spline_system(interpolation_levels)
+        ss.create_W_matrix()
+        res=collect_interpolated_data_frame_spline(non_interpolatable_factors=non_interpolatable_factors,
+                                                   interpolated_factors=interpolatable_factors,
+                                                   grouped_risk_ratios=RRs,
+                                                   level_dics=level_dics,
+                                                   spline_system=ss)
+        return res
+
+def collect_interpolated_data_frame_spline(non_interpolatable_factors,
+                                           interpolated_factors,
+                                           grouped_risk_ratios,
+                                           level_dics,
+                                           spline_system):
+    credibility = next(iter(grouped_risk_ratios.values())).get_credibility()
+    new_data_frame = data_frame(non_interpolatable_factors + interpolated_factors, credibility)
+    for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
+        yvals=[]
+        X=[]
+        for facts, y in RR.get_as_list_of_lists():
+            yvals.append(y)
+            int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
+            X.append(spline_system.get_beta_row(int_levels_for_row))
+        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=0.005)
+        for facts, y in RR.get_as_list_of_lists():
+            int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
+            form = spline_system.formula(int_levels_for_row, betas)
+            row = list(non_interpolated_factor_values)+list(facts)+[[interpolated_factors, form, min(yvals), max(yvals)]]
+            new_data_frame.addRow(row)
+    return new_data_frame
 
 def interpolate_one(RR):
     factor_names=RR.get_FactorNames()
@@ -363,10 +419,10 @@ def interpolate_one(RR):
         interpolation_levels=[sort_and_expand(factor_levels[v]) for v in factor_names if v in interpolatable_factors]
         for i_levs in interpolation_levels:
             compute_midpoints(i_levs)
-        k_vec=map(len, interpolation_levels)
+        k_vec=list(map(len, interpolation_levels))
         for r in RRs.values():
-            print r
-        print [[str(f) for f in il] for il in interpolation_levels], k_vec, [len(R) for R in RRs.values()]
+            print(r)
+        print([[str(f) for f in il] for il in interpolation_levels], k_vec, [len(R) for R in RRs.values()])
         k=prod(k_vec)
         check_grid(RRs.values(), k)
         cd, int_keys= initialize_InterpolationCorners(interpolation_levels)
@@ -391,9 +447,11 @@ def interpolate_one(RR):
     else:
         return None    
             
-        #tildeAs_andZs=[compute_midpoints(lev_vec) for lev_vec in interpolation_levels]
-        
-        
+
+
+
+
+# tildeAs_andZs=[compute_midpoints(lev_vec) for lev_vec in interpolation_levels]
 def collect_interpolated_data_frame(non_interpolatable_factors,
                                     interpolated_factors,
                                     grouped_risk_ratios,
@@ -403,7 +461,7 @@ def collect_interpolated_data_frame(non_interpolatable_factors,
                                     Bi,
                                     factor_tuples_to_k_index_dic #also called order_dic
                                     ):
-    credibility=grouped_risk_ratios[grouped_risk_ratios.keys()[0]].get_credibility()
+    credibility=next(iter(grouped_risk_ratios.values())).get_credibility()
     new_data_frame=data_frame(non_interpolatable_factors+interpolated_factors, credibility)
     for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
         rs=RR.get_last_column_in_specific_order(sorted_string_factors)
@@ -437,13 +495,13 @@ def tester():
     yfacts=['-3','3-5','5+']
     x=sort_and_expand(xfacts)
     y=sort_and_expand(yfacts)
-    print [str(f) for f in x]
-    print [str(f) for f in y]
+    print([str(f) for f in x])
+    print([str(f) for f in y])
     compute_midpoints(x)
     compute_midpoints(y)
-    print ''
-    print [str(f) for f in x]
-    print [str(f) for f in y]
+    print('')
+    print([str(f) for f in x])
+    print([str(f) for f in y])
     corner_dic={
         (0,0): InterpolationCorner([x[0],y[0]],(0,0)),
         (0,1): InterpolationCorner([x[0],y[1]],(0,1)),
@@ -468,13 +526,13 @@ def tester():
                                 corner_dic[(1,2)], 
                                 corner_dic[(2,2)]])
     for k,v in corner_dic.items():
-        print k, v.str_risk_ratio_area()
+        print(k, v.str_risk_ratio_area())
         
     for j in [(0,0),(1,0),(0,1),(1,1)]:
         v=corner_dic[j]
         v.computeV()
         v.invertV()
-        print v.V
+        print(v.V)
         
     set_interpolation_area_bounds(corner_dic,  [(0,0),(1,0),(0,1),(1,1)], [2,2])
     
@@ -482,8 +540,8 @@ def tester():
     
     for k,v in corner_dic.items():
         if k in [(0,0),(1,0),(0,1),(1,1)]:
-            print k, v.str_interpolation_area()
-            print v.iV.dot(yvals)
+            print(k, v.str_interpolation_area())
+            print(v.iV.dot(yvals))
     
         
             
