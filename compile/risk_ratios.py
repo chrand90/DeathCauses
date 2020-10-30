@@ -22,18 +22,21 @@ def loadRRs(writtenF_dir):
     for fileName in listOfFiles:
         j=0
         fileLoc=os.path.join(path,fileName)
+        lambd=0.005 # default value for the lambda in spline computations.
         with open(fileLoc) as f:
             for line in f:
                 if not line.startswith("#"):
                     if j==0:
                         splittedLine=line.split()
                         factorName=splittedLine[:-1]
-                        df=data_frame(factorName,0)
+                        df=data_frame(factorName,lambd)
                         j=j+1
                     else:
                         splittedLine=line.split()
                         splittedLine[-1]=float(splittedLine[-1])
                         df.addRow(splittedLine)
+                elif 'lambda=' in line:
+                    lambd=float(line.split('=')[1].strip())
                         
         dataframes.append(df)
 

@@ -385,7 +385,10 @@ def interpolate_one_spline(RR):
                                                    grouped_risk_ratios=RRs,
                                                    level_dics=level_dics,
                                                    spline_system=ss)
+        res.order_columns(factor_names)
         return res
+    else:
+        return None
 
 def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                            interpolated_factors,
@@ -401,7 +404,7 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
             yvals.append(y)
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             X.append(spline_system.get_beta_row(int_levels_for_row))
-        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=0.005)
+        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=credibility)
         for facts, y in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             form = spline_system.formula(int_levels_for_row, betas)

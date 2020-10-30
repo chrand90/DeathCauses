@@ -750,7 +750,7 @@ def evaluate_polynomial(coefs, z, normalization):
 def stringify_formula_dic(fdic):
     terms=[]
     for term, coef in fdic.items():
-        if not (-1e-10 < coef < 1e-10):
+        if coef!=0:
             if len(term)==0:
                 terms.append('{c}'.format(c=str(coef)))
             elif len(term)==2:
@@ -819,28 +819,28 @@ def get_random_point_in_lim(lims):
 
 def test_interpolation():
     from risk_ratios import loadRRs
-    RR = loadRRs('../Database/Causes/Cancer/MouthCancer/rr_Drinking-SmokeIntensity')[0]
+    RR = loadRRs('../Database/Causes/Cancer/LungCancer/rr_SmokeTypicalAmmount-SmokeSinceStop')[0]
     from interpolation import sort_and_expand, compute_midpoints
-    factor_levels = RR.get_categories(['Drinking', 'SmokeIntensity'])
-    interpolation_levels = [sort_and_expand(factor_levels['Drinking']), sort_and_expand(factor_levels['SmokeIntensity'])]
+    factor_levels = RR.get_categories(['SmokeTypicalAmmount', 'SmokeSinceStop'])
+    interpolation_levels = [sort_and_expand(factor_levels['SmokeTypicalAmmount']), sort_and_expand(factor_levels['SmokeSinceStop'])]
     compute_midpoints(interpolation_levels[0])
     compute_midpoints(interpolation_levels[1])
 
 
-    print('Drinking')
+    print('SmokeTypicalAmmount')
     for l in interpolation_levels[0]:
         print('\t',l)
-    print('SmokeIntensity')
+    print('SmokeSinceStop')
     for l in interpolation_levels[1]:
         print('\t',l)
     level_dics=[
         {interpolation_level.string: interpolation_level for interpolation_level in interpolation_levels[0]},
         {interpolation_level.string: interpolation_level for interpolation_level in interpolation_levels[1]},
     ]
-    print('Drinking')
+    print('SmokeTypicalAmmount')
     for l,v in level_dics[0].items():
         print('\t',l,':',v)
-    print('SmokeIntensity')
+    print('SmokeSinceStop')
     for l,v in level_dics[1].items():
         print('\t',l,':',v)
     ss=make_spline_system(interpolation_levels)
