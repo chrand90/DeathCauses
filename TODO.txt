@@ -1,0 +1,9 @@
+TODO:
+
+- indfør typescript
+- Fix normaliseringsfaktorer
+- Udregning af risk ratio for alle aldre og gem i objekt
+- Funktionalitet til minimering af lokal risk ratio (eq 10)
+- Funktionalitet til udregning af key indicators (forventet levealder, sandsynlighed for at dø af d, osv.)
+- Visualisering/grafer i d3?
+

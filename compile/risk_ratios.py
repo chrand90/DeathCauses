@@ -22,18 +22,21 @@ def loadRRs(writtenF_dir):
     for fileName in listOfFiles:
         j=0
         fileLoc=os.path.join(path,fileName)
+        lambd=0.005 # default value for the lambda in spline computations.
         with open(fileLoc) as f:
             for line in f:
                 if not line.startswith("#"):
                     if j==0:
                         splittedLine=line.split()
                         factorName=splittedLine[:-1]
-                        df=data_frame(factorName,0)
+                        df=data_frame(factorName,lambd)
                         j=j+1
                     else:
                         splittedLine=line.split()
                         splittedLine[-1]=float(splittedLine[-1])
                         df.addRow(splittedLine)
+                elif 'lambda=' in line:
+                    lambd=float(line.split('=')[1].strip())
                         
         dataframes.append(df)
 
@@ -154,11 +157,11 @@ def tester_basic_intersection():
                             list_of_lists_of_factor_names,
                             list_of_resulting_factor_names)
     
-    print list_of_lists_of_factor_names
-    print list_of_lists_of_factor_levels
-    print "TEST1:", a==["0.5-2.0", "tr","5.0-6.0","2.0","0-1"]
+    print(list_of_lists_of_factor_names)
+    print(list_of_lists_of_factor_levels)
+    print("TEST1:", a==["0.5-2.0", "tr","5.0-6.0","2.0","0-1"])
     
-    print a
+    print(a)
     
 if __name__=="__main__":
     tester_basic_intersection()

@@ -1,5 +1,5 @@
 def initialize_data_frame_by_columns(values_list, **kwargs):
-    keys=kwargs.keys()
+    keys=list(kwargs.keys())
     df=data_frame(keys, credibility=0)
     assert keys, 'no keyword arguments passed to this function. Why do you want to make an empty dataframe?'
     n=len(kwargs[keys[0]])

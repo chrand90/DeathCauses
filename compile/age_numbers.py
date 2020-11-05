@@ -36,7 +36,7 @@ def get_age_distribution():
     return df
 
 if __name__=="__main__":
-	print POPULATION_FILE_PATH
+	print(POPULATION_FILE_PATH)
 	#print get_age_distribution()
     #print get_age_totals()
     

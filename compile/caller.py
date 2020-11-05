@@ -1,5 +1,5 @@
 from frequencies import getFrequencies
-from interpolation import interpolate_one
+from interpolation import interpolate_one, interpolate_one_spline
 import factor_probabilities
 import os
 import time
@@ -36,7 +36,7 @@ def integrate_all_in_folder(age_intervals, folder):
             for RR in RRs:
                 RRlist=RR.get_as_list_of_lists()
                 factor_names=RR.get_FactorNames()
-                interpolated_RR_or_empty=interpolate_one(RR)
+                interpolated_RR_or_empty=interpolate_one_spline(RR)
                 if interpolated_RR_or_empty is None: #checking if there was something to interpolate
                     interpolated_RR=[]
                 else:
@@ -155,8 +155,8 @@ def get_cause_hierarchy(folder):
 
 if __name__ == "__main__":
     start=time.time()
-    print [f for f in os.walk(os.path.join(os.pardir, "Database", 'Causes'))]
-    print get_cause_hierarchy('Causes')
+    print([f for f in os.walk(os.path.join(os.pardir, "Database", 'Causes'))])
+    print(get_cause_hierarchy('Causes'))
     alist= search_for_writtenF_directories("Causes")
     #print alist
     #run()
@@ -175,4 +175,4 @@ if __name__ == "__main__":
      
     #make_simultane_and_get_writtenF(res,multiplicative(1,2))
     end=time.time()
-    print end-start
+    print(end-start)

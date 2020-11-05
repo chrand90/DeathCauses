@@ -364,16 +364,64 @@ parse_formulas=function(function_equations){
   return(res)
 }
 
+parse_spline_formulas=function(function_equations){
+  res=list()
+  parse_formula=function(form){
+    parts=strsplit(form,split='+', fixed = T)[[1]]
+    nested_list=strsplit(parts, split='*', fixed=T)
+    evaluate_function_part=function(element, x){
+      if(substr(element,1,1)=='x'){
+        index=as.numeric(substr(element,2,nchar(element)-2))
+        degree=as.numeric(substr(element,nchar(element), nchar(element)))
+        return(x[index+1]^degree)
+      }
+      else{
+        return(as.numeric(element))
+      }
+    }
+    res_f=function(x){
+      res=0
+      for(i in 1:length(nested_list)){
+        mult=1
+        for(element in nested_list[[i]]){
+          mult=mult*evaluate_function_part(element, x)
+        }
+        res=res+mult
+      }
+      return(res)
+    }
+    return(res_f)
+  }
+  res=lapply(function_equations, parse_formula)
+  names(res) <- function_equations
+  return(res)
+}
+
 make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='function_equation'){
   rownames(df) <- df[,paste(fname,'factorlevel', sep='.')]
   function_equations=df[names(f$remapper),output]
-  funcs=parse_formulas(as.character(function_equations))
-  yvals=funcs[[1]](f$plotting_limits[1])
-  for(i in 1:length(funcs)){
-    yvals=c(yvals, funcs[[i]](f$plotting_limits[i+1]))
+  funcs=parse_spline_formulas(as.character(function_equations))
+  #yvals=funcs[[1]](f$plotting_limits[1])
+  #xvals=f$plotting_limits[1]
+  N=33
+  to_plot=N-length(f$plotting_limits)
+  xfrom=min(f$plotting_limits)+0.01*diff(range(f$plotting_limits))
+  xto=min(f$plotting_limits)+0.99*diff(range(f$plotting_limits))
+  xvals=c(f$plotting_limits, seq(xfrom,xto, length.out = to_plot))
+  midpoints=c(rep('Yes',length(f$plotting_limits)), rep('No',to_plot))
+  data.frame(x=xvals, m=midpoints) %>% arrange(x) -> res_df
+  yvals=numeric(nrow(res_df))
+  func_index=1
+  print(res_df)
+  print(f$plotting_limits)
+  print(length(funcs))
+  for(i in 1:nrow(res_df)){
+    while(func_index<length(funcs) && res_df$x[i]>f$plotting_limits[func_index+1]+1e-6){
+      func_index=func_index+1
+    }
+    yvals[i]=funcs[[func_index]](res_df$x[i])
   }
-  xvals=f$plotting_limits
-  res_df=data.frame(y=yvals, x=xvals)
+  res_df$y=yvals
   return(res_df)
 }
 
@@ -388,7 +436,7 @@ make_two_dimensional_interpolation_plotting_file=function(df, fs, fnames, output
   colnames(res_df) <- fnames
   res_df %>% mutate(identifier=do.call(interaction, c(sapply(fnames, function(x) sym(x)), list(sep=',')))) -> res_df
   function_equations= df2[as.character(res_df$identifier),output]
-  funcs=parse_formulas(as.character(function_equations))
+  funcs=parse_spline_formulas(as.character(function_equations))
   list_of_pieces=list()
   for(i in 1:nrow(res_df)){
     cat1=res_df[i,fnames[1]]
@@ -466,8 +514,8 @@ plot_interpolation_table=function(df, interpolatable_factors, factors, subtitle=
     xticks=factors[[interpolatable_factors[1]]]$tick_strings
     xtick_positions=factors[[interpolatable_factors[1]]]$tick_positions
     q <- ggplot(p_df, aes(x=x, y=y))+
-      geom_line()+geom_point()+
-      geom_text(aes(x=x,y=y*1.05, label=round(y, digits=3)), color='black')+
+      geom_line()+geom_point(data=filter(p_df, m=='Yes'))+
+      geom_text(data=filter(p_df, m=='Yes'), aes(x=x,y=y*1.05, label=round(y, digits=3)), color='black')+
       ggtitle(subtitle)+
       xlab(interpolatable_factors)+ylab('Interpolated RR')+
       scale_x_continuous(breaks = xtick_positions,
