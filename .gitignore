@@ -4,6 +4,9 @@
 /my-app/node_modules
 /my-app/.pnp
 /my-app/.pnp.js
+/death-causes-app/node_modules
+/death-causes-app/.pnp
+/death-causes-app/.pnp.js
 
 # testing
 /my-app/coverage
@@ -38,6 +41,9 @@ npm-debug.log
 
 # intellij ide
 /.idea
+
+# log files
+**/*.log
 
 # any R histories that may be saved
 *.Rhistory
