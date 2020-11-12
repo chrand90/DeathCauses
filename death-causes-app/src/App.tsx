@@ -1,129 +1,60 @@
 import React from 'react';
 import './App.css';
 import Header from './components/Header';
-// import QuestionMenu from './Components/QuestionMenu.js';
+import QuestionMenu from './components/QuestionMenu';
 // import VizWindow from './Components/VizWindow.js';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
 import causesData from './resources/Causes.json'
+import Factors from './models/Factors';
 
-interface I_factor_answer {
-  bmi: number,
+interface AppState {
+  hasLoadedFactorAnswers: boolean,
+  hasLoadedDatabase: boolean,
+  hasLoadedFactorDatabase: boolean,
+  factorDatabase: any,
+  factorAnswers: Factors
+  factorAnswersSubmitted: Factors|null
 }
 
-class App extends React.Component<any, any> {
+class App extends React.Component<any, AppState> {
   constructor(props: any) {
     super(props);
-    this.state = {
-      hasLoadedFactorAnswers: true, //indicates whether the initial factors havent been read from the file. In the
-      hasLoadedDatabase: true, //indicates whether the database hasnt been loaded from the file
+
+    this.state  = {
+      hasLoadedFactorAnswers: true,
+      hasLoadedDatabase: true,
       hasLoadedFactorDatabase: true,
-      factor_database: null, //indicates any data about the factors. For example, how should the question be formulated.
-      database: null,
-      factor_answers: {
-        bmi: "",
-        waist: "", //livvidde
-        caffeine: "", // kop kaffe, svarende til XYZ [mg koffein / dag]. Eventuelt hover over box med typiske koffein indhold i forskellige kaffetyper.
-        fish: "", // [g fisk/uge]
-        vegetables: "",
-        fluids: "",
-        headTrauma: "",
-        drinking: "",
-        gender: "",
-        oralContraceptiveTypicalAmmount: "",
-        oralContraceptiveSinceStop: "",
-        physicalActivityTotal: "",
-        physicalActivityHard: "",
-        redMeat: "",
-        hCVHistory: "",
-        iIVHistory: "",
-        diabetes: "",
-        smokeSinceStop: "", // afhænger af smokeIntensity. Tidsperiode i år.
-        smokeTypicalAmmount: "", // [smøger / dag] mens man røg
-        smokeIntensity: "", // nuværende forbrug af røg [smøger/dag]
-        SmokeCumulative: "", // pack years. 1 pakke per dag i et år = 1 pack year. eventuelt erstart med smokeStart. 
-        indoorTanning: "",
-        race: "",
-        maxDrinking: "",
-        greens: "",
-        familyHistoryParkinson: "",
-        pesticideExposureDays: "",
-        depression: "",
-      },
-      factorAnswersSubmitted: {
-        bmi: "",
-        waist: "", //livvidde
-        caffeine: "", // kop kaffe, svarende til XYZ [mg koffein / dag]. Eventuelt hover over box med typiske koffein indhold i forskellige kaffetyper.
-        fish: "", // [g fisk/uge]
-        vegetables: "",
-        fluids: "",
-        headTrauma: "",
-        drinking: "",
-        gender: "",
-        oralContraceptiveTypicalAmmount: "",
-        oralContraceptiveSinceStop: "",
-        physicalActivityTotal: "",
-        physicalActivityHard: "",
-        redMeat: "",
-        hCVHistory: "",
-        iIVHistory: "",
-        diabetes: "",
-        smokeSinceStop: "", // afhænger af smokeIntensity. Tidsperiode i år.
-        smokeTypicalAmmount: "", // [smøger / dag] mens man røg
-        smokeIntensity: "", // nuværende forbrug af røg [smøger/dag]
-        SmokeCumulative: "", // pack years. 1 pakke per dag i et år = 1 pack year. eventuelt erstart med smokeStart. 
-        indoorTanning: "",
-        race: "",
-        maxDrinking: "",
-        greens: "",
-        familyHistoryParkinson: "",
-        pesticideExposureDays: "",
-        depression: "",
-      }
-    };
+      factorDatabase: undefined,
+      factorAnswers: new Factors(),
+      factorAnswersSubmitted: null
+    }
+
     this.handleChange = this.handleChange.bind(this)
     this.handleSubmit = this.handleSubmit.bind(this)
   };
 
-  test = () => {
-    console.log(this.state.database)
-  }
-
-  // callbackFunction(event) {
-  //   const { name, value } = event.target
-  //   this.setState({
-  //     data: {
-  //       waist: value,
-  //     }
-  //   })
-  // }´
-
-  handleSubmit(event: Event) {
+  handleSubmit(event: Event): void {
     event.preventDefault()
     this.setState({
-      factorAnswersSubmitted: this.state.factor_answers
+      factorAnswersSubmitted: this.state.factorAnswers
     })
   }
 
-  handleChange(event: React.FormEvent<HTMLInputElement>) {
+  handleChange(event: React.FormEvent<HTMLInputElement>): void {
     var value: any
     const { name, type } = event.currentTarget
     type === "checkbox" ? value = event.currentTarget.checked : value = event.currentTarget.value
-    this.setState((prevState: { factor_answers: I_factor_answer}) => {
+    this.setState<any>((prevState: { factorAnswers: Factors }) => {
       return {
-        factor_answers: {
-          ...prevState.factor_answers,
+        factorAnswers: {
+          ...prevState.factorAnswers,
           [name]: value
         }
       }
     })
     console.log(this.state)
   }
-
-  visualize() {
-    //this should re-render the view with the new factor values that was changed by QuestionMenu. 
-    // this.setState({ factor_answers: this.state.factor_answers });
-  };
 
   loadFactorAnswers() {
     // load_factor_answers.then((loaded_factor_answers)=> this.setState({hasLoadedFactorAnswers: false, factor_answers:loaded_factor_answers})).
@@ -142,29 +73,16 @@ class App extends React.Component<any, any> {
   }
 
   componentDidMount() {
-    // Promise.all(
-    //   [json("https://raw.githubusercontent.com/chrand90/DeathCauses/master/compile/Causes_for_json")]//,
-    //   //json('../factor_database'), NOT IMPLEMENTED
-    //   //json('../basic_factor_answers') NOT IMPLEMENTED
-    // ).then((databases) => {
-    //   console.log(databases[0])
-    //   this.setState({ database: databases[0], hasLoadedDatabase: true });
-    // });
-    //Probably better to use: Promise all then
     this.setState({
-      database: causesData
+      factorDatabase: causesData
     }
     )
   }
 
-
-
-
-
   renderQuestionMenu() {
     return (
-      <div>QuestionMenu</div>
-      // <QuestionMenu factor_answers={this.state.factor_answers} factor_database={this.factor_database} handleChange={this.handleChange} test={this.test} handleSubmit={this.handleSubmit} />
+      // <div>QuestionMenu</div>
+      <QuestionMenu factors={this.state.factorAnswers} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />
     );
   }
 
