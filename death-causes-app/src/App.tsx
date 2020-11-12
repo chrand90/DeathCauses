@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import Header from './components/Header';
 // import QuestionMenu from './Components/QuestionMenu.js';
-// import VizWindow from './Components/VizWindow.js';
+import VizWindow from './components/VizWindow';
 import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
 import causesData from './resources/Causes.json'
@@ -170,8 +170,7 @@ class App extends React.Component<any, any> {
 
   renderVizWindow() {
     return (
-      <div>VizWindowDog</div>
-      // <VizWindow database={this.state.database} factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
+       <VizWindow database={this.state.database} factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
     );
   }
 
