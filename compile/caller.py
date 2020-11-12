@@ -29,8 +29,10 @@ def integrate_all_in_folder(age_intervals, folder):
             riskfactorgroup={}
             normalizers, RRs, string_interaction_name=integrate_one(rr_dir,age_intervals, age_distribution)
             
-            normalizer_age_object=initialize_data_frame_by_columns(values_list=normalizers, Age=Ages).get_as_standard_age_prevalences()
-            riskfactorgroup['normalisingFactors']=normalizer_age_object
+            normalizer_age_object=initialize_data_frame_by_columns( Age=Ages, values_list=normalizers)
+            print('normalizer age object -----------------------------------------------------')
+            print(normalizer_age_object)
+            riskfactorgroup['normalisingFactors']=normalizer_age_object.get_as_standard_age_prevalences()
             riskfactorgroup['interactionFunction']=string_interaction_name
             riskratiotables=[]
             for RR in RRs:
