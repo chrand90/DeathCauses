@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent } from 'react';
 import './QuestionMenu.css';
 import Button from 'react-bootstrap/Button';
 import { Row, Col, Form } from 'react-bootstrap';
@@ -6,8 +6,8 @@ import Factors from '../models/Factors';
 
 interface I_QuestionMenu {
   factors: Factors,
-  handleChange: any,
-  handleSubmit: any;
+  handleChange: (e: ChangeEvent<HTMLInputElement>) => void,
+  handleSubmit: (e: React.MouseEvent) => void;
 }
 
 class QuestionMenu extends React.Component<I_QuestionMenu> {

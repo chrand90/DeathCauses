@@ -28,6 +28,13 @@ class Factors {
     familyHistoryParkinson: boolean = false;
     pesticideExposureDays: number = 0;
     depression: boolean = false;
+
+    // constructor() {
+    //     this.bmi = 22;
+    //     this.age = 45;
+
+    // }
+
 }
 
 export default Factors;

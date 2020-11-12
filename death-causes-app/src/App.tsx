@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ChangeEvent, MouseEvent } from 'react';
 import './App.css';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
@@ -14,14 +14,14 @@ interface AppState {
   hasLoadedFactorDatabase: boolean,
   factorDatabase: any,
   factorAnswers: Factors
-  factorAnswersSubmitted: Factors|null
+  factorAnswersSubmitted: Factors | null
 }
 
 class App extends React.Component<any, AppState> {
   constructor(props: any) {
     super(props);
 
-    this.state  = {
+    this.state = {
       hasLoadedFactorAnswers: true,
       hasLoadedDatabase: true,
       hasLoadedFactorDatabase: true,
@@ -34,14 +34,14 @@ class App extends React.Component<any, AppState> {
     this.handleSubmit = this.handleSubmit.bind(this)
   };
 
-  handleSubmit(event: Event): void {
+  handleSubmit(event: MouseEvent): void {
     event.preventDefault()
     this.setState({
       factorAnswersSubmitted: this.state.factorAnswers
     })
   }
 
-  handleChange(event: React.FormEvent<HTMLInputElement>): void {
+  handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
     var value: any
     const { name, type } = event.currentTarget
     type === "checkbox" ? value = event.currentTarget.checked : value = event.currentTarget.value
@@ -56,18 +56,24 @@ class App extends React.Component<any, AppState> {
     console.log(this.state)
   }
 
-  loadFactorAnswers() {
-    // load_factor_answers.then((loaded_factor_answers)=> this.setState({hasLoadedFactorAnswers: false, factor_answers:loaded_factor_answers})).
-    // This will load the factor answers and then it will update the rendered view using setState.
-  }
+  // loadFactorAnswers() {
+  //   this.setState({
+  //     factorAnswers: new Factors()
+  //   })
+  //   // load_factor_answers.then((loaded_factor_answers)=> this.setState({hasLoadedFactorAnswers: false, factor_answers:loaded_factor_answers})).
+  //   // This will load the factor answers and then it will update the rendered view using setState.
+  // }
 
-  loadDatabase() {
-    // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
-    // This will load the data and then it will update the rendered view using setState.
-    this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
-  }
+  // loadDatabase() {
+  //   // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
+  //   // This will load the data and then it will update the rendered view using setState.
+  //   // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
+  // }
 
   loadFactorDatabase() {
+    // ...
+    // MOVE THIS TO QUESTION MENU
+    // ...
     // load_factor_db.then((loaded_factor_data=> this.setState({hasLoadedFactorDatabase: false, factor_answers:loaded_factor_database})).
     // This will load the data and then it will update the rendered view using setState.
   }
@@ -75,20 +81,18 @@ class App extends React.Component<any, AppState> {
   componentDidMount() {
     this.setState({
       factorDatabase: causesData
-    }
-    )
+    })
   }
 
   renderQuestionMenu() {
     return (
-      // <div>QuestionMenu</div>
       <QuestionMenu factors={this.state.factorAnswers} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />
     );
   }
 
   renderVizWindow() {
     return (
-      <div>VizWindowDog</div>
+      <div>hej med dig</div>
       // <VizWindow database={this.state.database} factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
     );
   }
@@ -102,7 +106,7 @@ class App extends React.Component<any, AppState> {
             {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
           </Col>
           <Col md={9} xs={9} lg={9} sm={9} xl={9}>
-            {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"}
+            {this.state.factorAnswersSubmitted && (<div>{this.state.factorAnswersSubmitted.bmi}</div>)}
           </Col>
         </Row>
       </div>

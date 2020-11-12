@@ -178,7 +178,8 @@ class App extends React.Component {
             {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
           </Col>
           <Col md={9} xs={9} lg={9} sm={9} xl={9}>
-            {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"}
+            {/* {this.state.hasLoadedDatabase && this.state.hasLoadedFactorAnswers ? this.renderVizWindow() : "Waiting for loading quesitons and database"} */}
+            {this.state.factorAnswersSubmitted && (<div>{this.state.factorAnswersSubmitted.bmi}</div>)}
           </Col>
         </Row>
       </div>
