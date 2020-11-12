@@ -25,7 +25,7 @@ def get_age_distribution():
     age_cats=popfile.readline().split(",")
     age_cats[-1]=age_cats[-1].rstrip()
     pop=popfile.readline().split()
-    pop=map(float,pop)
+    pop=list(map(float,pop))
     popfile.close()
     
     sp=sum(pop)
