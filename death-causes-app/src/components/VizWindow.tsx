@@ -28,7 +28,7 @@ class VizWindow extends React.PureComponent<any, any> {
                 <option value="allcauses">Probability of dying of all causes</option>
                 <option value="allages">Probability of dying at all ages</option>
             </select>
-            <BarChartWrapper database={this.props.database} /> 
+           <BarChartWrapper database={this.props.database} />
         </div>);
     };
 }

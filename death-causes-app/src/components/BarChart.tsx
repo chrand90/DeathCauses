@@ -1,23 +1,33 @@
 import * as d3 from 'd3';
 import d3Tip from "d3-tip";
-import make_squares from './ComputationEngine';
 import './BarChart.css';
 import { ReactInstance } from 'react';
+import { TEST_DATA, DataRow } from './PlottingData';
+import  make_squares, {SquareSection}  from './ComptutationEngine';
+import { visitEachChild } from 'typescript';
+
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
 const WIDTH = 1200;
-const DESIGN= "LONG";
+let DESIGN= "LONG";
 const BARHEIGHT = 50;
 const XBARHEIGHT= 50;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE=100;
 const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
-const TEST_DATA= [{name: 'Corona',total_prob:0.15, inner_causes:{partying:0.45}},
-{name:'Old age', total_prob:0.75, inner_causes:{}}, {name: 'Accidents', total_prob:0.10, inner_causes:{partying:0.1}}];
-const CAUSE_COLORS={'Unexplained':"#FFFFFF",
+
+interface ColorDic {
+	[key: string]: string
+}
+
+const CAUSE_COLORS: ColorDic={'Unexplained':"#FFFFFF",
 'partying':'#FF6C00'};
 
 function getDivWidth(div: HTMLElement | null): number {
+	console.log(div);
+	if(div === null){
+		return 0;
+	}
     var width = d3.select(div)
       // get the width of div element
       .style('width')
@@ -63,9 +73,13 @@ function wideDesignConstants(n: number, width: number){
 }
 
 export default class BarChart {
-    element: HTMLElement | null =null;
+    element: HTMLElement|null=null ;
     width: number=0;
-    svg: d3.Selection<HTMLElement> | null=null;
+    svg!: d3.Selection<SVGSVGElement,unknown,null,undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
+    xAxisGroup: any| null;
+	data:any | null;
+	data2: SquareSection[]=[];
+	stip: any;
 
 	constructor(element: HTMLElement | null, database: any) {
         const vis = this
@@ -76,7 +90,7 @@ export default class BarChart {
 		vis.svg = d3.select(element)
 			.append("svg")
 				.attr("width", vis.width)
-				.attr("height", BARHEIGHT+XBARHEIGHT)
+                .attr("height", BARHEIGHT+XBARHEIGHT)
 		
 
 		vis.xAxisGroup = vis.svg.append("g")
@@ -104,20 +118,25 @@ export default class BarChart {
 		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
 
 		vis.svg.attr("height", designConstants.totalheightWithXBar)
-		vis.data.sort(function(a, b) {
+		vis.data.sort(function(a: DataRow, b: DataRow) {
 			return d3.descending(a.total_prob, b.total_prob)
 		})
 		vis.data2=make_squares(vis.data);
 
+		let a= d3.max(vis.data2, d => d.x);
+		if(a === undefined){
+			a=1.0
+		}
+
 		const x = d3.scaleLinear()
 			.domain([
-				0, 
-				d3.max(vis.data2, d =>  d.x)*1.15
+                0, 
+				a*1.15
 			])
 			.range([designConstants.startXScale,designConstants.width])
 
 		const yBars = d3.scaleBand()
-			.domain(vis.data.map(d => d.name))
+			.domain(vis.data.map( (d:any) => d.name))
 			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
 			.paddingInner(designConstants.yListInnerPadding)
 			.paddingOuter(designConstants.yListOuterPadding)
@@ -131,11 +150,9 @@ export default class BarChart {
 		const xAxisCall = d3.axisTop(x)
 		vis.xAxisGroup.call(xAxisCall)
 
-		vis.stip = d3Tip().attr('class', 'd3-tip').html(function(d) { return d.cause; })
-						.direction('s')
-						.offset([10,0])
-						
-		vis.svg.call(vis.stip);
+
+
+
 		
 		//DATA JOIN
 		const diseases = vis.svg.selectAll(".rect.shell")
@@ -150,40 +167,55 @@ export default class BarChart {
 
 		// UPDATE
 		diseases.transition().duration(500)
-			.attr("y", (d,i) => BARHEIGHT*i)
-			.attr('fill', function(d,i) { return ALTERNATING_COLORS[i%2]})
+			.attr("y", (d: any,i:number) => BARHEIGHT*i)
+			.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 
 		// ENTER
 		const g_components= diseases.enter().append('g').attr('class','rect.shell')
 
 		g_components.append('rect').attr('class','disease.rect')
-				.attr("y", (d,i) => yRects(designConstants.barheight*i))
+				.attr("y", (d:any,i:number) => yRects(designConstants.barheight*i))
 				.attr("x", 0)
 				.attr("width", designConstants.width)
 				.attr("height", designConstants.barheight)
-				.attr('fill', function(d,i) { return ALTERNATING_COLORS[i%2]})
+				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 				.style("opacity", 0.5)
 		g_components.append('text').attr('class','disease.text')
-				.attr("y", d => yBars(d.name))
+				.attr("y", (d:any) => (yBars(d.name) as number))
 				.attr("x", x(0))
-				.text(d => d.name)
+				.text( (d:any) => d.name)
 				.style('text-anchor',designConstants.textAnchor)
 				.attr("transform",designConstants.textTranslation)
 		
-		const gs= vis.svg.selectAll(".causebar")
+        const gs= vis.svg.selectAll(".causebar")
 					.data(vis.data2)
+
+
+		d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen). 
+
+
+		vis.stip = d3Tip().attr('class', 'd3-tip').html( (d: SquareSection) => {
+			return d.cause;
+			} )
+							.direction('s')
+							.offset([10,0])
+						
+		vis.svg.call(vis.stip);
+		
+
+
 		
 		gs.exit().remove()
 
 		gs.enter().append('rect')
 			.attr('class','causebar')
-			.attr("y", d => yBars(d.name))
+			.attr("y", d => (yBars(d.name) as number))
 			.attr("x", d => x(d.x0))
 			.attr('height', yBars.bandwidth)
 			.attr("width", d => x(d.x)-x(d.x0))
 			.attr("fill", d => CAUSE_COLORS[d.cause])
 			.attr('stroke', '#2378ae' )
-			.on("mouseover", function(d){
+			.on("mouseenter", function(e: Event, d: SquareSection){
 				d3.selectAll(".d3-tip").style("background-color", CAUSE_COLORS[d.cause])
 				vis.stip.show(d,this);
 				d3.select(this)
@@ -191,12 +223,20 @@ export default class BarChart {
 					.style("stroke-width",3)
 					.style('stroke','#000000')
 				})
-			.on("mouseout",  function(d){
+			.on("mouseleave",  function(e: Event, d: SquareSection){
 				vis.stip.hide(d,this);
 				d3.select(this)
 					.style("stroke-width",1)
 					.style('stroke','#2378ae')
 				})
+			.on("resize",  function(e: Event, d: SquareSection){
+				console.log('fullscreenchange');
+				vis.stip.hide(d,this);
+				d3.select(this)
+					.style("stroke-width",1)
+					.style('stroke','#2378ae')
+				})
+
 			
 			//
 			//});

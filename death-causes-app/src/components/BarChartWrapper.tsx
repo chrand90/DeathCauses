@@ -3,7 +3,7 @@ import BarChart from './BarChart';
 
 export default class ChartWrapper extends React.PureComponent<any,any> {
     should_resize: boolean;
-    ref: HTMLElement|null;
+    ref: HTMLElement | null;
     barchart: null | BarChart=null;
 	constructor(props: any){
 		super(props);
@@ -13,8 +13,13 @@ export default class ChartWrapper extends React.PureComponent<any,any> {
         }
         this.ref=null;
         this.should_resize=true;
-        const a: number=<number>("1");
 	}
+
+	componentDidMount(){
+		window.addEventListener("resize", 
+		this.updateDimensions.bind(this));
+		this.barchart= new BarChart(this.ref, this.props.database);
+	 }
 
 	getWidth(){
 		//console.log(this.chart);
@@ -23,7 +28,7 @@ export default class ChartWrapper extends React.PureComponent<any,any> {
 
 	render() {
         
-		return <div className="container" ref={(ref: HTMLElement | null) => this.ref = ref} id="barchartcontainer"/>
+		return <div className="container" ref={(ref: HTMLElement | null ) => this.ref = ref} id="barchartcontainer"/>
 	}
 
 	updateDimensions(){
@@ -46,11 +51,7 @@ export default class ChartWrapper extends React.PureComponent<any,any> {
 
 
 
-	 componentDidMount(){
-		window.addEventListener("resize", 
-		this.updateDimensions.bind(this));
-		this.barchart= new BarChart(this.ref, this.props.database);
-	 }
+
 	 componentWillUnmount() {
 		window.removeEventListener("resize",
 		this.updateDimensions.bind(this));
