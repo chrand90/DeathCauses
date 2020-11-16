@@ -1,10 +1,8 @@
 import * as d3 from 'd3';
 import d3Tip from "d3-tip";
 import './BarChart.css';
-import { ReactInstance } from 'react';
-import { TEST_DATA, DataRow } from './PlottingData';
+import { DataRow, DataSet } from './PlottingData';
 import  make_squares, {SquareSection}  from './ComptutationEngine';
-import { visitEachChild } from 'typescript';
 
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
@@ -77,12 +75,14 @@ export default class BarChart {
     width: number=0;
     svg!: d3.Selection<SVGSVGElement,unknown,null,undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
     xAxisGroup: any| null;
-	data:any | null;
+	data: DataRow[] ;
 	data2: SquareSection[]=[];
 	stip: any;
 
-	constructor(element: HTMLElement | null, database: any) {
-        const vis = this
+	constructor(element: HTMLElement | null, database: DataSet) {
+		console.log(database);
+		this.data=database;
+		const vis = this
 		vis.element=element;
 		vis.width=getDivWidth(element)*0.9;  //getDivWidth(element)*0.9;
 		console.log("vis width " + vis.width);
@@ -104,16 +104,17 @@ export default class BarChart {
 			.attr("text-anchor", "middle")
 			.text("Probability of dying of cause")
 		
-		vis.update();
+		vis.make();
 	}
 
 	clear(){
 		d3.select('svg').remove();
 	}
 
-	update() {
+	make() {
+		console.log('making...');
 		const vis = this;
-		vis.data = TEST_DATA; //(gender === "men") ? vis.menData : vis.womenData;
+		//vis.data = TEST_DATA; //(gender === "men") ? vis.menData : vis.womenData;
 		const n=vis.data.length;
 		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
 
@@ -242,12 +243,11 @@ export default class BarChart {
 			//});
 			//.transition().duration(500)
 				//.attr("height", d => HEIGHT - y(d.total_prob))
-				//.attr("y", d => y(d.height)) */
-			
-		
-		
-
-		
+				//.attr("y", d => y(d.height)) */	
 			
 	}
+
+	update(){
+		console.log('updating...')
+	};
 }

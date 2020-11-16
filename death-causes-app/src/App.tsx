@@ -170,7 +170,7 @@ class App extends React.Component<any, any> {
 
   renderVizWindow() {
     return (
-       <VizWindow database={this.state.database} factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
+       <VizWindow  factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
     );
   }
 

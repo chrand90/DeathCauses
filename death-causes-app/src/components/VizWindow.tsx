@@ -1,13 +1,15 @@
 import React from 'react';
 import './VizWindow.css';
 import BarChartWrapper from './BarChartWrapper';
+import {TEST_DATA, TEST_DATA2} from './PlottingData';
 
 class VizWindow extends React.PureComponent<any, any> {
-
+    counter: number=0;
     constructor(props: any) {
         super(props);
         this.state = {
-            selected_visualization: "allcauses"
+            selected_visualization: "allcauses",
+            database: TEST_DATA
         };
     }
 
@@ -16,11 +18,20 @@ class VizWindow extends React.PureComponent<any, any> {
     }
 
     handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        this.setState({ selected_visualization: event.currentTarget.value});
+        //this.setState({ });
+        if ( this.counter %2 ==0 ){
+            this.counter++;
+            this.setState({database: TEST_DATA2, selected_visualization: event.currentTarget.value});
+        }
+        else{
+            this.counter++;
+            this.setState({database: TEST_DATA, selected_visualization: event.currentTarget.value});
+        }
     };
 
     render(): React.ReactNode {
         console.log(this.props)
+        let props_to_pass_to_barchartwrapper=[ this.state.database];
         return (<div className='vizwindow'>
             <h4> Visualization Menu </h4>
                 
@@ -28,7 +39,7 @@ class VizWindow extends React.PureComponent<any, any> {
                 <option value="allcauses">Probability of dying of all causes</option>
                 <option value="allages">Probability of dying at all ages</option>
             </select>
-           <BarChartWrapper database={this.props.database} />
+           <BarChartWrapper database={this.state.database} />
         </div>);
     };
 }
