@@ -3,7 +3,7 @@ import './App.css';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
-import { Container, Row, Col } from 'reactstrap';
+import { Row, Col } from 'reactstrap';
 import { json } from 'd3';
 import causesData from './resources/Causes.json'
 import Factors from './models/Factors';
