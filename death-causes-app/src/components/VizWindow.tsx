@@ -19,7 +19,7 @@ class VizWindow extends React.PureComponent<any, any> {
 
     handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
         //this.setState({ });
-        if (this.counter % 2 == 0) {
+        if (this.counter % 2 === 0) {
             this.counter++;
             this.setState({ database: TEST_DATA2, selected_visualization: event.currentTarget.value });
         }

@@ -1,14 +1,9 @@
 import React, { ChangeEvent, MouseEvent } from 'react';
 import './App.css';
 import Header from './components/Header';
-<<<<<<< HEAD
-// import QuestionMenu from './Components/QuestionMenu.js';
-import VizWindow from './components/VizWindow';
-=======
 import QuestionMenu from './components/QuestionMenu';
-// import VizWindow from './Components/VizWindow.js';
->>>>>>> origin/master
-import { Row, Col } from 'reactstrap';
+import VizWindow from './components/VizWindow';
+import { Container, Row, Col } from 'reactstrap';
 import { json } from 'd3';
 import causesData from './resources/Causes.json'
 import Factors from './models/Factors';
@@ -97,12 +92,7 @@ class App extends React.Component<any, AppState> {
 
   renderVizWindow() {
     return (
-<<<<<<< HEAD
-       <VizWindow  factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
-=======
-      <div>hej med dig</div>
-      // <VizWindow database={this.state.database} factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
->>>>>>> origin/master
+      <VizWindow factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
     );
   }
 
@@ -110,14 +100,14 @@ class App extends React.Component<any, AppState> {
     return (
       <div className="App">
         <Header />
-        <Row>
-          <Col md={3} xs={3} lg={3} sm={3} xl={3}>
-            {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
-          </Col>
-          <Col md={9} xs={9} lg={9} sm={9} xl={9}>
-            {this.state.factorAnswersSubmitted && (<div>{this.state.factorAnswersSubmitted.bmi}</div>)}
-          </Col>
-        </Row>
+          <Row>
+            <Col md={3} xs={3} lg={3} sm={3} xl={3} style={{padding: '0px'}}>
+              {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
+            </Col>
+            <Col md={9} xs={9} lg={9} sm={9} xl={9} style={{padding: '0px'}}>
+              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
+            </Col>
+          </Row>
       </div>
     );
   }
