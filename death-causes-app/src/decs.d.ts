@@ -1,0 +1,1 @@
+declare module "d3-tip"; //Because the official @types/d3-tip does not allow the command d3Tip(), this is the replacement @types file that for some reason is more lenient and allows us to treat d3.tip variables as any
