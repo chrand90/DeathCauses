@@ -27,7 +27,7 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 
 	useEffect(() => {
 		if (chart) {
-			chart?.clear()
+			chart.clear() 
 			createNewChart();
 		}
 	}, [database]);
