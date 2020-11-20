@@ -14,7 +14,7 @@ interface AppState {
   hasLoadedFactorDatabase: boolean,
   factorDatabase: any,
   factorAnswers: Factors
-  factorAnswersSubmitted: Factors | null
+  factorAnswersSubmitted: Factors 
 }
 
 class App extends React.Component<any, AppState> {
@@ -27,7 +27,7 @@ class App extends React.Component<any, AppState> {
       hasLoadedFactorDatabase: true,
       factorDatabase: undefined,
       factorAnswers: new Factors(),
-      factorAnswersSubmitted: null
+      factorAnswersSubmitted: new Factors()
     }
 
     this.handleChange = this.handleChange.bind(this)
@@ -101,11 +101,11 @@ class App extends React.Component<any, AppState> {
       <div className="App">
         <Header />
           <Row>
-            <Col md={3} xs={3} lg={3} sm={3} xl={3} style={{padding: '0px'}}>
+            <Col md={4} xs={4} lg={4} sm={4} xl={4} style={{padding: '0px'}}>
               {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
             </Col>
-            <Col md={9} xs={9} lg={9} sm={9} xl={9} style={{padding: '0px'}}>
-              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
+            <Col md={8} xs={8} lg={8} sm={8} xl={8} style={{padding: '0px'}}>
+              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : ""}
             </Col>
           </Row>
       </div>

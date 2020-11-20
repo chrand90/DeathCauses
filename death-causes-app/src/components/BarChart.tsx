@@ -19,7 +19,11 @@ interface ColorDic {
 }
 
 const CAUSE_COLORS: ColorDic={'Unexplained':"#FFFFFF",
-'partying':'#FF6C00'};
+'Fish':'#15b2d1','Vegetables':"#0ebf08", 'Greens':'#058c00','Caffeine':"#994f28",'PhysicalActivityTotal':'#f09292',
+'Gender':'#c2fff7','Race':'#ffe9c2','Fluids':'#cfa81b','SmokeIntensity':"#858585",'SmokeCumulative':'#858585','HeadTrauma':'#ff1212',
+'RedMeat':'#8a4433', 'Drinking':'#f0e854','HCVHistory':"#6107ba",'HIVHistory':'#6107ba','Diabetes':'#6107ba', 'Depression':"#810af7",
+'PesticideExposureDays':'#9be800','FamilyHistoryParkinson':'#ab5caa', 'IndoorTanning':'#a86b2a'
+};
 
 function getDivWidth(div: HTMLElement | null): number {
 	console.log(div);

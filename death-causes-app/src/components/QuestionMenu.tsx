@@ -32,57 +32,155 @@ class QuestionMenu extends React.Component<I_QuestionMenu> {
 
       <div><p>Input risk factors to calculate probability of dying of most diseases and expected lifespan</p>
         <form>
+        <Button variant="primary" type="submit" onClick={this.props.handleSubmit}> Re-visualize </Button>
           <Form.Group >
             <Form.Row>
-              <Form.Label column sm={4}>
+              <Form.Label column>
                 BMI</Form.Label>
               <Col>
                 <Form.Control type="text" placeholder="BMI" name="bmi" value={factorAnswers.bmi} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
-              <Form.Label column sm={4}>
+              <Form.Label column >
                 Fish consumed / week</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="grams of fish" name="fish" value={factorAnswers.fish} onChange={this.props.handleChange} />
+                <Form.Control data-toggle="tooltip" data-placement="right" title="One fish is 100g" type="text" placeholder="grams of fish" name="fish" value={factorAnswers.fish} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
-              <Form.Label column sm={4}>
-                Waist circumference</Form.Label>
+              <Form.Label column >
+                Cups of Coffees / day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="caffeiene in cola also counts" type="text" placeholder="cups of coffee" name="caffeine" value={factorAnswers.caffeine} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Vegetables / day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="a vegetable is 100g. This excludes fruit" type="text" placeholder="grams of vegetables" name="vegetables" value={factorAnswers.vegetables} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Greens / day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="a green is 100g. This includes both vegetables and fruit" type="text" placeholder="grams of vegetables" name="greens" value={factorAnswers.greens} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Waist circumference (cm)</Form.Label>
               <Col>
                 <Form.Control type="text" placeholder="waist cm" name="waist" value={factorAnswers.waist} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
-              <Form.Label column sm={4}>
-                BMI</Form.Label>
+              <Form.Label column >
+                Fluids (ml) / day</Form.Label>
               <Col>
-                <Form.Control type="text" placeholder="Age" name="age" value={factorAnswers.age} onChange={this.props.handleChange} />
+                <Form.Control data-toggle="tooltip" data-placement="right" title="the total volume of fluids drunk in a day" type="text" placeholder="ml of fluids" name="fluids" value={factorAnswers.fluids} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
             <Form.Row>
-              <Form.Label column sm={4}>
+              <Form.Label column >
+                total cigarettes smoked / 365</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="This is the same Number of cigarettes per day times year smoked" type="text" placeholder="totalsmoke" name="smokecumulative" value={factorAnswers.smokecumulative} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                cigarettes per day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="This is all types of smoking" type="text" placeholder="totalsmoke" name="smokeintensity" value={factorAnswers.smokeintensity} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Concussions</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="Total number of concussion during your life" type="text" placeholder="conc" name="headtrauma" value={factorAnswers.headtrauma} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Alcoholic units / day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="a unit is 14 ml of pure alcohol" type="text" placeholder="alcohol" name="drinking" value={factorAnswers.drinking} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Red meat grams/ day</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="red meat is meat from cow, pork and lamb" type="text" placeholder="redmeat" name="redmeat" value={factorAnswers.redmeat} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Indoor tanning hours</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="The total number of hours in tanning bed" type="text" placeholder="tanning" name="indoortanning" value={factorAnswers.indoortanning} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
+                Days exposed to pesticides</Form.Label>
+              <Col>
+                <Form.Control data-toggle="tooltip" data-placement="right" title="The total number of days where you have worked with pesticides" type="text" placeholder="Pesticides" name="pesticideexposuredays" value={factorAnswers.pesticideexposuredays} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column >
                 Gender</Form.Label>
               <Col>
                 <Form.Control as="select" placeholder="Gender" name="gender" value={factorAnswers.gender} onChange={this.props.handleChange}>
                   <option selected disabled>Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
                 </Form.Control>
               </Col>
             </Form.Row>
             <Form.Row>
-              <Form.Label column sm={4}>
+              <Form.Label column>
                 Diabetes</Form.Label>
               <Col>
                 <Form.Control type="checkbox" name="diabetes" checked={factorAnswers.diabetes} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>
+            <Form.Row>
+              <Form.Label column>
+                HIV</Form.Label>
+              <Col>
+                <Form.Control type="checkbox" name="hivhistory" checked={factorAnswers.hivhistory} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column>
+                Hepatitis C</Form.Label>
+              <Col>
+                <Form.Control type="checkbox" name="hcvhistory" checked={factorAnswers.hcvhistory} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+
+            <Form.Row>
+              <Form.Label column>
+                Depression</Form.Label>
+              <Col>
+                <Form.Control type="checkbox" name="depression" checked={factorAnswers.depression} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
+            <Form.Row>
+              <Form.Label column>
+                Parkinsons in family</Form.Label>
+              <Col>
+                <Form.Control type="checkbox" name="familyhistoryparkinson" checked={factorAnswers.familyhistoryparkinson} onChange={this.props.handleChange} />
+              </Col>
+            </Form.Row>
           </Form.Group>
-          <Button variant="primary" type="submit" onClick={this.props.handleSubmit}> Re-visualize </Button>
-          {/* <label>Gender
+                    {/* <label>Gender
       <input type="radio" id="male" name="gender" value="Male" />
             <label htmlFor="male">Male</label> <br />
             <input type="radio" id="female" name="gender" value="Female" />
