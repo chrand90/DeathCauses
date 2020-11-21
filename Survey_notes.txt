@@ -1,0 +1,20 @@
+Testernes kommentarer:
+- placeholder navnene var forvirrende (pga fejl)
+- det var ikke tydeligt at det var essentielt at trykke på visualize knappen (Vi kan måske gøre den mere centralt og kalde den noget andet)
+- sæt fysisk aktivtet og race ind som valgmulighed
+- gør det muligt at se contribution fra hver enkelt faktor uden overlap
+- i stedet for fisk, kig da specifikt på omega-3
+- brug færre fagord i sygdomme
+- vis ikke grafen før der er indtastet for det er svært at se at spørgsmålene medfører grafen.
+- find en mere intuitiv fortolkning end sandsynlighed - fx antal år mistet
+- det skal være tydeligt om underårsagernes virkning skyldes for meget eller for lidt.
+- lad x-aksen være synlig når der scrolles
+- der var kommentarer om mængden af scroll nødvendig
+- mere fokus på kost og fibre!
+
+Mine kommentarer
+Ting, der faktisk blev forstået:
+- de farvede rektangler gav god nok mening (men måske var det først efter jeg forklarede det)
+
+Måske plot matricen
+[Sandsynlighed, years lost compared to average, years lost in total] x [Death Causes, underlying causes]
