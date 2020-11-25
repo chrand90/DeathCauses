@@ -19,6 +19,7 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 
 
 	useEffect(() => {
+		console.log('width changed');
 		if (chart) {
 			chart.clear();
 			createNewChart();
@@ -26,9 +27,9 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	}, [width])
 
 	useEffect(() => {
+		console.log('dataset changed');
 		if (chart) {
-			chart.clear() 
-			createNewChart();
+			chart.update(database);
 		}
 	}, [database]);
 
