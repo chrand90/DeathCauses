@@ -1,8 +1,12 @@
 TODO:
 
-- indfør typescript
 - Udregning af risk ratio for alle aldre og gem i objekt
 - Funktionalitet til minimering af lokal risk ratio (eq 10)
-- Funktionalitet til udregning af key indicators (forventet levealder, sandsynlighed for at dø af d, osv.)
-- Visualisering/grafer i d3?
+- Faktorer tastet ind mere brugervenligt afhængig mellem faktor spørgsmål
+- find ud af hvad folk synes om navnet DeathCauses
+- spørg om råd til hvordan der skal hostes
+- revisualize-knappen skal tydeliggøres og hvornår data og visualisering stemmer overens.
 
+- Funktionalitet til udregning af key indicators (forventet levealder, sandsynlighed for at dø af d, osv.)
+- Flere d3 diagrammer
+- Formuler forslag til hvad der sker matematisk med antal mistede år.
