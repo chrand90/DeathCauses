@@ -311,23 +311,21 @@ export default class BarChart {
 		const gs= vis.svg.selectAll(".causebar")
 			.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
 
+		const duration_per_transition=500;
 
 		gs.transition()
-			 .duration(500)
+			 .duration(duration_per_transition)
 			.attr("x", d => xscale(d.x0))
-			.attr('height', this.yBars.bandwidth)
 			.attr("width", d => xscale(d.x)-xscale(d.x0))
-			.attr("fill", d => CAUSE_COLORS[d.cause])
-			.attr('stroke', '#2378ae' )
 		gs.transition()
-			.delay(500)
-			.duration(500)
+			.delay(duration_per_transition)
+			.duration(duration_per_transition)
 			.attr("y", d => (this.yBars(d.name) as number))
 
 		vis.svg.selectAll('.dtext')
 			.data(rename_object, function(d:any){ return d.name})
 			.transition()
-			.delay(1000)
+			.delay(duration_per_transition*2)
 			.text( (d:any) => d.new_name)
 
 
