@@ -1,8 +1,9 @@
 import * as d3 from 'd3';
 import d3Tip from "d3-tip";
 import './BarChart.css';
-import { DataRow, DataSet } from './PlottingData';
+import { DataRow, DataSet, AugmentedDataSet, AugmentedDataRow } from './PlottingData';
 import  make_squares, {SquareSection}  from './ComptutationEngine';
+import { ScaleBand } from 'd3';
 
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
@@ -35,7 +36,22 @@ function getDivWidth(div: HTMLElement | null): number {
     return Math.round(Number(width))
   }
 
-function longDesignConstants(n: number, width:number){
+interface DesignConstants {
+	barheight: number,
+	totalheight: number,
+	totalheightWithXBar: number,
+	startXScale: number,
+	yListStart: number,
+	yListInnerPadding: number,
+	yListOuterPadding: number,
+	yListAlign: number,
+	middleOfChart: number,
+	width: number,
+	textTranslation: string,
+	textAnchor: 'start' | 'middle' | 'end'
+}
+
+function longDesignConstants(n: number, width:number): DesignConstants{
 	return {
 		barheight: 1.5*BARHEIGHT,
 		totalheight: n*1.5*BARHEIGHT,
@@ -53,7 +69,7 @@ function longDesignConstants(n: number, width:number){
 	}
 }
 
-function wideDesignConstants(n: number, width: number){
+function wideDesignConstants(n: number, width: number): DesignConstants{
 	return {
 		barheight: BARHEIGHT,
 		totalheight: n*BARHEIGHT,
@@ -78,9 +94,17 @@ export default class BarChart {
 	data: DataRow[] ;
 	data2: SquareSection[]=[];
 	stip: any;
+	drect_order: string[];
+	yBars: ScaleBand<string>;
 
 	constructor(element: HTMLElement | null, database: DataSet) {
 		console.log(database);
+
+		//Initializers
+		this.drect_order=[];
+		this.yBars=d3.scaleBand();
+
+
 		this.data=database;
 		const vis = this
 		vis.element=element;
@@ -111,85 +135,84 @@ export default class BarChart {
 		d3.select('svg').remove();
 	}
 
+	recalibrate_ybars(sort_data: DataSet, designConstants: DesignConstants){
+		this.yBars = d3.scaleBand()
+		.domain(sort_data.map((d:any) => d.name))
+		.range([designConstants.yListStart, designConstants.totalheightWithXBar])
+		.paddingInner(designConstants.yListInnerPadding)
+		.paddingOuter(designConstants.yListOuterPadding)
+		.align(designConstants.yListAlign)
+	}
+
 	make() {
-		console.log('making...');
 		const vis = this;
-		//vis.data = TEST_DATA; //(gender === "men") ? vis.menData : vis.womenData;
 		const n=vis.data.length;
 		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
 
 		vis.svg.attr("height", designConstants.totalheightWithXBar)
-		vis.data.sort(function(a: DataRow, b: DataRow) {
-			return d3.descending(a.total_prob, b.total_prob)
+		const dataSortedName= copyOfSortedDataset(vis.data, 'name');
+		const dataSortedTotal= copyOfSortedDataset(vis.data, 'total_prob');
+
+		const augmented_data: AugmentedDataSet=dataSortedTotal.map((d: DataRow, index: number): AugmentedDataRow=> {
+			let res: any= d;
+			res["id"]=index;
+			return res;
 		})
-		vis.data2=make_squares(vis.data);
 
-		let a= d3.max(vis.data2, d => d.x);
-		if(a === undefined){
-			a=1.0
-		}
+		this.drect_order=dataSortedTotal.map((d) => d.name);
+		const dataSquares=make_squares(dataSortedName);
 
-		const x = d3.scaleLinear()
-			.domain([
-                0, 
-				a*1.15
-			])
-			.range([designConstants.startXScale,designConstants.width])
-
-		const yBars = d3.scaleBand()
-			.domain(vis.data.map( (d:any) => d.name))
-			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
-			.paddingInner(designConstants.yListInnerPadding)
-			.paddingOuter(designConstants.yListOuterPadding)
-			.align(designConstants.yListAlign)
-
-		const yRects = d3.scaleLinear()
-			.domain([0,designConstants.totalheight])
-			.range([XBARHEIGHT, designConstants.totalheightWithXBar])
-
-
-		const xAxisCall = d3.axisTop(x)
+		//Setting X-axis
+		const newMaxX=getMaxX(dataSquares);
+		const {xAxisCall, xscale} = this.createXAxisCall(newMaxX, designConstants)
 		vis.xAxisGroup.call(xAxisCall)
+
+		//Setting the mapping disease -> y value
+		this.recalibrate_ybars(dataSortedTotal, designConstants);
+
+		const yRects = d3.scaleBand()
+			.domain(dataSortedTotal.map((d:any) => d.name))
+			.align(designConstants.yListAlign)
+			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
+
+
 
 
 
 
 		
 		//DATA JOIN
-		const diseases = vis.svg.selectAll(".rect.shell")
-			.data(vis.data)
+		const diseases = vis.svg.selectAll("rect.shell").data(augmented_data, function(d: any){ return d.name })
 
 		// EXIT
 		diseases.exit().remove()
-			//.transition().duration(500)
-			//	.attr("height", 0)
-			//	.attr("y", HEIGHT)
-				
-
-		// UPDATE
-		diseases.transition().duration(500)
-			.attr("y", (d: any,i:number) => BARHEIGHT*i)
-			.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 
 		// ENTER
 		const g_components= diseases.enter().append('g').attr('class','rect.shell')
 
-		g_components.append('rect').attr('class','disease.rect')
-				.attr("y", (d:any,i:number) => yRects(designConstants.barheight*i))
-				.attr("x", 0)
+
+		/*  One disadvantage of this structure is that it is important that the text is never inserted before the 
+			rectangle. Therefore it is important that they are inserted in the same order. 
+		*/
+		g_components.append('rect').attr('class','drect')
+				.attr("y", (d:any,i:number) => (yRects(d.name) as number))
+				.attr("x", xscale(0))
 				.attr("width", designConstants.width)
 				.attr("height", designConstants.barheight)
-				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
+				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[d.id%2]})
 				.style("opacity", 0.5)
-		g_components.append('text').attr('class','disease.text')
-				.attr("y", (d:any) => (yBars(d.name) as number))
-				.attr("x", x(0))
+
+		g_components.insert('text').attr('class','dtext')
+				.attr("y", (d:any) => (this.yBars(d.name) as number))
+				.attr("x", xscale(0))
 				.text( (d:any) => d.name)
 				.style('text-anchor',designConstants.textAnchor)
 				.attr("transform",designConstants.textTranslation)
+
 		
+		//The causes themselves are plotted by this.
         const gs= vis.svg.selectAll(".causebar")
-					.data(vis.data2)
+					.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
 
 
 		d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen). 
@@ -210,10 +233,10 @@ export default class BarChart {
 
 		gs.enter().append('rect')
 			.attr('class','causebar')
-			.attr("y", d => (yBars(d.name) as number))
-			.attr("x", d => x(d.x0))
-			.attr('height', yBars.bandwidth)
-			.attr("width", d => x(d.x)-x(d.x0))
+			.attr("y", d => (this.yBars(d.name) as number))
+			.attr("x", d => xscale(d.x0))
+			.attr('height', this.yBars.bandwidth)
+			.attr("width", d => xscale(d.x)-xscale(d.x0))
 			.attr("fill", d => CAUSE_COLORS[d.cause])
 			.attr('stroke', '#2378ae' )
 			.on("mouseenter", function(e: Event, d: SquareSection){
@@ -247,7 +270,76 @@ export default class BarChart {
 			
 	}
 
-	update(){
-		console.log('updating...')
+	createXAxisCall(newMax: number, designConstants: DesignConstants){
+		const x = d3.scaleLinear()
+		.domain([
+			0, 
+			newMax*1.15
+		])
+		.range([designConstants.startXScale,designConstants.width])
+		
+		return {xAxisCall: d3.axisTop(x), xscale:x}
+	}
+
+	update(dataset: DataSet){
+
+		const vis = this;
+		
+		const dataSortedTotal = copyOfSortedDataset(dataset, "total_prob"); 
+		const dataSortedName = copyOfSortedDataset(dataset, 'name'); 
+
+		//dataset that connects the original disease order (drect_order) with the new label.
+		//In theory, it would be possible to rearrange the labels, but some of them will almost always end up
+		//"below" a drect-object. Therefore it is easier to rename them.
+		const rename_object= this.drect_order.map((d,i) => {
+			return {new_name: dataSortedTotal[i].name, name: d}
+		})
+
+		const dataSquares=make_squares(dataSortedName);
+
+		const n=dataSortedName.length;
+		const designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
+
+		//Updating X-axis
+		const newMaxX=getMaxX(dataSquares);
+		const {xAxisCall, xscale} = this.createXAxisCall(newMaxX, designConstants)
+		vis.xAxisGroup.call(xAxisCall)
+
+		//Updating the disease-to-y mapping (this.yBars)
+		this.recalibrate_ybars(dataSortedTotal, designConstants); 
+
+		const gs= vis.svg.selectAll(".causebar")
+			.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
+
+		const duration_per_transition=500;
+
+		gs.transition()
+			 .duration(duration_per_transition)
+			.attr("x", d => xscale(d.x0))
+			.attr("width", d => xscale(d.x)-xscale(d.x0))
+		gs.transition()
+			.delay(duration_per_transition)
+			.duration(duration_per_transition)
+			.attr("y", d => (this.yBars(d.name) as number))
+
+		vis.svg.selectAll('.dtext')
+			.data(rename_object, function(d:any){ return d.name})
+			.transition()
+			.delay(duration_per_transition*2)
+			.text( (d:any) => d.new_name)
+
+
 	};
+}
+
+function copyOfSortedDataset(dataset: DataSet, sorter: 'total_prob' | 'name' ='total_prob'): DataSet{
+	return dataset.slice().sort(function(a: DataRow, b: DataRow) { return d3.descending(a[sorter], b[sorter]) });
+}
+
+function getMaxX(dataset: SquareSection[]):number{
+	let a= d3.max(dataset, d => d.x);
+	if(a === undefined){
+		a=1.0
+	}
+	return a;
 }
