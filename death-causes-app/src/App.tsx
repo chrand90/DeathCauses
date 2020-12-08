@@ -9,7 +9,7 @@ import { RiskRatioTable } from './components/database/RiskRatioTable';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
-import Factors, { StateObject } from './models/Factors';
+import Factors, { FactorAnswers } from './models/Factors';
 import causesData from './resources/Causes.json';
 
 interface AppState {
@@ -17,8 +17,8 @@ interface AppState {
   hasLoadedDatabase: boolean,
   hasLoadedFactorDatabase: boolean,
   factorDatabase: any,
-  factorAnswers: StateObject | null
-  factorAnswersSubmitted: StateObject | null
+  factorAnswers: FactorAnswers | null
+  factorAnswersSubmitted: FactorAnswers | null
 }
 
 class App extends React.Component<any, AppState> {
