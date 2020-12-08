@@ -1,20 +1,24 @@
-import React, { ChangeEvent, MouseEvent } from 'react';
+import * as d3 from 'd3';
+import React, { MouseEvent } from 'react';
+import { Col, Row } from 'reactstrap';
 import './App.css';
+import FrequencyTable from './components/database/Age';
+import Deathcause from './components/database/Deathcause';
+import { RiskFactorGroup } from './components/database/RickFactorGroup';
+import { RiskRatioTable } from './components/database/RiskRatioTable';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
-import { Row, Col } from 'reactstrap';
-import { json } from 'd3';
-import causesData from './resources/Causes.json'
-import Factors from './models/Factors';
+import Factors, { FactorAnswers } from './models/Factors';
+import causesData from './resources/Causes.json';
 
 interface AppState {
   hasLoadedFactorAnswers: boolean,
   hasLoadedDatabase: boolean,
   hasLoadedFactorDatabase: boolean,
   factorDatabase: any,
-  factorAnswers: Factors
-  factorAnswersSubmitted: Factors | null
+  factorAnswers: FactorAnswers | null
+  factorAnswersSubmitted: FactorAnswers | null
 }
 
 class App extends React.Component<any, AppState> {
@@ -26,7 +30,7 @@ class App extends React.Component<any, AppState> {
       hasLoadedDatabase: true,
       hasLoadedFactorDatabase: true,
       factorDatabase: undefined,
-      factorAnswers: new Factors(),
+      factorAnswers: null,
       factorAnswersSubmitted: null
     }
 
@@ -37,12 +41,12 @@ class App extends React.Component<any, AppState> {
   handleSubmit(event: MouseEvent): void {
     event.preventDefault()
     this.setState({
-      factorAnswersSubmitted: this.state.factorAnswers
+      factorAnswersSubmitted: Object.create(this.state.factorAnswers)
     })
   }
 
   handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    var value: any
+    var value: boolean | string | number
     const { name, type } = event.currentTarget
     type === "checkbox" ? value = event.currentTarget.checked : value = event.currentTarget.value
     this.setState<any>((prevState: { factorAnswers: Factors }) => {
@@ -71,17 +75,31 @@ class App extends React.Component<any, AppState> {
   // }
 
   loadFactorDatabase() {
-    // ...
-    // MOVE THIS TO QUESTION MENU
-    // ...
-    // load_factor_db.then((loaded_factor_data=> this.setState({hasLoadedFactorDatabase: false, factor_answers:loaded_factor_database})).
-    // This will load the data and then it will update the rendered view using setState.
+    let res: Deathcause[] = [];
+    let database = causesData;
+    // console.log(database.BreastCancer.RiskFactorGroups[0])
+
+    // for (var key in database) {
+    //   if (database.hasOwnProperty(key)) {
+    //     console.log(database[key as keyof typeof database])
+    //     res.push(new Deathcause(database[key as keyof typeof database], key))
+    //   }
+    // }
+
+    // console.log(res)
+    // console.log(age)
+    this.loadFactorNames()
   }
 
   componentDidMount() {
+    this.loadFactorDatabase()
     this.setState({
       factorDatabase: causesData
     })
+  }
+
+  loadFactorNames() {
+    d3.csv('FactorDatabase.csv').then(data => { this.setState({ factorAnswers: new Factors(data).getFactorsAsStateObject() }) });
   }
 
   renderQuestionMenu() {
@@ -100,14 +118,14 @@ class App extends React.Component<any, AppState> {
     return (
       <div className="App">
         <Header />
-          <Row>
-            <Col md={3} xs={3} lg={3} sm={3} xl={3} style={{padding: '0px'}}>
-              {this.state.hasLoadedFactorAnswers && this.state.hasLoadedFactorDatabase ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
-            </Col>
-            <Col md={9} xs={9} lg={9} sm={9} xl={9} style={{padding: '0px'}}>
-              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
-            </Col>
-          </Row>
+        <Row>
+          <Col md={3} xs={3} lg={3} sm={3} xl={3} style={{ padding: '0px' }}>
+            {this.state.factorAnswers ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
+          </Col>
+          <Col md={9} xs={9} lg={9} sm={9} xl={9} style={{ padding: '0px' }}>
+            {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
+          </Col>
+        </Row>
       </div>
     );
   }
