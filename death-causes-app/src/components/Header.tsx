@@ -1,7 +1,7 @@
 import React from 'react';
 import './Header.css';
 
-class Header extends React.Component {
+class Header extends React.PureComponent {
 
     render(): React.ReactNode {
         return (<div className='header'> 
