@@ -38,6 +38,8 @@ interface NumericQuestionProps extends I_Question<number> {
 
 interface StringQuestionProps extends I_Question<string> {
   placeholder: string;
+  inputvalidity: InputValidity;
+  updateCycle: number;
   options: string[];
 }
 
@@ -133,11 +135,13 @@ export class SimpleStringQuestion extends React.PureComponent<
   StringQuestionProps,
   I_QuestionStates
 > {
+  updateCycle: number;
   constructor(props: StringQuestionProps) {
     super(props);
     this.state = {
       ignore: false,
     };
+    this.updateCycle=0;
     this.handleIgnoreBox = this.handleIgnoreBox.bind(this);
   }
   handleIgnoreBox(event: React.ChangeEvent<HTMLInputElement>) {
@@ -164,8 +168,29 @@ export class SimpleStringQuestion extends React.PureComponent<
     }
   }
 
+  getErrorStyles() {
+    let formControlStyle: FormControlStyle = {
+      background: this.getBackgroundColor(),
+      color: this.getTextColor()
+    };
+    let showmessage: boolean = false;
+    let errorMessageStyle: FormControlStyle = {};
+    if (
+      this.props.inputvalidity.status === "Warning" ||
+      (this.props.inputvalidity.status === "Missing" &&
+        !this.state.ignore &&
+        this.updateCycle !== this.props.updateCycle)
+    ) {
+      showmessage = true;
+      formControlStyle["border-color"] = WARNING_COLOR;
+      errorMessageStyle["color"] = WARNING_COLOR;
+    }
+    return { formControlStyle, showmessage, errorMessageStyle };
+  }
+
   render() {
     console.log("Renders Question" + this.props.name);
+    const { formControlStyle, showmessage, errorMessageStyle } = this.getErrorStyles();
 
     return (
       <Question
@@ -174,7 +199,15 @@ export class SimpleStringQuestion extends React.PureComponent<
         handleIgnoreBox={this.handleIgnoreBox}
         ignore={this.state.ignore}
         helpText={this.props.helpText}
-        secondLine=""
+        secondLine={
+          showmessage ? (
+            <Form.Label className="ErrorLabel" style={errorMessageStyle}>
+              {this.props.inputvalidity.message}
+            </Form.Label>
+          ) : (
+            ""
+          )
+        }
       >
         <Form.Control
           as="select"
@@ -182,7 +215,7 @@ export class SimpleStringQuestion extends React.PureComponent<
           value={this.props.factorAnswer}
           onChange={this.props.handleChange}
           disabled={this.state.ignore}
-          style={{ background: this.getBackgroundColor(), color: this.getTextColor() }}
+          style={formControlStyle}
         >
           <option value={this.props.placeholder} hidden>
             {this.props.placeholder}
