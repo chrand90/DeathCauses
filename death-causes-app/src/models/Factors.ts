@@ -139,6 +139,10 @@ abstract class GeneralFactor<T> {
   check_input(input: string | boolean): InputValidity {
     return { status: "Success", message: "" };
   }
+
+  interpretAnswer(answer: T|""){
+    return answer;
+  }
 }
 
 class StringFactorPermanent extends GeneralFactor<string> {
@@ -159,6 +163,12 @@ class StringFactorPermanent extends GeneralFactor<string> {
       return { status: "Success", message: "" };
     }
     return { status: "Missing", message: "" };
+  }
+  interpretAnswer(val: string|""){
+    if(val in this.options){
+      return val;
+    }
+    return "";
   }
 }
 

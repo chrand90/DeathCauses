@@ -1,32 +1,34 @@
-import * as d3 from 'd3';
-import { json } from 'd3';
-import React, { MouseEvent } from 'react';
-import { Col, Container, Row } from 'reactstrap';
-import './App.css';
-import FrequencyTable from './components/database/Age';
-import Deathcause from './components/database/Deathcause';
-import { RiskFactorGroup } from './components/database/RickFactorGroup';
-import { RiskRatioTable } from './components/database/RiskRatioTable';
-import Header from './components/Header';
-import QuestionMenu from './components/QuestionMenu';
-import VizWindow from './components/VizWindow';
-import Factors, { FactorAnswers } from './models/Factors';
-import causesData from './resources/Causes.json';
-import HelpJsons from './models/HelpJsons';
+import * as d3 from "d3";
+import { json } from "d3";
+import React, { MouseEvent } from "react";
+import { Col, Container, Row } from "reactstrap";
+import "./App.css";
+import FrequencyTable from "./components/database/Age";
+import Deathcause from "./components/database/Deathcause";
+import { RiskFactorGroup } from "./components/database/RickFactorGroup";
+import { RiskRatioTable } from "./components/database/RiskRatioTable";
+import Header from "./components/Header";
+import QuestionMenu from "./components/QuestionMenu";
+import VizWindow from "./components/VizWindow";
+import Factors, { FactorAnswers } from "./models/Factors";
+import causesData from "./resources/Causes.json";
+import HelpJsons from "./models/HelpJsons";
+import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 
 interface AppState {
-  hasLoadedFactorAnswers: boolean,
-  hasLoadedDatabase: boolean,
-  hasLoadedFactorDatabase: boolean,
-  factorDatabase: any,
-  factorAnswers: FactorAnswers
-  factorAnswersSubmitted: FactorAnswers | null
+  hasLoadedFactorAnswers: boolean;
+  hasLoadedDatabase: boolean;
+  hasLoadedFactorDatabase: boolean;
+  factorDatabase: any;
+  factorAnswers: FactorAnswers;
+  factorAnswersSubmitted: FactorAnswers | null;
+  elementInFocus: string;
 }
 
 class App extends React.Component<any, AppState> {
-
   factors: Factors;
   helpjsons: HelpJsons;
+  relationLinkData: RelationLinks | null = null;
 
   constructor(props: any) {
     super(props);
@@ -37,42 +39,43 @@ class App extends React.Component<any, AppState> {
       hasLoadedFactorDatabase: true,
       factorDatabase: undefined,
       factorAnswers: {},
-      factorAnswersSubmitted: null
-    } 
-    this.factors=new Factors(null);
-    this.helpjsons={};
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSuccessfullSubmit = this.handleSuccessfullSubmit.bind(this)
-    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
-  };
+      factorAnswersSubmitted: null,
+      elementInFocus: "BMI",
+    };
+    this.factors = new Factors(null);
+    this.helpjsons = {};
+    this.handleChange = this.handleChange.bind(this);
+    this.handleSuccessfullSubmit = this.handleSuccessfullSubmit.bind(this);
+    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
+  }
 
   handleSuccessfullSubmit(): void {
     this.setState({
-      factorAnswersSubmitted: Object.create(this.state.factorAnswers)
-    })
+      factorAnswersSubmitted: Object.create(this.state.factorAnswers),
+    });
   }
 
-  handleChange(name: string, value: boolean|string|number|null):void{
+  handleChange(name: string, value: boolean | string | number | null): void {
     this.setState<any>((prevState: { factorAnswers: Factors }) => {
       return {
         factorAnswers: {
           ...prevState.factorAnswers,
-          [name]: value
-        }
-      }
-    })
-    console.log(this.state)
+          [name]: value,
+        },
+      };
+    });
+    console.log(this.state);
   }
 
-  handleIgnoreFactor(name: string): void{
+  handleIgnoreFactor(name: string): void {
     this.setState<any>((prevState: { factorAnswers: Factors }) => {
       return {
         factorAnswers: {
           ...prevState.factorAnswers,
-          [name]: ""
-        }
-      }
-    })
+          [name]: "",
+        },
+      };
+    });
   }
 
   // loadFactorAnswers() {
@@ -103,60 +106,71 @@ class App extends React.Component<any, AppState> {
 
     // console.log(res)
     // console.log(age)
-    this.loadFactorNames()
+    this.loadFactorNames();
   }
 
   componentDidMount() {
-    this.loadFactorDatabase()
+    this.loadFactorNames();
     this.setState({
-      factorDatabase: causesData
-    })
+      factorDatabase: causesData,
+    });
   }
 
   loadFactorNames() {
-    Promise.all([d3.csv('FactorDatabase.csv'), json('helpjsons.json')]).then(data => { 
-      this.factors=  new Factors(data[0]);
-      this.helpjsons= (data[1] as HelpJsons);
-      this.setState({ factorAnswers: this.factors.getFactorsAsStateObject() }) 
+    Promise.all([
+      d3.csv("FactorDatabase.csv"),
+      json("helpjsons.json"),
+      json("AffectPointers.json")
+    ]).then((data) => {
+      this.factors = new Factors(data[0]);
+      this.helpjsons = data[1] as HelpJsons;
+      this.relationLinkData = new RelationLinks(data[2] as RelationLinkJson);
+      this.setState({ factorAnswers: this.factors.getFactorsAsStateObject() });
     });
   }
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu factorAnswers={this.state.factorAnswers} 
-                    factors={this.factors} 
-                    helpjsons={this.helpjsons}
-                    handleChange={this.handleChange} 
-                    handleSuccessfullSubmit={this.handleSuccessfullSubmit} 
-                    handleIgnoreFactor={this.handleIgnoreFactor}/>
-    );
-  }
-
-  renderVizWindow() {
-    return (
-      <VizWindow factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
+      <QuestionMenu
+        factorAnswers={this.state.factorAnswers}
+        factors={this.factors}
+        helpjsons={this.helpjsons}
+        handleChange={this.handleChange}
+        handleSuccessfullSubmit={this.handleSuccessfullSubmit}
+        handleIgnoreFactor={this.handleIgnoreFactor}
+      />
     );
   }
 
   render() {
-    console.log('Renders App')
+    console.log("Renders App");
     return (
       <div className="App">
         <Header />
         <Container fluid>
-        <Row>
-          <Col  lg={4}  xl={3} style={{ padding: '0px' }}>
-            {Object.keys(this.state.factorAnswers).length>0 ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
-          </Col>
-          <Col  lg={8}  xl={9} style={{ padding: '0px' }}>
-            {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
-          </Col>
-        </Row>
+          <Row>
+            <Col lg={4} xl={3} style={{ padding: "0px" }}>
+              {Object.keys(this.state.factorAnswers).length > 0
+                ? this.renderQuestionMenu()
+                : "Waiting for loading quesitons"}
+            </Col>
+            <Col lg={8} xl={9} style={{ padding: "0px" }}>
+              {this.state.factorAnswersSubmitted &&
+              this.relationLinkData !== null ? (
+                <VizWindow
+                  factorAnswers={this.state.factorAnswersSubmitted}
+                  relationLinkData={this.relationLinkData}
+                  elementInFocus={this.state.elementInFocus}
+                />
+              ) : (
+                "yolo"
+              )}
+            </Col>
+          </Row>
         </Container>
       </div>
     );
   }
-
 }
 
 export default App;

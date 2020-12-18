@@ -186,6 +186,8 @@ class QuestionMenu extends React.Component<
                 handleChange={this.handleValidityAndChange}
                 handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
                 helpText={this.getHelpText(factorName)}
+                updateCycle={this.state.updateCycle}
+                inputvalidity={this.state.validities[factorName]}
                 />
             )
           }
@@ -203,6 +205,23 @@ class QuestionMenu extends React.Component<
           and expected lifespan
         </p>
         <form noValidate onSubmit={this.handleSubmit}>
+
+        <div>
+            <div>
+              <Button variant="primary" type="submit" disabled={!submittable}>
+                {" "}
+                Compute{" "}
+              </Button>
+            </div>
+            <div>
+              {submittable ? (
+                ""
+              ) : (
+                <Label className="errorLabel">*Fix inputs</Label>
+              )}
+            </div>
+          </div>
+
           {questionlist}
 
           {/*<Form.Row>
@@ -245,21 +264,7 @@ class QuestionMenu extends React.Component<
                 <Form.Control type="checkbox" name="diabetes" checked={factorAnswers.diabetes} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>*/}
-          <div>
-            <div>
-              <Button variant="primary" type="submit" disabled={!submittable}>
-                {" "}
-                Compute{" "}
-              </Button>
-            </div>
-            <div>
-              {submittable ? (
-                ""
-              ) : (
-                <Label className="errorLabel">*Fix inputs</Label>
-              )}
-            </div>
-          </div>
+
 
           {/* <label>Gender
       <input type="radio" id="male" name="gender" value="Male" />
