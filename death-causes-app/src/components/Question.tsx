@@ -84,7 +84,7 @@ class Question extends React.PureComponent<AbstractQuestionProps> {
     );
   }
 
-  helpBoxButton() {
+  helpBoxButton() {//Popover til venstre for små skærme.
     return (
       <OverlayTrigger
         trigger="click"
@@ -297,7 +297,7 @@ export class SimpleNumericQuestion extends React.PureComponent<
       errorMessageStyle,
     } = this.getErrorStyles();
 
-    this.updateCycle = this.props.updateCycle; //At rerender the warning must have been seen and we will therefore remove it.
+    this.updateCycle = this.props.updateCycle; //At rerender the warning must have been seen and we will therefore remove it. //TODO : Is it really necessary`? probably not
 
     return (
       <Question

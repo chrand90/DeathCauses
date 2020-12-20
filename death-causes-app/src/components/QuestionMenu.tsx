@@ -55,7 +55,7 @@ class QuestionMenu extends React.Component<
     return res;
   }
 
-  handleSubmit(event: React.FormEvent) {
+  handleSubmit(event: React.FormEvent) { //TODO: brug en bedre måde at tjekke validites.
     event.preventDefault();
     let submittable = true;
     let validitiesToBeChanged: InputValidities = {};
@@ -73,7 +73,7 @@ class QuestionMenu extends React.Component<
       }
     }
     if (submittable) {
-      this.setState<any>(
+      this.setState(
         (prevState: { validities: InputValidities; updateCycle: number }) => {
           return {
             validities: {
@@ -91,6 +91,7 @@ class QuestionMenu extends React.Component<
     }
   }
 
+  //Overvej at flytte denne op i App.tsx for at undgå dobbeltrendering
   handleValidityAndChange(ev: ChangeEvent<HTMLInputElement>): void {
     var value: string | boolean;
     const { name, type } = ev.currentTarget;
@@ -186,6 +187,8 @@ class QuestionMenu extends React.Component<
                 handleChange={this.handleValidityAndChange}
                 handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
                 helpText={this.getHelpText(factorName)}
+                updateCycle={this.state.updateCycle}
+                inputvalidity={this.state.validities[factorName]}
                 />
             )
           }
@@ -203,6 +206,22 @@ class QuestionMenu extends React.Component<
           and expected lifespan
         </p>
         <form noValidate onSubmit={this.handleSubmit}>
+
+        <div>
+            <div>
+              <Button variant="primary" type="submit" disabled={!submittable}>
+                Compute
+              </Button>
+            </div>
+            <div>
+              {submittable ? (
+                ""
+              ) : (
+                <Label className="errorLabel">*Fix inputs</Label>
+              )}
+            </div>
+          </div>
+
           {questionlist}
 
           {/*<Form.Row>
@@ -245,21 +264,7 @@ class QuestionMenu extends React.Component<
                 <Form.Control type="checkbox" name="diabetes" checked={factorAnswers.diabetes} onChange={this.props.handleChange} />
               </Col>
             </Form.Row>*/}
-          <div>
-            <div>
-              <Button variant="primary" type="submit" disabled={!submittable}>
-                {" "}
-                Compute{" "}
-              </Button>
-            </div>
-            <div>
-              {submittable ? (
-                ""
-              ) : (
-                <Label className="errorLabel">*Fix inputs</Label>
-              )}
-            </div>
-          </div>
+
 
           {/* <label>Gender
       <input type="radio" id="male" name="gender" value="Male" />
