@@ -55,7 +55,7 @@ class QuestionMenu extends React.Component<
     return res;
   }
 
-  handleSubmit(event: React.FormEvent) {
+  handleSubmit(event: React.FormEvent) { //TODO: brug en bedre måde at tjekke validites.
     event.preventDefault();
     let submittable = true;
     let validitiesToBeChanged: InputValidities = {};
@@ -73,7 +73,7 @@ class QuestionMenu extends React.Component<
       }
     }
     if (submittable) {
-      this.setState<any>(
+      this.setState(
         (prevState: { validities: InputValidities; updateCycle: number }) => {
           return {
             validities: {
@@ -91,6 +91,7 @@ class QuestionMenu extends React.Component<
     }
   }
 
+  //Overvej at flytte denne op i App.tsx for at undgå dobbeltrendering
   handleValidityAndChange(ev: ChangeEvent<HTMLInputElement>): void {
     var value: string | boolean;
     const { name, type } = ev.currentTarget;
@@ -209,8 +210,7 @@ class QuestionMenu extends React.Component<
         <div>
             <div>
               <Button variant="primary" type="submit" disabled={!submittable}>
-                {" "}
-                Compute{" "}
+                Compute
               </Button>
             </div>
             <div>

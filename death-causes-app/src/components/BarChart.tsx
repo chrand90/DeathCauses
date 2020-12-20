@@ -4,6 +4,7 @@ import './BarChart.css';
 import { DataRow, DataSet, AugmentedDataSet, AugmentedDataRow } from './PlottingData';
 import  make_squares, {SquareSection}  from './ComptutationEngine';
 import { ScaleBand } from 'd3';
+import {ALTERNATING_COLORS} from './Helpers';
 
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
@@ -13,7 +14,6 @@ const BARHEIGHT = 50;
 const XBARHEIGHT= 50;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE=100;
-const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
 
 interface ColorDic {
 	[key: string]: string

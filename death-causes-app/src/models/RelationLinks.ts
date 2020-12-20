@@ -4,14 +4,11 @@ export const CONDITION = "Condition";
 export const CAUSE_CATEGORY = "Death cause category";
 export const CAUSE = "Death cause";
 
+const NODE_ORDER = [INPUT, COMPUTED_FACTOR, CONDITION, CAUSE_CATEGORY, CAUSE];
 
-const NODE_ORDER= [
-  INPUT,
-  COMPUTED_FACTOR,
-  CONDITION,
-  CAUSE_CATEGORY,
-  CAUSE,
-];
+interface ReverseNodeOrder {
+  [key: string]: number;
+}
 
 interface NodeValue {
   type: string;
@@ -39,6 +36,13 @@ interface UntransformedLabel {
   x_relative: number;
   y: number;
   nodeName: string;
+  key: string;
+}
+
+export interface Arrow {
+  from: string;
+  to: string;
+  type: string;
 }
 
 export interface TransformedLabel {
@@ -46,6 +50,27 @@ export interface TransformedLabel {
   x: number;
   y: number;
   nodeName: string;
+  key: string;
+}
+
+interface DirectionInfo {
+  arrows: Arrow[];
+  untransformedlabels: UntransformedLabel[];
+  usedKeys: string[];
+}
+
+interface XDivision {
+  x0: number;
+  width: number;
+}
+
+interface AdjustXReturn {
+  transformedLabels: TransformedLabel[];
+  xDivisions: XDivision[];
+}
+
+export interface PlottingInfo extends AdjustXReturn {
+  arrows: Arrow[];
 }
 
 const INPUT_FACTORS_LENGTH = 1;
@@ -80,8 +105,13 @@ export default class RelationLinks {
   nodeTypes: NodeToType = {};
   superAncestorList: NodeDic = {};
   superDescendantList: NodeDic = {};
+  nodeOrderReversed: ReverseNodeOrder={};
 
   constructor(jsonObject: RelationLinkJson) {
+
+    NODE_ORDER.forEach((d:string,i:number) => {
+      this.nodeOrderReversed[d]=i;
+    });
     //initializing  nodetypes, ancestorList, and computing the reverse descendantList.
     Object.keys(jsonObject).forEach((nodeName: string) => {
       this.descendantList[nodeName] = [];
@@ -89,6 +119,7 @@ export default class RelationLinks {
     Object.entries(jsonObject).forEach(([nodeName, node]) => {
       this.nodeTypes[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
+      
       this.ancestorList[nodeName].forEach((ancestor: string) => {
         try {
           return this.descendantList[ancestor].push(nodeName);
@@ -133,12 +164,14 @@ export default class RelationLinks {
     }
   }
 
-  makePlottingInstructions(nodeName: string) {
+  makePlottingInstructions(nodeName: string): PlottingInfo {
     let untransformed: UntransformedLabel[] = [];
     const totalHeight = Math.max(
       this.superAncestorCount[nodeName],
       this.superDescendantCount[nodeName]
     );
+
+    //Taking care of the node we are currently in.
     let currentCategory = this.nodeTypes[nodeName];
     let upstreamElements = this.followGraph(
       nodeName,
@@ -161,65 +194,101 @@ export default class RelationLinks {
       x_relative: xval,
       y: yval,
       nodeName: nodeName,
+      key: nodeName,
     });
-    untransformed = untransformed.concat(
-      this.makePlottingInNodeDicDirection(
-        nodeName,
-        upstreamElements,
-        this.descendantList,
-        this.superDescendantCount,
-        0,
-        this.superDescendantCount[nodeName],
-        (x: number) => x
-      )
+
+    //Dealing with the rest of the nodes in the tree.
+    let usedKeys: string[] = [nodeName];
+    let arrows: Arrow[] = [];
+    let descendantInfo = this.makePlottingInNodeDicDirection(
+      nodeName,
+      upstreamElements,
+      this.descendantList,
+      this.superDescendantCount,
+      0,
+      this.superDescendantCount[nodeName],
+      (x: number) => x,
+      (s: string[]) => [s[0], s[1]],
+      usedKeys
     );
-    untransformed = untransformed.concat(
-      this.makePlottingInNodeDicDirection(
-        nodeName,
-        downStreamElements,
-        this.ancestorList,
-        this.superAncestorCount,
-        0,
-        this.superAncestorCount[nodeName],
-        (x: number) => 1 - x
-      )
+    usedKeys = descendantInfo.usedKeys;
+    arrows = descendantInfo.arrows;
+    untransformed = untransformed.concat(descendantInfo.untransformedlabels);
+    let ancestorInfo = this.makePlottingInNodeDicDirection(
+      nodeName,
+      downStreamElements,
+      this.ancestorList,
+      this.superAncestorCount,
+      0,
+      this.superAncestorCount[nodeName],
+      (x: number) => 1 - x,
+      (s: string[]) => [s[1], s[0]],
+      usedKeys
     );
-    const transformedData: TransformedLabel[] = this.adjustXCoordinates(
-      untransformed
-    );
-    return transformedData;
+    usedKeys = ancestorInfo.usedKeys;
+    arrows = arrows.concat(ancestorInfo.arrows);
+    untransformed = untransformed.concat(ancestorInfo.untransformedlabels);
+    const adjXReturn: AdjustXReturn = this.adjustXCoordinates(untransformed);
+    return { ...adjXReturn, arrows: arrows };
   }
 
-  adjustXCoordinates(dat: UntransformedLabel[]): TransformedLabel[] {
-
+  adjustXCoordinates(dat: UntransformedLabel[]): AdjustXReturn {
     //calculates the relative space used by each of categories.
     const weights = NODE_ORDER.map((cat: string, index: number) => {
       const xvals = dat
-        .filter(
-          (ut: UntransformedLabel) =>
-            ut.cat === cat && ut.x_relative < 0.51 && ut.x_relative > 0
-        )
+        .filter((ut: UntransformedLabel) => ut.cat === cat)
         .map((ut: UntransformedLabel) => ut.x_relative);
       if (xvals.length === 0) {
-        return 1;
+        return 0;
+      }
+      const mv = Math.min(...xvals);
+      if (mv === 0 || mv === 1) {
+        return 2;
       } else {
         return 1 / Math.min(...xvals);
       }
     });
-    const cumWeights: number[]=[];
-    weights.reduce(function(a,b,i) { 
-        cumWeights.push(a+b);
-        return a+b; 
-    },0);
-    cumWeights.unshift(0) //inserting a 0, because the visualization should start at 0.
-    
-    const resDat=dat.map((d:UntransformedLabel)=>{
-        const catOrder=NODE_ORDER.indexOf(d.cat);
-        const newX=cumWeights[catOrder]+(cumWeights[catOrder+1]-cumWeights[catOrder])*d.x_relative
-        return { cat: d.cat, x: newX, y: d.y, nodeName: d.nodeName }
-    })
+    const cumWeights: number[] = [];
+    weights.reduce(function (a, b, i) {
+      cumWeights.push(a + b);
+      return a + b;
+    }, 0);
+    cumWeights.unshift(0); //inserting a 0, because the visualization should start at 0.
 
-    return resDat;
+    const resDat = dat.map((d: UntransformedLabel) => {
+      const catOrder = NODE_ORDER.indexOf(d.cat);
+      const newX =
+        cumWeights[catOrder] +
+        (cumWeights[catOrder + 1] - cumWeights[catOrder]) * d.x_relative;
+      return { ...d, x: newX };
+    });
+    let xDivisions: XDivision[] = [];
+    for (let index = 0; index < cumWeights.length - 1; index++) {
+      xDivisions.push({ x0: cumWeights[index], width: weights[index] });
+    }
+
+    console.log("resDat");
+    console.log(resDat);
+
+    return { transformedLabels: resDat, xDivisions: xDivisions };
+  }
+
+  compareChildNodesFunction(parentNode:string, superDestinations: NumberOfDestinations){
+    const parentCat=this.nodeTypes[parentNode];
+    const parentCatIndex=this.nodeOrderReversed[parentCat]
+    const nrev=this.nodeOrderReversed;
+    const ntyp=this.nodeTypes;
+    function returner(a: string, b:string){
+      const aIndex=nrev[ntyp[a]];
+      const bIndex=nrev[ntyp[b]];;
+      if(aIndex===bIndex){
+        return superDestinations[a]-superDestinations[b]
+      }
+      else{
+        return -Math.abs(aIndex-parentCatIndex)+Math.abs(bIndex-parentCatIndex);
+      }
+    }
+    return returner;
   }
 
   makePlottingInNodeDicDirection(
@@ -229,18 +298,25 @@ export default class RelationLinks {
     superDestinations: NumberOfDestinations,
     bottomY: number,
     topY: number,
-    xDirection: (s: number) => number
-  ): UntransformedLabel[] {
+    xDirection: (s: number) => number,
+    arrowDirection: (twocats: string[]) => string[],
+    usedKeys: string[]
+  ): DirectionInfo {
     if (nodeDic[nodeName].length === 0) {
-      let res: UntransformedLabel[] = [];
+      let ut: UntransformedLabel[] = [];
+      let newArrows: Arrow[] = [];
+      let res: DirectionInfo = {
+        untransformedlabels: ut,
+        usedKeys: usedKeys,
+        arrows: newArrows,
+      };
       return res;
     } else {
       const children: string[] = nodeDic[nodeName];
-      children.sort((a: string, b: string) => {
-        return superDestinations[a] - superDestinations[b];
-      });
+      children.sort(this.compareChildNodesFunction(nodeName,superDestinations));
       const weights = children.map((d: string) => superDestinations[d]);
       let res: UntransformedLabel[] = [];
+      let arrows: Arrow[] = [];
       let yfrom = bottomY;
       const sumweights = weights.reduce((a, b) => a + b, 0);
       const parentNodeType = this.nodeTypes[nodeName];
@@ -268,21 +344,40 @@ export default class RelationLinks {
             (1 + seenElements) / (2 + seenElements + remainingElements)
           );
         }
-        res.push({ cat: cat, x_relative: xval, y: yval, nodeName: cnodeName });
-        res = res.concat(
-          this.makePlottingInNodeDicDirection(
-            cnodeName,
-            seenElements,
-            nodeDic,
-            superDestinations,
-            yfrom,
-            yto,
-            xDirection
-          )
+
+        let directionInfo: DirectionInfo = this.makePlottingInNodeDicDirection(
+          cnodeName,
+          seenElements,
+          nodeDic,
+          superDestinations,
+          yfrom,
+          yto,
+          xDirection,
+          arrowDirection,
+          usedKeys
         );
+        usedKeys = directionInfo.usedKeys;
+        arrows = arrows.concat(directionInfo.arrows);
+        res = res.concat(directionInfo.untransformedlabels);
+        let key = cnodeName;
+        while (key in usedKeys) {
+          key += "*";
+        }
+        usedKeys.push(key);
+        const arrowtype =
+          parentNodeType === CAUSE_CATEGORY ? "no-arrow" : "arrow";
+        const froto: string[] = arrowDirection([nodeName, cnodeName]); //depending on the direction a different number is
+        arrows.push({ from: froto[0], to: froto[1], type: arrowtype });
+        res.push({
+          cat: cat,
+          x_relative: xval,
+          y: yval,
+          nodeName: cnodeName,
+          key: key,
+        });
         yfrom = yto;
       });
-      return res;
+      return { untransformedlabels: res, arrows: arrows, usedKeys: usedKeys };
     }
   }
 
@@ -301,4 +396,3 @@ export default class RelationLinks {
     }
   }
 }
-

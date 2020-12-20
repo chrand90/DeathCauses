@@ -5,16 +5,18 @@ import RelationLinkViz from './RelationLinkViz';
 interface RelationLinkWrapperProps {
 	rdat: RelationLinks;
 	elementInFocus: string;
+	changeElementInFocus: (d:string) => void,
 }
 
 
 const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
 	const chartArea = useRef(null);
+	const elementInFocus= props.elementInFocus;
 	const [chart, setChart] = useState<RelationLinkViz | null>(null);
 	const { width } = useWindowSize();
 
 	const createNewChart = function () {
-		setChart(new RelationLinkViz(chartArea.current, props.rdat, props.elementInFocus));
+		setChart(new RelationLinkViz(chartArea.current, props.rdat, props.elementInFocus, props.changeElementInFocus));
 	}
 
 
@@ -29,6 +31,14 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 	useEffect(() => {
 		createNewChart();
 	}, []);
+
+	useEffect(() => {
+		console.log('dataset changed');
+		if (chart) {
+			chart.clear();
+			createNewChart()
+		}
+	}, [elementInFocus]);
 
 	return <div className="container" ref={chartArea} id="barchartcontainer" />
 

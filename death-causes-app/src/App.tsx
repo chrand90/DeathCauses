@@ -47,12 +47,17 @@ class App extends React.Component<any, AppState> {
     this.handleChange = this.handleChange.bind(this);
     this.handleSuccessfullSubmit = this.handleSuccessfullSubmit.bind(this);
     this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
+    this.changeFocus = this.changeFocus.bind(this);
   }
 
   handleSuccessfullSubmit(): void {
     this.setState({
       factorAnswersSubmitted: Object.create(this.state.factorAnswers),
     });
+  }
+
+  changeFocus(newElementInFocus:string){
+    this.setState<any>({elementInFocus: newElementInFocus});
   }
 
   handleChange(name: string, value: boolean | string | number | null): void {
@@ -161,6 +166,7 @@ class App extends React.Component<any, AppState> {
                   factorAnswers={this.state.factorAnswersSubmitted}
                   relationLinkData={this.relationLinkData}
                   elementInFocus={this.state.elementInFocus}
+                  changeElementInFocus={this.changeFocus}
                 />
               ) : (
                 "yolo"

@@ -10,6 +10,7 @@ interface VizWindowProps {
   factorAnswers: FactorAnswers | null;
   relationLinkData: RelationLinks;
   elementInFocus: string;
+  changeElementInFocus: (d: string) => void;
 }
 
 interface VizWindowStates {
@@ -66,7 +67,13 @@ class VizWindow extends React.PureComponent<VizWindowProps, any> {
         return <BarChartWrapper database={this.state.database} />;
       }
       case "relationGraph": {
-        return <RelationLinkVizWrapper rdat={this.props.relationLinkData} elementInFocus={this.props.elementInFocus}/>;
+        return (
+          <RelationLinkVizWrapper
+            rdat={this.props.relationLinkData}
+            elementInFocus={this.props.elementInFocus}
+            changeElementInFocus={this.props.changeElementInFocus}
+          />
+        );
       }
       default: {
         return <p>'No visualizations'</p>;
