@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from 'react';
 import RelationLinks, { RelationLinkJson } from '../models/RelationLinks';
 import RelationLinkViz from './RelationLinkViz';
+import './RelationLinkVizWrapper.css';
 
 interface RelationLinkWrapperProps {
 	rdat: RelationLinks;
@@ -40,7 +41,13 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 		}
 	}, [elementInFocus]);
 
-	return <div className="container" ref={chartArea} id="barchartcontainer" />
+	//container-fluid to fill the whole space, overflow hidden to prevent horizontal scrollbar.
+	return (
+		<div>
+			<p>Graph showing how we use <strong>{elementInFocus}</strong> in the model</p>
+		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
+		</div>
+	)
 
 }
 

@@ -105,12 +105,11 @@ export default class RelationLinks {
   nodeTypes: NodeToType = {};
   superAncestorList: NodeDic = {};
   superDescendantList: NodeDic = {};
-  nodeOrderReversed: ReverseNodeOrder={};
+  nodeOrderReversed: ReverseNodeOrder = {};
 
   constructor(jsonObject: RelationLinkJson) {
-
-    NODE_ORDER.forEach((d:string,i:number) => {
-      this.nodeOrderReversed[d]=i;
+    NODE_ORDER.forEach((d: string, i: number) => {
+      this.nodeOrderReversed[d] = i;
     });
     //initializing  nodetypes, ancestorList, and computing the reverse descendantList.
     Object.keys(jsonObject).forEach((nodeName: string) => {
@@ -119,7 +118,7 @@ export default class RelationLinks {
     Object.entries(jsonObject).forEach(([nodeName, node]) => {
       this.nodeTypes[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
-      
+
       this.ancestorList[nodeName].forEach((ancestor: string) => {
         try {
           return this.descendantList[ancestor].push(nodeName);
@@ -138,6 +137,35 @@ export default class RelationLinks {
         nodeName
       ].length;
     });
+  }
+
+  formulation(
+    fromNode: string,
+    toNode: string,
+  ): string {
+    let res: string = "";
+    let fromType=this.nodeTypes[fromNode];
+    let toType=this.nodeTypes[toNode];
+    if (fromType === INPUT || fromType === COMPUTED_FACTOR) {
+      res += fromNode + " is used ";
+    } else if (fromType === CONDITION) {
+      res += "The status of " + fromNode + " is used ";
+    } else if (fromType === CAUSE_CATEGORY) {
+      res +=
+        "The risk factors common to all types of " + fromNode + " are used ";
+    }
+    if (toType === COMPUTED_FACTOR) {
+      res += "to compute " + toNode;
+    } else if (toType === CONDITION) {
+      res += "to estimate the status of " + toNode;
+    } else if (toType === CAUSE_CATEGORY && fromType === CAUSE_CATEGORY) {
+      res += "as risk factors for all types of " + toNode;
+    } else if (toType === CAUSE_CATEGORY) {
+      res += "as a risk factor for all types of " + toNode;
+    } else if (toType === CAUSE) {
+      res += "to compute the risk of dying from " + toNode;
+    }
+    return res;
   }
 
   findDescendants(nodeName: string): string[] {
@@ -188,7 +216,7 @@ export default class RelationLinks {
     if (downStreamElements !== 0) {
       console.log(downStreamElements);
     }
-    const yval = 0.5;
+    const yval = 0.25;
     untransformed.push({
       cat: currentCategory,
       x_relative: xval,
@@ -237,16 +265,18 @@ export default class RelationLinks {
     const weights = NODE_ORDER.map((cat: string, index: number) => {
       const xvals = dat
         .filter((ut: UntransformedLabel) => ut.cat === cat)
-        .map((ut: UntransformedLabel) => ut.x_relative);
+        .map((ut: UntransformedLabel) => {
+          return this.followMaximumSumOfSummary(
+            ut.nodeName,
+            this.descendantList,
+            (d: string) => this.nodeTypes[d] === cat,
+            (d: string) => d.length + 10
+          );
+        });
       if (xvals.length === 0) {
         return 0;
       }
-      const mv = Math.min(...xvals);
-      if (mv === 0 || mv === 1) {
-        return 2;
-      } else {
-        return 1 / Math.min(...xvals);
-      }
+      return Math.max(...xvals);
     });
     const cumWeights: number[] = [];
     weights.reduce(function (a, b, i) {
@@ -273,19 +303,27 @@ export default class RelationLinks {
     return { transformedLabels: resDat, xDivisions: xDivisions };
   }
 
-  compareChildNodesFunction(parentNode:string, superDestinations: NumberOfDestinations){
-    const parentCat=this.nodeTypes[parentNode];
-    const parentCatIndex=this.nodeOrderReversed[parentCat]
-    const nrev=this.nodeOrderReversed;
-    const ntyp=this.nodeTypes;
-    function returner(a: string, b:string){
-      const aIndex=nrev[ntyp[a]];
-      const bIndex=nrev[ntyp[b]];;
-      if(aIndex===bIndex){
-        return superDestinations[a]-superDestinations[b]
-      }
-      else{
-        return -Math.abs(aIndex-parentCatIndex)+Math.abs(bIndex-parentCatIndex);
+  compareChildNodesFunction(
+    parentNode: string,
+    superDestinations: NumberOfDestinations
+  ) {
+    const parentCat = this.nodeTypes[parentNode];
+    const parentCatIndex = this.nodeOrderReversed[parentCat];
+    const nrev = this.nodeOrderReversed;
+    const ntyp = this.nodeTypes;
+    function returner(a: string, b: string) {
+      const aIndex = nrev[ntyp[a]];
+      const bIndex = nrev[ntyp[b]];
+      if (aIndex === bIndex) {
+        if (a.length === b.length) {
+          return superDestinations[a] - superDestinations[b];
+        } else {
+          return a.length - b.length;
+        }
+      } else {
+        return (
+          -Math.abs(aIndex - parentCatIndex) + Math.abs(bIndex - parentCatIndex)
+        );
       }
     }
     return returner;
@@ -313,18 +351,29 @@ export default class RelationLinks {
       return res;
     } else {
       const children: string[] = nodeDic[nodeName];
-      children.sort(this.compareChildNodesFunction(nodeName,superDestinations));
+      children.sort(
+        this.compareChildNodesFunction(nodeName, superDestinations)
+      );
       const weights = children.map((d: string) => superDestinations[d]);
       let res: UntransformedLabel[] = [];
       let arrows: Arrow[] = [];
       let yfrom = bottomY;
       const sumweights = weights.reduce((a, b) => a + b, 0);
       const parentNodeType = this.nodeTypes[nodeName];
+      let distanceToEnd: number;
       children.forEach((cnodeName: string, index: number) => {
-        const yto = yfrom + (weights[index] / sumweights) * (topY - bottomY);
-        const yval = (yto + yfrom) / 2;
-
         const cat = this.nodeTypes[cnodeName];
+        const yto = yfrom + (weights[index] / sumweights) * (topY - bottomY);
+        let yval = (yto + yfrom) / 2;
+        if (yval === (bottomY + topY) / 2 && cat === parentNodeType) {
+          distanceToEnd = this.followGraph(
+            cnodeName,
+            nodeDic,
+            (n: string) => true
+          );
+          yval += 0.4 * (((distanceToEnd + 2) % 2) * 2 - 1); //adding 2 because distance to end could be -1
+        }
+
         const remainingElements = this.followGraph(
           cnodeName,
           nodeDic,
@@ -364,8 +413,13 @@ export default class RelationLinks {
           key += "*";
         }
         usedKeys.push(key);
-        const arrowtype =
-          parentNodeType === CAUSE_CATEGORY ? "no-arrow" : "arrow";
+        let arrowtype: string;
+        if (xDirection(0.2) === 0.2) {
+          arrowtype = parentNodeType === CAUSE_CATEGORY ? "no-arrow" : "arrow";
+        } else {
+          arrowtype = cat === CAUSE_CATEGORY ? "no-arrow" : "arrow";
+        }
+
         const froto: string[] = arrowDirection([nodeName, cnodeName]); //depending on the direction a different number is
         arrows.push({ from: froto[0], to: froto[1], type: arrowtype });
         res.push({
@@ -379,6 +433,24 @@ export default class RelationLinks {
       });
       return { untransformedlabels: res, arrows: arrows, usedKeys: usedKeys };
     }
+  }
+
+  followMaximumSumOfSummary(
+    nodeName: string,
+    nodeDic: NodeDic,
+    continueTest: (name: string) => boolean,
+    summary: (name: string) => number
+  ): number {
+    if (!continueTest(nodeName)) {
+      return 0;
+    }
+    if (nodeDic[nodeName].length === 0) {
+      return summary(nodeName);
+    }
+    let tmp = nodeDic[nodeName].map((d: string) => {
+      return this.followMaximumSumOfSummary(d, nodeDic, continueTest, summary);
+    });
+    return Math.max(...tmp) + summary(nodeName);
   }
 
   followGraph(

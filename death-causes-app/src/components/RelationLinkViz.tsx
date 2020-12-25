@@ -1,11 +1,15 @@
 import * as d3 from "d3";
+import d3Tip from "d3-tip";
 import RelationLinks, {
+  Arrow,
   CAUSE,
   INPUT,
+  CAUSE_CATEGORY,
   PlottingInfo,
   TransformedLabel,
 } from "../models/RelationLinks";
-import { ALTERNATING_COLORS } from "./Helpers";
+import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
+import "./RelationLinkViz.css";
 
 interface PlottingNodeDicValue {
   bbox: SVGRect;
@@ -20,13 +24,27 @@ interface PlottingNodeDic {
   [key: string]: PlottingNodeDicValue;
 }
 
+interface ArrowExtender {
+  x1: number;
+  x2: number;
+  y1: number;
+  y2: number;
+}
+
+interface ArrowPlottingObject extends Arrow, ArrowExtender {}
+
+
+
 export default class RelationLinkViz {
   constructor(
     canvas: HTMLElement | null,
     rdat: RelationLinks,
     elementInFocus: string,
-    changeElementInFocus:  (d:string) => void,
+    changeElementInFocus: (d: string) => void
   ) {
+    const width = getDivWidth(canvas);
+    console.log("wdth");
+    console.log(width);
     const pdat: PlottingInfo = rdat.makePlottingInstructions(elementInFocus);
     const transformedLabels = pdat.transformedLabels;
     const arrows = pdat.arrows;
@@ -35,7 +53,7 @@ export default class RelationLinkViz {
     const svg = d3
       .select(canvas)
       .append("svg")
-      .attr("width", 900)
+      .attr("width", Math.max(width - 10, 800))
       .attr("height", 800);
 
     const maxX = getMax(transformedLabels, "x");
@@ -43,8 +61,8 @@ export default class RelationLinkViz {
 
     const x = d3
       .scaleLinear()
-      .domain([-0.5, Math.max(maxX * 1.1)])
-      .range([0, 900]);
+      .domain([-maxX * 0.05, maxX * 1.05])
+      .range([0.1, Math.max(width - 10, 800) * 0.9]);
 
     const yfromDomain = -0.5;
     const ytoDomain = Math.max(10, maxY);
@@ -84,9 +102,26 @@ export default class RelationLinkViz {
           return "middle";
         }
       })
+      .style("fill", function (d: any) {
+        return d.cat === CAUSE_CATEGORY
+          ? null
+          : d.nodeName === elementInFocus
+          ? "#551A8B"
+          : "#0000EE";
+      })
+      .style("text-decoration", function (d: any) {
+        return d.cat === CAUSE_CATEGORY ? null : "underline";
+      })
+      .style("font-weight", function (d: any) {
+        return d.nodeName === elementInFocus ? 700 : null;
+      })
+      .style("cursor", function (d: any) {
+        return d.cat === CAUSE_CATEGORY ? null : "pointer";
+      })
       .attr("alignment-baseline", "central")
-      .on("click", function(e: Event, d: TransformedLabel){
-        changeElementInFocus(d.nodeName)})
+      .on("click", function (e: Event, d: TransformedLabel) {
+        changeElementInFocus(d.nodeName);
+      })
       .call(insertBB);
     stext.each(function (d: any, i: number) {
       console.log(this.getBBox());
@@ -97,33 +132,106 @@ export default class RelationLinkViz {
     let nodeDic: PlottingNodeDic = {};
 
     transformedLabels.forEach((ut: any) => {
-      console.log(ut.key);
-      nodeDic[ut.key] = shiftTarget(ut, x);
+      nodeDic[ut.key] = ut;
     });
-    console.log("newNodeDic");
+
+    let adjustedArrows = arrows.map((a: Arrow) => {
+      return {
+        ...a,
+        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y),
+      };
+    });
+    console.log(adjustedArrows);
     console.log(nodeDic);
 
-    const slines = svg
-      .selectAll("line")
-      .data(arrows)
+    //taken from https://stackoverflow.com/questions/36579339/how-to-draw-line-with-arrow-using-d3-js
+    svg
+      .append("svg:defs")
+      .append("svg:marker")
+      .attr("id", "triangle")
+      .attr("refX", 3)
+      .attr("refY", 3)
+      .attr("markerWidth", 30)
+      .attr("markerHeight", 30)
+      .attr("orient", "auto")
+      .append("path")
+      .attr("d", "M 0 0 6 3 0 6 1.5 3")
+      .style("fill", "black");
+
+    d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+
+    var tooltipdiv = d3.select('body')
+      .append("div")
+      .attr("class", "tooltip")
+      .style("opacity", 0);
+
+    const underlines = svg
+      .selectAll(".underlines")
+      .data(adjustedArrows, function (d: any) {
+        return d.from + " - " + d.to;
+      })
       .enter()
       .append("line")
-      .attr("x1", function (d: any) {
-        console.log(d.from);
-        console.log(nodeDic[d.from]);
-        return x(nodeDic[d.from].x);
+      .attr("class", "underlines")
+      .attr("x1", (d: any) => d.x1)
+      .attr("y1", (d: any) => d.y1)
+      .attr("x2", (d: any) => d.x2)
+      .attr("y2", (d: any) => d.y2)
+      .attr("stroke-width", "1")
+      .attr("stroke", "black")
+      .attr("marker-end", (d: any) => {
+        return d.type === "arrow" ? "url(#triangle)" : null;
+      });
+
+    const overlines = svg
+      .selectAll(".overlines")
+      .data(adjustedArrows, function (d: any) {
+        return d.from + " - " + d.to;
       })
-      .attr("y1", function (d: any) {
-        return y(nodeDic[d.from].y);
+      .enter()
+      .append("line")
+      .attr("class", "overlines")
+      .attr("x1", (d: any) => d.x1)
+      .attr("y1", (d: any) => d.y1)
+      .attr("x2", (d: any) => d.x2)
+      .attr("y2", (d: any) => d.y2)
+      .attr("stroke-width", "15")
+      .attr("stroke", "black")
+      .attr("opacity", 0)
+      .attr("cursor", "pointer")
+      .on("mouseover", function (e: Event, d: ArrowPlottingObject) {
+        svg
+          .selectAll(".underlines")
+          .filter(function (ud: any) {
+            {
+              return d.from + " - " + d.to === ud.from + " - " + ud.to;
+            }
+          })
+          .attr("stroke-width", 3);
       })
-      .attr("x2", function (d: any) {
-        return x(nodeDic[d.to].x);
+      .on("mouseout", function (e: Event, d: ArrowPlottingObject) {
+        svg
+          .selectAll(".underlines")
+          .filter(function (ud: any) {
+            {
+              return d.from + " - " + d.to === ud.from + " - " + ud.to;
+            }
+          })
+          .attr("stroke-width", 1);
       })
-      .attr("y2", function (d: any) {
-        return y(nodeDic[d.to].y);
-      })
-      .attr("stroke-width", "1px")
-      .attr("stroke", "black");
+      .on("click", function (e: MouseEvent, d: ArrowPlottingObject) {
+        var x = e.pageX; //x position within the element.
+        var y = e.pageY;  //y position within the element.
+        tooltipdiv
+          .style("opacity", 1)
+          .html(`<small>${rdat.formulation(d.from, d.to)}</small>`)
+          .style("left", x + "px")
+          .style("top", y + "px");
+        e.stopPropagation();
+      });
+    svg.on("click", () => {
+      tooltipdiv.style("opacity", 0);
+    });
   }
 
   clear() {
@@ -158,9 +266,102 @@ function shiftTarget(
   scale: d3.ScaleLinear<number, number, never>
 ): PlottingNodeDicValue {
   if (node.cat === INPUT) {
-    return { ...node, x: node.x + scale.invert(node.bbox.width)-scale.invert(0) };
+    return {
+      ...node,
+      x: node.x + scale.invert(node.bbox.width) - scale.invert(0),
+    };
   } else if (node.cat === CAUSE) {
-    return { ...node, x: node.x - scale.invert(node.bbox.width)+scale.invert(0) };
+    return {
+      ...node,
+      x: node.x - scale.invert(node.bbox.width) + scale.invert(0),
+    };
   }
   return node;
+}
+
+function computeArrowEndPoints(
+  fromNode: PlottingNodeDicValue,
+  toNode: PlottingNodeDicValue,
+  xscale: d3.ScaleLinear<number, number, never>,
+  yscale: d3.ScaleLinear<number, number, never>
+) {
+  const x1org = xscale(fromNode.x);
+  const y1org = yscale(fromNode.y);
+  const x2org = xscale(toNode.x);
+  const y2org = yscale(toNode.y);
+  const aorg = (y2org - y1org) / (x2org - x1org);
+  let percentage = (Math.atan(aorg) * 2) / Math.PI;
+  let arrowExtender: ArrowExtender = { x1: 0, x2: 0, y1: 0, y2: 0 };
+
+  //Leftbox
+  let h1 = fromNode.bbox.height / 2;
+  let w1 = fromNode.bbox.width / 2;
+  let wOrg1 = fromNode.bbox.width / 2;
+  let R1 = h1 / (h1 + w1);
+  let xAdd1 = 0;
+  if (fromNode.cat === INPUT) {
+    w1 = h1;
+    xAdd1 = wOrg1;
+  }
+  //Rightbox
+  let h2 = toNode.bbox.height / 2;
+  let w2 = toNode.bbox.width / 2;
+  let wOrg2 = toNode.bbox.width / 2;
+  let R2 = h2 / (h2 + w2);
+  let xAdd2 = 0;
+  if (toNode.cat === CAUSE) {
+    w2 = h2;
+    xAdd2 = -wOrg2;
+  }
+
+  // if (x1org + wOrg1 + xAdd1 > x2org - wOrg2 + xAdd2) {
+  //   //The two labels overlap in the y-direction, which means that we should increase the percentage to make sure that no arrows go backwards
+  //   percentage = Math.sign(percentage);
+  //   if (fromNode.cat === INPUT) {
+  //     w1 = fromNode.bbox.width / 5;
+  //   }
+  //   if (toNode.cat === CAUSE) {
+  //     w2 = toNode.bbox.width / 5;
+  //   }
+  // }
+
+  if (Math.abs(percentage) > R1) {
+    arrowExtender.y1 = y1org + Math.sign(percentage) * h1;
+    arrowExtender.x1 =
+      x1org - ((Math.abs(percentage) - R1) / (1 - R1)) * w1 + wOrg1 + xAdd1;
+  } else {
+    arrowExtender.y1 = y1org + percentage * h1;
+    arrowExtender.x1 = x1org + wOrg1 + xAdd1;
+  }
+
+  if (Math.abs(percentage) > R2) {
+    arrowExtender.y2 = y2org - Math.sign(percentage) * h2;
+    arrowExtender.x2 =
+      x2org + ((Math.abs(percentage) - R2) / (1 - R2)) * w2 - wOrg2 + xAdd2;
+  } else {
+    arrowExtender.y2 = y2org - percentage * h2;
+    arrowExtender.x2 = x2org - wOrg2 + xAdd2;
+  }
+
+  if (arrowExtender.x1 > arrowExtender.x2) {
+    let tmp = arrowExtender.x2;
+    arrowExtender.x2 = arrowExtender.x1;
+    arrowExtender.x1 = tmp;
+  }
+
+  return shortenArrow(arrowExtender, 10);
+}
+
+function shortenArrow(ae: ArrowExtender, pixels: number): ArrowExtender {
+  let a = (ae.y2 - ae.y1) / (ae.x2 - ae.x1);
+  let xchange = Math.floor(pixels / Math.sqrt(1 + a ** 2));
+  if (xchange > (ae.x2 - ae.x1) * 0.33) {
+    return ae;
+  }
+  return {
+    y1: ae.y1 + a * xchange,
+    x1: ae.x1 + xchange,
+    y2: ae.y2 - a * xchange,
+    x2: ae.x2 - xchange,
+  };
 }
