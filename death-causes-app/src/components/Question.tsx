@@ -10,12 +10,14 @@ import MarkDown from "react-markdown";
 import { InputValidity } from "../models/Factors";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import UnitPicker from "./UnitPicker";
+import { DropdownToggle } from "reactstrap";
 
-const BACKGROUNDCOLOR_DISABLED= "#c7c7c7";
-const TEXTCOLOR_DISABLED="#999";
-const BACKGROUNDCOLOR_CHOICE="#cef1f5";
-const ERROR_COLOR="#fc0303";
-const WARNING_COLOR="#bfa50d";
+const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
+const TEXTCOLOR_DISABLED = "#999";
+const BACKGROUNDCOLOR_CHOICE = "#cef1f5";
+const ERROR_COLOR = "#fc0303";
+const WARNING_COLOR = "#bfa50d";
 
 interface I_Question<T> {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -24,6 +26,7 @@ interface I_Question<T> {
   phrasing: string;
   factorAnswer: T;
   helpText: string;
+  featured: boolean;
 }
 
 interface I_QuestionStates {
@@ -33,13 +36,13 @@ interface I_QuestionStates {
 interface NumericQuestionProps extends I_Question<number> {
   placeholder: string;
   inputvalidity: InputValidity;
-  updateCycle: number;
+  unitOptions: string[];
+  handleChangeUnit: (fname: string, newUnitName: string) => void;
 }
 
 interface StringQuestionProps extends I_Question<string> {
   placeholder: string;
   inputvalidity: InputValidity;
-  updateCycle: number;
   options: string[];
 }
 
@@ -54,6 +57,8 @@ interface AbstractQuestionProps {
   helpText: string;
   phrasing: string;
   secondLine: ReactElement | string;
+  featured: boolean;
+  unitText: string | React.ReactNode;
 }
 
 class Question extends React.PureComponent<AbstractQuestionProps> {
@@ -84,7 +89,8 @@ class Question extends React.PureComponent<AbstractQuestionProps> {
     );
   }
 
-  helpBoxButton() {//Popover til venstre for små skærme.
+  helpBoxButton() {
+    //Popover til venstre for små skærme.
     return (
       <OverlayTrigger
         trigger="click"
@@ -108,13 +114,65 @@ class Question extends React.PureComponent<AbstractQuestionProps> {
     }
   }
 
+  inLineFactorNameHeader() {
+    return (
+      <div>
+        <p
+          style={{
+            color: this.FactorNameColor(),
+            fontWeight: "bold",
+            marginBottom: "0px",
+            textAlign: "left",
+          }}
+        >
+          {this.props.name}
+        </p>
+      </div>
+    );
+  }
+
+  unitButtonOrText() {
+    return (
+      <Dropdown>
+        <Dropdown.Toggle variant="success" id="dropdown-basic">
+          Dropdown Button
+        </Dropdown.Toggle>
+
+        <Dropdown.Menu>
+          <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
+          <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
+          <Dropdown.Item href="#/action-3">Something else</Dropdown.Item>
+        </Dropdown.Menu>
+      </Dropdown>
+    );
+  }
+
+  questionPhrasing() {
+    return (
+      <div>
+        <div
+          style={{
+            color: this.FactorNameColor(),
+            fontSize: this.props.featured ? "" : "11px",
+            marginTop: "0px",
+            textAlign: "left",
+          }}
+        >
+          {this.props.phrasing} {this.props.unitText}
+          {this.props.featured ? "?" : ""}
+        </div>
+      </div>
+    );
+  }
+
   render() {
     return (
       <Form.Row>
-        <Form.Label column xl={4} style={{ color: this.FactorNameColor() }}>
-          {this.props.phrasing}
-        </Form.Label>
-        <Col xl={8}>
+        <Col xl={this.props.featured ? 12 : 4}>
+          {this.props.featured ? "" : this.inLineFactorNameHeader()}
+          {this.questionPhrasing()}
+        </Col>
+        <Col xl={this.props.featured ? 12 : 8}>
           <Form.Group>
             <InputGroup className="mb-2">
               {this.props.children}
@@ -135,13 +193,11 @@ export class SimpleStringQuestion extends React.PureComponent<
   StringQuestionProps,
   I_QuestionStates
 > {
-  updateCycle: number;
   constructor(props: StringQuestionProps) {
     super(props);
     this.state = {
       ignore: false,
     };
-    this.updateCycle=0;
     this.handleIgnoreBox = this.handleIgnoreBox.bind(this);
   }
   handleIgnoreBox(event: React.ChangeEvent<HTMLInputElement>) {
@@ -171,16 +227,11 @@ export class SimpleStringQuestion extends React.PureComponent<
   getErrorStyles() {
     let formControlStyle: FormControlStyle = {
       background: this.getBackgroundColor(),
-      color: this.getTextColor()
+      color: this.getTextColor(),
     };
     let showmessage: boolean = false;
     let errorMessageStyle: FormControlStyle = {};
-    if (
-      this.props.inputvalidity.status === "Warning" ||
-      (this.props.inputvalidity.status === "Missing" &&
-        !this.state.ignore &&
-        this.updateCycle !== this.props.updateCycle)
-    ) {
+    if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
       formControlStyle["border-color"] = WARNING_COLOR;
       errorMessageStyle["color"] = WARNING_COLOR;
@@ -190,7 +241,11 @@ export class SimpleStringQuestion extends React.PureComponent<
 
   render() {
     console.log("Renders Question" + this.props.name);
-    const { formControlStyle, showmessage, errorMessageStyle } = this.getErrorStyles();
+    const {
+      formControlStyle,
+      showmessage,
+      errorMessageStyle,
+    } = this.getErrorStyles();
 
     return (
       <Question
@@ -208,6 +263,8 @@ export class SimpleStringQuestion extends React.PureComponent<
             ""
           )
         }
+        featured={this.props.featured}
+        unitText=""
       >
         <Form.Control
           as="select"
@@ -216,6 +273,7 @@ export class SimpleStringQuestion extends React.PureComponent<
           onChange={this.props.handleChange}
           disabled={this.state.ignore}
           style={formControlStyle}
+          autoFocus={this.props.featured}
         >
           <option value={this.props.placeholder} hidden>
             {this.props.placeholder}
@@ -233,14 +291,11 @@ export class SimpleNumericQuestion extends React.PureComponent<
   NumericQuestionProps,
   I_QuestionStates
 > {
-  updateCycle: number;
-
   constructor(props: NumericQuestionProps) {
     super(props);
     this.state = {
       ignore: false,
     };
-    this.updateCycle = 0;
     this.handleIgnoreBox = this.handleIgnoreBox.bind(this);
   }
 
@@ -270,22 +325,35 @@ export class SimpleNumericQuestion extends React.PureComponent<
       showmessage = true;
       //formControlStyle["border-width"]="4px";
       formControlStyle["border-color"] = ERROR_COLOR;
-      formControlStyle["color"] =ERROR_COLOR;
+      formControlStyle["color"] = ERROR_COLOR;
       errorMessageStyle["color"] = ERROR_COLOR;
     }
     console.log("this.state.ignore");
     console.log(this.state.ignore);
-    if (
-      this.props.inputvalidity.status === "Warning" ||
-      (this.props.inputvalidity.status === "Missing" &&
-        !this.state.ignore &&
-        this.updateCycle !== this.props.updateCycle)
-    ) {
+    if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
       formControlStyle["border-color"] = WARNING_COLOR;
       errorMessageStyle["color"] = WARNING_COLOR;
     }
     return { formControlStyle, showmessage, errorMessageStyle };
+  }
+
+  unitButtonOrText() {
+    if (this.props.unitOptions.length > 0) {
+      return (
+        <UnitPicker
+          onChoice={(newUnit: string) =>
+            this.props.handleChangeUnit(this.props.name, newUnit)
+          }
+          options={this.props.unitOptions}
+          size={this.props.featured ? "": '11px'}
+        >
+          {this.props.placeholder}
+        </UnitPicker>
+      );
+    } else {
+      return ` (${this.props.placeholder})`;
+    }
   }
 
   render() {
@@ -296,8 +364,6 @@ export class SimpleNumericQuestion extends React.PureComponent<
       showmessage,
       errorMessageStyle,
     } = this.getErrorStyles();
-
-    this.updateCycle = this.props.updateCycle; //At rerender the warning must have been seen and we will therefore remove it. //TODO : Is it really necessary`? probably not
 
     return (
       <Question
@@ -315,6 +381,8 @@ export class SimpleNumericQuestion extends React.PureComponent<
             ""
           )
         }
+        unitText={this.unitButtonOrText()}
+        featured={this.props.featured}
       >
         <Form.Control
           type="text"
@@ -324,6 +392,7 @@ export class SimpleNumericQuestion extends React.PureComponent<
           style={formControlStyle}
           onChange={this.props.handleChange}
           disabled={this.state.ignore}
+          autoFocus={this.props.featured}
         />
       </Question>
     );
