@@ -11,18 +11,23 @@ export interface FactorList {
   [key: string]: GeneralFactor<string | number | boolean>;
 }
 
+const IS_NUMBER_REGEX=/^[-]?(\d+|[.]\d+|\d+[.]\d*|)$/;
+const IS_NUMBER_WITH_COMMAS_REGEX=/^[-]?([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/
+
+enum FactorTypes {
+  NUMERIC='number',
+  STRING='string',
+};
+
 class Factors {
   factorList: FactorList = {};
 
   constructor(data: d3.DSVRowArray<string> | null) {
-    console.log(data);
-    console.log("data");
     data?.forEach((element) => {
       if (element.factorName !== undefined) {
         //We strongly the expect the input from FactorDatabase.csv to contain this column.
-        console.log("entering switch");
         switch (element.factorType) {
-          case "number": {
+          case FactorTypes.NUMERIC: {
             this.factorList[element.factorName] = new NumericFactorPermanent(
               element.factorName as string,
               element.initialValue as number | "",
@@ -39,7 +44,7 @@ class Factors {
           //     );
           //     break;
           //   }
-          case "string": {
+          case FactorTypes.STRING: {
             this.factorList[element.factorName] = new StringFactorPermanent(
               element.factorName as string,
               element.initialValue as string,
@@ -66,7 +71,7 @@ class Factors {
   }
 
   getInputValidity(name: string, value: string | boolean): InputValidity {
-    return this.factorList[name].check_input(value);
+    return this.factorList[name].checkInput(value);
   }
 }
 
@@ -91,20 +96,20 @@ function extractLimsAndExplanation(
     let lowerLim: null | number = null;
     let upperLim: null | number = null;
     let explanation: string = "";
-    let a = domain.split("-");
-    if (a[0] !== "") {
+    let limitsAsStrings = domain.split("-");
+    if (limitsAsStrings[0] !== "") {
       explanation += explanationStart;
-      lowerLim = parseFloat(a[0]);
-      if (a[1] !== "") {
-        upperLim = parseFloat(a[1]);
-        explanation += " between " + a[0] + " and " + a[1];
+      lowerLim = parseFloat(limitsAsStrings[0]);
+      if (limitsAsStrings[1] !== "") {
+        upperLim = parseFloat(limitsAsStrings[1]);
+        explanation += " between " + limitsAsStrings[0] + " and " + limitsAsStrings[1];
       } else {
-        explanation += " larger than " + a[0];
+        explanation += " larger than " + limitsAsStrings[0];
       }
     } else {
-      if (a[1] !== "") {
-        explanation += explanationStart + " smaller than " + a[1];
-        upperLim = parseFloat(a[1]);
+      if (limitsAsStrings[1] !== "") {
+        explanation += explanationStart + " smaller than " + limitsAsStrings[1];
+        upperLim = parseFloat(limitsAsStrings[1]);
       }
     }
     return { lowerLim: lowerLim, upperLim: upperLim, explanation: explanation };
@@ -116,7 +121,7 @@ abstract class GeneralFactor<T> {
   initialValue: T | "";
   phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
-  factorType: string = "abstract";
+  factorType: string='abstract';
   options: string[] = [];
 
   constructor(
@@ -129,16 +134,13 @@ abstract class GeneralFactor<T> {
     this.initialValue = initialValue;
     this.phrasing = phrasing;
     this.placeholder = placeholder;
-    this.factorType = "abstract";
   }
 
   getInitialValue(): T | "" {
     return this.initialValue;
   }
 
-  check_input(input: string | boolean): InputValidity {
-    return { status: "Success", message: "" };
-  }
+  abstract checkInput(input: string | boolean): InputValidity
 }
 
 class StringFactorPermanent extends GeneralFactor<string> {
@@ -154,7 +156,7 @@ class StringFactorPermanent extends GeneralFactor<string> {
     this.options = options;
   }
 
-  check_input(val: string): InputValidity {
+  checkInput(val: string): InputValidity {
     if (val in this.options) {
       return { status: "Success", message: "" };
     }
@@ -196,15 +198,15 @@ class NumericFactorPermanent extends GeneralFactor<number> {
     this.factorType = "number";
   }
 
-  check_input(input: string): InputValidity {
-    let s = input.trim();
-    if (s === "") {
+  checkInput(input: string): InputValidity {
+    let trimmedInput = input.trim();
+    if (trimmedInput === "") {
       return { status: "Missing", message: "" };
     }
-    let isNum = /^(-?)(\d+|[.]\d+|\d+[.]\d+)$/.test(s);
-    let l = parseFloat(s);
-    if (!isNum) {
-      if (/^(-?)([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/.test(s)) {
+    let isNumeric = IS_NUMBER_REGEX.test(trimmedInput);
+    
+    if (!isNumeric) {
+      if (IS_NUMBER_WITH_COMMAS_REGEX.test(trimmedInput)) {
         return {
           status: "Error",
           message: "Use a dot(.) as decimal separator.",
@@ -212,15 +214,20 @@ class NumericFactorPermanent extends GeneralFactor<number> {
       }
       return { status: "Error", message: "Input is not a number" };
     }
+    const numberToCheck = parseFloat(trimmedInput);
+    return this.checkNumberInput(numberToCheck);
+  }
+
+  checkNumberInput(numberToCheck:number):InputValidity{
     if (
-      (this.lowerRequired !== null && l < this.lowerRequired) ||
-      (this.upperRequired && l > this.upperRequired)
+      (this.lowerRequired !== null && numberToCheck < this.lowerRequired) ||
+      (this.upperRequired && numberToCheck > this.upperRequired)
     ) {
       return { status: "Error", message: this.explanationRequirement };
     }
     if (
-      (this.lowerRecommended !== null && l < this.lowerRecommended) ||
-      (this.upperRecommended && l > this.upperRecommended)
+      (this.lowerRecommended !== null && numberToCheck < this.lowerRecommended) ||
+      (this.upperRecommended && numberToCheck > this.upperRecommended)
     ) {
       return { status: "Warning", message: this.explanationRecommendation };
     }

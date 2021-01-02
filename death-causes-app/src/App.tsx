@@ -1,5 +1,4 @@
-import * as d3 from 'd3';
-import { json } from 'd3';
+
 import React, { MouseEvent } from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './App.css';
@@ -12,68 +11,36 @@ import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
 import Factors, { FactorAnswers } from './models/Factors';
 import causesData from './resources/Causes.json';
-import HelpJsons from './models/HelpJsons';
+
 
 interface AppState {
-  hasLoadedFactorAnswers: boolean,
-  hasLoadedDatabase: boolean,
-  hasLoadedFactorDatabase: boolean,
+  factorAnswersSubmitted: FactorAnswers | null,
   factorDatabase: any,
-  factorAnswers: FactorAnswers
-  factorAnswersSubmitted: FactorAnswers | null
 }
 
 class App extends React.Component<any, AppState> {
 
-  factors: Factors;
-  helpjsons: HelpJsons;
+
 
   constructor(props: any) {
     super(props);
 
     this.state = {
-      hasLoadedFactorAnswers: true,
-      hasLoadedDatabase: true,
-      hasLoadedFactorDatabase: true,
-      factorDatabase: undefined,
-      factorAnswers: {},
-      factorAnswersSubmitted: null
+      factorAnswersSubmitted: null,
+      factorDatabase: null
     } 
-    this.factors=new Factors(null);
-    this.helpjsons={};
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSuccessfullSubmit = this.handleSuccessfullSubmit.bind(this)
-    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
+    //this.handleChange = this.handleChange.bind(this)
+    this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this)
+    //this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
   };
 
-  handleSuccessfullSubmit(): void {
+  handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
     this.setState({
-      factorAnswersSubmitted: Object.create(this.state.factorAnswers)
+      factorAnswersSubmitted: Object.create(factorAnswers)
     })
   }
 
-  handleChange(name: string, value: boolean|string|number|null):void{
-    this.setState<any>((prevState: { factorAnswers: Factors }) => {
-      return {
-        factorAnswers: {
-          ...prevState.factorAnswers,
-          [name]: value
-        }
-      }
-    })
-    console.log(this.state)
-  }
 
-  handleIgnoreFactor(name: string): void{
-    this.setState<any>((prevState: { factorAnswers: Factors }) => {
-      return {
-        factorAnswers: {
-          ...prevState.factorAnswers,
-          [name]: ""
-        }
-      }
-    })
-  }
 
   // loadFactorAnswers() {
   //   this.setState({
@@ -103,7 +70,6 @@ class App extends React.Component<any, AppState> {
 
     // console.log(res)
     // console.log(age)
-    this.loadFactorNames()
   }
 
   componentDidMount() {
@@ -113,22 +79,11 @@ class App extends React.Component<any, AppState> {
     })
   }
 
-  loadFactorNames() {
-    Promise.all([d3.csv('FactorDatabase.csv'), json('helpjsons.json')]).then(data => { 
-      this.factors=  new Factors(data[0]);
-      this.helpjsons= (data[1] as HelpJsons);
-      this.setState({ factorAnswers: this.factors.getFactorsAsStateObject() }) 
-    });
-  }
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu factorAnswers={this.state.factorAnswers} 
-                    factors={this.factors} 
-                    helpjsons={this.helpjsons}
-                    handleChange={this.handleChange} 
-                    handleSuccessfullSubmit={this.handleSuccessfullSubmit} 
-                    handleIgnoreFactor={this.handleIgnoreFactor}/>
+      <QuestionMenu 
+                    handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
     );
   }
 
@@ -146,7 +101,7 @@ class App extends React.Component<any, AppState> {
         <Container fluid>
         <Row>
           <Col  lg={4}  xl={3} style={{ padding: '0px' }}>
-            {Object.keys(this.state.factorAnswers).length>0 ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
+            {this.renderQuestionMenu()}
           </Col>
           <Col  lg={8}  xl={9} style={{ padding: '0px' }}>
             {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
