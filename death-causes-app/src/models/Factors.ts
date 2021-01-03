@@ -20,6 +20,7 @@ enum FactorTypes {
 };
 
 class Factors {
+<<<<<<< HEAD
   factorList: FactorList = {};
 
   constructor(data: d3.DSVRowArray<string> | null) {
@@ -66,6 +67,31 @@ class Factors {
     let stateObject: FactorAnswers = {};
     for (let factorName in this.factorList) {
       stateObject[factorName] = this.factorList[factorName].getInitialValue();
+=======
+    factorList: GeneralFactor<string | number | boolean>[] = []
+
+    constructor(data: d3.DSVRowArray<string> | null) {
+        data?.forEach(
+            element => {
+                switch (element.factorType) {
+                    case 'number': {
+                        this.factorList.push(new NumericFactorPermanent(element.factorName as string))
+                        break;
+                    }
+                    case 'boolean': {
+                        this.factorList.push(new BooleanFactorPermanent(element.factorName as string))
+                        break;
+                    }
+                    case 'string': {
+                        this.factorList.push(new StringFactorPermanent(element.factorName as string))
+                        break;
+                    }
+                    default:
+                        break;
+                }
+            }
+        )
+>>>>>>> 4f82883 (parsing of polynomials and calculation of RR)
     }
     return stateObject;
   }
