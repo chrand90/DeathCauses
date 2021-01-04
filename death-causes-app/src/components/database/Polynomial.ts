@@ -1,4 +1,4 @@
-import { assert } from "console";
+// import { assert } from "../console";
 
 export class Polynomial {
     monomials: Monomial[] = [];
@@ -26,7 +26,7 @@ export class Monomial {
     }
 
     evaluate(submittedFactorAnswers: number[]): number {
-        assert(submittedFactorAnswers.length === this.exponents.length);
+        // assert(submittedFactorAnswers.length === this.exponents.length);
         let res = this.coefficient;
         for (let i = 0; i < this.exponents.length; i++) {
             res = res * Math.pow(submittedFactorAnswers[i], this.exponents[i])

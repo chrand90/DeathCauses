@@ -32,10 +32,13 @@ class RiskRatioTable {
 
     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
         let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-        this.riskRatioTable.forEach(element => {
-            if(element.isFactorAnswersInDomain(relevantFactorAnswers)) {
-                return element.riskRatioValue;
+        for (let i = 0; i < this.riskRatioTable.length; i++) {
+            if(this.riskRatioTable[i].isFactorAnswersInDomain(relevantFactorAnswers)) {
+                return this.riskRatioTable[i].riskRatioValue;
             }
+        }
+        this.riskRatioTable.forEach(element => { 
+            
         })
         throw new Error("Found no risk ratio entry where " + submittedFactorAnswers + " is within domain")
     }

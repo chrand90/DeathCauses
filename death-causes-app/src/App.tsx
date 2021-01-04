@@ -4,6 +4,7 @@ import { Col, Container, Row } from 'reactstrap';
 import './App.css';
 import FrequencyTable from './components/database/Age';
 import Deathcause from './components/database/Deathcause';
+import { ProbabilityOfDeathCauseCalculation } from './components/database/ProbabilityOfDeathCauseCalculation';
 import { RiskFactorGroup } from './components/database/RickFactorGroup';
 import { RiskRatioTable } from './components/database/RiskRatioTable';
 import Header from './components/Header';
@@ -28,7 +29,7 @@ class App extends React.Component<any, AppState> {
     this.state = {
       factorAnswersSubmitted: null,
       factorDatabase: null
-    } 
+    }
     //this.handleChange = this.handleChange.bind(this)
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this)
     //this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
@@ -36,10 +37,22 @@ class App extends React.Component<any, AppState> {
 
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
     this.setState({
-      factorAnswersSubmitted: Object.create(factorAnswers)
-    })
+      factorAnswersSubmitted: factorAnswers
+    }, () => {this.calculateRR()})
   }
 
+  calculateRR() {
+    let database = this.state.factorDatabase
+    let calc = new ProbabilityOfDeathCauseCalculation();
+    for (var key in database) {
+      if (database.hasOwnProperty(key)) {
+        if (this.state.factorAnswersSubmitted) {
+          console.log(database[key as keyof typeof database].deathCauseName)
+          console.log(calc.calculate(this.state.factorAnswersSubmitted, 10, 100, database[key as keyof typeof database]))
+        }
+      }
+    }
+  }
 
 
   // loadFactorAnswers() {
@@ -59,31 +72,28 @@ class App extends React.Component<any, AppState> {
   loadFactorDatabase() {
     let res: Deathcause[] = [];
     let database = causesData;
-    // console.log(database.BreastCancer.RiskFactorGroups[0])
 
-    // for (var key in database) {
-    //   if (database.hasOwnProperty(key)) {
-    //     console.log(database[key as keyof typeof database])
-    //     res.push(new Deathcause(database[key as keyof typeof database], key))
-    //   }
-    // }
+    for (var key in database) {
+      if (database.hasOwnProperty(key)) {
+        console.log(database[key as keyof typeof database])
+        res.push(new Deathcause(database[key as keyof typeof database], key))
+      }
+    }
 
-    // console.log(res)
-    // console.log(age)
+    this.setState({
+      factorDatabase: res
+    })
   }
 
   componentDidMount() {
     this.loadFactorDatabase()
-    this.setState({
-      factorDatabase: causesData
-    })
   }
 
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu 
-                    handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
+      <QuestionMenu
+        handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
     );
   }
 
@@ -99,14 +109,14 @@ class App extends React.Component<any, AppState> {
       <div className="App">
         <Header />
         <Container fluid>
-        <Row>
-          <Col  lg={4}  xl={3} style={{ padding: '0px' }}>
-            {this.renderQuestionMenu()}
-          </Col>
-          <Col  lg={8}  xl={9} style={{ padding: '0px' }}>
-            {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
-          </Col>
-        </Row>
+          <Row>
+            <Col lg={4} xl={3} style={{ padding: '0px' }}>
+              {this.renderQuestionMenu()}
+            </Col>
+            <Col lg={8} xl={9} style={{ padding: '0px' }}>
+              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
+            </Col>
+          </Row>
         </Container>
       </div>
     );
