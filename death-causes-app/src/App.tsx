@@ -1,6 +1,6 @@
-import * as d3 from 'd3';
+
 import React, { MouseEvent } from 'react';
-import { Col, Row } from 'reactstrap';
+import { Col, Container, Row } from 'reactstrap';
 import './App.css';
 import FrequencyTable from './components/database/Age';
 import Deathcause from './components/database/Deathcause';
@@ -12,53 +12,35 @@ import VizWindow from './components/VizWindow';
 import Factors, { FactorAnswers } from './models/Factors';
 import causesData from './resources/Causes.json';
 
+
 interface AppState {
-  hasLoadedFactorAnswers: boolean,
-  hasLoadedDatabase: boolean,
-  hasLoadedFactorDatabase: boolean,
+  factorAnswersSubmitted: FactorAnswers | null,
   factorDatabase: any,
-  factorAnswers: FactorAnswers | null
-  factorAnswersSubmitted: FactorAnswers | null
 }
 
 class App extends React.Component<any, AppState> {
+
+
+
   constructor(props: any) {
     super(props);
 
     this.state = {
-      hasLoadedFactorAnswers: true,
-      hasLoadedDatabase: true,
-      hasLoadedFactorDatabase: true,
-      factorDatabase: undefined,
-      factorAnswers: null,
-      factorAnswersSubmitted: null
-    }
-
-    this.handleChange = this.handleChange.bind(this)
-    this.handleSubmit = this.handleSubmit.bind(this)
+      factorAnswersSubmitted: null,
+      factorDatabase: null
+    } 
+    //this.handleChange = this.handleChange.bind(this)
+    this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this)
+    //this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
   };
 
-  handleSubmit(event: MouseEvent): void {
-    event.preventDefault()
+  handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
     this.setState({
-      factorAnswersSubmitted: Object.create(this.state.factorAnswers)
+      factorAnswersSubmitted: Object.create(factorAnswers)
     })
   }
 
-  handleChange(event: React.ChangeEvent<HTMLInputElement>): void {
-    var value: boolean | string | number
-    const { name, type } = event.currentTarget
-    type === "checkbox" ? value = event.currentTarget.checked : value = event.currentTarget.value
-    this.setState<any>((prevState: { factorAnswers: Factors }) => {
-      return {
-        factorAnswers: {
-          ...prevState.factorAnswers,
-          [name]: value
-        }
-      }
-    })
-    console.log(this.state)
-  }
+
 
   // loadFactorAnswers() {
   //   this.setState({
@@ -88,7 +70,6 @@ class App extends React.Component<any, AppState> {
 
     // console.log(res)
     // console.log(age)
-    this.loadFactorNames()
   }
 
   componentDidMount() {
@@ -98,13 +79,11 @@ class App extends React.Component<any, AppState> {
     })
   }
 
-  loadFactorNames() {
-    d3.csv('FactorDatabase.csv').then(data => { this.setState({ factorAnswers: new Factors(data).getFactorsAsStateObject() }) });
-  }
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu factors={this.state.factorAnswers} handleChange={this.handleChange} handleSubmit={this.handleSubmit} />
+      <QuestionMenu 
+                    handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
     );
   }
 
@@ -115,17 +94,20 @@ class App extends React.Component<any, AppState> {
   }
 
   render() {
+    console.log('Renders App')
     return (
       <div className="App">
         <Header />
+        <Container fluid>
         <Row>
-          <Col md={3} xs={3} lg={3} sm={3} xl={3} style={{ padding: '0px' }}>
-            {this.state.factorAnswers ? this.renderQuestionMenu() : "Waiting for loading quesitons"}
+          <Col  lg={4}  xl={3} style={{ padding: '0px' }}>
+            {this.renderQuestionMenu()}
           </Col>
-          <Col md={9} xs={9} lg={9} sm={9} xl={9} style={{ padding: '0px' }}>
+          <Col  lg={8}  xl={9} style={{ padding: '0px' }}>
             {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
           </Col>
         </Row>
+        </Container>
       </div>
     );
   }

@@ -1,30 +1,28 @@
-factorName,factorType
-BMI,number
-Age,number
-Waist,number
-Caffeine,number
-Fish,number
-Vegetables,number
-Fluids,number
-HeadTrauma,number
-Drinking,number
-Gender,string
-OralContraceptiveTypicalAmmount,number
-OralContraceptiveSinceStop,number
-PhysicalActivityTotal,number
-PhysicalActivityHard,number
-RedMeat,number
-HCVHistory,number
-HIVHistory,number
-Diabetes,boolean
-SmokeSinceStop,number
-SmokeTypicalAmmount,number
-SmokeIntensity,number
-SmokeCumulative,number
-IndoorTanning,number
-Race,string
-MaxDrinking,number
-Greens,number
-FamilyHistoryParkinson,boolean
-PesticideExposureDays,number
-Depression,boolean
+factorName,factorType,phrasing,placeholder,initialValue,recommendedDomain,requiredDomain,options
+BMI,number,BMI kg/m^2,BMI,,18-40,0-,
+Age,number,Age today,Years,,0-110,0-,
+Waist,number,Waist circumference cm,Centimeters around waist,,60-170,0-,
+Caffeine,number,Coffees per day,Number of cups,,0-10,0-,
+Fish,number,Fish per week,Servings (grams),,0-,0-,
+Vegetables,number,Vegetables per day,'Servings (100 grams),,0-,0-,
+Fluids,number,Fluids drunk per day ml,'mililiters of fluid',,0-,0-,
+HeadTrauma,number,Headtraumas in life,'Number of Head Traumas',,0-,0-,
+Drinking,number,Alcholic drinks per week,'Alcoholic drinks',,0-40,0-,
+Gender,string,Sex,Choose sex,Choose sex,,,Male_Female_Other
+OralContraceptiveTypicalAmmount,string,Ever taken oral contraceptives,Choose Yes/No,Choose Yes/No,,,Yes_No
+OralContraceptiveSinceStop,number,Time since taking oral contraceptives,Years,,0-200,0-,,
+RedMeat,number,Red meat per day,grams,,0-
+HCVHistory,string,HCV infected,Status,Status,,,Yes_No
+HIVHistory,string,HIV infected,Status,Status,,,Yes_No
+Diabetes,string,Diabetes patient,Status,Status,,,Yes_No
+SmokeSinceStop,number,Time since stopped smoking,Years,,0-,0-,
+SmokeTypicalAmmount,number,Cigarettes per day when smoking,Cigarettes,,0-60,0-,
+SmokeIntensity,number,Cigarettes per day today,Cigarettes,,0-60,0-,
+SmokeCumulative,number,Cigarette-years smoked,Cig-years,,0-800,0-,
+IndoorTanning,number,Indoor tanning in life,Hours,,0-60,0-,
+Race,string,Race,Race,Race,,,White_Asian_Pacific_Black
+MaxDrinking,number,Peak drinking in week,Drinks,,0-15,0-,
+Greens,number,Greens per day,Greens,,0-,0-
+FamilyHistoryParkinson,string,Parkinsons in family,Status,Status,,,Yes_No
+PesticideExposureDays,number,Days with pesticides in life,Days,,0-600,0-,
+Depression,string,Depressed now,Status,Statues,,,Yes_No
