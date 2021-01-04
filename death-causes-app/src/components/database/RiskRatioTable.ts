@@ -33,13 +33,11 @@ class RiskRatioTable {
     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
         let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
         for (let i = 0; i < this.riskRatioTable.length; i++) {
-            if(this.riskRatioTable[i].isFactorAnswersInDomain(relevantFactorAnswers)) {
+            if (this.riskRatioTable[i].isFactorAnswersInDomain(relevantFactorAnswers)) {
                 return this.riskRatioTable[i].riskRatioValue;
             }
         }
-        this.riskRatioTable.forEach(element => { 
-            
-        })
+
         throw new Error("Found no risk ratio entry where " + submittedFactorAnswers + " is within domain")
     }
 
@@ -49,15 +47,20 @@ class RiskRatioTable {
         return res;
     }
 
-    getInterpolatedRiskRatio(submittedFactorAnswers: FactorAnswers){        
+    getInterpolatedRiskRatio(submittedFactorAnswers: FactorAnswers): number {
         let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-        
-        this.interpolation.forEach(interpolationEntry => {
+
+        for (let index = 0; index < this.interpolation.length; index++) {
+            let interpolationEntry = this.interpolation[index];
             let relevantInterpolationFactorAnswers = interpolationEntry.getRelevantFactorAnswers(submittedFactorAnswers) as number[];
-            if(interpolationEntry.isFactorAnswersInDomain(relevantFactorAnswers)) {
+            if (interpolationEntry.isFactorAnswersInDomain(relevantFactorAnswers)) {
                 return interpolationEntry.interpolateRR(relevantInterpolationFactorAnswers);
             }
-        })}
+            
+        }
+
+        return 1;
+    }
 }
 
 class RiskRatioTableEntry {
@@ -71,7 +74,7 @@ class RiskRatioTableEntry {
 
     isFactorAnswersInDomain(relevantFactorAnswers: (string | boolean | number)[]) {
         for (let i = 0; i < this.factorValues.length; i++) {
-            let isSubmittedFactorAnswerWithinCell =  this.factorValues[i].isInputWithinCell(relevantFactorAnswers[i])
+            let isSubmittedFactorAnswerWithinCell = this.factorValues[i].isInputWithinCell(relevantFactorAnswers[i])
             if (!isSubmittedFactorAnswerWithinCell) {
                 return false;
             }

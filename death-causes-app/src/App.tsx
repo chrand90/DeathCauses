@@ -1,16 +1,13 @@
 
-import React, { MouseEvent } from 'react';
+import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './App.css';
-import FrequencyTable from './components/database/Age';
 import Deathcause from './components/database/Deathcause';
 import { ProbabilityOfDeathCauseCalculation } from './components/database/ProbabilityOfDeathCauseCalculation';
-import { RiskFactorGroup } from './components/database/RickFactorGroup';
-import { RiskRatioTable } from './components/database/RiskRatioTable';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
-import Factors, { FactorAnswers } from './models/Factors';
+import { FactorAnswers } from './models/Factors';
 import causesData from './resources/Causes.json';
 
 

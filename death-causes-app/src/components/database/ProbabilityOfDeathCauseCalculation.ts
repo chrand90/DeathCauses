@@ -13,11 +13,11 @@ export class ProbabilityOfDeathCauseCalculation {
         return RRs
     }
 
-    calculateRRForSingleDeathcauseAndAge(factorAnswers: FactorAnswers, age: number, deathcause: Deathcause): number {
-        let agePrevalence = deathcause.age.getPrevalence(age);
+    calculateRRForSingleDeathcauseAndAge(factorAnswers: FactorAnswers, selectedAge: number, deathcause: Deathcause): number {
+        let agePrevalence = deathcause.age.getPrevalence(selectedAge);
         let res = 1;
         deathcause.riskFactorGroups.forEach(riskFactorGroup =>
-            res = res * this.calculateRRForSingleRiskFactorGroup(factorAnswers, riskFactorGroup, age)
+            res = res * this.calculateRRForSingleRiskFactorGroup(factorAnswers, riskFactorGroup, selectedAge)
         )
         return agePrevalence * res;
     }
@@ -25,7 +25,7 @@ export class ProbabilityOfDeathCauseCalculation {
     calculateRRForSingleRiskFactorGroup(factorAnswers: FactorAnswers, riskFactorGroup: RiskFactorGroup, age: number): number {
         let res = 1;
         riskFactorGroup.riskRatioTables.forEach(riskRatioTable => {
-            res = res * riskRatioTable.getRiskRatio(factorAnswers)
+            res = res * riskRatioTable.getInterpolatedRiskRatio(factorAnswers)
         });
         return res / riskFactorGroup.normalisationFactors.getPrevalence(age)
     }
