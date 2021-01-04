@@ -122,7 +122,7 @@ export abstract class GeneralFactor<T> {
   phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
   factorType: string='abstract';
-  options: string[] = [];
+
 
   constructor(
     factorName: string,
@@ -143,7 +143,8 @@ export abstract class GeneralFactor<T> {
   abstract checkInput(input: string | boolean): InputValidity
 }
 
-class StringFactorPermanent extends GeneralFactor<string> {
+export class StringFactorPermanent extends GeneralFactor<string> {
+  options: string[] = [];
   constructor(
     factorName: string,
     initialValue: string,

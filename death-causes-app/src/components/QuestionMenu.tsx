@@ -4,6 +4,7 @@ import React, { ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
 import { Label, Spinner } from "reactstrap";
 import Factors, {
+  StringFactorPermanent,
   FactorAnswers,
   GeneralFactor,
   InputValidity,
@@ -196,7 +197,7 @@ class QuestionMenu extends React.Component<
             placeholder={factor.placeholder}
             factorAnswer={this.state.factorAnswers[factorName] as string}
             phrasing={factor.phrasing}
-            options={factor.options}
+            options={(factor as StringFactorPermanent).options}
             handleChange={this.handleInputChange}
             handleIgnoreFactor={this.handleIgnoreFactor}
             helpText={this.getHelpText(factorName)}
