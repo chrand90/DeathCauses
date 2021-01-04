@@ -1,3 +1,3 @@
 export default interface HelpJsons {
-    [key: string] : string[]
+    [key: string] : string
 }

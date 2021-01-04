@@ -26,5 +26,3 @@ Greens,number,Greens per day,Greens,,0-,0-
 FamilyHistoryParkinson,string,Parkinsons in family,Status,Status,,,Yes_No
 PesticideExposureDays,number,Days with pesticides in life,Days,,0-600,0-,
 Depression,string,Depressed now,Status,Statues,,,Yes_No
-PhysicalActivityTotal,number
-PhysicalActivityHard,number

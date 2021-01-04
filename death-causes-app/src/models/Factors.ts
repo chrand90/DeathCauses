@@ -116,7 +116,7 @@ function extractLimsAndExplanation(
   }
 }
 
-abstract class GeneralFactor<T> {
+export abstract class GeneralFactor<T> {
   factorName: string;
   initialValue: T | "";
   phrasing: string; //If the factor is not going to be asked, the phrasing should be nu

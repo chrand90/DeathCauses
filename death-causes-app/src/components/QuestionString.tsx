@@ -9,7 +9,7 @@ import {
   QuestionContext
 } from "./Question";
 import React from "react";
-import {Form } from "react-bootstrap";
+import {Form} from "react-bootstrap";
 
 interface StringQuestionProps extends QuestionProps<string> {
   options: string[];
