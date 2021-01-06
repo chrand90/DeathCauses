@@ -1,0 +1,88 @@
+---
+title: "Death causes"
+output: html_notebook
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{   
+    margin: 10px !important;
+    padding: 10px !important;
+    padding-left: 20px;
+    background:#F0F0F0;
+    max-width:750px;}
+    
+h1.title {
+
+</style>
+
+Humanity's ability to prevent death has improved tremendously in the last 150 years. Not only can we save many more sick and injured people but we also know more about preventing illness and accidents. It is for example well known that drinking and smoking increase the risk of early death while vegetables and seatbelts decrease the risk. And it is great that people know what is good and what is bad for their health, but there is a lot more to know. How much does the bad habits increase one's risk of death? And what types of illness and tragedies are related to each habit? On this website you can based on your specific habits and data, get an estimated age of death and a breakdown of how responsible each disease or habit was for your death. These numbers are computed by our mathematical model based on results from selected scientific papers. 
+
+Imagine a world where we kept track of cause of death but there was no research in their underlying causes. Furthermore, imagine that you were an old person living in a nice house in a quiet suburbs and you asked the scientists to come up with an estimate of your risk of dying from homicide. One would think that you would have less risk of dying from homicide than, say, a drug dealer. However, the scientists in this hypothetical world would not have any information about these things. Therefore, their best estimate would be the crude rate; for example, in America the murder rate is 5.0 out of 100,000 per year, so they would tell everyone that their chance of dying from homicide was 5/100,000=0.005% each year. Imagine now that the scientists decided to actually do some research in the subject; they went out and examined how many people who were murdered in their house had a gun and compared it to how many people who weren't murdered had guns in their house. They might find that the gun-owners had approximately 1.9 times higher risk of death from homicide in their home than non-owners (as the researchers Dahlberg, Ikeda and Kresnow discovered in 2016). If our hypothetical world had a gun ownership rate of 40% of house holds and 20% of homicides occuring in the home(like America has today), the scientists could then give 3 different answers to the question about your risk of dying from homicide:
+
+* If they know that your household has a gun, each year the risk of you dying from homicide is $0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}=$ **0.00540%**
+* If they know that your household doesn't have a gun, each year the risk of you dying from homicide is $0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1}{1.9\cdot 40 \%+60\%}=$ **0.00474%**
+* If they don't know whether your household has a gun, they have to use the default rate and say that each year your risk of dying from homicide is **0.005%**
+
+The mathematical model that we use works similarly. We start with a neutral model that only knows the rates of each death cause for each age. As we put more scientific results into the model, we can more accurately estimate the risks for the individual person. Finding these results is a never-ending task and a task filled with hard decisions. We decide which numbers to include in the model and how to combine the results. For example, what happens to your risk of homicide if you are both a drug addict and has a gun in your home? We deal with this case by case and describe our considerations in the section Risk Factor Choices.
+
+### Overview of computations
+
+When the scientists in our hypothetical example computed the risk of dying from homicide, they used the following formula that we will unpack. 
+$$0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}$$
+The first part $0.005\%\cdot 80\%$ is the risk of dying from something other than a homicide in your home. For those $80\%$ of homicides we knew nothing about their underlying causes so we simply use their base rate of $0.005\%$. This means that we have effectively split up homicides into two sub death causes - homicides in your home with yearly rate $0.005\%\cdot 20\%=0.001\%$ and homicides elsewhere with yearly rate $0.004\%$. 
+
+## Normalization factor
+Looking at the more complicated part of the above equation, we are left with
+$$0.001\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%} $$
+Let us look at where it comes from. We know that the overall risk for homicides in the home is $0.001\%$ and we know that the group that has a gun in their house should have 1.9 times higher risk of being murdered. This means that if the risk in the non-owner group is $x$, the risk of the gun-owner group is $x\cdot 1.9$. The question is now what $x$ is. To find $x$ we use that the overall risk is $0.001\%$. Some of these $0.001\%$ must come from the gun owner group. If we use the fact that $40\%$ of the population owns a gun, they would contribute with $x\cdot 1.9\cdot 40\%$ of the $0.001\%$ and likewise the non-owners will contribute with $x\cdot60\%$. In total we get an equation where we can isolate $x$.
+
+$$
+x\cdot 60\%+x\cdot 1.9\cdot 40\%=0.001\%
+$$
+$$
+x \cdot (60\%+ 1.9\cdot 40\%)=0.001\%
+$$
+$$
+x=0.001\%\frac{1}{60\%+ 1.9\cdot 40\%}
+$$
+
+The final equation spells the formula for the risk of dying from homicide in the home for non-owners. The risk in the gun-owning group is then 
+$$
+x\cdot 1.9=0.001\%\frac{1.9}{60\%+ 1.9\cdot 40\%}
+$$
+We have hereby shown the formulas of .
+
+One way to think about the denominator $60\%+1.9\cdot 40\%=1.36$ is as the relative risk of dying from homicide in home. This means that the average American is 1.36 times more likely to die from homicide in their home than an American who does not own a gun (because when we consider an average American there is a certain chance they have a gun in their home). Henceforth the denominator will be called the **normalization factor**, because it scales the risks such that the overall risk is correct.
+
+## The neutral model
+
+When a user haven't filled out any personal data to the model, the model will default to the *neutral* model. It knows what proportion of American population dies in each 5-year age bracket every year from the [Underlying Cause of Death data set on the CDC website](https://wonder.cdc.gov/) split into ICD10-codes. There are hundreds of different ICD codes so we group them into different categories that we call *death causes*. Just like people We obtain numbers $P(a,d)$ - the probability of dying from death cause $d$ between your $a$'th birthday and $(a+1)$'th birthday given that you are alive on your $a$'th birthday. From this we use the 
+
+
+
+# Risk factor choices
+
+### Colon Cancer
+
+There are many minor risk factors for colorectal cancers. So far we have included the following
+
+* [Drinking](#colorectal-cancer-drinking).
+* Physical Activity.
+* Read meat consumption.
+
+Other relevant risk factors not included in the model are smoking, family history of this cancer, other cancers and  obesity.
+
+#### Interactions
+We assume that all the selected risk factors for colorectal cancer join multiplicatively. That is the total risk ratio 
+
+$$\text{RR}$$
+
+
+#### Colorectal cancer: Drinking
+We use a analysis by @cho2004alcohol who looked a
+
+# References
