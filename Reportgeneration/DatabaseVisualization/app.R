@@ -15,16 +15,16 @@ get_number_of_risk_factors=function(riskratiotable){
 }
 
 read_limits=function(x){
-  if(substr(x,1,1)=='-'){
+  if(substr(x,1,1)==','){
     rest=substr(x,2,nchar(x))
-    return(c("-Inf", rest,paste('-Inf',rest,sep='-'),'numeric'))
+    return(c("-Inf", rest,paste('-Inf',rest,sep=','),'numeric'))
   }
   if(substr(x,nchar(x),nchar(x))=='+'){
     res=substr(x,1,nchar(x)-1)
     return(c(res, 'Inf',paste(res, 'Inf',sep='-'), 'numeric'))
   }
-  if(grepl('-', x)){
-    l=strsplit(x, split = '-', fixed = T)[[1]]
+  if(grepl(',', x)){
+    l=strsplit(x, split = ',', fixed = T)[[1]]
     return(c(l[1],l[2],x,'numeric'))
   }
   if(    !is.na(as.numeric(x))    ){

@@ -209,10 +209,10 @@ def interval_length(output_from_factor_type):
 def factor_type(factor):
     if '+' in factor:
         return 'y+', (float(factor.split("+")[0]), float('Inf'))
-    elif '-' in factor:
-        numbers = factor.split('-')
+    elif ',' in factor:
+        numbers = factor.split(',')
         if not numbers[0]:
-            return '-x', (0.0, float(numbers[1]))
+            return '-x', (-float('Inf'), float(numbers[1]))
         else:
             return 'x-y', (float(numbers[0]), float(numbers[1]))
     else:
