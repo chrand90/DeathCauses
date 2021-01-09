@@ -378,7 +378,8 @@ def interpolate_one_spline(RR):
         for interpolation_levels_d in interpolation_levels:
             ndic = {interpolation_level.string: interpolation_level for interpolation_level in interpolation_levels_d}
             level_dics.append(ndic)
-        ss=make_spline_system(interpolation_levels)
+        finite_interpolation_levels= [filter(lambda flevel: flevel.isFinite(), interpolation_levels_d) for interpolation_levels_d in interpolation_levels]
+        ss=make_spline_system(finite_interpolation_levels)
         ss.create_W_matrix()
         res=collect_interpolated_data_frame_spline(non_interpolatable_factors=non_interpolatable_factors,
                                                    interpolated_factors=interpolatable_factors,
@@ -395,18 +396,22 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                            grouped_risk_ratios,
                                            level_dics,
                                            spline_system):
-    credibility = next(iter(grouped_risk_ratios.values())).get_credibility()
-    new_data_frame = data_frame(non_interpolatable_factors + interpolated_factors, credibility)
+    grouped_risk_ratio=next(iter(grouped_risk_ratios.values()))
+    lambd = grouped_risk_ratio.get_lambd()
+    new_data_frame = grouped_risk_ratio.subcopy(non_interpolatable_factors + interpolated_factors)
     for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
         yvals=[]
         X=[]
         for facts, y in RR.get_as_list_of_lists():
-            yvals.append(y)
-            int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
-            X.append(spline_system.get_beta_row(int_levels_for_row))
-        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=credibility)
+            #Check that all factors are finite, that is.
+            if all(level_dics[n][fact].isFinite() for n,fact in enumerate(facts)):
+                yvals.append(y)
+                int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
+                X.append(spline_system.get_beta_row(int_levels_for_row))
+        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=lambd)
         for facts, y in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
+            print("int_levels_for_row", int_levels_for_row)
             form = spline_system.formula(int_levels_for_row, betas)
             row = list(non_interpolated_factor_values)+list(facts)+[[interpolated_factors, form, min(yvals), max(yvals)]]
             new_data_frame.addRow(row)

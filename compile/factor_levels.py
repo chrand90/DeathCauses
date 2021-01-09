@@ -133,6 +133,11 @@ class factor_level(object):
             self.midPoint=None
             self.length=None
 
+    def isFinite(self):
+        if self.type=='x' or self.type=='x-y':
+            return True
+        return False
+
     def asFiniteInterval(self):
         if self.type=='x':
             return [self.midPoint]

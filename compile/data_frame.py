@@ -116,11 +116,13 @@ class data_frame:  # svend
             if factor_tuple in newly_created_dataframes:
                 newly_created_dataframes[factor_tuple].addRow(row_to_add)
             else:
-                new_data_frame=data_frame(not_variables,self.credibility)
+                new_data_frame=self.subcopy(not_variables)
                 new_data_frame.addRow(row_to_add)
                 newly_created_dataframes[factor_tuple]=new_data_frame
         return newly_created_dataframes
-        
+
+    def subcopy(self, variables):
+        return data_frame(variables, self.credibility)
         
         
     def subset(self, conditions):

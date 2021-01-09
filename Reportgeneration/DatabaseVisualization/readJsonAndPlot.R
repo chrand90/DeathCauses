@@ -1,12 +1,3 @@
-#
-# This is a Shiny web application. You can run the application by clicking
-# the 'Run App' button above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(tidyverse)
 
 
@@ -52,7 +43,7 @@ analyze_limits=function(lim_mat){
     starter=2
   }
   n=nrow(lim_mat)
-  print(paste('n',n))
+  #print(paste('n',n))
   if(starter< n){
     for(i in starter:n){
       if(i==n  && !is.finite(mean(lim_mat[i,]))){
@@ -67,15 +58,15 @@ analyze_limits=function(lim_mat){
         #time to make room!
         sizes=c()
         if(i>1){
-          print(paste('adding', diff(lim_mat[i-1,]), 'to the sizes'))
+          #print(paste('adding', diff(lim_mat[i-1,]), 'to the sizes'))
           sizes=c(sizes, diff(lim_mat[i-1,]))
         }
         if(i<n){
-          print(paste('adding', diff(lim_mat[i+1,]), 'to the sizes'))
+          #print(paste('adding', diff(lim_mat[i+1,]), 'to the sizes'))
           sizes=c(sizes, diff(lim_mat[i+1,]))
         }
         at_size=min(sizes)/5
-        print(at_size)
+        #print(at_size)
         if(i==1){
           plotting_limits=c(lim_mat[i,1]-at_size, lim_mat[i,2]+at_size)
           tick_positions=c(lim_mat[i,1])
@@ -246,10 +237,9 @@ make_one_dimensional_plotting_file=function(df, f, fname, output='risks'){
 
 plot_one_dimensional_RR=function(df, f, fname){
   p_df <- make_one_dimensional_plotting_file(df,f,fname)
-  pl <- ggplot(p_df, aes(x=x,y=y, width=widths, fill=y))+geom_col()+
+  pl <- ggplot(p_df, aes(x=x,y=y, width=widths))+geom_bar(stat='identity')+
     scale_x_continuous(breaks=f$tick_positions, labels = f$tick_strings)+
     xlab(fname)+ylab('RR')+
-    scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
     ggtitle('Risk ratios')
   return(pl)
 }
@@ -412,9 +402,9 @@ make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='
   data.frame(x=xvals, m=midpoints) %>% arrange(x) -> res_df
   yvals=numeric(nrow(res_df))
   func_index=1
-  print(res_df)
-  print(f$plotting_limits)
-  print(length(funcs))
+  #print(res_df)
+  #print(f$plotting_limits)
+  #print(length(funcs))
   for(i in 1:nrow(res_df)){
     while(func_index<length(funcs) && res_df$x[i]>f$plotting_limits[func_index+1]+1e-6){
       func_index=func_index+1
@@ -531,7 +521,7 @@ plot_interpolation_file=function(interpolationtable, riskratio_names){
   #print('res=')
   #print(res)
   sfacts=sort_factors(factors)
-  print(sfacts)
+  #print(sfacts)
   interpolation_dimension=nrow(filter(sfacts, type=='numeric'))
   if(interpolation_dimension==0){
     stop('tried plotting an interpolation file without numeric variables.')
@@ -566,7 +556,7 @@ plot_risk_ratio_file=function(riskratio_numbers, riskratio_names){
   sfacts=sort_factors(factors)
   #res=list()
   if(nrow(sfacts)==1){
-    print('entered sfacts=1')
+    #print('entered sfacts=1')
     fname=as.character(sfacts[1,1])
     f=factors[[fname]]
     pl <- plot_one_dimensional_RR(df,f,fname)
@@ -576,12 +566,12 @@ plot_risk_ratio_file=function(riskratio_numbers, riskratio_names){
     #   xlab(fname)+ylab('RR')
   }
   if(nrow(sfacts)==2){
-    print('entered sfacts=2')
+    #print('entered sfacts=2')
     fnames=as.character(sfacts[1:2,1])
     pl <- plot_two_dimensional(df, factors, fnames)
   }
   if(nrow(sfacts)>2){
-    print('entered sfacts>2')
+    #print('entered sfacts>2')
   }
   return(pl)
 }
@@ -597,177 +587,124 @@ library(grid)
 library(gridExtra)
 standard_ages=c(0,1,seq(5,105,5))
 standard_ages_string=as.character(standard_ages)
-#standard_ages_string[length(standard_ages_string)]='Inf'
+standard_ages_string[length(standard_ages_string)]='Inf'
 barwidths=diff(standard_ages)
 dat=fromJSON(file = '../../compile/Causes.json')
 
-
-get_info=function(ca){
-  subdat=dat[[ca]]
-  y=subdat$Age$age_prevalences
-  flattened_risk_table=list()
+get_info = function(ca) {
+  subdat = dat[[ca]]
+  y = subdat$Age$age_prevalences
+  x = subdat$Age$age_classification
+  flattened_risk_table = list()
   
   #age_plot
-  count=0
-  riskratio_names=list()
-  riskratio_numbers=list()
-  interpolation_tables=list()
-  for(riskfactor_group in subdat$RiskFactorGroups){
-    for(l in riskfactor_group$riskRatioTables){
-      count=count+1
+  count = 0
+  riskratio_names = list()
+  riskratio_numbers = list()
+  interpolation_tables = list()
+  for (riskfactor_group in subdat$RiskFactorGroups) {
+    for (l in riskfactor_group$riskRatioTables) {
+      count = count + 1
       riskratio_names[[count]] <- l$riskFactorNames
       riskratio_numbers[[count]] <- l$riskRatioTable
       interpolation_tables[[count]] <- l$interpolationTable
     }
   }
-  outp=list()
-  outp$riskratio_names=riskratio_names
-  outp$y=y
-  outp$riskratio_numbers=riskratio_numbers
-  outp$count=count
-  outp$interpolationTable=interpolation_tables
+  outp = list()
+  outp$riskratio_names = riskratio_names
+  outp$y = y
+  outp$x= x
+  outp$riskratio_numbers = riskratio_numbers
+  outp$count = count
+  outp$interpolationTable = interpolation_tables
   return(outp)
 }
 
-make_age_plot=function(y){
-  print(y)
+make_list_of_plots_for_risk_and_interpolation_factor=function(deathcause, riskfactors){
+  list_of_plots = list()
+  outp = get_info(deathcause)
+  count = outp$count
+  if (count > 0) {
+    for (i in 1:count) {
+      #print(riskfactors)
+      #print(outp$riskratio_names[[i]])
+      if (riskfactors == paste(outp$riskratio_names[[i]], collapse = '_')) {
+        r <-
+          plot_risk_ratio_file(
+            riskratio_names = outp$riskratio_names[[i]],
+            riskratio_numbers = outp$riskratio_numbers[[i]]
+          )
+        list_of_plots = c(list_of_plots, list(r))
+        int_table = outp$interpolationTable[[i]]
+        if (length(int_table) > 0) {
+          interpolation_plots = plot_interpolation_file(int_table,
+                                                        outp$riskratio_names[[i]])
+          if(length(interpolation_plots)>0){
+            list_of_plots=c(list_of_plots, interpolation_plots)
+          }
+        }
+      }
+      
+    }
+    return(list_of_plots)
+  }
+  return("The requested plot does not exist")
+}
+
+make_plot_for_risk_factor_and_interpolation = function(deathcause, riskfactors) {
+  list_of_plots=make_list_of_plots_for_risk_and_interpolation_factor(deathcause, riskfactors)
+  list_of_plots$ncol = 1
+  g <- do.call(grid.arrange, list_of_plots)
+  print(g)
+}
+
+make_plot_for_risk_factor = function(deathcause, riskfactors) {
+  list_of_plots=make_list_of_plots_for_risk_and_interpolation_factor(deathcause, riskfactors)
+  list_of_plots$ncol = 1
+  do.call(grid.arrange, list(list_of_plots[[1]]))
+}
+
+make_plot_for_interpolation = function(deathcause, riskfactors) {
+  list_of_plots=make_list_of_plots_for_risk_and_interpolation_factor(deathcause, riskfactors)
+  list_of_plots$ncol = 1
+  if(length(list_of_plots)>1){
+    do.call(grid.arrange, list_of_plots[-1])
+  }
+}
+
+#make_plot_for_interpolation('Alzheimers','Caffeine')
+
+make_plot_for_deathcause=function(deathcause, ylabText=NULL){
+  outp = get_info(deathcause)
+  if(is.null(ylabText)){
+    return(make_age_plot(outp$y,outp$x))
+  }
+  else{
+    return(make_age_plot(outp$y, outp$x, ylabText))
+  }
+  
+}
+
+
+make_age_plot=function(y,x=c(), ylabText="Probability of dying from cause"){
+  if(length(x)==0){
+    ages=standard_ages
+    ages_string=standard_ages_string
+  }
+  else{
+    ages= x
+    ages_string=as.character(x)
+    
+  }
+  barwidths=diff(ages)
   age_plot = ggplot(data=data.frame(y=y, 
-                                    x=standard_ages[-length(standard_ages)]+barwidths/2,
+                                    x=ages[-length(ages)]+barwidths/2,
                                     w=barwidths),
                     aes(x=x,y=y,width=w*0.95))+
-    geom_col()+scale_x_continuous(breaks=standard_ages,
-                                  labels=standard_ages_string)+
+    geom_col()+scale_x_continuous(breaks=ages,
+                                  labels=ages)+
     xlab('Age')+
-    ylab('Probability of dying of cause')+
+    ylab(ylabText)+
     scale_fill_gradient(low = "yellow", high = "darkgreen", na.value = NA)
   return(age_plot)
 }
-
-#p <- plot_ly(data=res_df, x=res_df$xval, y=res_df$yval, z=res_df$zval, type="mesh3d" ) %>% add_trace()
-
-#testing
-if(F){
-  g=dat$Parkinsons$RiskFactorGroups[[4]]$riskRatioTables[[1]]
-  riskratio_names=g$riskFactorNames
-  riskratio_numbers=g$riskRatioTable
-  interpolation_table=g$interpolationTable
-  plot_risk_ratio_file(riskratio_numbers, riskratio_names)
-}
-
-if(F){
-  g=dat$BreastCancer$RiskFactorGroups[[2]]$riskRatioTables[[2]] # oral contraceptive
-  riskratio_names=g$riskFactorNames
-  interpolationtable=g$interpolationTable
-}
-
-if(F){
-  g=dat$BreastCancer$RiskFactorGroups[[2]]$riskRatioTables[[1]] #gender
-  riskratio_names=g$riskFactorNames
-  interpolationtable=g$interpolationTable
-}
-
-if(F){
-  g=dat$LiverCancer$RiskFactorGroups[[1]]$riskRatioTables[[1]]
-  interpolationtable=g$interpolationTable
-  riskratio_names=g$riskFactorNames
-}
-
-
-#r=
-#print(r)
-
-# Define UI for application that draws a histogram
-
-Number_of_plot_slots=20
-theight=8000
-
-ui <- fluidPage(
-   
-   # Application title
-   titlePanel("DeathCauses database"),
-   
-   
-   
-   selectInput(inputId = "cause", label = NULL, choices=names(dat)),
-   plotOutput('distPlot', height=theight)
-   
-)
-
-
-
-
-
-# Define server logic required to draw a histogram
-server <- function(input, output) {
-  
-  
-  outp <- reactive({get_info(input$cause)})
-    # flattened_risk_table=list()
-    # 
-    # #age_plot
-    # count=0
-    # risk_ratio_names=list()
-    # risk_ratio_numbers=list()
-    # for(riskfactor_group in subdat$RiskFactorGroups){
-    #   for(l in riskfactor_group$riskRatioTables){
-    #     count=count+1
-    #     riskratio_names[[count]] <- l$riskFactorNames
-    #     riskratio_numbers[[count]] <- l$riskRatioTable
-    #   }
-    # }
-  
-  
-   
-   output$distPlot <- renderPlot({
-      # generate bins based on input$bins from ui.R
-      
-     age_plot=make_age_plot(outp()$y)
-     list_of_plots=list(age_plot)
-     count=outp()$count
-      if(count>0 && T){
-        for(i in 1:count){
-          r <- plot_risk_ratio_file(riskratio_names = outp()$riskratio_names[[i]],
-                                    riskratio_numbers = outp()$riskratio_numbers[[i]])
-          list_of_plots=c(list_of_plots,list(r))
-          int_table=outp()$interpolationTable[[i]]
-          print('int table')
-          print(int_table)
-          if(length(int_table)>0){
-            interpolation_plots=plot_interpolation_file(int_table,
-                                                        outp()$riskratio_names[[i]])
-            print(paste('length of interpolation plots', length(interpolation_plots)))
-            if(length(interpolation_plots)>0){
-              list_of_plots=c(list_of_plots, interpolation_plots)
-            }
-          }
-        }
-        if(i<count){
-          print(outp()$riskratio_names[[i+1]])
-        }
-        
-      }
-     ln=length(list_of_plots)
-     if(ln<Number_of_plot_slots){
-       number_of_remaining=Number_of_plot_slots-ln
-       extras=replicate(number_of_remaining, ggplot()+theme_void(), simplify = F)
-       list_of_plots=c(list_of_plots, extras)
-     }
-     list_of_plots$ncol=1
-      g <- do.call(grid.arrange, list_of_plots)
-      return(g)
-      
-      
-      #list_of_plots[[2]] <- htmlOutput()
-      #tagList(list_of_plots)
-      #return(list_of_plots[[1]])
-      
-            #bins <- seq(min(x), max(x), length.out = 4 + 1)
-      
-      # draw the histogram with the specified number of bins
-      #hist(x, breaks = bins, col = 'darkgray', border = 'white')
-   })
-}
-
-# Run the application 
-shinyApp(ui = ui, server = server)
-
