@@ -17,4 +17,10 @@ export class RiskFactorGroup {
         this.interactionFunction  = json.interactionFunction;
         this.riskRatioTables = json.riskRatioTables.map(element => {return new RiskRatioTable(element)})
     }
+
+    getAllFactorsInGroup(): Set<string> {
+        let allFactors: string[] = [];
+        this.riskRatioTables.forEach(rrt => allFactors.concat(rrt.factorNames));
+        return new Set(allFactors)
+    }
 }

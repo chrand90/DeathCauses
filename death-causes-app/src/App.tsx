@@ -7,13 +7,12 @@ import { ProbabilityOfDeathCauseCalculation } from './components/database/Probab
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
-import { FactorAnswers } from './models/Factors';
+import Factors, { FactorAnswers } from './models/Factors';
 import causesData from './resources/Causes.json';
 
 
 interface AppState {
-  factorAnswersSubmitted: FactorAnswers | null,
-  factorDatabase: any,
+  factorAnswersSubmitted: FactorAnswers,
 }
 
 class App extends React.Component<any, AppState> {
@@ -24,8 +23,7 @@ class App extends React.Component<any, AppState> {
     super(props);
 
     this.state = {
-      factorAnswersSubmitted: null,
-      factorDatabase: null
+      factorAnswersSubmitted: new Factors(null).getFactorsAsStateObject(),
     }
     //this.handleChange = this.handleChange.bind(this)
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this)
@@ -35,21 +33,10 @@ class App extends React.Component<any, AppState> {
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
     this.setState({
       factorAnswersSubmitted: factorAnswers
-    }, () => {this.calculateRR()})
+    }, () => { })
   }
 
-  calculateRR() {
-    let database = this.state.factorDatabase
-    let calc = new ProbabilityOfDeathCauseCalculation();
-    for (var key in database) {
-      if (database.hasOwnProperty(key)) {
-        if (this.state.factorAnswersSubmitted) {
-          console.log(database[key as keyof typeof database].deathCauseName)
-          console.log(calc.calculate(this.state.factorAnswersSubmitted, 10, 100, database[key as keyof typeof database]))
-        }
-      }
-    }
-  }
+
 
 
   // loadFactorAnswers() {
@@ -66,25 +53,7 @@ class App extends React.Component<any, AppState> {
   //   // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
   // }
 
-  loadFactorDatabase() {
-    let res: Deathcause[] = [];
-    let database = causesData;
 
-    for (var key in database) {
-      if (database.hasOwnProperty(key)) {
-        console.log(database[key as keyof typeof database])
-        res.push(new Deathcause(database[key as keyof typeof database], key))
-      }
-    }
-
-    this.setState({
-      factorDatabase: res
-    })
-  }
-
-  componentDidMount() {
-    this.loadFactorDatabase()
-  }
 
 
   renderQuestionMenu() {
