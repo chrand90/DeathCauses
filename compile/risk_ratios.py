@@ -18,6 +18,7 @@ class RiskRatioTable(data_frame):
     def __init__(self, factornames, lambd, bounding_method):
         self.lambd = lambd
         self.bounding_method = bounding_method
+        self.variances=[]
         super().__init__(factornames, 0)
 
     def subcopy(self, factornames):
@@ -28,6 +29,53 @@ class RiskRatioTable(data_frame):
 
     def get_lambd(self):
         return self.lambd
+
+    def addVariance(self, variance):
+        self.variances.append(variance)
+
+    def addRow(self, row):
+        assert len(row) == len(self.factornames) + 1, "Row does not fit data frame."
+        self.listOfRowsInTheDataFrame.append(row)
+        if len(self)>len(self.variances):
+            self.variances.extend([None]*(len(self)-len(self.variances)))
+
+    def __str__(self):
+        '''
+        This function returns the string that should be printed when an instance is printed
+        '''
+        str1=''
+        str1 += "\t".join(self.factornames) + "\t" + "Value" + "\n"
+        for row,var in zip(self.listOfRowsInTheDataFrame, self.variances):
+            str1 += "\t".join(map(str, row)) + "(VAR="+ str(var) +")" +"\n"
+        str1+= 'lambda='+str(self.lambd)+"\n"
+        str1+= 'tails='+self.bounding_method
+        return str1
+
+    def get_as_list_of_lists(self):
+        res = []
+        for r,v in zip(self.listOfRowsInTheDataFrame, self.variances):
+            res.append([r[:-1], r[-1],v])
+        return res
+
+    def group_by(self, variables):
+        not_variables=list(set(self.factornames)-set(variables))
+        newly_created_dataframes={}
+        indices=[i for i,s in enumerate(self.factornames) if s in variables]
+        not_indices=[i for i,s in enumerate(self.factornames) if s in not_variables]
+        if len(indices)==0:
+            return { tuple():self}
+        for row, var in zip(self.listOfRowsInTheDataFrame,self.variances):
+            factor_tuple=tuple((row[i] for i in indices))
+            row_to_add=[row[i] for i in not_indices]+[row[-1]]
+            if factor_tuple in newly_created_dataframes:
+                newly_created_dataframes[factor_tuple].addVariance(var)
+                newly_created_dataframes[factor_tuple].addRow(row_to_add)
+            else:
+                new_data_frame=self.subcopy(not_variables)
+                new_data_frame.addVariance(var)
+                new_data_frame.addRow(row_to_add)
+                newly_created_dataframes[factor_tuple]=new_data_frame
+        return newly_created_dataframes
 
 
 def loadRRs(writtenF_dir):
@@ -49,7 +97,15 @@ def loadRRs(writtenF_dir):
                         j = j + 1
                     else:
                         splittedLine = line.split()
-                        splittedLine[-1] = float(splittedLine[-1])
+                        lastEntry=splittedLine[-1]
+                        if '(' in lastEntry:
+                            s_parts=lastEntry.split('(')
+                            rr=float(s_parts[0])
+                            sd=float(s_parts[1].split(')')[0])
+                            df.addVariance(sd**2)
+                            splittedLine[-1]=rr
+                        else:
+                            splittedLine[-1] = float(splittedLine[-1])
                         df.addRow(splittedLine)
                 elif 'lambda=' in line:
                     lambd = float(line.split('=')[1].strip())

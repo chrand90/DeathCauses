@@ -75,7 +75,7 @@ class data_frame:  # svend
         res=[row for row in self.listOfRowsInTheDataFrame]
         res.insert(0,self.factornames)
         return res
-    
+
     def get_as_standard_age_prevalences(self):
         res={'age_classification':[]}
         age_prevalences=[r[-1] for r in self.listOfRowsInTheDataFrame]
@@ -88,6 +88,9 @@ class data_frame:  # svend
             f.write(','.join(df[0]+['Value'])+'\n')
             for r in df[1:]:
                 f.write(','.join(r[:-1]+[r[-1][1]])+'\n')
+
+    def hasVariances(self):
+        return False
                 
         
     def __dict__(self):
@@ -102,28 +105,9 @@ class data_frame:  # svend
         for row in self.listOfRowsInTheDataFrame:
             str1 += "\t".join(map(str, row)) + "\n"
         return str1
-    
-    def group_by(self, variables):
-        not_variables=list(set(self.factornames)-set(variables))
-        newly_created_dataframes={}
-        indices=[i for i,s in enumerate(self.factornames) if s in variables]
-        not_indices=[i for i,s in enumerate(self.factornames) if s in not_variables]
-        if len(indices)==0:
-            return { tuple():self}
-        for row in self.listOfRowsInTheDataFrame:
-            factor_tuple=tuple((row[i] for i in indices))
-            row_to_add=[row[i] for i in not_indices]+[row[-1]]
-            if factor_tuple in newly_created_dataframes:
-                newly_created_dataframes[factor_tuple].addRow(row_to_add)
-            else:
-                new_data_frame=self.subcopy(not_variables)
-                new_data_frame.addRow(row_to_add)
-                newly_created_dataframes[factor_tuple]=new_data_frame
-        return newly_created_dataframes
 
     def subcopy(self, variables):
         return data_frame(variables, self.credibility)
-        
         
     def subset(self, conditions):
         '''

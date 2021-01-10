@@ -402,14 +402,33 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
     for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
         yvals=[]
         X=[]
-        for facts, y in RR.get_as_list_of_lists():
+        Xfixed=[]
+        yfixed=[]
+        invertedVariances=[]
+        for facts, y,var in RR.get_as_list_of_lists():
             #Check that all factors are finite, that is.
             if all(level_dics[n][fact].isFinite() for n,fact in enumerate(facts)):
-                yvals.append(y)
                 int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
-                X.append(spline_system.get_beta_row(int_levels_for_row))
-        betas = get_maximum_likelihood_estimate(W=spline_system.W, X=X, yvals=yvals, lambdaval=lambd)
-        for facts, y in RR.get_as_list_of_lists():
+                if var is not None and var<1e-8:
+                    yfixed.append(y)
+                    Xfixed.append(spline_system.get_beta_row(int_levels_for_row))
+                else:
+                    yvals.append(y)
+                    X.append(spline_system.get_beta_row(int_levels_for_row))
+                    if var is None:
+                        invertedVariances.append(1.0)
+                    else:
+                        invertedVariances.append(1.0/var)
+
+        betas = get_maximum_likelihood_estimate(W=spline_system.W,
+                                                X=X,
+                                                yvals=yvals,
+                                                lambdaval=lambd,
+                                                scales=invertedVariances,
+                                                Xfixed=Xfixed,
+                                                yfixed=yfixed
+                                                )
+        for facts, y,_ in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             print("int_levels_for_row", int_levels_for_row)
             form = spline_system.formula(int_levels_for_row, betas)
