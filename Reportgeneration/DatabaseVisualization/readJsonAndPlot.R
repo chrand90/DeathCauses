@@ -158,7 +158,8 @@ create_data_frame_from_interpolation_table=function(interpolationtable, riskrati
     }
     to_add_vector=c(to_add_vector,
                     row[[2]][[2]],
-                    row[[2]][[3]])
+                    ifelse(is.null(row[[2]][[3]]),"NULL",row[[2]][[3]]),
+                    ifelse(is.null(row[[2]][[4]]), "NULL",row[[2]][[4]]))
     table_content=rbind(table_content, to_add_vector)
   }
   factor_objects=list()
@@ -170,6 +171,8 @@ create_data_frame_from_interpolation_table=function(interpolationtable, riskrati
   rd=data.frame(table_content)
   first_col_names <-  as.vector(sapply(riskratio_names, function(x){ paste(x, c('lower','upper','factorlevel','type','in_interpolation'), sep='.')}))
   colnames(rd) <- c(first_col_names, 'function_equation','min','max')
+  rd$min=as.numeric(as.character(rd$min))
+  rd$max=as.numeric(as.character(rd$max))
   return(list(df=rd, factors=factor_objects))
 }
 
@@ -390,28 +393,50 @@ parse_spline_formulas=function(function_equations){
 make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='function_equation'){
   rownames(df) <- df[,paste(fname,'factorlevel', sep='.')]
   function_equations=df[names(f$remapper),output]
+  print(df)
+  mins=as.numeric(df[names(f$remapper), 'min'])
+  maxs=as.numeric(df[names(f$remapper), 'max'])
   funcs=parse_spline_formulas(as.character(function_equations))
   #yvals=funcs[[1]](f$plotting_limits[1])
   #xvals=f$plotting_limits[1]
   N=33
-  to_plot=N-length(f$plotting_limits)
-  xfrom=min(f$plotting_limits)+0.01*diff(range(f$plotting_limits))
-  xto=min(f$plotting_limits)+0.99*diff(range(f$plotting_limits))
-  xvals=c(f$plotting_limits, seq(xfrom,xto, length.out = to_plot))
-  midpoints=c(rep('Yes',length(f$plotting_limits)), rep('No',to_plot))
+  to_plot=N-length(f$tick_positions)
+  xfrom=min(f$tick_positions)+0.01*diff(range(f$tick_positions))
+  xto=min(f$tick_positions)+0.99*diff(range(f$tick_positions))
+  xvals=c(sort(f$tick_positions), seq(xfrom,xto, length.out = to_plot))
+  midpoints=c(rep('Yes',length(f$tick_positions)), rep('No',to_plot))
   data.frame(x=xvals, m=midpoints) %>% arrange(x) -> res_df
   yvals=numeric(nrow(res_df))
+  interpolation_areas=rep('Inside', nrow(res_df))
+  truncated=rep('No', nrow(res_df))
   func_index=1
   #print(res_df)
   #print(f$plotting_limits)
   #print(length(funcs))
   for(i in 1:nrow(res_df)){
-    while(func_index<length(funcs) && res_df$x[i]>f$plotting_limits[func_index+1]+1e-6){
+    while(func_index<length(funcs) && res_df$x[i]>f$tick_positions[func_index]+1e-6){
       func_index=func_index+1
     }
     yvals[i]=funcs[[func_index]](res_df$x[i])
+    if(!is.na(maxs[func_index]) && yvals[i]>maxs[func_index]){
+      yvals[i]=maxs[func_index]
+      truncated[i]='Yes'
+    }
+    if(!is.na(mins[func_index]) && yvals[i]<mins[func_index]){
+      truncated[i]='Yes'
+      yvals[i]=mins[func_index]
+    }
+    
+    if(f$interval_types[func_index]== 'y+'){
+      interpolation_areas[i]='After'
+    }
+    if(f$interval_types[func_index]== '-x'){
+      interpolation_areas[i]='Before'
+    }
+    
   }
   res_df$y=yvals
+  res_df$in_interpolation_area=interpolation_areas
   return(res_df)
 }
 
@@ -501,10 +526,15 @@ plot_interpolation_table=function(df, interpolatable_factors, factors, subtitle=
   }
   else if(length(interpolatable_factors)==1){
     p_df=make_one_dimensional_interpolation_plotting_file(df,factors[[interpolatable_factors]], interpolatable_factors, output='function_equation')
-    xticks=factors[[interpolatable_factors[1]]]$tick_strings
+    xticks=as.character(factors[[interpolatable_factors[1]]]$tick_positions)
     xtick_positions=factors[[interpolatable_factors[1]]]$tick_positions
-    q <- ggplot(p_df, aes(x=x, y=y))+
-      geom_line()+geom_point(data=filter(p_df, m=='Yes'))+
+    q <- ggplot(filter(p_df, in_interpolation_area=='Inside'), aes(x=x, y=y))+
+      geom_line()+
+      geom_line(data=filter(p_df, in_interpolation_area=='Before'), aes(x=x, y=y), 
+                linetype='dashed')+
+      geom_line(data=filter(p_df, in_interpolation_area=='After'), aes(x=x, y=y), 
+                linetype='dashed')+
+      geom_point(data=filter(p_df, m=='Yes'))+
       geom_text(data=filter(p_df, m=='Yes'), aes(x=x,y=y*1.05, label=round(y, digits=3)), color='black')+
       ggtitle(subtitle)+
       xlab(interpolatable_factors)+ylab('Interpolated RR')+
@@ -579,7 +609,6 @@ plot_risk_ratio_file=function(riskratio_numbers, riskratio_names){
 
 
 
-library(shiny)
 
 library(rjson)
 library(plotly)
@@ -672,7 +701,7 @@ make_plot_for_interpolation = function(deathcause, riskfactors) {
   }
 }
 
-#make_plot_for_interpolation('Alzheimers','Caffeine')
+make_plot_for_interpolation('Alzheimers','Caffeine')
 
 make_plot_for_deathcause=function(deathcause, ylabText=NULL){
   outp = get_info(deathcause)

@@ -15,7 +15,7 @@ from collections import defaultdict
 
 class RiskRatioTable(data_frame):
 
-    def __init__(self, factornames, lambd, bounding_method):
+    def __init__(self, factornames, lambd, bounding_method='min_bounded local'):
         self.lambd = lambd
         self.bounding_method = bounding_method
         self.variances=[]
@@ -51,10 +51,18 @@ class RiskRatioTable(data_frame):
         str1+= 'tails='+self.bounding_method
         return str1
 
-    def get_as_list_of_lists(self):
+    def getMinAndMax(self):
+        vals=[r[-1] for r in self.listOfRowsInTheDataFrame]
+        return min(vals), max(vals)
+
+    def get_as_list_of_lists(self, includeVariances=False):
         res = []
-        for r,v in zip(self.listOfRowsInTheDataFrame, self.variances):
-            res.append([r[:-1], r[-1],v])
+        if includeVariances:
+            for r,v in zip(self.listOfRowsInTheDataFrame, self.variances):
+                res.append([r[:-1], r[-1],v])
+        else:
+            for r in self.listOfRowsInTheDataFrame:
+                res.append([r[:-1], r[-1]])
         return res
 
     def group_by(self, variables):

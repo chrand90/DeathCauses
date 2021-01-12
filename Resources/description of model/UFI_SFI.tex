@@ -1,0 +1,81 @@
+\documentclass[a4paper, 12pt]{memoir}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\renewcommand{\danishhyphenmins}{22}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\xdot}{x_{\cdot}}
+\usepackage{SASnRdisplay}
+\usepackage{mathtools}
+\newcommand{\Rroom}[2]{\mathbb R^{#1 \times #2}}
+\renewcommand{\i}{^{-1}}
+\newcommand{\tr}{\textup{tr}}
+\usepackage{bm}
+\usepackage{tikz}
+\definecolor{blue1}{rgb}{0.7,0.8,1}
+\definecolor{blue2}{rgb}{0.6,0.8,1}
+\definecolor{blue3}{rgb}{0.7,0.9,1}
+\definecolor{blue4}{rgb}{0.6,0.7,1}
+
+\definecolor{red1}{rgb}{1,0.5,0.7}
+\definecolor{red2}{rgb}{1,0.7,0.75}
+\definecolor{red3}{rgb}{1,0.7,0.5}
+\definecolor{red4}{rgb}{1,0.8,0.7}
+\definecolor{red5}{rgb}{1,0.5,0.5}
+
+\definecolor{gron}{rgb}{0,0.6,0}
+
+\newcommand{\bigzero}{\mbox{\normalfont\Large\bfseries 0}}
+\newcommand{\rvline}{\hspace*{-\arraycolsep}\vline\hspace*{-\arraycolsep}}
+
+
+
+\begin{document}
+
+Lad os kigge på formlen fra notation and integration.pdf
+
+\begin{equation}
+U(F_I)=p_d(a,\psi_{0,F_I})-p_d(a, \psi_0)
+\end{equation}
+Begge led i summen kan skrives som produkter
+\begin{align}
+&p_d(a,\psi_{0,F_I})-p_d(a, \psi_0)\\
+&=P_d(a) \biggl(\begin{lgathered}[t]\prod_{j=1}^{n_d} \frac{g_{j,d}(R^{1,j,d}(\psi_{0,F_I}^{1,j,d}),  \dots , R^{k_{j,d},j,d}(\psi_{0,F_I}^{k_{j,d},j,d}) )}{\textup{norm}^{j,d}(l(a))}-\\
+ \prod_{j=1}^{n_d} \frac{g_{j,d}(R^{1,j,d}(\psi_{0}^{1,j,d}),  \dots , R^{k_{j,d},j,d}(\psi_{0}^{k_{j,d},j,d}) )}{\textup{norm}^{j,d}(l(a))}\biggr)\end{lgathered}\\
+ &=P_d(a) \frac{1}{\prod_{j=1}^{n_d}{\textup{norm}^{j,d}(l(a))}}\biggl(\begin{lgathered}[t]\prod_{j=1}^{n_d} {g_{j,d}(R^{1,j,d}(\psi_{0,F_I}^{1,j,d}),  \dots , R^{k_{j,d},j,d}(\psi_{0,F_I}^{k_{j,d},j,d}) )}-\\
+ \prod_{j=1}^{n_d} {g_{j,d}(R^{1,j,d}(\psi_{0}^{1,j,d}),  \dots , R^{k_{j,d},j,d}(\psi_{0}^{k_{j,d},j,d}) )}\biggr)\end{lgathered}\\
+\end{align}
+Hvis vi antager at $g$'erne er produkter, står der
+\begin{align}
+ &=P_d(a) \frac{1}{\prod_{j=1}^{n_d}{\textup{norm}^{j,d}(l(a))}}\biggl(\begin{lgathered}[t]\prod_{j=1}^{n_d} {R^{1,j,d}(\psi_{0,F_I}^{1,j,d})  \cdots R^{k_{j,d},j,d}(\psi_{0,F_I}^{k_{j,d},j,d}) }-\\
+ \prod_{j=1}^{n_d} {R^{1,j,d}(\psi_{0}^{1,j,d}) \cdots R^{k_{j,d},j,d}(\psi_{0}^{k_{j,d},j,d}) }\biggr)\end{lgathered}\\
+\end{align}
+Inde i den store parentes står der et objekt af formen
+\begin{align}
+r_1r_2\cdots r_n- r_{1,0}r_{2,0}\cdots r_{n,0}
+\end{align}
+Det kan skrives som
+\begin{align}
+(r_{1,0}&+(r_1-r_{1,0}))\cdots (r_{n,0}+(r_n-r_{n,0}))- r_{1,0}r_{2,0}\cdots r_{n,0}\\
+&=r_{1,0}\cdots r_{n,0}+(r_1-r_{1,0})r_{2,0}\cdots r_{n,0}+\dots + (r_n-r_{n,0})r_{1,0}\cdots r_{n-1,0}+ R -r_{1,0}\cdots r_{n,0}\\
+&=(r_1-r_{1,0})r_{2,0}\cdots r_{n,0}+\dots + (r_n-r_{n,0})r_{1,0}\cdots r_{n-1,0}+ R
+\end{align}
+Vi vil nu dele $R$ ud på risk factorne svarende til $r_1$, $r_2 \dots , r_n$. Formlen i notation and integration.pdf ser således ud
+\begin{equation}
+S^{(1)}(F_i)=\frac{S(F_i)}{\sum_{j=1}^{n}S(F_j)}\cdot U_* \label{eqS1}
+\end{equation}
+hvilket siger at den ekstra vægt (dvs. $U_{*}/(\sum_{j=1}^{n}S(F_j))$) skal deles ud proportionalt til $r_i/\textup{norm}^{i}$. 
+
+For klarifikation kan vi skrive
+\begin{align}
+ &P_d(a) \frac{1}{\prod_{j=1}^{n_d}{\textup{norm}^{j,d}(l(a))}}\biggl(\begin{lgathered}[t]\prod_{j=1}^{n_d} {R^{1,j,d}(\psi_{0,F_I}^{1,j,d})  \cdots R^{k_{j,d},j,d}(\psi_{0,F_I}^{k_{j,d},j,d}) }-\\
+ \prod_{j=1}^{n_d} {R^{1,j,d}(\psi_{0}^{1,j,d}) \cdots R^{k_{j,d},j,d}(\psi_{0}^{k_{j,d},j,d}) }\biggr)\end{lgathered}\\
+ &=\sum_{j=1}^{n}S(F_i)+P_d(a) \frac{1}{\prod_{j=1}^{n_d}{\textup{norm}^{j,d}(l(a))}}\biggl(R\biggr)=U_{*}
+\end{align}
+På branchen prototype brugte vi i stedet for formel \eqref{eqS1} følgende formel
+\begin{equation}
+S^{(1)}(F_j)=\frac{\frac{r_j-r_{j,0}}{r_{j,0}}}{\sum_{i=1}^n\frac{r_i-r_{i,0}}{r_{i,0}}} U_{*}
+\end{equation}
+\end{document}

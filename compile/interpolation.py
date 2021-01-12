@@ -4,6 +4,7 @@ from factor_levels import factor_type, NUMERICAL_FACTOR_TYPES, interval_length, 
 from itertools import product
 from data_frame import data_frame
 from spline import make_spline_system, get_maximum_likelihood_estimate
+from interpolation_tails import insert_bounds
 
 
 
@@ -386,6 +387,7 @@ def interpolate_one_spline(RR):
                                                    grouped_risk_ratios=RRs,
                                                    level_dics=level_dics,
                                                    spline_system=ss)
+        insert_bounds(RR, RRs,res,level_dics,non_interpolatable_factors,interpolatable_factors)
         res.order_columns(factor_names)
         return res
     else:
@@ -405,7 +407,7 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
         Xfixed=[]
         yfixed=[]
         invertedVariances=[]
-        for facts, y,var in RR.get_as_list_of_lists():
+        for facts, y,var in RR.get_as_list_of_lists(includeVariances=True):
             #Check that all factors are finite, that is.
             if all(level_dics[n][fact].isFinite() for n,fact in enumerate(facts)):
                 int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
@@ -428,11 +430,11 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                                 Xfixed=Xfixed,
                                                 yfixed=yfixed
                                                 )
-        for facts, y,_ in RR.get_as_list_of_lists():
+        for facts, y in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             print("int_levels_for_row", int_levels_for_row)
             form = spline_system.formula(int_levels_for_row, betas)
-            row = list(non_interpolated_factor_values)+list(facts)+[[interpolated_factors, form, min(yvals), max(yvals)]]
+            row = list(non_interpolated_factor_values)+list(facts)+[[interpolated_factors, form, None, None]]
             new_data_frame.addRow(row)
     return new_data_frame
 
