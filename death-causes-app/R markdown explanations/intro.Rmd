@@ -74,13 +74,13 @@ One way to think about the denominator $60\%+1.9\cdot 40\%=1.36$ is as the relat
 
 ## Smoothing
 
-Many results in health research are presented with binned categories. An example is the paper 
+Many results in health research are presented with binned categories. An example can be taken from @eskelinen2010caffeine, where they found the following risk ratios. They had examined the relation between Alzheimer's and Coffee consumption and in the their analysis they had divided people into three categories; people drinking 0-2 cups of coffe per day, 3-5 cups of coffee per day and 5 or more cups of coffee per day. For each category they computed an [odds ratio](#odds-ratio) of 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 source('../../Reportgeneration/DatabaseVisualization/readJsonAndPlot.R')
 make_plot_for_risk_factor('Alzheimers', 'Caffeine')
-make_plot_for_interpolation('Alzheimers', 'Caffeine')
 ```
+
 
 # Risk factor choices
 
@@ -102,5 +102,29 @@ $$\text{RR}$$
 
 #### Colorectal cancer: Drinking
 We use a analysis by @cho2004alcohol who looked a
+
+# Glossary
+
+### Odds ratio
+An odds ratio is two odds divided by each other. In this document, an odds is a probability divided by the complementary probability. That is, if the probability is $p=0.2$, the odds is
+$$
+\frac{p}{1-p}=\frac{0.2}{1-0.2}=\frac{1}{4}
+$$
+
+An odds ratio is then
+
+$$
+OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}
+$$
+We will almost consequently make the approximation
+
+$$
+OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}\approx \frac{p_1}{p_2}=RR
+$$
+which is justified when $p_1$ and $p_2$ are small or close to each other. The RR is notation for [Risk Ratio](#risk-ratio) 
+
+### Risk ratio
+
+A risk ratio is two probabilities divided by each other. In this program, we will use it as 
 
 # References

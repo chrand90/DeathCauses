@@ -14,6 +14,7 @@
 \newcommand{\tr}{\textup{tr}}
 \usepackage{bm}
 \usepackage{tikz}
+\usepackage[normalem]{ulem}
 \definecolor{blue1}{rgb}{0.7,0.8,1}
 \definecolor{blue2}{rgb}{0.6,0.8,1}
 \definecolor{blue3}{rgb}{0.7,0.9,1}
@@ -66,7 +67,12 @@ Vi vil nu dele $R$ ud på risk factorne svarende til $r_1$, $r_2 \dots , r_n$. F
 \begin{equation}
 S^{(1)}(F_i)=\frac{S(F_i)}{\sum_{j=1}^{n}S(F_j)}\cdot U_* \label{eqS1}
 \end{equation}
-hvilket siger at den ekstra vægt (dvs. $U_{*}/(\sum_{j=1}^{n}S(F_j))$) skal deles ud proportionalt til $r_i/\textup{norm}^{i}$. 
+hvilket siger at den ekstra vægt (dvs. $U_{*}/(\sum_{j=1}^{n}S(F_j))$) skal \textcolor{red}{\sout{deles ud proportionalt til $r_i/\textup{norm}^{i}$}} \textcolor{blue}{deles ud proportionalt til 
+\begin{equation}
+r_{1,0}\cdots r_{i-1,0}\cdot (r_i-r_{i,0}) \cdot r_{i+1,0}\cdots r_n
+\end{equation}
+hvilket er upåvirket af omskaleringer af hele risk ratiotabeller.
+}
 
 For klarifikation kan vi skrive
 \begin{align}
@@ -74,8 +80,35 @@ For klarifikation kan vi skrive
  \prod_{j=1}^{n_d} {R^{1,j,d}(\psi_{0}^{1,j,d}) \cdots R^{k_{j,d},j,d}(\psi_{0}^{k_{j,d},j,d}) }\biggr)\end{lgathered}\\
  &=\sum_{j=1}^{n}S(F_i)+P_d(a) \frac{1}{\prod_{j=1}^{n_d}{\textup{norm}^{j,d}(l(a))}}\biggl(R\biggr)=U_{*}
 \end{align}
-På branchen prototype brugte vi i stedet for formel \eqref{eqS1} følgende formel
+På branchen prototype brugte vi \textcolor{red}{\sout{i stedet for}} \textcolor{blue}{denne udgave af} formel \eqref{eqS1}
 \begin{equation}
 S^{(1)}(F_j)=\frac{\frac{r_j-r_{j,0}}{r_{j,0}}}{\sum_{i=1}^n\frac{r_i-r_{i,0}}{r_{i,0}}} U_{*}
 \end{equation}
+
+\subsection{Generelt}
+Lad som sædvanlig $U(F_I)=p_d(a,\psi_{F_I})-p_d(a, \psi_{0})$ og $U_*=U(F_{\{1,\dots,N\}})$. Vi ønsker at lave dekomponeringen 
+\begin{equation}
+U_*=\sum_{i}S(F_i)
+\end{equation}
+og vi ønsker at $S(F_i)$ på en eller anden måde er tæt på $U(F_i)$. I multinomialfordelingen ville det fortolkes som at produktet
+\begin{equation}
+\prod_{i=1}^{N}\bigl(S(F_i)\bigr)^{U(F_i)}
+\end{equation}
+er stort. Man kan vise at 
+\begin{gather}
+\textup{arg}\max_{S(F_1), \dots, S(F_N) \in \mathbb R_+} \prod_{i=1}^{N}\bigl(S(F_i)\bigr)^{U(F_i)}, 	\\\quad \textup{ med betingelsen } \sum_{i=1}^NS(F_i)=U_*
+\end{gather}
+giver løsningen 
+\begin{equation}
+\S(F_i)=\frac{U(F_i)}{\sum_{j=1}^N U(F_j)}U_*
+\end{equation}
+hvilket er identisk med formel \eqref{eqS1}. 
+
+
+
+
+
+
+
+
 \end{document}

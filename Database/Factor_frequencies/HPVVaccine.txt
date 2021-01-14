@@ -1,0 +1,8 @@
+#credibility=1
+#
+#Because practically no lives has been saved due to the HPVvaccine yet, there is no need to take the vaccinated into account
+#
+HPVVaccine	freq
+None	1.0
+9vHPV	0.0
+4vHPV	0.0

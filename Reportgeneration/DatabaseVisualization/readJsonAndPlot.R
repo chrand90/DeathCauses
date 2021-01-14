@@ -30,6 +30,7 @@ analyze_limits=function(lim_mat){
   #we know that the smalles limit is the first entry and so on.
   types=c()
   plotting_limits=c()
+  interpolation_plotting_limits=c()
   tick_strings=c()
   tick_positions=c()
   starter=1
@@ -38,6 +39,7 @@ analyze_limits=function(lim_mat){
     size_of_second_interval=diff(lim_mat[2,])
     lower_limit=lim_mat[1,2]-size_of_second_interval
     plotting_limits=c(plotting_limits,lower_limit, lim_mat[1,2])
+    interpolation_plotting_limits=c(interpolation_plotting_limits,lower_limit, lim_mat[1,2])
     tick_positions=c(tick_positions,lower_limit, lim_mat[1,2])
     tick_strings=c(tick_strings,'-Inf', as.character(lim_mat[1,2]))
     starter=2
@@ -49,6 +51,7 @@ analyze_limits=function(lim_mat){
       if(i==n  && !is.finite(mean(lim_mat[i,]))){
         size_of_second_last_interval=diff(lim_mat[n-1,])
         plotting_limits=c(plotting_limits, plotting_limits[length(plotting_limits)]+size_of_second_last_interval)
+        interpolation_plotting_limits=c(plotting_limits, plotting_limits[length(plotting_limits)])
         tick_positions=c(tick_positions, plotting_limits[length(plotting_limits)])
         tick_strings=c(tick_strings, 'Inf')
         types=c(types,'y+')
@@ -70,6 +73,7 @@ analyze_limits=function(lim_mat){
         if(i==1){
           plotting_limits=c(lim_mat[i,1]-at_size, lim_mat[i,2]+at_size)
           tick_positions=c(lim_mat[i,1])
+          interpolation_plotting_limits=rep(lim_mat[i,1],2)
           tick_strings=c(as.character(lim_mat[i,1]))
         }
         else{
@@ -84,10 +88,12 @@ analyze_limits=function(lim_mat){
         if(i==1){
           plotting_limits=lim_mat[i,]
           tick_positions=lim_mat[i,]
+          interpolation_plotting_limits=lim_mat[i,]
           tick_strings=as.character(lim_mat[i,])
         }
         else{
           plotting_limits=c(plotting_limits, lim_mat[i,2])
+          interpolation_plotting_limits=c(interpolation_plotting_limits,lim_mat[i,2])
           tick_positions=c(tick_positions,lim_mat[i,2])
           tick_strings=c(tick_strings, as.character(lim_mat[i,2]))
         }
@@ -97,7 +103,8 @@ analyze_limits=function(lim_mat){
   }
   return(list(types=types, plotting_limits=plotting_limits,
               tick_positions=tick_positions,
-              tick_strings=tick_strings))
+              tick_strings=tick_strings,
+              interpolation_plotting_limits=interpolation_plotting_limits))
 }
 
 make_factor_object= function(fourcolumned_matrix){
@@ -124,6 +131,7 @@ make_factor_object= function(fourcolumned_matrix){
     object$tick_strings=lims$tick_strings
     object$tick_positions=lims$tick_positions
     object$interval_types=lims$types
+    object$interpolation_plotting_limits=lims$interpolation_plotting_limits
   }
   else{
     object$type='categorical'
@@ -393,7 +401,6 @@ parse_spline_formulas=function(function_equations){
 make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='function_equation'){
   rownames(df) <- df[,paste(fname,'factorlevel', sep='.')]
   function_equations=df[names(f$remapper),output]
-  print(df)
   mins=as.numeric(df[names(f$remapper), 'min'])
   maxs=as.numeric(df[names(f$remapper), 'max'])
   funcs=parse_spline_formulas(as.character(function_equations))
@@ -413,10 +420,14 @@ make_one_dimensional_interpolation_plotting_file=function(df, f, fname, output='
   #print(res_df)
   #print(f$plotting_limits)
   #print(length(funcs))
+  # print(res_df)
+  # print(f$interpolation_plotting_limits)
+  # print(as.character(function_equations))
   for(i in 1:nrow(res_df)){
-    while(func_index<length(funcs) && res_df$x[i]>f$tick_positions[func_index]+1e-6){
+    while(func_index<length(funcs) && res_df$x[i]>f$interpolation_plotting_limits[func_index+1]+1e-6){
       func_index=func_index+1
     }
+    #print(func_index)
     yvals[i]=funcs[[func_index]](res_df$x[i])
     if(!is.na(maxs[func_index]) && yvals[i]>maxs[func_index]){
       yvals[i]=maxs[func_index]
@@ -701,7 +712,7 @@ make_plot_for_interpolation = function(deathcause, riskfactors) {
   }
 }
 
-make_plot_for_interpolation('Alzheimers','Caffeine')
+#make_plot_for_interpolation('Alzheimers','Caffeine')
 
 make_plot_for_deathcause=function(deathcause, ylabText=NULL){
   outp = get_info(deathcause)
