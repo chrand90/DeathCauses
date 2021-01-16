@@ -20,7 +20,7 @@ export class RiskFactorGroup {
 
     getAllFactorsInGroup(): Set<string> {
         let allFactors: string[] = [];
-        this.riskRatioTables.forEach(rrt => allFactors.concat(rrt.factorNames));
+        this.riskRatioTables.forEach(rrt => allFactors.push(...rrt.factorNames));
         return new Set(allFactors)
     }
 }

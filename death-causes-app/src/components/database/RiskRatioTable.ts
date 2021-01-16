@@ -17,6 +17,10 @@ export interface RiskRatioTableInput {
     riskRatioTable: (string[] | number)[][];
 }
 
+export interface MinimumRiskRatios {
+    [key: string]: number
+}
+
 class RiskRatioTable {
     factorNames: string[];
     riskRatioTable: RiskRatioTableEntry[];
@@ -28,6 +32,24 @@ class RiskRatioTable {
         json.interpolationTable.forEach(element => {
             return this.interpolation.push(new InterpolationEntry(element.domain, element.factors, element.interpolationPolynomial, element.minValue, element.maxValue))
         });
+    }
+
+    getMinimumRRForFactor(submittedFactorAnswers: FactorAnswers): MinimumRiskRatios {
+        let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
+        let res: MinimumRiskRatios = {}
+        let riskRatiosToMinimize = []
+        for (let factorIndex = 0; factorIndex < this.factorNames.length; factorIndex++) {
+
+            for (let i = 0; i < this.riskRatioTable.length; i++) {
+                if (this.riskRatioTable[i].isFactorAnswersInDomainExceptOneFactor(factorIndex, relevantFactorAnswers)) {
+                    riskRatiosToMinimize.push(this.riskRatioTable[i].riskRatioValue)
+                }
+            }
+            let minRR = Math.min(...riskRatiosToMinimize)
+            let factorname = this.factorNames[factorIndex]
+            res[factorname] = minRR
+        }
+        return res;
     }
 
     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
@@ -56,7 +78,7 @@ class RiskRatioTable {
             if (interpolationEntry.isFactorAnswersInDomain(relevantFactorAnswers)) {
                 return interpolationEntry.interpolateRR(relevantInterpolationFactorAnswers);
             }
-            
+
         }
 
         return 1;
@@ -81,8 +103,20 @@ class RiskRatioTableEntry {
         }
         return true;
     }
-}
 
+    isFactorAnswersInDomainExceptOneFactor(factorToMinimize: number, relevantFactorAnswers: (string | boolean | number)[]) {
+        for (let i = 0; i < this.factorValues.length; i++) {
+            if (i === factorToMinimize) {
+                continue;
+            }
+            let isSubmittedFactorAnswerWithinCell = this.factorValues[i].isInputWithinCell(relevantFactorAnswers[i])
+            if (!isSubmittedFactorAnswerWithinCell) {
+                return false;
+            }
+        }
+        return true;
+    }
+}
 
 
 export { RiskRatioTable, RiskRatioTableEntry };

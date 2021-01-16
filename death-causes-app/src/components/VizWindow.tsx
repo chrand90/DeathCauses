@@ -69,7 +69,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowState> {
 
         for (var key in database) {
             if (database.hasOwnProperty(key)) {
-                console.log(database[key as keyof typeof database])
                 res.push(new Deathcause(database[key as keyof typeof database], key))
             }
         }
