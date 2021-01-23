@@ -1,0 +1,111 @@
+\documentclass[a4paper, 12pt]{memoir}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\renewcommand{\danishhyphenmins}{22}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\xdot}{x_{\cdot}}
+\usepackage{SASnRdisplay}
+\usepackage{mathtools}
+\newcommand{\Rroom}[2]{\mathbb R^{#1 \times #2}}
+\renewcommand{\i}{^{-1}}
+\newcommand{\tr}{\textup{tr}}
+\usepackage{bm}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+\definecolor{blue1}{rgb}{0.7,0.8,1}
+\definecolor{blue2}{rgb}{0.6,0.8,1}
+\definecolor{blue3}{rgb}{0.7,0.9,1}
+\definecolor{blue4}{rgb}{0.6,0.7,1}
+
+\definecolor{red1}{rgb}{1,0.5,0.7}
+\definecolor{red2}{rgb}{1,0.7,0.75}
+\definecolor{red3}{rgb}{1,0.7,0.5}
+\definecolor{red4}{rgb}{1,0.8,0.7}
+\definecolor{red5}{rgb}{1,0.5,0.5}
+
+\definecolor{gron}{rgb}{0,0.6,0}
+
+\newcommand{\bigzero}{\mbox{\normalfont\Large\bfseries 0}}
+\newcommand{\rvline}{\hspace*{-\arraycolsep}\vline\hspace*{-\arraycolsep}}
+
+
+
+\begin{document}
+
+\subsection{Minimering $n$-dimensionelle funktioner}
+
+Lad $f(x_1, \dots, x_n)$ være en to gange differentiabel $n$-dimensionel funktion defineret på området $[l_{1}, u_{1}]\times \dots \times [l_{n},u_n]$. Hvis den har et minimum, er det enten et kritisk punkt eller et kantpunkt.
+\begin{enumerate}
+\item
+Et kritisk punkt er et punkt hvor gradienten er 0
+\begin{equation}
+\nabla f(x_1, \dots, x_n)=0\label{gradient}
+\end{equation}
+\item
+Et kantpunkt opfylder at mindst en af koordinaterne ligger yderst i sit interval. Det vil sige at der eksisterer et $i$, så $x_i=l_i$ eller $x_i=u_i$.
+\end{enumerate}
+Udtrykket i \eqref{gradient} er det samme som
+\begin{align}
+\begin{pmatrix}
+\frac{\partial}{\partial x_1}f & \dots & \frac{\partial }{\partial x_n}f
+\end{pmatrix}=0
+\end{align}
+Et kritisk punkt er et minimum hvis Hessian-matricen er positiv definit (men det er ikke et tjek der er nødvendigt for os at lave).
+
+\subsection{1-dimensionel tabel}
+For at minimere en 1-dimensionel tabel skal man finde eventuelle kritiske punkter i hver celle og man skal tjekke kantpunkterne. En celle er kendetegnet ved dets domæne $[l_1,u_1]$. For at finde de kritiske punkter skal man løse
+\begin{equation}
+\nabla f(x)=\frac{\partial}{\partial x} f(x)=0 \label{gradient1}
+\end{equation}
+for alle celler. Hvis ikke en løsning til \eqref{gradient1} ligger i sin celle, er det ikke et kritisk punkt. Fordi $f$ er et tredjegradspolynomium er $\nabla f$ et andengradspolynomium ($ax^2+bx+c$) har det to analytiske løsninger
+\begin{equation}
+x=\frac{-b\pm\sqrt{b^2-4ac}}{2a}
+\end{equation}
+Efter man har fundet en række kritiske punkter $x_1,\dots, x_m$, skal man se hvilken $f$ værdi, de har for at afgøre hvilket et er mindst. Man skal også sammenligne med $f$ værdien for de to kantpunkter. Alle de punkter man skal tjekke kalder vi \emph{minimumskandidater}. Altså er minimum
+\begin{equation}
+\min \{f(x_1), \dots, f(x_m), f(l_1), f(u_1)\}
+\end{equation}
+
+
+
+\subsection{2-dimensionelle tabeller}
+\subsubsection{Det globale minimum}
+For at finde minimum af en todimensionel interpolationstabel skal man igen finde kritiske punkter i hver celle og tjekke randpunkterne. I en todimensionel tabel er en celle defineret ved dets domæne på formen $[l_1,u_1]\times [l_2,u_2]$. Dvs. man skal løse 
+\begin{equation}
+\nabla f(x,y)=(0,0) \label{gradient2}
+\end{equation}
+for hver celle. Hvis en løsning til \eqref{gradient2} ikke ligger i sin celle, er det ikke et kritisk punkt. Da $f$ er todimensionel er det ikke sikkert der er en analytisk løsning til \eqref{gradient2}. Da skal man bruge en numerisk løsning (måske Newton-Rhapson). 
+
+For at tjekke kantpunkterne skal vi finde alle minimumskandidater af de 4 funktioner 
+\begin{align}
+f(x,l_2) &\quad \textup{som funktion af } x\label{kant1}\\
+f(x,u_2) &\quad \textup{som funktion af } x\label{kant2}\\
+f(l_1,y) &\quad \textup{som funktion af } y\label{kant3}\\
+f(u_1,y) &\quad \textup{som funktion af } y\label{kant4}
+\end{align}
+Det gøres som beskrevet i sektionen \emph{1-dimensionel tabel}. Til sidst tager man alle minimumkandidater fra hhv \eqref{gradient2}, \eqref{kant1}, \eqref{kant2}, \eqref{kant3} og \eqref{kant4} og finder minimum blandt dem. 
+\subsubsection{De betingede minimum}
+Vi holder nu en variabel fast (fx $y=y_0$) og vi prøver at finde minimum over den anden variabel. Dvs. vi er interesseret i at finde
+\begin{equation}
+\min_{x\in [l_1, u_1]} f(x,y_0) \label{min}
+\end{equation}
+Da vi ikke kender værdien af $y_0$, bliver minimummet \eqref{min} nødt til at afhænge af $y_0$. Når vi ikke kender $y_0$ bliver det svært at finde ud af hvilket af minimumskandidaterne, der giver minimum. Derfor foreslår jeg at vi kun udregner minimumskandidaterne og lader udregning af minimum foregå i browseren. For at finde minimumskandidaterne skal vi finde de kritiske punkter samt kantpunkter.
+
+Når vi er i en todimensionel tabel er $f(x,y_0)$ et tredjegradspolynomium og så findes en analytisk løsning til gradienten $\frac{\partial}{\partial x}f(x,y_0)=0$. Der er også kun 2 kantpunkter ($l_1$ og $u_1$), så mængden af minimumskandidater bliver altså 
+\begin{enumerate}
+\item
+$l_1$
+\item
+$u_1$
+\item
+De to løsninger til $\frac{\partial}{\partial x}f(x,y_0)=0$ udtrykt som funktion af $y_0$.
+\end{enumerate}
+
+
+
+
+
+\end{document}
