@@ -1,4 +1,4 @@
-\documentclass[a4paper, 12pt]{memoir}
+\documentclass[a4paper, 12pt]{article}
 \usepackage[danish]{babel}
 \usepackage[utf8]{inputenc}
 \renewcommand{\danishhyphenmins}{22}
@@ -16,6 +16,7 @@
 \usepackage{bm}
 \usepackage{tikz}
 \usepackage[normalem]{ulem}
+\usepackage[shortlabels]{enumitem}
 \definecolor{blue1}{rgb}{0.7,0.8,1}
 \definecolor{blue2}{rgb}{0.6,0.8,1}
 \definecolor{blue3}{rgb}{0.7,0.9,1}
@@ -32,11 +33,14 @@
 \newcommand{\bigzero}{\mbox{\normalfont\Large\bfseries 0}}
 \newcommand{\rvline}{\hspace*{-\arraycolsep}\vline\hspace*{-\arraycolsep}}
 
-\newtheorem{proposition}{Proposition}[section]
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{korollar}{Korollar}
 
 
 
 \begin{document}
+
 
 Lad som sædvanlig $U(F_I)=p_d(a,\psi_{F_I})-p_d(a, \psi_{0})$ og $U_*=U(F_{\{1,\dots,N\}})$. Som tidligere er faktorsvarene $\psi_{F_I}$ defineret således at det er det er de faktorsvar der giver den laveste $p_d(a,\psi)$ samtidig med at for $i\in I$ er $\psi_i=F_{i}$ - altså at vi har indsat de indtastede faktorsvar på alle index i $\psi$, $I$. Definer
 \begin{align*}
@@ -64,5 +68,182 @@ Beviset er ikke lavet, men det er understøttet af simulationer.
 \end{proof}
 
 Proposition \ref{divided} siger at $V(F_i)$'erne kan dekomponere $U_*$. Formen \eqref{V} kan fortolkes som at hver eneste faktor ``arver'' fra alle de interaktioner, hvor den indgår. Arven deles ligeligt mellem efterkommere.
+
+\begin{lemma}\label{alternating}
+Der gælder
+\begin{equation}
+S(F_I)=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|J|+|I|} U(F_J)
+\end{equation}
+\end{lemma}
+\begin{proof}
+Kan laves (og er lavet) med induktion. 
+\end{proof}
+\begin{lemma}\label{coefficient}
+Vi kan skrive
+\begin{equation}
+V(F_i)=\sum_{K\subseteq \{1, \dots, N\}, K\neq \emptyset} U(F_K)a_K
+\end{equation}
+hvor 
+\begin{equation}
+a_K=\begin{cases} \sum_{s=0}^{N-|K|} (-1)^s \frac{1}{|K|+s}{N-|K|\choose s} \quad &\textup{hvis } i\in K\\
+\sum_{s=1}^{N-|K|}\frac{1}{|K|+s}{N-|K|-1 \choose s-1} (-1)^s &\textup{hvis } i\not\in K
+\end{cases}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Formlen kan ses ved at skrive
+\begin{align*}
+V(F_i)&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{S(F_J)}{|J|}\\
+&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J}  \frac{1}{|J|}\sum_{K\subseteq J, K\neq \emptyset} (-1)^{|J|+|K|} U(F_K)\\
+&=\sum_{K\subseteq \{1, \dots, N\}, K\neq \emptyset} \biggl( U(F_K)\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}\biggr)
+\end{align*}
+Vi kan derfor konkludere at $a_K$ findes og er lig med
+\begin{align}
+a_K=\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}
+\end{align}
+Det kan vi skrive om ved at stratificere efter $|J|$. 
+\begin{align*}
+a_K&=\sum_{s=0}^{N}\sum_{J, K\subseteq J, i\in J, |J|=s}(-1)^{s+|K|} \frac{1}{s}\\
+a_K&=\sum_{s=0}^{N}(-1)^{s+|K|} \frac{1}{s}\#\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}
+\end{align*}
+Mængden $\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}$ er tom hvis $s<|K|$. Den er også tom hvis $i\not\in K$ og $|s|=K$. Hvis $i\in K$ og $s\geq |K|$ kan vi vælge elementerne $J\setminus K$ uniformt fra $\{1, \dots, N\}\setminus K$. Det giver ${N-|K| \choose s-|K|}$ muligheder. Dvs.
+\begin{align*}
+a_K&=\sum_{s=|K|}^{N}(-1)^{s+|K|} \frac{1}{s}{N-|K| \choose s-|K|}\\
+&=\sum_{s=|K|}^{N}(-1)^{s-|K|} \frac{1}{s}{N-|K| \choose s-|K|}\\
+&=\sum_{s=0}^{N-|K|}(-1)^{s} \frac{1}{s+|K|}{N-|K| \choose s}
+\end{align*}
+Hvis $i\not \in K$, består alle elmenter i $\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}$ af foreningen af $K$, $\{i\}$ og et antal indices fra $\{1, \dots, N\} \setminus (K\cup \{i\})$. Disse indices skal igen vælges uniformt, og hvis der skal være $s$ elementer i $J$, kan det gøres på ${N-|K|-1 \choose s-|K|-1}$ måder. Alt i alt får vi
+\begin{align*}
+a_K&=\sum_{s=|K|+1}^{N}(-1)^{s+|K|}\frac{1}{s}{N-|K|-1 \choose s-|K|-1}\\
+&=\sum_{s=1}^{N-|K|}(-1)^{s}\frac{1}{s+|K|}{N-|K|-1 \choose s-1}\\
+\end{align*}
+\end{proof}
+
+\subsubsection{Multiplikativitet}
+
+I vores framework sker det ofte at der er multiplikativ effekt mellem riskratiotables.
+\begin{equation}
+p_d(a,\psi)=P_d(a)\cdot \frac{1}{\prod_{i=n}^n \textup{mult}_i} \prod_{i=1}^n \textup{RR}_i(\psi)\label{multiplicative_groups}
+\end{equation}
+hvor $\text{RR}_i$ er en samlet riskratiotabel for den $i$'te riskfactor group. Definer nu 
+\begin{align}
+\mathcal F_i&=\{\textup{faktorer i den $i$'te riskfactor group}\}\\
+U_i(F_I\cap \mathcal F_i)&=\textup{RR}_i(\psi_{F_I\cap \mathcal F_i})\\
+C&=P_d(a)\cdot \frac{1}{\prod_{i=1}^n \textup{mult}_i} 
+\end{align}
+hvor $\psi_{F_I \cap \mathcal F_i}$ skal forstås som den $\psi$-vektor der giver den laveste værdi af $\textup{RR}_i$-tabellen under betingelsen at $\psi$ har input-faktorsvarene for alle faktorer i $F_I$. (Som input i $\textup{RR}_i$-tabellen er det lidt overflødigt at skrive $F_I\cap \mathcal F_i$ og ikke bare $F_I$, da $\textup{RR}_i$ tabellen i forvejen ignorer alle faktorer der ikke har noget med den at gøre). Vi kan derfor skrive
+\begin{align}
+p_d(a,\psi_{F_I})=C\cdot \prod_{i=1}^n U_i(F_I\cap \mathcal F_i)
+\end{align}
+For at udnytte denne konstruktion bedst muligt ændrer vi også notation 
+\begin{align*}
+\tilde U(F_I)&:=\frac{p_d(a,\psi_{F_I})}{C}=\prod_{i=1}^nU_i(F_I\cap \mathcal F_i)\\
+\tilde S(F_I)&=\tilde U(F_I)-\sum_{J\subseteq I, J\neq I} \tilde S(F_J)
+\end{align*}
+Noter at 
+\begin{enumerate}[a.]
+\item
+Nu eksisterer $\tilde U(F_{\emptyset})$ og $\tilde S(F_{\emptyset})$ og er trivielle
+\begin{equation}
+\tilde U(F_{\emptyset})=\tilde S(F_{\emptyset})= 1
+\end{equation}
+\item
+Forbindelsen mellem det gamle $U$ og det nye $\tilde U$ er
+\begin{equation}
+U(F_I)=C\cdot \bigl[\tilde U(F_I)-\tilde U(F_{\emptyset})\bigr]
+\end{equation}
+\item
+Sammenhængen mellem $\tilde S$ og $S$ er
+\begin{equation}
+S(F_I)=C\cdot \tilde S(F_I) \quad I\neq \emptyset\label{SStilde}
+\end{equation}
+\end{enumerate}
+Sammenhængen \eqref{SStilde} retfærdiggør også definitionen
+\begin{equation}
+\tilde V(F_i)=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{\tilde S(F_J)}{|J|},
+\end{equation}
+fordi med dette $\tilde V(F_i)$ kan vi nemt finde $V(F_i)=C\cdot \tilde V(F_i)$. Vi kan også lave en tilde-version af Lemma \ref{alternating}
+\begin{align*}
+\tilde S(F_I)&=\frac{1}{C}\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} U(F_J)\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \bigl[\tilde U(F_J)-\tilde U(F_{\emptyset})\bigr]\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\sum_{J\subseteq I, I\neq \emptyset} (-1)^{|J|}\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\sum_{s=1}^{|I|} (-1)^{|J|}{|I| \choose s}\\
+&=\begin{lgathered}[t]\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J)\\ \,\,-(-1)^{|I|}U(F_{\emptyset})\biggl(\Bigl[\sum_{s=0}^{|I|} (-1)^{|J|}{|I| \choose s}1^{|I|-|J|}\Bigr]-1\biggr)\end{lgathered}\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\bigl(-1\bigr)\\
+&=\sum_{J\subseteq I} (-1)^{|I|+|J|} \tilde U(F_J)
+\end{align*}
+Vi har altså udledt dette korrolar til Lemma \ref{alternating}.
+\begin{korollar}\label{alternating_tilde}
+Der gælder
+\begin{equation}
+\tilde S(F_I)=\sum_{J\subseteq I} (-1)^{|J|+|I|} \tilde U(F_J)
+\end{equation}
+\end{korollar}
+Vi kan også udlede en tilde-version af Lemma \ref{coefficient}. Hvis vi følger udregningen
+\begin{align}
+\tilde V(F_i)&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{\tilde S(F_J)}{|J|}\nonumber\\
+&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J}  \frac{1}{|J|}\sum_{K\subseteq J} (-1)^{|J|+|K|} \tilde U(F_K)\nonumber\\
+&=\sum_{K\subseteq \{1, \dots, N\}} \biggl( \tilde U(F_K)\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}\biggr)
+\end{align}
+Vi ser straks at koefficienterne for $\tilde U(F_K), K\neq \emptyset$ er de samme som i Lemma \ref{coefficient}. Lad os nu betrage $a_{\emptyset}$. Som i beviset for Lemma \ref{coefficient} kan vi se at koefficienten for $a_{\emptyset}$ er 
+\begin{align*}
+a_{\emptyset}&=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} \#\{J, J\subseteq \emptyset, i\in J, |J|=s \}\\
+&=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} \#\{J, i\in J, |J|=s \}\\
+\end{align*}
+Et $J$ i mængden $\{J, i\in J, |J|=s \}$ kan vælges på ${N-1 \choose s-1}$ måder, da der er så mange forskellige valg af elementer som ikke er $i$. Det giver
+\begin{equation}
+a_{\emptyset}=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} {N-1 \choose s-1} \\
+\end{equation}
+Alt i alt kan vi konkludere følgende korollar
+\begin{korollar}\label{coefficient_tilde}
+Vi kan skrive
+\begin{equation}
+\tilde V(F_i)=\sum_{K\subseteq \{1, \dots, N\}} \tilde U(F_K)a_K \label{Vformula}
+\end{equation}
+hvor 
+\begin{equation}
+a_K=\begin{cases} \sum_{s=0}^{N-|K|} (-1)^s \frac{1}{|K|+s}{N-|K|\choose s} \quad &\textup{hvis } i\in K\\
+\sum_{s=1}^{N-|K|}\frac{1}{|K|+s}{N-|K|-1 \choose s-1} (-1)^s &\textup{hvis } i\not\in K
+\end{cases}
+\end{equation}
+\end{korollar}
+Udregningen af \eqref{Vformula} er umiddelbart af kompleksitet $O(2^N)$ hvor $N$ er antallet af faktorer. Det kan godt være lang tid hvis der er mange riskfactor grupper, så vi ønsker at finde en hurtigere måde at udregne det på. Antag som før at der er $n$ grupper. Så kan vi skrive
+\begin{align*}
+\tilde V(F_i)=\sum_{K\subseteq \{1, \dots, N\}} a_K \prod_{j=1}^n U_j(F_K\cap \mathcal F_j)
+\end{align*}
+Vi kan nu bruge at $a$ kun afhænger af $K$ gennem $|K|$ samt sandhedsværdien af $i\in K$. Notationsmæssigt indfører vi derfor $a_{s}(i\in K)$ og $a_s(i\not\in K)$, som står for $a_K$-koefficienten når $|K|=s$ og $i$ hhv. ligger og ikke ligger i $K$. 
+\begin{align}
+\tilde V(F_i)&=\sum_{s=0}^N \biggl(\begin{lgathered}[t]a_s(i\in K) \sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s,
+i\in K}}\prod_{j=1}^n \tilde U_j(F_K\cap \mathcal F_j)\\
++a_s(i\not\in K) \sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s,
+i\not\in K}}\prod_{j=1}^n \tilde  U_j(F_K\cap \mathcal F_j)\biggr)\end{lgathered}
+\end{align}
+Lad nu $j(i)$ være den af de $n$ riskfactor groups hvor $i$ ligger. Antag uden tab af generalitet at $j(i)=1$. På grund af vores riskfactor struktur har vi sammenhængen $\{1, \dots, N\}=\mathcal F_1\cup \cdots \cup \mathcal F_n$, hvilket vi kan bruge til at skrive
+\begin{align}
+ &\sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s, i\in K}}\prod_{j=1}^n \tilde U_j(F_K\cap \mathcal F_j)\\
+ &= \sum_{\substack{s_1, \dots, s_n\in \{0,\dots,N\},\\
+s_1+\dots+s_n=s}} \sum_{\substack{K_1\subseteq \mathcal F_1, \\ |K_1|=s_1, i\in K_1}}\sum_{\substack{K_2\subseteq \mathcal F_2, \\ |K_2|=s_2}}\cdots \sum_{\substack{K_n\subseteq \mathcal F_n, \\ |K_n|=s_n}} \prod_{j=1}^n \tilde U_j(F_{K_j}\cap \mathcal F_j)\\
+&=\begin{lgathered}[t]\sum_{s_1\in \{0, \dots, N\}}\sum_{\substack{K_1\subseteq \mathcal F_1, \\ |K_1|=s_1, i\in K_1}} \tilde U_1(F_{K_1}) \sum_{s_2\in \{0, \dots, N\}}\sum_{\substack{K_2\subseteq \mathcal F_2, \\ |K_2|=s_2}}\tilde U_2(F_{K_2})\cdots \\ \cdots\sum_{\substack{K_n\subseteq \mathcal F_2, \\  |K_n|=s-s_1-\dots-s_{n-1}}}\tilde U_n(F_{K_n})\end{lgathered}
+\end{align}
+Dette udtryk er meget nyttigt da det i høj grad kan splittes op i produkter af summer. Lad for alle $s=0,\dots, N$
+\begin{align}
+\beta_{s,j}&=\sum_{\substack{K\subseteq \mathcal F_j,\\ |K|=s}} \tilde U_j(F_K), \quad  j=1, \dots, n\\
+\beta_{s,J}&=\sum_{\substack{s_{j} \in \{0, \dots, N\},\\ \sum_{J} s_{j}=s}}\biggl( \prod_{j \in J} \beta_{s_j,j}\biggr), \quad J\subseteq \{1, \dots, n\}\\
+\alpha_{s,j,i}&=\sum_{\substack{K\subseteq \mathcal F_j, \\
+i\in K, |K|=s}}\tilde U_j(F_K), \quad j=1,\dots, n, i\in\mathcal F_j \\
+\alpha_{s,j,i^*}&=\sum_{\substack{K\subseteq \mathcal F_j, \\
+i\not\in K, |K|=s}}\tilde U_j(F_K), \quad j=1,\dots, n, i\in\mathcal F_j 
+\end{align}
+Definer ligeledes for kvotienterne $a_K$ i Korollar \ref{coefficient_tilde},
+\begin{align}
+a_{s}^*&=\sum_{x=1}^{N-s}(-1)^x\frac{1}{s+x}{N-s-1 \choose x-1} \\
+a_s&=\sum_{x=0}^{N-s} (-1)^x \frac{1}{s+x}{N-s\choose x}
+\end{align}
+Da kan vi udregne 
+\begin{align}
+V(F_i)=\sum_{s=0}^{N} \sum_{s_1=0}^N \beta_{s-s_1, \{1, \dots, N\}\setminus \{j_i\}}(\alpha_{s_1,j_i,i}a_s+\alpha_{s_2, j_i,i^*}a_s^*)
+\end{align}
+
+
 
 \end{document}
