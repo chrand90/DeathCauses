@@ -1,11 +1,11 @@
 OralContraceptiveTypicalAmmount	OralContraceptiveSinceStop	RR
 No	0	0.88
 Yes	0	1.24
-No	0-5.0	0.88
-Yes	0-5.0	1.16
-No	5.0-11.25	0.88
-Yes	5.0-11.25	1.07
-No	11.25-20.0	0.88
-Yes	11.25-20.0	1.0
+No	0,5.0	0.88
+Yes	0,5.0	1.16
+No	5.0,11.25	0.88
+Yes	5.0,11.25	1.07
+No	11.25,20.0	0.88
+Yes	11.25,20.0	1.0
 No	20.0+	0.88
 Yes	20.0+	1.0

@@ -1,7 +1,9 @@
+#citation=Cho, Eunyoung, Stephanie A. Smith,Warner, John Ritz, Piet A. Van Den Brandt, Graham A. Colditz, Aaron R. Folsom, Jo L. Freudenheim et al. "Alcohol intake and colorectal cancer: a pooled analysis of 8 cohort studies." Annals of internal medicine 140, no. 8 (2004): 603,613.
+# To not imply an unproven protective effect of colon cancer, we inflate the risk ratio to 1.0
 Drinking	RR
 0	1.0
-0-2.825	0.94
-2.825-7.55	0.97
-7.55-14.1	1.01
-14.1-23.175	1.16
+0,2.825	1.0
+2.825,7.55	1.0
+7.55,14.1	1.01
+14.1,23.175	1.16
 23.175+	1.41

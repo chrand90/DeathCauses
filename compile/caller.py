@@ -80,6 +80,7 @@ def integrate_one(writtenF_dir, age_intervals,age_distribution):
     '''
     RRs=rr.loadRRs(writtenF_dir)
     interaction, string_interaction_name=rr.read_interaction(writtenF_dir)
+    tmp=str(RRs[0])
     RR= rr.make_simultane_and_get_writtenF(RRs, interaction)
     RRages=[factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in age_intervals]
     

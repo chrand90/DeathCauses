@@ -719,6 +719,25 @@ Det vil sige vi har følgende fortolkning af sandsynligheden for at dø af
 \textup{$F_2$: }=\frac{0.05}{2.1}&\approx 2 \%
 \end{align}
 
+\subsection{Tilgang ved at udlede $S$'erne}
+
+I denne sektion vil vi ud fra ønskede egenskaber udlede hvordan $S(F_I)$'erne skal defineres. Et ufravigeligt krav er
+
+\begin{align}
+U_*=\sum_{J\subseteq \{1, \dots, N\}, J\neq \emptyset}S(F_J),\qquad S(F_J)\geq0\label{necessary_requirement}
+\end{align}
+Som allerede diskuteret kan vi ikke have 
+\begin{align*}
+p_d(a,\psi_{F_I})-p_d(a, \psi_0)=\sum_{J\subseteq I, J\neq \emptyset}S(F_J). \forall I\subseteq \{1,\dots, N\}
+\end{align*}
+ej heller kan vi have
+\begin{align*}
+p_d(a,\psi_{F_i})-p_d(a, \psi_0)=S(F_i). \forall i\in \{1,\dots, N\}
+\end{align*}
+fordi det vil bryde med \eqref{necessary_requirement}. Noget, man gerne vil have, er at man kan se hvad der ville ske hvis man ændrede en vane. Et krav kunne måske være
+\begin{align*}
+p_d(a,\psi)-p_d(a, \psi_{0, F_{\{1, \dots, N\}\setminus \{i\}}})=\sum_{J\subseteq \{1, \dots, N\},i\in  J}S(F_J), \quad i=1, \dots, N
+\end{align*}
 
 %
 %
