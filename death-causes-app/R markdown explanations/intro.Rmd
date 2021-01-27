@@ -132,7 +132,7 @@ The researchers [@kellermann1993gun] found that the odds of dying from homicide 
 </details>
 
 #### Combining physical violence and guns.
-Research by [@dahlberg2004guns] found that a gun in one's home, makes one 1.9 times more likely to be killed in the home, while [@kellermann1993gun] found that a history of domestic physical fights increases that risk by 4.4 times. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
+In the [motivating example](#motivating-example) we talked about the research from [@dahlberg2004guns] which found that a gun in one's home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a meta analysis by [@anglemyer2014accessability]. They found that  In the program we would rather use the result from []practice we would rather use the result, while [@kellermann1993gun] found that a history of domestic physical fights increases that risk by 4.4 times. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
 
 * If you both live in a household with physical violent fights and gun(s), you risk of dying from homicide in the home is $1.9\cdot 4.4=8.36$ times higher than if you did neither.
 * If there is only physical violent fights but no guns, your risk is $4.4$ times higher than if you did neither.

@@ -89,6 +89,33 @@ compute_Ss=function(us, codes){
   return(Ss)
 }
 
+compute_Ts=function(us, codes){
+  Ts=rep(0, length(us))
+  sums=sapply(codes, sum)
+  looping_order=order(sums)
+  for(i in 1:length(us)){
+    i_=looping_order[i]
+    code=codes[[i_]]
+    Ts[i_]=us[i_]
+    if(i>1){
+      for(j in 1:length(us)){
+        j_=looping_order[j]
+        candidate_code=codes[[j_]]
+        if(sum(code-candidate_code< -0.5)==0 && j_!=i_){
+          if(sum(code)==length(code)){
+            Ts[i_]=Ts[i_]-Ts[j_]
+          }
+          else{
+            Ts[i_]=max(0,Ts[i_]-Ts[j_])
+          }
+        }
+      }
+    }
+    
+  }
+  return(Ts)
+}
+
 compute_marginals=function(Ss, codes){
   Ncats=length(codes[[1]])
   margs=rep(0,Ncats)
@@ -362,6 +389,22 @@ makeSim=function(){
   return(c(min(margs),ustar, sum(margs)))
 }
 
+testTs=function(){
+  simtab=simulateTable()
+  chosen_index=choose_index(simtab)
+  ustar=simtab[chosen_index,ncol(simtab)]-min(simtab[,ncol(simtab)])
+  outp=compute_U(simtab)
+  us=outp$us
+  codes=outp$codes
+  codes_as_matrix=do.call(cbind,codes)
+  ss=compute_Ss(us,codes)
+  ts=compute_Ts(us,codes)
+  margs=compute_marginals(ss, codes)
+  margs2=compute_marginals(ts, codes)
+  return(c(min(margs),ustar, sum(margs), min(margs2), sum(margs2), max(abs(margs-margs2)), ts[length(ts)]))
+}
+ad=replicate(1000,testTs())
+
 simtab=simulateTable()
 chosen_index=choose_index(simtab)
 ustar=simtab[chosen_index,ncol(simtab)]-min(simtab[,ncol(simtab)])
@@ -393,7 +436,25 @@ find_beneficiaries=function(code){
   return(res)
 }
 
-find_beneficiaries(c(1,1,1,0))
+find_beneficiaries(c(1,1,1,1))
+
+sendBlameDownAndGetRemaining=function(accounts, codes, current_code, amount){
+  s=sum(current_code)
+  if(s==0){
+    return(list(amount=amount, account_changes=rep(0, length(accounts))))
+  }
+  else{
+    inheritors=find_beneficiaries(current_code)
+    amount_per_person=amount/length(inheritors)
+    for(i in 1:length(inheritors)){
+      
+    }
+  }
+  
+  if(length(inheritors)>0){
+    guilts[i_]=0
+  }
+}
 
 sendDownBlameSystem=function(Ss, codes){
   sums=sapply(codes, sum)
@@ -435,3 +496,30 @@ rbind(ss,sendDownBlameSystem(ss, codes))
 ys=sendDownBlameSystem(ss,codes)
 sum(ys)
 sum(ss)
+
+sendBlameUpAndDown=function(ss,codes){
+  sums=sapply(codes, sum)
+  looping_order=order(sums)
+  guilts=rep(0,length(Ss))
+  ress=rep(0,length(Ss))
+  for(i in 1:length(Ss)){
+    i_=looping_order[i]
+    balance=Ss[i_]+guilts[i_]
+    if(balance>0){
+      ress[i_]=balance
+      guilts[i_]=0
+    }
+    else if(balance<0){
+      inheritors=find_beneficiaries(codes[[i_]])
+      if(length(inheritors)>0){
+        guilts[i_]=0
+      }
+      
+      for(inh in inheritors){
+        guilts[inh]=guilts[inh]+balance/length(inheritors)
+      }
+    }
+  }
+  print(guilts)
+  return(ress)
+}
