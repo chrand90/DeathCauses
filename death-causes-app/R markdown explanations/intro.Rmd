@@ -123,7 +123,6 @@ The loss function term is the same as the in the one-dimensional case except the
 Often there are much more than one risk factor for a specific death cause. An example could be that both gun ownership and living in a violent household increase your risk of dying from a homicide in the home. The question is now, what happens if one does both? In other words, what is the *interaction* between household violence and gun ownership?
 
 <details> <summary> Homicide and physical violence in the home</summary>
-#### Homicide and physical violence in the home
 The researchers [@kellermann1993gun] found that the odds of dying from homicide was $4.4$ times higher if there had ever been a fight where someone was physically hurt in the home. In the same process they found that $5.7\%$ of their controls answered yes to that question. If we use that number (see our consideration under [Homicide](#homicide)) we can compute the normalization factor of $1.19=5.7\%\cdot 4.4 + 94.3\%\cdot 1$, which we can use to compute
 
 * If you live in a home where someone has been physically hurt in a fight, the risk of dying from homicide in the home $0.001\%\cdot\frac{4.4}{1.19}=$ **0.00370%** (per year)
@@ -132,22 +131,42 @@ The researchers [@kellermann1993gun] found that the odds of dying from homicide 
 </details>
 
 #### Combining physical violence and guns.
-In the [motivating example](#motivating-example) we talked about the research from [@dahlberg2004guns] which found that a gun in one's home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a meta analysis by [@anglemyer2014accessability]. They found that  In the program we would rather use the result from []practice we would rather use the result, while [@kellermann1993gun] found that a history of domestic physical fights increases that risk by 4.4 times. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
+In the [motivating example](#motivating-example) we talked about the research from [@dahlberg2004guns] which found that a gun in one's home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a meta analysis by [@anglemyer2014accessability], where they estimated the risk ratio to be 2.0 - rather than 1.9. Since much more data has been used to estimate the meta analysis estimate, we will use it from now on. 
 
-* If you both live in a household with physical violent fights and gun(s), you risk of dying from homicide in the home is $1.9\cdot 4.4=8.36$ times higher than if you did neither.
+We want to combine the risk ratio for gun ownership with the results by [@kellermann1993gun] who found that a history of domestic physical fights increases the risk of dying by homicide in the home by 4.4 times. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
+
+* If you both live in a household with physical violent fights and gun(s), you risk of dying from homicide in the home is $2.0\cdot 4.4=8.8$ times higher than if you did neither.
 * If there is only physical violent fights but no guns, your risk is $4.4$ times higher than if you did neither.
-* If there is only guns but no physical violence, your risk is $1.9$ times higher than if you did neither.
+* If there is only guns but no physical violence, your risk is $2.0$ times higher than if you did neither.
 
-In this example, and in many others, multiplying them is supported by how they were computed in the original research. In [@kellermann1993gun] they computed the odds ratio $4.4$ using a method that *adjusted for gun ownership*. They assumed that odds ratios for gun ownership, physical violence, race etc. should be multiplied together and then they estimated all odds ratios at once. Consequently, $4.4$ is the most correct odds ratio when multiplied together with the gun ownership odds ratio (and all the other odds ratios in their model). That is fortunate, because that is how we use it! 
+We justify this choice by how the odds ratios were computed in the original papers. In [@kellermann1993gun] they computed the odds ratio $4.4$ using a method that *adjusted for gun ownership*. They assumed that odds ratios for gun ownership, physical violence, race etc. should be multiplied together and then they estimated all odds ratios at once. Consequently, $4.4$ is the most correct odds ratio when multiplied together with the gun ownership odds ratio (and all the other odds ratios in their model). That is good, because that is how we use it! 
 
-The odds ratio 1.9 from [@dahlberg2004guns] is however not adjust for physical violence. Because we want to include physical violence, this is a little drawback to using their research. In [@kellermann1993gun] they included gun ownership in their model, and that This is a drawback to using their result, but it is  scientific results that adjusts for 
+However, the odds ratio 2.0 from [@anglemyer2014accessability] was computed from other papers where only some adjusted for physical violence. That should ideally be all the papers now that we multiply the two odds ratios. Fortunately, it doesn't seem to matter that much;
+
+* In [@kellermann1993gun] they estimated the odds ratio for gun ownership adjusted for physical violence to be 2.6, which is quite near the meta analysis estimate 2.0.
+* The authors in [@anglemyer2014accessability] must have thought about and tested the appropriateness of combining studies that adjust for physical violence with those that don't. Since they ended up doing so, they have probably found that it is not a big violation.
+
+In general our interactions are multiplicative. The above considerations about how estimates are adjusted repeats many times in the cause-by-cause section [Risk factor choices](#risk-factor-choices). It is not always possible to find studies that adjust for every relevant risk factor. In these cases we will often assume that they combine multiplicatively anyway, but the behavior of the program will be more speculative.
+
+#### Combining normalizing factors
+To use the combined risk or odds ratio, we have to compute a new normalizing factor. Let us continue the homicide example where we multiplied the odds ratio for gun ownership (2.0) and physical violence (4.4). 
+
+To compute the normalizing factor we need to know the proportion of Americans who belong to each combination of gun ownership and physical violence. For example we need the proportion of the American population who lives in a household where there is a gun and a history of physical violence. Recall that the proportion of households that owns a gun ($40\%$) and the proportion that has a history of violence ($5.7\%$). If the gun owning and non gun owning households were independent, they would be equally likely to be violent and so we could compute the joint proportion as $40\%\cdot 5.7\%=2.3\%$. It doesn't sound outrageous that they should be independent and since we are unlikely to find the actual proportions, we assume that they are independent. Then the normalizing factor is
+$$
+4.4\cdot 2.0 \cdot 40\% \cdot 5.7\%+4.4\cdot 1.0 \cdot 60\% \cdot 5.7\%+1.0\cdot 2.0 \cdot 40\% \cdot 94.3\% \\+ 1.0\cdot 1.0\cdot 60\%\cdot 94.3\%\approx 1.67
+$$
+The potential caveat to assuming that they are independent is that we get a more imprecise number for the normalizing factor. On the other hand, the normalizing factor is already an imprecise number because the odds ratios 4.4 and 2.0 are uncertain estimates. The confidence intervals for 4.4 is 
+
+We will often 
 
 
-Most of the mathematical models used in health research have the assumption that odds ratios or risk ratios are multiplied together. Whether the 
+It is very probable that there exists research that could guide us towards a better guess for the proportions, so we don't have to assume that gun ownership and physical violence are independent. However, duean actual answer to
+Our intuition tells us that it is probably not far from  if they arecould imagine that violent households tend to be poorer and therefore  , we can  Let $P(\text{gun, violence})$, $P(\text{no gun, violence})$, $P(\text{gun, no violence})$ and be 
+
+* 
 
 
-In other words 4.4 should be multiplied with o designed to be  4.4 is designed to be multiplied the odds ratio which makes the product of the two odds ratios most correct. rractually the odds ratio that fits their data best when it is multiplied by the odds ratio of 
-
+The normalizing factor is the average risk ratio, so if we take the example with We have to compute a new normalizing factor for the joint risk ratio. The normalizing factor is the average rate of 
 
 
 

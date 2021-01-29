@@ -401,7 +401,9 @@ testTs=function(){
   ts=compute_Ts(us,codes)
   margs=compute_marginals(ss, codes)
   margs2=compute_marginals(ts, codes)
-  return(c(min(margs),ustar, sum(margs), min(margs2), sum(margs2), max(abs(margs-margs2)), ts[length(ts)]))
+  ts3=sendDownBlameSystem(ts,codes)
+  margs3=compute_marginals(ts3,codes)
+  return(c(min(margs),ustar, sum(margs), min(margs2), sum(margs2), max(abs(margs-margs2)), ts[length(ts)], min(margs3), sum(margs3), max(abs(margs-margs3)), ts3[length(ts3)]))
 }
 ad=replicate(1000,testTs())
 
