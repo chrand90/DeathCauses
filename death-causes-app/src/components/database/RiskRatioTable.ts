@@ -34,23 +34,61 @@ class RiskRatioTable {
         });
     }
 
-    getMinimumRRForFactor(submittedFactorAnswers: FactorAnswers): MinimumRiskRatios {
-        let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-        let res: MinimumRiskRatios = {}
-        let riskRatiosToMinimize = []
-        for (let factorIndex = 0; factorIndex < this.factorNames.length; factorIndex++) {
-
-            for (let i = 0; i < this.riskRatioTable.length; i++) {
-                if (this.riskRatioTable[i].isFactorAnswersInDomainExceptOneFactor(factorIndex, relevantFactorAnswers)) {
-                    riskRatiosToMinimize.push(this.riskRatioTable[i].riskRatioValue)
-                }
-            }
-            let minRR = Math.min(...riskRatiosToMinimize)
-            let factorname = this.factorNames[factorIndex]
-            res[factorname] = minRR
+    getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number  {
+        let indexOfFactor = this.factorNames.indexOf(factorToMinimize)
+        if (indexOfFactor === -1) {
+            return 1;
         }
-        return res;
+
+        let riskRatiosToMinimize = this.riskRatioTable.filter(rrt => {
+                return rrt.isSingleFactorInDomain(indexOfFactor, submittedFactorAnswers[factorToMinimize])
+            })
+            .map(rte => rte.riskRatioValue)
+
+        return Math.min(...riskRatiosToMinimize)
     }
+
+    // getMinimumRRForFactor(submittedFactorAnswers: FactorAnswers): MinimumRiskRatios {
+    //     let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
+    //     let res: MinimumRiskRatios = {}
+    //     let riskRatiosToMinimize = []
+    //     for (let factorIndex = 0; factorIndex < this.factorNames.length; factorIndex++) {
+    //         for (let i = 0; i < this.riskRatioTable.length; i++) {
+    //             if (this.riskRatioTable[i].isFactorAnswersInDomainExceptOneFactor(factorIndex, relevantFactorAnswers)) {
+    //                 riskRatiosToMinimize.push(this.riskRatioTable[i].riskRatioValue)
+    //             }
+    //         }
+    //         let minRR = Math.min(...riskRatiosToMinimize)
+    //         let factorname = this.factorNames[factorIndex]
+    //         res[factorname] = minRR
+    //     }
+    //     return res;
+    // }
+
+    getMinimumRR() {
+        let riskRatioValues = this.riskRatioTable.map(rrte => rrte.riskRatioValue)
+        return Math.min(...riskRatioValues)
+    }
+
+    getMinimumRRFactors() {
+        let riskRatioValues = this.riskRatioTable.map(rrte => rrte.riskRatioValue)
+        let minimumIndex = riskRatioValues.indexOf(Math.min(...riskRatioValues))
+        let minRrte = this.riskRatioTable[minimumIndex]
+        let res: any = {}
+        this.factorNames.forEach((value, index) =>
+            res[value] = minRrte.factorValues[index]
+        )
+        return res
+    }
+
+    // getMinimumRRForFactor2(submittedFactorAnswers: FactorAnswers) {
+    //     let factorIndex = 1;
+    //     let factorName = this.factorNames[factorIndex]
+    //     this.riskRatioTable.filter(rrt => rrt.isSingleFactorInDomain(factorIndex, submittedFactorAnswers[factorName]))
+    //         .map(rre => rre.riskRatioValue)
+    //         .reduce((prev, curr) => prev < curr ? prev : curr)
+
+    // }
 
     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
         let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
@@ -115,6 +153,13 @@ class RiskRatioTableEntry {
             }
         }
         return true;
+    }
+
+    isSingleFactorInDomain(factorIndexToFind: number, factorAnswer: (string | boolean | number)) {
+        if (this.factorValues[factorIndexToFind].isInputWithinCell(factorAnswer)) {
+            return true;
+        }
+        return false;
     }
 }
 

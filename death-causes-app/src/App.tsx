@@ -3,7 +3,7 @@ import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './App.css';
 import Deathcause from './components/database/Deathcause';
-import { ProbabilityOfDeathCauseCalculation } from './components/database/ProbabilityOfDeathCauseCalculation';
+import { RiskRatioCalculationService } from './components/Calculations/RiskRatioCalculationService';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';

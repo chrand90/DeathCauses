@@ -2,6 +2,10 @@ export interface FactorAnswers {
   [id: string]: number | string | boolean;
 }
 
+export interface TestInterface{
+  [id: string]: number
+}
+
 export interface InputValidity {
   status: "Error" | "Warning" | "Missing" | "Success";
   message: string;
