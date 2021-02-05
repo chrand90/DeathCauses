@@ -20,30 +20,30 @@ details{
 
 </style>
 
-Humanity's ability to prevent death has improved tremendously in the last 150 years. Not only can we save many more sick and injured people but we also know more about preventing illness and accidents. It is for example well known that drinking and smoking increase the risk of early death while vegetables and seatbelts decrease the risk. And it is great that people know what is good and what is bad for their health, but there is a lot more to know. How much does the bad habits increase one's risk of death? And what types of illness and tragedies are related to each habit? On this website you can based on your specific habits and data, get an estimated age of death and a breakdown of how responsible each disease or habit was for your death. These numbers are computed by our mathematical model based on results from selected scientific papers. 
+Humanity's ability to prevent death has improved tremendously in the last 150 years. Not only can we save many more sick and injured people but we also know more about preventing illness and accidents. It is for example well known that drinking and smoking increase the risk of early death while vegetables and seatbelts decrease the risk. And it is great that people know what is good and what is bad for their health, but there is a lot more to know. How much does the bad habits increase one's risk of death? And what types of illness and tragedies are related to each habit? On this website you can based on your specific habits and data, get an estimated age of death and a breakdown of how responsible each disease or habit is for your death. These numbers are computed by our mathematical model based on results from a big number of scientific papers. 
 
 #### Motivating example
 
-Imagine a world where we kept track of cause of death but there was no research in their underlying causes. Furthermore, imagine that you were an old person living in a nice house in a quiet suburbs and you asked the scientists to come up with an estimate of your risk of dying from homicide. One would think that you would have less risk of dying from homicide than, say, a drug dealer. However, the scientists in this hypothetical world would not have any information about these things. Therefore, their best estimate would be the crude rate; for example, in America the murder rate is 5.0 out of 100,000 per year, so they would tell everyone that their chance of dying from homicide was 5/100,000=0.005% each year. Imagine now that the scientists decided to actually do some research in the subject; they went out and examined how many people who were murdered in their house had a gun and compared it to how many people who weren't murdered had guns in their house. They might find that the gun-owners had approximately 1.9 times higher risk of death from homicide in their home than non-owners (as found by the researchers [@dahlberg2004guns]). If our hypothetical world had a gun ownership rate of 40% of house holds and 20% of homicides occuring in the home(like America has today), the scientists could then give 3 different answers to the question about your risk of dying from homicide:
+Imagine a world where we kept track of cause of death but there was no research in their underlying causes. Furthermore, imagine that you were an old person living in a nice house in a quiet suburbs and you asked the scientists to come up with an estimate of your risk of dying from homicide. One would think that you would have less risk of dying from homicide than, say, a drug dealer. However, the scientists in this hypothetical world would not have any information about these things. Therefore, their best estimate would be the crude rate; for example, in America the murder rate is 5.0 out of 100,000 per year, so they would tell everyone that their chance of dying from homicide was 5/100,000=0.005% each year. Imagine now that the scientists decided to actually do some research in the subject; they went out and examined how many people who were murdered in their house had a gun and compared it to how many people who weren't murdered had guns in their house. They might find that the gun-owners had approximately 1.9 times higher risk of death from homicide in their home than non-owners (as found by the researchers @dahlberg2004guns). If our hypothetical world had a gun ownership rate of 40% of households and 50% of homicides occurring in the home (like America has today), the scientists could then give 3 different answers to the question about your risk of dying from homicide:
 
-* If they know that your household has a gun, each year the risk of you dying from homicide is $0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}=$ **0.00540%**
-* If they know that your household doesn't have a gun, each year the risk of you dying from homicide is $0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1}{1.9\cdot 40 \%+60\%}=$ **0.00474%**
+* If they know that your household has a gun, each year the risk of you dying from homicide is $0.005\%\cdot 50\%+50\% \cdot 0.0025\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}=$ **0.00599%**
+* If they know that your household doesn't have a gun, each year the risk of you dying from homicide is $0.005\%\cdot 50\%+50\% \cdot 0.005\%\cdot \frac{1}{1.9\cdot 40 \%+60\%}=$ **0.00434%**
 * If they don't know whether your household has a gun, they have to use the default rate and say that each year your risk of dying from homicide is **0.005%**
 
 The mathematical model that we use works similarly. We start with a neutral model that only knows the rates of each death cause for each age. As we put more scientific results into the model, we can more accurately estimate the risks for the individual person. Finding these results is a never-ending task and a task filled with hard decisions. We have to decide which numbers to include in the model and how to combine the results. For example, what happens to your risk of homicide if you are both a drug addict and has a gun in your home? We deal with this case by case and describe our considerations in the section [Risk Factor Choices](#risk-factor-choices).
 
-# The model
+# The mathematical model
 
 ## The neutral model
 
-When a user haven't filled out any personal data to the model, the model will use the *neutral* model. It knows what proportion of American population dies in each 5-year age bracket every year from the [Underlying Cause of Death data set on the CDC website](https://wonder.cdc.gov/) split into ICD10 codes (which is a standardized system used by doctors to classify cause of death). There are thousands of different ICD codes so we group them into sensible categories that we call *death causes*. Using this data we can compute the  probability of dying from each death cause and expected age of death. However, these probabilities and expected lifetime will only describe the average American and not anyone in particular.
+When a user haven't filled out any personal data to the mathematical model, the program will use the *neutral* model. For every deadly illness and accident type, the neutral model knows what proportion of the American population dies in each 5-year age bracket every year. This data comes from the [Underlying Cause of Death data set on the CDC website](https://wonder.cdc.gov/). The illnesses and accidents are split into ICD10 codes, which is a standardized system used by doctors to classify cause of death. There are thousands of different ICD codes so we group them into sensible categories that we call *death causes*. Using this data we can compute the probability of dying from each death cause and expected age of death. However, in this neutral model these probabilities and the expected lifetime will only describe the average American and not anyone in particular.
 
 <details><summary> Formulas </summary>
 For completeness, the formula that we use to compute the probability of dying from a death cause is 
 $$
 P(\text{die from }d)=\sum_{a=0}^{119} P(d|a) \prod_{b=0}^{a-1} \Bigl(1-\sum_{d\in D}^b P(d|a) \Bigr)
 $$
-where $P(d|a)$ is the probability of dying from the death cause $d$ between your $a$'th and $a+1$'th birthday. By $D$ we denote the set of all death causes. The sum goes to 119, because there is very little chance of living past 120. In the neutral model we use the proportions from the CDC as the $P(d|a)$ numbers, but when we start including risk factors we scale them using so-called risk ratios or similar.
+where $P(d|a)$ is the probability of dying from the death cause $d$ between your $a$'th and $a+1$'th birthday. By $D$ we denote the set of all death causes. The sum goes to 119, because there is very little chance of living past 120. In the neutral model we use the proportions from the CDC as the $P(d|a)$ numbers, but when we start including risk factors we scale them using [risk ratios](#risk-ratios) or similar.
 </details>
 
 ## Including risk factors
@@ -51,33 +51,33 @@ where $P(d|a)$ is the probability of dying from the death cause $d$ between your
 In order to compute personalized probabilities, we use *risk factors* which are different behaviors or circumstances that influence the probability of dying. 
 
 When the scientists in our hypothetical example computed the risk of dying from homicide, they used the following formula that we will unpack. 
-$$0.005\%\cdot 80\%+20\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}$$
-The first part $0.005\%\cdot 80\%$ is the risk of dying from something other than a homicide in your home. For those $80\%$ of homicides we knew nothing about their underlying causes so we simply use their base rate of $0.005\%$. This means that we have effectively split up homicides into two sub death causes - homicides in your home with yearly rate $0.005\%\cdot 20\%=0.001\%$ and homicides elsewhere with yearly rate $0.004\%$. In this example the rates ($0.005\%$, $0.004\%$ and so on) are the combined rate of Americans of all ages but in the actual model we use the rates specific to a certain age.
+$$0.005\%\cdot 50\%+50\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%}$$
+The first part $0.005\%\cdot 50\%$ is the risk of dying of homicide outside of your your home. For those $50\%$ of homicides we knew nothing about their underlying causes so we simply use their base rate of $0.005\%$. This means that we have effectively split up homicides into two sub death causes - homicides in your home with yearly rate $0.005\%\cdot 50\%=0.0025\%$ and homicides elsewhere with yearly rate $0.0025\%$. In this example we use the rates of the actual program we use age-specific rates, In this example the rates ($0.005\%$, $0.0025\%$) are the combined rate of Americans of all ages but in the actual model we use the rates specific to a certain age.
 
 ## Normalization factor
 Looking at the more complicated part of the above equation, we are left with
-$$0.001\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%} $$
+$$0.0025\%\cdot \frac{1.9}{1.9\cdot 40 \%+60\%} $$
 <details><summary>Derivation</summary>
-Let us look at where it comes from. We know that the overall risk for homicides in the home is $0.001\%$ and we know that the group that has a gun in their house should have 1.9 times higher risk of being murdered. This means that if the risk in the non-owner group is $x$, the risk of the gun-owner group is $x\cdot 1.9$. The question is now what $x$ is. To find $x$ we use that the overall risk is $0.001\%$. Some of these $0.001\%$ must come from the gun owner group. If we use the fact that $40\%$ of the population owns a gun, they would contribute with $x\cdot 1.9\cdot 40\%$ of the $0.001\%$ and likewise the non-owners will contribute with $x\cdot60\%$. In total we get an equation where we can isolate $x$.
+Let us look at where it comes from. We know that the overall risk for homicides in the home is $0.0025\%$ and we know that the group that has a gun in their house should have 1.9 times higher risk of being murdered. This means that if the risk in the non-owner group is $x$, the risk of the gun-owner group is $x\cdot 1.9$. The question is now what $x$ is. To find $x$ we use that the overall risk is $0.0025\%$. Some of these $0.0025\%$ must come from the gun owner group. If we use the fact that $40\%$ of the population owns a gun, they would contribute with $x\cdot 1.9\cdot 40\%$ of the $0.0025\%$ and likewise the non-owners will contribute with $x\cdot60\%$. In total we get an equation where we can isolate $x$.
 
 $$
-x\cdot 60\%+x\cdot 1.9\cdot 40\%=0.001\%
+x\cdot 60\%+x\cdot 1.9\cdot 40\%=0.0025\%
 $$
 $$
-x \cdot (60\%+ 1.9\cdot 40\%)=0.001\%
+x \cdot (60\%+ 1.9\cdot 40\%)=0.0025\%
 $$
 $$
-x=0.001\%\frac{1}{60\%+ 1.9\cdot 40\%}
+x=0.0025\%\frac{1}{60\%+ 1.9\cdot 40\%}
 $$
 
 This last equation is the formula for the risk of dying from homicide in the home for non-owners. The risk in the gun-owning group is then 
 $$
-x\cdot 1.9=0.001\%\frac{1.9}{60\%+ 1.9\cdot 40\%}
+x\cdot 1.9=0.0025\%\frac{1.9}{60\%+ 1.9\cdot 40\%}
 $$
 We have hereby shown the formulas.
 </details>
 $~$  
-One way to think about the denominator $60\%+1.9\cdot 40\%=1.36$ is as the relative risk of dying from homicide in the home. This means that the average American is 1.36 times more likely to die from homicide in their home than an American who does not own a gun (because when we consider an average American there is a certain chance they have a gun in their home). Consequently, the fraction $1.9/1.36\approx1.397$ means that if you own a gun, you are 1.397 times more likely to die from homicide in your home than the average American. Because the rate $0.001\%$ applies to the average American, the product $0.001\%\cdot 1.397\approx0.0014\%$ will be the risk of dying from homicide in the home if you own a gun. Henceforth, the denominator will be called the **normalization factor**, because it scales the risks such that the overall risk is correct.
+One way to think about the denominator $60\%+1.9\cdot 40\%=1.36$ is as the relative risk of dying from homicide in the home. This means that the average American is 1.36 times more likely to die from homicide in their home than an American who does not own a gun (because when we consider an average American there is a certain chance they have a gun in their home). Consequently, the fraction $1.9/1.36\approx1.397$ means that if you own a gun, you are 1.397 times more likely to die from homicide in your home than the average American. Because the rate $0.0025\%$ applies to the average American, the product $0.0025\%\cdot 1.397\approx0.0014\%$ will be the risk of dying from homicide in the home if you own a gun. Henceforth, the denominator will be called the **normalization factor**, because it scales the risks such that the overall risk is correct.
 
 ## Smoothing
 
@@ -88,24 +88,24 @@ source('../../Reportgeneration/DatabaseVisualization/readJsonAndPlot.R')
 make_plot_for_risk_factor('Alzheimers', 'Caffeine')
 ```
 
-The graph says that the risk of obtaining Alzheimers is According to these numbers an average coffee consumption of 2.49 cups of coffees per day is more than twice as dangerous as drinking 2.51 cups of coffee per day. This is not realistic and only a result of the chosen binning. To get a more realistic and intuitive model we fit a curve to binned categories.
+According to these numbers an average coffee consumption of 2.49 cups of coffees per day is more than twice as dangerous as drinking 2.51 cups of coffee per day. This is not realistic and only a result of the chosen binning. To get a more realistic and intuitive model, we fit a curve to binned categories.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 make_plot_for_interpolation('Alzheimers', 'Caffeine')
 ```
 
-This curve is computed as a trade-off between being smooth and reflecting the original data. We have decided that the above curve could not exceed 1, because there is no indication that extreme coffee consumption leads to more Alzheimers than total coffee abstinence. 
+This curve is computed as a trade-off between being smooth and reflecting the original data. We have decided that the above curve could not exceed 1, because there is no indication that extreme coffee consumption leads to more Alzheimer's than total coffee abstinence. 
 
 <details> <summary>Technical details</summary>
-We fit the curve by finding the natural cubic splines $\{N_i\}_{i=1, \dots, N}$ that minimizes the expression
+We fit the curve by finding the natural cubic splines $\{N_i\}_{i=1, \dots, n}$ that minimizes the expression
 $$
 \sum_{f} \frac{1}{\sigma_f^2}\biggl(RR(f)-\frac{1}{|f|}\int_f\sum_{i=1}^n N_i(X) \text{ d}X\biggr)^2+\lambda\int_f \Bigl|\sum_{i=1}^n N_i''(X)\Bigr|^2 \text{ d}X
 $$
-where $f$ is a binned category, $|f|$ is the size of the bin and $\lambda$ is a tuning parameter and $\sigma_f$ is the standard deviation of the risk ratio $RR(f)$. The outer sum goes through only the finite bins and the natural cubic splines have knots around every finite bin. The tuning parameter $\lambda$ is chosen manually based on visual inspection of the fitted curve. 
+where $f$ is a binned category, $|f|$ is the size of the bin and $\lambda$ is a tuning parameter and $\sigma_f$ is the standard deviation of the [risk ratio](#risk-ratio) $RR(f)$. The outer sum goes through only the finite bins and the natural cubic splines have knots around every finite bin. The tuning parameter $\lambda$ is chosen manually based on visual inspection of the fitted curve. 
 
-For the $\sigma_f$-values we should remember that the estimated spline function will be multiplied with the inverse normalization factor in the program. This means that we are really making this fit for the normalized risk ratios and so we should set $\sigma_f$ equal to *their* standard deviations. They are unfortunately not easily computed and since we adjust the tuning parameter manually anyway, we mostly set $\sigma_f=1$. One exception is that many risk ratio tables have a *base category* which are used to compare against all other categories. This base category has, by construction, risk ratio 1 and standard deviation 0. In these cases we often constrain the spline to take that value (by using Lagrange multiplier method on the above expression). However, the normalized risk ratio of the base category does not have standard deviation zero, so the constraint does not make the computation more correct. We do it to make the resemblance between the interpolated curve and the risk ratio histogram more clear to humans.
+For the $\sigma_f$-values we should remember that the estimated spline function will be multiplied with the inverse normalization factor in the program. This means that we are really making this fit for the normalized risk ratios and so we should set $\sigma_f$ equal to *their* standard deviations. They are unfortunately not easily computed and since we adjust the tuning parameter manually anyway, we mostly set $\sigma_f=1$. One exception is that many risk ratio tables have a *base category* which are used to compare against all other categories. This base category has, by construction, risk ratio 1 with standard deviation 0. In these cases we often constrain the spline to take that value (by using Lagrange multiplier method on the above expression). However, the *normalized* risk ratio of the base category does not have standard deviation 0, so the constraint does not make the computation more correct. We do it to make the resemblance between the interpolated curve and the risk ratio histogram more clear to humans.
 
-When the input risk ratios are arranged in a multidimensional grid, we use cross products of one dimensional splines. The basis is 
+When the input risk ratios are arranged in a multidimensional grid, we use cross products of one-dimensional splines. The basis is 
 $$
 \{D_k(X_i)D_l(X_j)\}_{(i,j,k,l)\in I}\cup \{D_k(X_i)\}_{(k,i)\in J}
 $$
@@ -118,101 +118,154 @@ The loss function term is the same as the in the one-dimensional case except the
 
 </details>
 
-## Interactions
+## Interactions between risk factors
 
-Often there are much more than one risk factor for a specific death cause. An example could be that both gun ownership and living in a violent household increase your risk of dying from a homicide in the home. The question is now, what happens if one does both? In other words, what is the *interaction* between household violence and gun ownership?
+Often there are much more than one [risk factor](#risk-factor) for a specific death cause. An example could be that both gun ownership and living in a violent household increase your risk of dying from a homicide in the home. The question is now, what happens if one does both? In other words, what is the *interaction* between household violence and gun ownership?
 
 <details> <summary> Homicide and physical violence in the home</summary>
-The researchers [@kellermann1993gun] found that the odds of dying from homicide was $4.4$ times higher if there had ever been a fight where someone was physically hurt in the home. In the same process they found that $5.7\%$ of their controls answered yes to that question. If we use that number (see our consideration under [Homicide](#homicide)) we can compute the normalization factor of $1.19=5.7\%\cdot 4.4 + 94.3\%\cdot 1$, which we can use to compute
+The researchers @kellermann1993gun found that the odds of dying from homicide was $4.4$ times higher if there had ever been a fight where someone was physically hurt in the home. In the same process they found that $5.7\%$ of their controls had ever had such a violent fight. If we say that number represents the American population, we can compute the normalization factor as $1.19=5.7\%\cdot 4.4 + 94.3\%\cdot 1$, which we can use to compute the following
 
-* If you live in a home where someone has been physically hurt in a fight, the risk of dying from homicide in the home $0.001\%\cdot\frac{4.4}{1.19}=$ **0.00370%** (per year)
-* If you live in a home where no one has been physically hurt in a fight, the risk of dying from homicide in the home is $0.001\%\cdot\frac{1.0}{1.19}=$ **0.00084\%** (per year)
-* If you don't consider physical violence in your home, the best guess of your risk of dying from homicide in the home is the default **0.001%** (per year)
+* If you live in a home where someone has been physically hurt in a fight, the risk of dying from homicide in the home is $0.0025\%\cdot\frac{4.4}{1.19}=$ **0.00924%** (per year)
+* If you live in a home where no one has been physically hurt in a fight, the risk of dying from homicide in the home is $0.0025\%\cdot\frac{1.0}{1.19}=$ **0.00210\%** (per year)
+* If you don't consider physical violence in your home, the best guess of your risk of dying from homicide in the home is the default **0.0025%** (per year)
 </details>
 
 #### Combining physical violence and guns.
-In the [motivating example](#motivating-example) we talked about the research from [@dahlberg2004guns] which found that a gun in one's home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a meta analysis by [@anglemyer2014accessability], where they estimated the risk ratio to be 2.0 - rather than 1.9. Since much more data has been used to estimate the meta analysis estimate, we will use it from now on. 
+In the [motivating example](#motivating-example) we talked about the research from @dahlberg2004guns who found that a gun in one's home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a [meta analysis](#meta-analysis) by @anglemyer2014accessability, where they estimated the risk ratio to be 2.0 - rather than 1.9. Since much more data has been used to estimate the meta analysis estimate, we will use it from now on. 
 
-We want to combine the risk ratio for gun ownership with the results by [@kellermann1993gun] who found that a history of domestic physical fights increases the risk of dying by homicide in the home by 4.4 times. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
+We want to combine the risk ratio for gun ownership with the results of @kellermann1993gun, who found that a history of domestic physical fights increases the risk of dying from homicide in the home by a factor of 4.4. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. That is
 
-* If you both live in a household with physical violent fights and gun(s), you risk of dying from homicide in the home is $2.0\cdot 4.4=8.8$ times higher than if you did neither.
+* If you both live in a household with physical violent fights and gun(s), your risk of dying from homicide in the home is $2.0\cdot 4.4=8.8$ times higher than if you did neither.
 * If there is only physical violent fights but no guns, your risk is $4.4$ times higher than if you did neither.
 * If there is only guns but no physical violence, your risk is $2.0$ times higher than if you did neither.
 
-We justify this choice by how the odds ratios were computed in the original papers. In [@kellermann1993gun] they computed the odds ratio $4.4$ using a method that *adjusted for gun ownership*. They assumed that odds ratios for gun ownership, physical violence, race etc. should be multiplied together and then they estimated all odds ratios at once. Consequently, $4.4$ is the most correct odds ratio when multiplied together with the gun ownership odds ratio (and all the other odds ratios in their model). That is good, because that is how we use it! 
+We justify this choice by how the odds ratios were computed in the original papers. In @kellermann1993gun they computed the odds ratio $4.4$ using a method that *adjusted for gun ownership*. They assumed that odds ratios for gun ownership, physical violence, race etc. should be multiplied together and then they estimated all odds ratios at once. Consequently, $4.4$ is the most correct odds ratio when multiplied together with the gun ownership odds ratio (and all the other odds ratios in their model). That is good, because that is how we use it! 
 
 However, the odds ratio 2.0 from [@anglemyer2014accessability] was computed from other papers where only some adjusted for physical violence. That should ideally be all the papers now that we multiply the two odds ratios. Fortunately, it doesn't seem to matter that much;
 
-* In [@kellermann1993gun] they estimated the odds ratio for gun ownership adjusted for physical violence to be 2.6, which is quite near the meta analysis estimate 2.0.
-* The authors in [@anglemyer2014accessability] must have thought about and tested the appropriateness of combining studies that adjust for physical violence with those that don't. Since they ended up doing so, they have probably found that it is not a big violation.
+* In @kellermann1993gun they estimated the odds ratio for gun ownership adjusted for physical violence to be 2.6, which is quite near the meta analysis estimate 2.0.
+* The authors in @anglemyer2014accessability must have thought about or tested the appropriateness of combining studies that adjust for physical violence with those that don't. Since they ended up doing so, they have probably found that it is not a giant violation.
 
 In general our interactions are multiplicative. The above considerations about how estimates are adjusted repeats many times in the cause-by-cause section [Risk factor choices](#risk-factor-choices). It is not always possible to find studies that adjust for every relevant risk factor. In these cases we will often assume that they combine multiplicatively anyway, but the behavior of the program will be more speculative.
 
-#### Combining normalizing factors
+#### Combining normalization factors
 To use the combined risk or odds ratio, we have to compute a new normalizing factor. Let us continue the homicide example where we multiplied the odds ratio for gun ownership (2.0) and physical violence (4.4). 
 
-To compute the normalizing factor we need to know the proportion of Americans who belong to each combination of gun ownership and physical violence. For example we need the proportion of the American population who lives in a household where there is a gun and a history of physical violence. Recall that the proportion of households that owns a gun ($40\%$) and the proportion that has a history of violence ($5.7\%$). If the gun owning and non gun owning households were independent, they would be equally likely to be violent and so we could compute the joint proportion as $40\%\cdot 5.7\%=2.3\%$. It doesn't sound outrageous that they should be independent and since we are unlikely to find the actual proportions, we assume that they are independent. Then the normalizing factor is
+To compute the normalizing factor we need to know the proportion of Americans who belong to each combination of gun ownership and physical violence. For example we need the proportion of the American population who lives in a household where there is a gun and a history of physical violence. Recall that the proportion of households that owns a gun is $40\%$, and the proportion that has a history of violence is $5.7\%$. If gun ownership were unrelated to whether there are physical violence, we would say that gun ownership and physical violence are *independent*. This means that gun owners and non-gun owners are equally likely to have a violent household (and vice versa). Then we could simply compute the joint proportion as $40\%\cdot 5.7\%=2.3\%$. It doesn't sound outrageous that gun ownership and physical violence in the home should be independent and since we are unlikely to find the actual joint proportions, we assume that they are independent. Then the normalizing factor is
 $$
 4.4\cdot 2.0 \cdot 40\% \cdot 5.7\%+4.4\cdot 1.0 \cdot 60\% \cdot 5.7\%+1.0\cdot 2.0 \cdot 40\% \cdot 94.3\% \\+ 1.0\cdot 1.0\cdot 60\%\cdot 94.3\%\approx 1.67
 $$
-The potential caveat to assuming that they are independent is that we get a more imprecise number for the normalizing factor. On the other hand, the normalizing factor is already an imprecise number because the odds ratios 4.4 and 2.0 are uncertain estimates. The confidence intervals for 4.4 is 
+Notice that we could have also gotten $1.67$ by multiplying the two normalization factors of physical violence and gun ownership. That is $1.67=1.19\cdot (60\%+40\%\cdot 2)$. 
 
-We will often 
+We do not always assume independence between risk factors, but it will be handled on a case-by-case basis described in [Risk factor choices](#risk-factor-choices). In many cases the independence assumption will not matter that much (see "Consequences of assuming incorrect independence" below).
 
+<details><summary>Consequences of assuming incorrect independence</summary>
+The potential caveat to assuming that they are independent is that we get a more imprecise estimate of the normalizing factor. On the hand the normalizing factor and in particular the normalized risk are already uncertain estimates. If we consider the homicide example, the normalizing factor when assuming independence was $1.67$. If we didn't assume independence, the normalizing factor could still not be outside the interval $(1.40,1.79)$ (under the assumption that $5.7\%$ are violent and $40\%$ own guns). For comparison the confidence interval of the 4.4-odds ratio of physical violence is $(2.2,8.8)$ and the confidence interval of the 2.0-odds ratio of gun ownership is $(1.56,3.02)$. The error from incorrectly assuming independence is therefore not the biggest source of error in this case. In general the independence assumption will matter less when the risk factors are rare or when the risk ratios are similar.  
 
-It is very probable that there exists research that could guide us towards a better guess for the proportions, so we don't have to assume that gun ownership and physical violence are independent. However, duean actual answer to
-Our intuition tells us that it is probably not far from  if they arecould imagine that violent households tend to be poorer and therefore  , we can  Let $P(\text{gun, violence})$, $P(\text{no gun, violence})$, $P(\text{gun, no violence})$ and be 
+Even though the error on the normalized risk may not be important when we don't have the correct joint proportions, we lose a pleasant property. Correct proportions would ensure that if all Americans filled out the program and we averaged all their results, we would get the neutral model. In other words, the program would be correct on average. The uncertainty in the odds and risk ratios would still lead to overestimation of, say, some people's risk of dying from homicide, but with the correct joint proportions some other people's homicide risk would be correspondingly underestimated. 
+</details>
 
-* 
-
-
-The normalizing factor is the average risk ratio, so if we take the example with We have to compute a new normalizing factor for the joint risk ratio. The normalizing factor is the average rate of 
-
-
+## Decompositions
+This section will not be written before the method is tested.
 
 # Risk factor choices
 
 ### Colon Cancer
 
-There are many minor risk factors for colorectal cancers. So far we have included the following
+There are many minor [risk factors](#risk-factor) for colorectal cancers. So far we have included the following
 
 * [Drinking](#colorectal-cancer-drinking). 
-* Physical Activity.
-* Read meat consumption.
+* [Physical activity](#colorectal-cancer-physical-activity).
+* [Read meat consumption](#colorectal-cancer-red-meat-consumption)
 
-Other relevant risk factors not included in the model are smoking, family history of this cancer, other cancers and  obesity.
+Other relevant risk factors not included in the model are smoking, fiber intake, family history of this cancer, other cancers and obesity.
 
 #### Interactions
-We assume that all the selected risk factors for colorectal cancer join multiplicatively. That is the total risk ratio 
-
-$$\text{RR}$$
+We assume that the [interaction](#interactions-between-risk-factors) between all factors in colorectal cancer is multiplicative. That means that we multiply the [risk ratios](#risk-ratio) for every factor to get the full risk ratio, $\text{RR}$. 
+$$
+\text{RR}=\text{RR}_{\text{drinking}}\cdot \text{RR}_{\text{physical activity}}\cdot \text{RR}_{\text{red meat}}
+$$
+We also assume that the factors are [independent](#independence) when we compute the normalizing factor. This means that we compute the joint proportions, $P$, as
+$$
+P=P_{\text{drinking}}\cdot P_{\text{physical activity}}\cdot P_{\text{red meat}}
+$$
+There is evidence that people who drink are more physically active than those who don't [@piazza2012examining], but that effect is negligible in our context.
 
 
 #### Colorectal cancer: Drinking
-We use a analysis by @cho2004alcohol who looked a
+We use the [meta analysis](#meta-analysis) of cohort studies by @cho2004alcohol. They computed a joint [risk ratio](#risk-ratio) that were adjusted for many other [factors](#risk-factors), including physical activity and red meat consumed. This study is also ideal because it is a big meta analysis with data divided into many bins. They found that it was slightly better to drink a little($\text{RR}=0.94$) rather than nothing($\text{RR}=1.0$), but they thought it was an artifact of many former heavy drinkers who turned to abstinence. We therefore raise the risk ratio of the light drinkers to 1.0 as well. 
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+make_plot_for_risk_factor('ColonCancer', 'Drinking')
+make_plot_for_interpolation('ColonCancer', 'Drinking')
+```
+
+#### Colorectal cancer: Physical Activity
+It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar [@samad2005meta]. We therefore obtain the [risk ratios](#risk-ratio) from @Kyui2016physical, where they estimated a [dose-response](#dose-response) relationship based on total physical activity in a [meta analysis](#meta-analysis). They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+make_plot_for_risk_factor('ColonCancer', 'PhysicalActivityTotal')
+make_plot_for_interpolation('ColonCancer', 'PhysicalActivityTotal')
+```
+
+#### Colorectal cancer: Red Meat Consumption
+Red meat is meat made from pigs, cows, sheep or animals with similarly colored meat. Chicken meat is for example not red meat. We use the risk ratios from @schwingshackl2018food, which is a big dose-response meta analysis. Not all, but most of the big included studies in the meta analysis adjusted for physical activity and alcohol consumption, so it is very reasonable to use it in combination with our other risk factors
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+make_plot_for_risk_factor('ColonCancer', 'RedMeat')
+make_plot_for_interpolation('ColonCancer', 'RedMeat')
+```
 
 # Glossary
 
+### Dose-response
+A dose-response is a special type of analysis that are often made when considering just one [risk factor](#risk-factor) that can be infinitely many different numbers. This numeric risk factor is the dose. For example, the dose could be the number of alcohol drinks per week, because it can be 0, 10, 3.4,0.02, etc.  The response is most often risk ratio, odds ratio or similar. The dose-response relationship is often presented using binned dose-intervals like the example we saw in section [Smoothing](#smoothing).
+
+### Independence
+Variables are independent, when there is absolutely no relation between them. This is equivalent to saying that if you know one (or some) of the variables, you are not any wiser about the other variables. One example is two consecutive die rolls. The result of the first die roll, doesn't tell you anything about the result of the second, so they are independent. [Risk factors](#risk-factor), on the other hand, are rarely completely independent. Consider for example sex and eye color. At first they may seem independent, but remember that 
+
+* The proportions of different eye colors changes from country to country.
+* The ratio between males and females also depends on the country
+
+Imagine that we draw a random person in the world and we only know that he or she has brown eyes. With this tiny bit of information, we know that the person is more likely to come from a country with many brown-eyed people, and because the countries with many brown-eyed people generally have more males than females, we should now think there is a higher change that the person is male. This means that the person's eye color affected our expectation of their sex, and so eye color and sex is not independent. It didn't change our expectation by a lot, so we would say that they are almost independent. 
+
+The benefit of independent variables is that it makes computations easier and faster. We will therefore assume risk factors are independent when it is not too wrong (see considerations in Section [Combining normalization factors](#combining-normalization-factors)).
+
+### Meta analysis
+In health research the same risk ratios, odds ratios or similar are often estimated in many different studies that varies by location and methods. The meta analysis finds these studies, removes those with unwanted methodology, and takes a kind of average of all the estimates. This averaged estimate will normally have a smaller error than any of the original estimates. A downside is that is much harder to determine the methodology behind the averaged estimate, because it will be some combination of methodology of all the included studies.
+
 ### Odds ratio
-An odds ratio is two odds divided by each other. In this document, an odds is a probability divided by the complementary probability. That is, if the probability is $p=0.2$, the odds is
+An odds ratio is two odds divided by each other. In this document, an odds is a probability divided by the complementary probability. That is, if the probability is $p=0.2=20\%$, the odds is
 $$
-\frac{p}{1-p}=\frac{0.2}{1-0.2}=\frac{1}{4}
+\frac{p}{1-p}=\frac{0.2}{1-0.2}=\frac{1}{4}=25\%
 $$
 
 An odds ratio is then
-
 $$
 OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}
 $$
-We will almost consequently make the approximation
 
+We will almost consequently make the approximation
 $$
 OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}\approx \frac{p_1}{p_2}=RR
 $$
 which is justified when $p_1$ and $p_2$ are small or close to each other. The RR is notation for [Risk Ratio](#risk-ratio) 
 
+### Risk
+Risk is the same as probability. It represents the certainty of some event (which could be dying from homicide). It is a number between $0\%=0$ and $100\%=1$, where $0\%$ means that the event will definitely not happen and $100\%$ means that it definitely will.
+
+### Risk factor
+A risk factor is a variable that affects a risk. For example, physical activity is a risk factor *for* colorectal cancer because one's risk of dying from colorectal cancer depends on one's level of physical activity. 
+
 ### Risk ratio
 
-A risk ratio is two probabilities divided by each other. In this program, we will use it as 
+A risk ratio is two probabilities divided by each other. Risk ratios normally occur in studies where some people have been divided into different categories that have different risks of something. If there are 3 categories, there are 3 risks $p_1, p_2$ and $p_3$. If category number one is the *base category*, the risk ratios are computed as
+$$
+\text{RR}_1=\frac{p_1}{p_1}, \, \text{RR}_2=\frac{p_2}{p_1}, \, \text{RR}_3=\frac{p_3}{p_1} 
+$$
+
+Notice that $\text{RR}_1$ will always be $1.0$ using this definition. 
+
 
 # References

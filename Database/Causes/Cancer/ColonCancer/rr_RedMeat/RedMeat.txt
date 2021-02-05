@@ -1,6 +1,6 @@
+#taken from Schwingshack, Lukas, Carolina Schwedhelm, Georg Hoffmann, Sven Knuppel, Anne Laure Preterre, Khalid Iqbal, Angela Bechthold, et al. 2018. "Food Groups and Risk of Colorectal Cancer." International Journal of Cancer 142 (9): 1748–58. 
 RedMeat	RR
-,30.7	1.0
-30.7,53.5	1.0
-53.5,76.3	1.0
-76.3,109.0	1.21
-109.0+	1.71
+0	1
+0,127.5	1.1
+127.5,212.5	1.27
+212.5+	1.27
