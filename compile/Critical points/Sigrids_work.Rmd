@@ -1,0 +1,465 @@
+---
+title: "Critical_points_Sigrid"
+author: "Sigrid"
+date: "1/26/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r loading packages}
+pacman::p_load(rjson, tidyverse)
+```
+
+```{r}
+################ SVENDS KODE ####################
+
+#library(rjson)
+
+PATH_TO_Causes.json ='../'
+NEW_FILE_NAME ='Causes_and_psis.json'
+
+read_database = function(){
+  return(fromJSON(file = paste0(PATH_TO_Causes.json,'Causes.json')))
+}
+
+write_database = function(new_database){
+  write(toJSON(new_database), paste0(PATH_TO_Causes.json, NEW_FILE_NAME))
+}
+
+compute_and_insert_critical_points = function(database){
+
+  #Code goes here...
+}
+
+#run the function
+new_database = compute_and_insert_critical_points(read_database())
+
+write_new_database(new_database)
+
+
+### TESTING
+test_dat1=list(
+  OldAge=list(
+    RiskFactorGroups=list(
+      list(
+        riskRatioTables=list(
+          riskFactorNames=c("Smoking"),
+          interpolationTable=list(
+            list( 
+              domain="0,2.5", # l1 og u1
+              factors="Smoking",
+              interpolationPolynomial="1+0.5*x0^2+-1.234*x0^1",
+              minValue="1",  # y-aksen
+              maxValue="10" 
+            ),
+            list(
+              domain="-4,0",
+              factors="Smoking",
+              interpolationPolynomial="1+-0.4*x0^1",
+              minValue="1",
+              maxValue="10"
+            ),
+            list( #remember to ignore this interval when finding minimum because it is infinitely long
+              domain=",-4",
+              factors="Smoking",
+              interpolationPolynomial="1+-0.4*x0^1",
+              minValue="1",
+              maxValue="10"
+            ),
+            list(# ignore also this interval because it is just an edge case of the other cells
+              domain="2.5", 
+              factors="Smoking",
+              interpolationPolynomial="1.04",
+              minValue="1",
+              maxValue="10"
+            ),
+            list(# ignore also because it is infinitely long
+              domain="2.5+", 
+              factors="Smoking",
+              interpolationPolynomial="1.04+0.234*x0^1",
+              minValue="1",
+              maxValue="10"
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+test_dat1_expected_output=list(
+  OldAge=list(
+    RiskFactorGroups=list(
+      list(
+        riskRatioTables=list(
+          riskFactorNames=c("Smoking"),
+          interpolationTable=list(
+            list( 
+              domain="0,2.5",
+              factors="Smoking",
+              interpolationPolynomial="1+0.5*x0^2+-1.234*x0^1",
+              interpolationMinimums=list(
+                global="1.234"
+              ),
+              minValue="1",
+              maxValue="10"
+            ),
+            list(
+              domain="-4,0",
+              factors="Smoking",
+              interpolationPolynomial="1+-0.4*x0^1",
+              interpolationMinimums=list(
+                global="1.234"
+              ),
+              minValue="1",
+              maxValue="10"
+            ),
+            list( 
+              domain=",-4",
+              factors="Smoking",
+              interpolationPolynomial="1+-0.4*x0^1",
+              interpolationMinimums=list(
+                global="1.234"
+              ),
+              minValue="1",
+              maxValue="10"
+            ),
+            list(
+              domain="2.5", 
+              factors="Smoking",
+              interpolationPolynomial="1.04",
+              interpolationMinimums=list(
+                global="1.234"
+              ),
+              minValue="1",
+              maxValue="10"
+            ),
+            list(
+              domain="2.5+", 
+              factors="Smoking",
+              interpolationPolynomial="1.04+0.234*x0^1",
+              interpolationMinimums=list(
+                global="1.234"
+              ),
+              minValue="1",
+              maxValue="10"
+            )
+          )
+        )
+      )
+    )
+  )
+)
+
+
+test_dat2=list(
+  Cancer=list(
+    RiskFactorGroups=list(
+      list(
+        riskRatioTables=list(
+          riskFactorNames=c("Drinking","Smoking"),
+          interpolationTable=list(
+            list(
+              domain=c("0", "0"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0,6", "0"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+0.3*x0^3+-4.0*x0^1",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0", "0,4"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+1*x1^1",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0,6", "0,4"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+0.3*x0^3+0.3*x0^1*x1^2+0.04*x0^3*x1^3+-4*x0^1+-1*x1^1",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list( #this infinitely long interval should not be changed
+              domain=c("0", "4+"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list( #this infinitely long interval should not be changed
+              domain=c("0,6", "4+"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            
+          )
+        )
+      )
+    )
+  )
+)
+
+test_dat2=list(
+  Cancer=list(
+    RiskFactorGroups=list(
+      list(
+        riskRatioTables=list(
+          riskFactorNames=c("Drinking","Smoking"),
+          interpolationTable=list(
+            list(
+              domain=c("0", "0"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              interpolationMinimums=list(
+                global=list(min=c("2.0612283", "0.5507934")),
+                x0_fixed=list(min=c("0")), #the minimum candidates when x0 is fixed and both x0 and x1 is in this cell
+                x1_fixed=list(min=c("0")), #the minimum candidates when x1 is fixed and both x0 and x1 is in this cell
+              ),
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0,6", "0"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+0.3*x0^3+-4.0*x0^1",
+              interpolationMinimums=list(
+                global=list(min=c("2.0612283", "0.5507934")),
+                x0_fixed=list(min=c("0")),
+                x1_fixed=list(min=c("2.108185"))
+              ),
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0", "0,4"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+-1*x1^1",
+              interpolationMinimums=list(
+                global=list(min=c("2.0612283", "0.5507934")),
+                x0_fixed=list(min=c("4")),
+                x1_fixed=list(min=c("0"))
+              ),
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list(
+              domain=c("0,6", "0,4"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0+0.3*x0^3+0.3*x0^1*x1^2+0.04*x0^3*x1^3+-4*x0^1+-1*x1^1",
+              interpolationMinimums=list(
+                global=list(min=c("2.0612283", "0.5507934")),
+                x0_fixed=list(candidates=list( #depending on the x0-value, either of the three x1-values can be the minimum
+                  list(val=c("4")),
+                  list(val=c("0")),
+                  list(solvePolynomial=c("0","0.6*x0","0.12*x0^3")))  #here we put the coefficients of the second degree polynomial whose roots could be minimums 
+                ),                
+                x1_fixed=list(candidates=list(
+                  list(val=c("6")),
+                  list(val=c("0")),
+                  list(solvePolynomial=c("-4+0.3*x1^2","0","0.9+0.12*x1^3")))
+                ),
+              ),
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list( #this infinitely long interval should not be changed
+              domain=c("0", "4+"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            list( #this infinitely long interval should not be changed
+              domain=c("0,6", "4+"),
+              factors=c("Drinking", "Smoking"),
+              interpolationPolynomial="0",
+              minValue= "1.0",
+              maxValue= "null"
+            ),
+            
+          )
+        )
+      )
+    )
+  )
+)
+```
+
+
+
+```{r}
+####### Using regexp to extract the coefficients of the polynomium ########
+
+#creating different random polynomiums
+poly1 = "1+-0.4*x0^1"
+poly2 = "-1+0.5*x0^2+-1.234*x0^1"
+poly3 = "123.23+0.5*x0^2+2*x0^1+-2*x0^3"
+poly_3a = "1 + 2*x0^1 + 3*x0^2 + 2*x0^3"
+
+# extracting k (constant) only works when it is the first number in the poly
+poly3_v1 = "123.23+0.5*x0^2+2*x0^1+-2*x0^3"
+str_extract(poly3_v1, '-?\\d{1,}\\.?\\d{1,}')
+
+# problem with extracting k if it is not the first number ..
+poly3_v2 = "0.5*x0^2+2*x0^1+-2*x0^3+123.23"
+str_extract(poly3_v2, '-?\\d{1,}\\.?\\d{1,}?\\[^*]')
+
+# something is working but not how I want it...
+str_extract(poly3_v2, '-?\\d{0,}?\\.?[^\\^]d{0,}\\+')
+
+```
+
+
+```{r}
+######### creating a function which can differentiate a 3. order polynomium ############3
+diff_poly_3 = function(poly){
+  #differentiating the poly
+  a = str_extract(poly, '-?\\d{0,}\\.?\\d{0,}?\\*x0\\^3')
+  a = str_extract(a,'-?\\d\\.?\\d{0,}')
+  a = as.numeric(a) * 3
+  
+  b = str_extract(poly, '-?\\d{0,}\\.?\\d{0,}?\\*x0\\^2')
+  b = str_extract(b,'-?\\d\\.?\\d{0,}')
+  b = as.numeric(b) * 2
+  
+  c = str_extract(poly, '-?\\d{0,}\\.?\\d{0,}?\\*x0\\^1')
+  c = str_extract(c,'-?\\d\\.?\\d{0,}')
+  
+  #df = as.data.frame(c(a,b,c)) ---- for checking
+  #return(df)
+  poly_diff = paste0(c, '+' ,b,'*x0^1+',a,'*x0^2')
+  
+  # appending the differentiated coefficients to a data frame
+  df = data_frame(poly,poly_diff,a,b,c)
+  # replacing NAs with 0
+  df[is.na(df)] <- '0'
+
+  return(df)
+}
+
+# testing 
+poly3_a = '7+4*x0^1+2*x0^2+0.5*x0^3'
+#burde give 4 + 4x^1 + 1.5x^2
+test <- diff_poly_3(poly3_a)
+# og sørme om det ikke gør det
+
+# skal dog bruge alle coefficienter for at virke
+# så nedenstående virker eksempelvis ikke
+poly3_b = 'x0^3'
+test2 <- diff_poly_3(poly_3b)
+
+```
+
+```{r}
+### Creating function which calculates the critical points for a third order polynomium 
+#input is the coefficients of the 3. order poly
+
+crit <- function(a_3,b_3,c_3,k,x_min,x_max){
+  a = a_3*3
+  b = b_3*2
+  c = c_3
+  
+  #udregn x
+  x1 = (-b + sqrt(abs(b^2-4*a*c)))/(2*a)
+  x2 = (-b - sqrt(abs(b^2-4*a*c)))/(2*a)
+  
+  #udregn y
+  y1 = a_3*x1^3 + b_3*x1^2 + c_3*x1^1 #+ k
+  y2 = a_3*x2^3 + b_3*x2^2 + c_3*x2^1 #+ k
+  y_min = a_3*x_min^3 + b_3*x_min^2 + c_3*x_min^1 #+ k
+  y_max = a_3*x_max^3 + b_3*x_max^2 + c_3*x_max^1 #+ k
+
+  #append to list
+  name = c('min', 'x1', 'x2', 'max')
+  min_crit_x = c(x_min, x1, x2, x_max)
+  min_crit_y = c(y_min, y1, y2, y_max)
+  
+  #return dataframe with coordinates
+  df = data.frame(name, min_crit_x, min_crit_y)
+  return(df)
+}
+
+# testing the function
+a = 2/3
+b = -5
+c = 8
+k = 2
+min = 1
+max = 10
+
+testtest = crit(a, b, c, k, min, max)
+testest
+
+```
+
+```{r}
+########### Function which finds the critical points for f(x,y) ###########3
+
+crit2 <- function(l1,u1){
+  
+}
+
+list_test <-list(
+  domain = c('0,6', '0,4'),
+  factors=c("Drinking", "Smoking"),
+  interpolationPolynomial="0+0.3*x0^3+0.3*x0^1*x1^2+0.04*x0^3*x1^3+-4*x0^1+-1*x1^1",
+  minValue= "1.0",
+  maxValue= "null")
+
+f(x_0,x_1) = 3 + 0.5*x_0^3 + 2*x_1^2 + 7*x_0
+f(0, x_1) = 3 + 0.5*0^3 + 2*x_1^2 + 7*0  -->  3 + 2*x_1^2
+f'(0,x_1) = 4*x_1
+4*x_1 = 0
+-b +- sqrt(b^2 - 4ac) / 2a
+
+b*x + c = 0
+b*x = -c
+x = -c / b
+
+c = 0 # hvis a og b er nul er der ingen ekstremer 
+#pakke opteam?
+
+
+f(x0,x1) = 0
+f(0,x1) = 
+             
+
+              
+               global=list(min=c("2.0612283", "0.5507934")),
+                x0_fixed=list(min=c("0")), #the minimum candidates when x0 is fixed and both x0 and x1 is in this cell
+                x1_fixed=list(min=c("0")), #the minimum candidates when x1 is fixed and both x0 and x1 is in this cell
+              ),
+
+```
+
+
+```{r}
+############# Function which calculates critical values for a n-dimensional polynomium
+```
+
+```{r}
+for (lister in test_dat1){
+  for (objects in lister$RiskFactorGroups){
+    print(objects[[1]])
+  }
+}
+
+#test_dat1$OldAge$RiskFactorGroups[[1]]$riskRatioTables$interpolationTable[[3]]$interpolationPolynomial
+
+
+```
+
