@@ -106,9 +106,9 @@ For at udnytte denne konstruktion bedst muligt ændrer vi også notation
 Noter at 
 \begin{enumerate}[a.]
 \item
-Nu eksisterer $\tilde U(F_{\emptyset})$ og $\tilde S(F_{\emptyset})$ og er trivielle
+Nu eksisterer $\tilde U(F_{\emptyset})$ og $\tilde S(F_{\emptyset})$ og er lig med hinanden
 \begin{equation}
-\tilde U(F_{\emptyset})=\tilde S(F_{\emptyset})= 1
+\tilde U(F_{\emptyset})=\tilde S(F_{\emptyset})=\frac{p_d(a,\psi_0)}{C}
 \end{equation}
 \item
 Forbindelsen mellem det gamle $U$ og det nye $\tilde U$ er
@@ -145,51 +145,54 @@ Det kan udregnes direkte
 \end{align*}
 \end{proof}
 
+\subsubsection*{
+\textbf{Fra nu af dropper vi tilde-notationen, og bruger ikke længere de gamle variable uden tilde.}}
+
 \begin{lemma}\label{tilde_sis}
 Definer rekursivt
 \begin{equation}
-S_i(F_I\cap \mathcal F_i)=\tilde U_i(F_I\cap \mathcal F_i)-\sum_{J\subseteq \cap \mathcal F_i, J\neq I}\tilde S_i(F_J)
+ S_i(F_I\cap \mathcal F_i)= U_i(F_I\cap \mathcal F_i)-\sum_{J\subseteq \cap \mathcal F_i, J\neq I} S_i(F_J)
 \end{equation}
 Så gælder 
 \begin{equation}
-S_i(F_I)=\sum_{J\subseteq I}(-1)^{|J|+|I|}\tilde U_i(F_J), \quad I\subseteq \mathcal F_i\label{si}
+ S_i(F_I)=\sum_{J\subseteq I}(-1)^{|J|+|I|} U_i(F_J), \quad I\subseteq \mathcal F_i\label{si}
 \end{equation}
 og
 \begin{equation}
-S(F_I)=\prod_{i=1}^n S(F_{I\cap \mathcal F_i})\label{si_decomposition}
+ S(F_I)=\prod_{i=1}^n  S(F_{I\cap \mathcal F_i})\label{si_decomposition}
 \end{equation}
 \end{lemma}
 \begin{proof}
 Formel \eqref{si} kan udledes på samme måde som et specialtilfælde af Korollar \ref{alternating_tilde}. Vi viser \eqref{si_decomposition} for $n=2$ og deraf følger resten nemt. Lad $I\subseteq \{1, \dots, N\}$. Skriv $L=I\cap \mathcal F_1$, $K=I\cap \mathcal F_2$. Så er
 \begin{align*}
-S(F_K)S(F_L)&=\sum_{J\subseteq K} (-1)^{|J|+|K|}\tilde U_1(F_J)\sum_{M\subseteq L} (-1)^{|M|+|L|}\tilde U_2(F_M)\\
-&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|}\tilde U(F_{J\cup M})\\
-&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|}\tilde U(F_{J\cup M})\\
-&=\sum_{J\subseteq K\cup L}(-1)^{|J|+|L|+|K|}\tilde U(F_J)\\
-&=\sum_{J\subseteq I}(-1)^{|J|+|I|}\tilde U(F_J)\\
-&=S(F_I)
+ S_1(F_K) S_2(F_L)&=\sum_{J\subseteq K} (-1)^{|J|+|K|} U_1(F_J)\sum_{M\subseteq L} (-1)^{|M|+|L|} U_2(F_M)\\
+&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|} U(F_{J\cup M})\\
+&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|} U(F_{J\cup M})\\
+&=\sum_{J\subseteq K\cup L}(-1)^{|J|+|L|+|K|} U(F_J)\\
+&=\sum_{J\subseteq I}(-1)^{|J|+|I|} U(F_J)\\
+&= S(F_I)
 \end{align*}
 \end{proof}
-Med dette i hånden kan vi udregne $\tilde V(F_i)$ hurtigere.
+Med dette i hånden kan vi udregne $ V(F_i)$ hurtigere.
 \begin{saetning}\label{saetning_fast_computation}
 Lad $i\in \{1, \dots, N\}$ og lad $j_i$ være det indeks som opfylder $i\in \mathcal F_{j_i}$. Da er
 \begin{equation}
-\tilde V(F_i)=\sum_{s=1}^N\frac{1}{s}\sum_{t=1}^{N-s}\alpha_{t,{j_i},i}\beta_{t-s, \{1, \dots, N\}\setminus \{j_i\}}
+ V(F_i)=\sum_{s=1}^N\frac{1}{s}\sum_{t=1}^{N-s}\alpha_{t,{j_i},i}\beta_{t-s, \{1, \dots, N\}\setminus \{j_i\}}
 \end{equation}
 hvor \begin{align}
-\alpha_{t,j,i}&=\sum_{\substack{J\subseteq \mathcal F_j, i\in J\\ |J|=t}}S_j(F_{J})\\
-\beta_{t,j}&=\sum_{\substack{J\subseteq \mathcal F_j\\ |J|=t}}S_j(F_{J})\\
+\alpha_{t,j,i}&=\sum_{\substack{J\subseteq \mathcal F_j, i\in J\\ |J|=t}} S_j(F_{J})\\
+\beta_{t,j}&=\sum_{\substack{J\subseteq \mathcal F_j\\ |J|=t}} S_j(F_{J})\\
 \beta_{t,I}&=\sum_{\substack{t_i\in \{0, \dots, N\}\\,
 i\in I, \sum t_i=t}} \Biggl(\prod_{i\in I} \beta_{t_i,i}\Biggr)
 \end{align}
 \end{saetning}
 \begin{proof}
-Formlen følger ved at anvende Lemma \ref{tilde_sis} på $\tilde V(F_i)$. Antag for simplicitet at $j_i=1$.
+Formlen følger ved at anvende Lemma \ref{tilde_sis} på $ V(F_i)$. Antag for simplicitet at $j_i=1$.
 \begin{align}
-\tilde V(F_i)&=\sum_{\substack{J\subseteq\{1,\dots, N\}\\ J\neq \emptyset, i\in J}} \frac{\tilde S(F_J)}{|J|}\nonumber\\
+ V(F_i)&=\sum_{\substack{J\subseteq\{1,\dots, N\}\\ J\neq \emptyset, i\in J}} \frac{ S(F_J)}{|J|}\nonumber\\
 &=\sum_{s=1}^{N} \Biggl(\sum_{\substack{s_1, \dots, s_n\in \{0, \dots, N\},\\
 s_1+\dots+s_n=s}}\biggl(\sum_{\substack{J_1\subseteq \mathcal F_1, \dots, J_n\subseteq \mathcal F_n\\
-i\in J_{j_i}, |J_j|=s_j}} \frac{\tilde \prod_{j=1}^nS_j(F_{J_j})}{|s|}\biggr)\Biggr)\nonumber\\
+i\in J_{j_i}, |J_j|=s_j}} \frac{ \prod_{j=1}^nS_j(F_{J_j})}{|s|}\biggr)\Biggr)\nonumber\\
 &=\sum_{s=1}^{N}\frac{1}{s} \Biggl(\sum_{\substack{s_1, \dots, s_n\in \{0, \dots, N\},\\
 s_1+\dots+s_n=s}}\biggl(\begin{lgathered}[t]\sum_{\substack{J_1\subseteq \mathcal F_1,\\|J_1|=s_1, i\in J_1}}S_1(F_{J_1})\\
 \cdot \prod_{j=2}^n \sum_{\substack{J_j\subseteq \mathcal F_j,|J_j|=s_j}} S_j(F_{J_j})\biggr)\Biggr)\end{lgathered}\label{extract_alpha_term}\\
@@ -207,17 +210,17 @@ Dette viser sætningen for $j_1=1$. For et generelt $j_1\in \{1, \dots, n\}$ er 
 \subsection{Vægtning af faktorer}\label{rangering}
 Der er stor forskel på hvor stor forskel der er på hvor nemt det er at ændre en risikofaktor. Ens biologiske køn kan man for eksempel ikke ændre, men man kan godt variere hvor meget man ryger. Vi forventer derfor at brugere er mindre interesserede i interaktionen mellem køn og rygning og mere interesseret i hvad deres forskellige rygevaner gør \emph{givet deres køn}. Derfor forestiller vi os at alle faktorer får en diskret vægtning afhængig af hvor nemme de er at ændre. Lad $F_{Q_1}$ være de faktorer, der er vægtet lavest. Da dekomponerer vi først
 \begin{equation}
-\tilde U(F_{Q_1})\propto p_d(a,\psi_{F_{Q_1}})
+ U(F_{Q_1})\propto p_d(a,\psi_{F_{Q_1}})
 \end{equation}
 med $ U({F_\emptyset})=p_d(a, \psi_0)$. Hvis der er faktorer med en anden rangering samlet i $F_{Q_2}$, komponerer vi dernæst 
 \begin{equation}
-\tilde U(F_{Q_2}\cup F_{Q_1})\propto p_d(a,\psi_{F_{Q_2\cup Q_1}})\label{nextRs}
+ U(F_{Q_2}\cup F_{Q_1})\propto p_d(a,\psi_{F_{Q_2\cup Q_1}})\label{nextRs}
 \end{equation}
 med $U (F_{\emptyset})\propto p_d(a, \psi_{F_{Q_1}})$. Det vil sige at vi lader som om $\psi_0$ har fået indsat de indtastede $F_{Q_1}$-værdier. Som konsekvens bliver alle eventuelle forstærkende interaktioner mellem $Q_1$-variablene og $Q_2$-variablene lavet om til rene $Q_2$-bidrag.  Omvendt bliver eventuelle inhiberende interaktioner lavet om til rene $Q_1$-bidrag. Denne virkemåde er lige, hvad vi vil have! Hvis der er flere distinkte niveauer af rangeringer, sker udregningen på samme måde som i \eqref{nextRs}. 
 
-Ligesom før kan vi bare ignorere normaliseringskonstanten $C$ og først gange den på til sidst, da det er lige meget om vi dekomponerer $p_d(a, \psi_{F_Q})$ eller $p_d(a,\psi_{F_Q})/C$. Vi skal dog, selvfølgelig, huske at udregne det fulde $\tilde U$ baseret på produktet af alle $U_i$'erne.
+Ligesom før kan vi bare ignorere normaliseringskonstanten $C$ og først gange den på til sidst, da det er lige meget om vi dekomponerer $p_d(a, \psi_{F_Q})$ eller $p_d(a,\psi_{F_Q})/C$. Vi skal dog, selvfølgelig, huske at udregne det fulde $ U$ baseret på produktet af alle $U_i$'erne.
 \begin{equation}
-\tilde U(F_Q)=\prod_{i=1}^nU_i(F_Q\cap \mathcal F_i)
+ U(F_Q)=\prod_{i=1}^nU_i(F_Q\cap \mathcal F_i)
 \end{equation}
 
 \subsection{Algoritme}
@@ -247,7 +250,7 @@ Baseret på Sætning \ref{saetning_fast_computation} og ovenstående sektion, fo
  \For {$i\in F_R$}
  \For {$k=1, \dots, |\mathcal F_{j_i}|$}
  \For {$l=0, \dots, |F_Q|-|\mathcal F_{j_i}|$}
- \State $V(F_i)\gets \alpha_{k,j_i,i}\beta_{l,\{1, \dots,n\}\setminus \{j_i\}}/(k+l)$
+ \State $V(F_i)\gets V(F_i)+\alpha_{k,j_i,i}\beta_{l,\{1, \dots,n\}\setminus \{j_i\}}/(k+l)$
  \EndFor
  \EndFor
  \EndFor
@@ -359,7 +362,124 @@ F_{k_1} \textbf{ eller}\cdots \textbf{eller } F_{k_{|K|}} \quad &\textup{hvis } 
 F_{k_1} \textbf{ og}\cdots \textbf{og } F_{k_{|K|}} \quad &\textup{hvis } S_i(F_K)=E_i(F_K)\\
 \end{cases}
 \end{gather}
-Det bibeholder og-fortolkningen mellem led fra forskellige risk factorgrupper.
+Det bibeholder og-fortolkningen mellem led fra forskellige risk factorgrupper. 
+
+\subsubsection{Speed-up}
+
+Udregning af alle krydsprodukter har kompleksitet $O(2^N)$ - som netop er den størrelsesorden som gjorde at vi udregnede $ V(F_i)$'erne på en alternativ måde. For at gøre udregningen af $E_i(F_K)$-leddene hurtigere kan  vi nøjes med at udregne de $k$ højeste interaktionsled af orden større end 1. 
+
+Lad $e(i,j)$ være den $i$'te største $E_j(F_I)$, hvor $I\subseteq \mathcal F_j$. Det største kombinerede $E$-led er 
+\begin{equation}
+e(1,1)\cdot e(1,2)\cdots e(1,n) \label{e1}
+\end{equation}
+Det næsthøjeste $e$-led fås ved at erstatte en af $e(1,j)$'erne med $e(2,j)$ - netop den hvor $e(1,j)/e(2,j)$ er højest. Når vi skal finde det tredjehøjeste $e$-led bliver det mere kompliceret. Det tredjehøjeste led kan være på formen
+\begin{equation}
+e(1,1) \cdots e(1,i-1) e(2,i) e(1,i+1)\cdots e(1,n) \label{e2i}
+\end{equation}
+men det kan også være på formen
+\begin{equation}
+e(1,1) \cdots e(1,j-1) e(3,j) e(1,j+1)\cdots e(1,n)\label{e3j}
+\end{equation}
+Det kan dog ikke være på formen
+\begin{equation}
+e(1,1) \cdots e(1,i-1) e(2,i) e(1,i+1)\cdots e(1,j-1) \cdot e(2,j) \cdot e(1,j+1) \cdots e(1,n)
+\end{equation}
+fordi det er a priori mindre end \eqref{e2i}. Generelt kan vi sige at den $k$'te højeste er enten
+\begin{enumerate}
+\item
+Hvis $k=1$ er det \eqref{e1}
+\item
+på formen \eqref{e2i}, \eqref{e3j}, eller ``dybere''
+\item
+Et ``merge'' af to af de $k-1$ højeste tidligere led. Dvs.
+\begin{align}
+\textup{merge}(\prod_{i=1}^n e(i,j_i), \prod_{i=1}^n e(i,k_i))=\prod_{i=1}^n e(i,\max(j_i,k_i))
+\end{align}
+\end{enumerate}
+Det fører til Algorithm \ref{khighest}
+
+\begin{algorithm}
+\caption{Finde de $k$ højeste $E(F_K)$-led}\label{khighest}
+\begin{algorithmic}[1]
+\Procedure{KHighest}{$\{e(i,j)\}, k$}
+\State $\text{scale} \gets \prod_{i=1}^n e(i,1)$
+\State $\text{taken} \gets \text{dictionary}()$
+\State $\text{taken}[(1,1, \dots, 1)]=1$
+\State $\text{candidates} \gets \text{dictionary}()$
+\For {$j=1, \dots, n$}
+\State $\text{candidates}[1+e_j]=e(2,j)/e(1,j)$
+\EndFor
+\While {$\text{length}(\text{taken})<k$}
+\State $v\gets \arg \max( \text{candidates})$
+\State $\text{reduction} \gets \text{candidates}[v]$
+\State $\text{delete candidates}[v]$
+\State $\text{taken}[v] \gets \text{reduction}$
+\If {$v_j=1$ for alle $j=1, \dots, n$ på nær én}
+\State $l\gets \text{indexNotOne}(v)$
+\State $\text{candidates}[v+e_l]\gets \text{reduction}\frac{e(l,v_l+1)}{e(l,v_l)}$
+\EndIf
+\For {$w,r \in \textup{taken}$}
+\If {($w_j>v_j$ for mindst et $j$ \textbf{og}\\ \hspace{2.5cm}$w_jv_j=\max(w_jv_j)$ for alle $j$)}
+\State $\textup{newCandidate}\gets \textup{pairwiseMax}(w,v)$
+\State candidates$[\textup{newCandidate}] \gets r\cdot\text{reduction} $
+\EndIf
+\EndFor
+\EndWhile
+\State \Return {taken, scale}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Udregne $\beta_{s,\{1, \dots, N\}\setminus \{i\}}$'er}\label{compute_betas}
+\begin{algorithmic}[1]
+\Procedure{ComputeBetaSums}{$\{\beta_{s,j}\}, k$}
+\State $m_1 \gets \text{highestNumberLowerThanMedian}(1, \dots, n)$
+\State $m_2 \gets \text{lowestNumberHigherThanMedian}(1, \dots, n)$
+\State $\text{path1} \gets (\text{next\_sequence}=1:m_1, \textup{visited}=(), \beta^*=())$
+\State $\text{path2} \gets (\text{next\_sequence}=m_2:n, \textup{visited}=(), \beta^*=())$
+\While {$\text{length}(\textup{paths})<0$}
+\State $\text{path}\gets \textup{pop}(\textup{paths})$
+\State $\tilde \beta \gets (0, \dots, 0)$
+\State $j \gets \textup{pop}(\textup{path}.\textup{next\_sequence})$ 
+\For {$\textup{index}_1, \beta_1 \in \textup{path}.\beta^*$}
+\For {$\textup{index}_2, \beta_2 \in \{\beta_{0,j}, \dots, \beta_{s_{\textup{max}}, j}\}$}
+\State $\tilde  \beta[\textup{index}_1+\textup{index}_2] \gets \beta_1+\beta_2$
+\EndFor
+\EndFor
+\EndWhile
+\State $\text{scale} \gets \prod_{i=1}^n e(i,1)$
+\State $\text{taken} \gets \text{dictionary}()$
+\State $\text{taken}[(1,1, \dots, 1)]=1$
+\State $\text{candidates} \gets \text{dictionary}()$
+\For {$j=1, \dots, n$}
+\State $\text{candidates}[1+e_j]=e(2,j)/e(1,j)$
+\EndFor
+\While {$\text{length}(\text{taken})<k$}
+\State $v\gets \arg \max( \text{candidates})$
+\State $\text{reduction} \gets \text{candidates}[v]$
+\State $\text{delete candidates}[v]$
+\State $\text{taken}[v] \gets \text{reduction}$
+\If {$v_j=1$ for alle $j=1, \dots, n$ på nær én}
+\State $l\gets \text{indexNotOne}(v)$
+\State $\text{candidates}[v+e_l]\gets \text{reduction}\frac{e(l,v_l+1)}{e(l,v_l)}$
+\EndIf
+\For {$w,r \in \textup{taken}$}
+\If {($w_j>v_j$ for mindst et $j$ \textbf{og}\\ \hspace{2.5cm}$w_jv_j=\max(w_jv_j)$ for alle $j$)}
+\State $\textup{newCandidate}\gets \textup{pairwiseMax}(w,v)$
+\State candidates$[\textup{newCandidate}] \gets r\cdot\text{reduction} $
+\EndIf
+\EndFor
+\EndWhile
+\State \Return {taken, scale}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
 
 
 
