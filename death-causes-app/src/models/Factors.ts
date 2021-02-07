@@ -19,6 +19,14 @@ export interface FactorList {
   [key: string]: GeneralFactor<string | number | boolean>;
 }
 
+const IS_NUMBER_REGEX=/^[-]?(\d+|[.]\d+|\d+[.]\d*|)$/;
+const IS_NUMBER_WITH_COMMAS_REGEX=/^[-]?([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/
+
+enum FactorTypes {
+  NUMERIC='number',
+  STRING='string',
+};
+
 class Factors {
   factorList: FactorList = {};
 
@@ -28,9 +36,8 @@ class Factors {
     data?.forEach((element) => {
       if (element.factorName !== undefined) {
         //We strongly the expect the input from FactorDatabase.csv to contain this column.
-        console.log("entering switch");
         switch (element.factorType) {
-          case "number": {
+          case FactorTypes.NUMERIC: {
             this.factorList[element.factorName] = new NumericFactorPermanent(
               element.factorName as string,
               element.initialValue as number | "",
@@ -56,7 +63,7 @@ class Factors {
           //     );
           //     break;
           //   }
-          case "string": {
+          case FactorTypes.STRING: {
             this.factorList[element.factorName] = new StringFactorPermanent(
               element.factorName as string,
               element.initialValue as string,
@@ -80,6 +87,10 @@ class Factors {
     console.log(this.factorList);
   }
 
+  getRandomFactorOrder() {
+    return Object.keys(this.factorList);
+  }
+
   getFactorsAsStateObject() {
     let stateObject: FactorAnswers = {};
     for (let factorName in this.factorList) {
@@ -93,7 +104,7 @@ class Factors {
     value: string | boolean,
     unit?: string
   ): InputValidity {
-    return this.factorList[name].check_input(value, unit);
+    return this.factorList[name].checkInput(value, unit);
   }
 
   getScalingFactor(name: string, unitName: string): number {
@@ -174,7 +185,6 @@ export abstract class GeneralFactor<T> {
   phrasings: string[]; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
   factorType: string = "abstract";
-  options: string[] = [];
   derivableStates: DeriveState[] = [];
 
   constructor(
@@ -188,7 +198,6 @@ export abstract class GeneralFactor<T> {
     this.initialValue = initialValue;
     this.phrasings = phrasings;
     this.placeholder = placeholder;
-    this.factorType = "abstract";
     this.initializeDerivableStates(derivableStatesInitializer);
   }
 
@@ -210,16 +219,13 @@ export abstract class GeneralFactor<T> {
     return this.initialValue;
   }
 
-  check_input(input: string | boolean, unit?: string): InputValidity {
-    return { status: "Success", message: "" };
-  }
+  abstract checkInput(input: string | boolean, unit?: string): InputValidity 
 
-  getScalingFactor(unitName: string): number {
-    return 1;
-  }
+  abstract getScalingFactor(unitName: string): number 
 }
 
-class StringFactorPermanent extends GeneralFactor<string> {
+export class StringFactorPermanent extends GeneralFactor<string> {
+  options: string[] = [];
   constructor(
     factorName: string,
     initialValue: string,
@@ -233,21 +239,26 @@ class StringFactorPermanent extends GeneralFactor<string> {
     this.options = options;
   }
 
-  check_input(val: string, unit = undefined): InputValidity {
+  checkInput(val: string, unit = undefined): InputValidity {
     if (val in this.options) {
       return { status: "Success", message: "" };
     }
     return { status: "Missing", message: "" };
   }
+
+  getScalingFactor(unitName: string): number {
+    return 1
+  }
 }
 
-class NumericFactorPermanent extends GeneralFactor<number> {
+export class NumericFactorPermanent extends GeneralFactor<number> {
   lowerRecommended: number | null = null;
   upperRecommended: number | null = null;
   lowerRequired: number | null = null;
   upperRequired: number | null = null;
   explanationRecommendation: string = "";
   explanationRequirement: string = "";
+  unitOptions: string[] = [];
   unitDic: UnitTable = {};
   requiredDomain: string | null;
   recommendedDomain: string | null;
@@ -263,7 +274,7 @@ class NumericFactorPermanent extends GeneralFactor<number> {
     derivableStatesInitializer: string[]=[],
   ) {
     super(factorName, initialValue, phrasings, placeholder, derivableStatesInitializer);
-    this.options = [];
+    this.unitOptions = [];
     let scalingFactor: number;
     if (unitOptions.length > 0) {
       //Initializing error messages for all possible choice of units.
@@ -283,7 +294,7 @@ class NumericFactorPermanent extends GeneralFactor<number> {
           ),
           scalingFactor: scalingFactor,
         };
-        this.options.push(v[0]);
+        this.unitOptions.push(v[0]);
       });
     }
     this.requiredDomain = requiredDomain;
@@ -306,24 +317,25 @@ class NumericFactorPermanent extends GeneralFactor<number> {
   }
 
   hasUnitOptions() {
-    return this.options.length > 0;
+    return this.unitOptions.length > 0;
   }
 
   getScalingFactor(unitName: string) {
     return this.unitDic[unitName].scalingFactor;
   }
 
-  check_input(
+  checkInput(
     input: string,
     unit: string | undefined = undefined
   ): InputValidity {
-    let s = input.trim();
-    if (s === "") {
+    let trimmedInput = input.trim();
+    if (trimmedInput === "") {
       return { status: "Missing", message: "" };
     }
-    let isNum = /^(-?)(\d+|[.]\d+|\d+[.]\d+)$/.test(s);
-    if (!isNum) {
-      if (/^(-?)([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/.test(s)) {
+    let isNumeric = IS_NUMBER_REGEX.test(trimmedInput);
+    
+    if (!isNumeric) {
+      if (IS_NUMBER_WITH_COMMAS_REGEX.test(trimmedInput)) {
         return {
           status: "Error",
           message: "Use a dot(.) as decimal separator.",
@@ -331,8 +343,11 @@ class NumericFactorPermanent extends GeneralFactor<number> {
       }
       return { status: "Error", message: "Input is not a number" };
     }
-    let l = parseFloat(s);
+    const numberToCheck = parseFloat(trimmedInput);
+    return this.checkNumberInput(numberToCheck, unit);
+  }
 
+  checkNumberInput(numberToCheck:number, unit: string | undefined):InputValidity{
     if (unit && this.hasUnitOptions()) {
       let lowerRequired = this.unitDic[unit].required.lowerLim;
       let upperRequired = this.unitDic[unit].required.upperLim;
@@ -342,28 +357,28 @@ class NumericFactorPermanent extends GeneralFactor<number> {
       let explanationRecommendation = this.unitDic[unit].recommended
         .explanation;
       if (
-        (lowerRequired !== null && l < lowerRequired) ||
-        (upperRequired && l > upperRequired)
+        (lowerRequired !== null && numberToCheck < lowerRequired) ||
+        (upperRequired && numberToCheck > upperRequired)
       ) {
         return { status: "Error", message: explanationRequirement };
       }
       if (
-        (lowerRecommended !== null && l < lowerRecommended) ||
-        (upperRecommended && l > upperRecommended)
+        (lowerRecommended !== null && numberToCheck < lowerRecommended) ||
+        (upperRecommended && numberToCheck > upperRecommended)
       ) {
         return { status: "Warning", message: explanationRecommendation };
       }
       return { status: "Success", message: "" };
     }
     if (
-      (this.lowerRequired !== null && l < this.lowerRequired) ||
-      (this.upperRequired && l > this.upperRequired)
+      (this.lowerRequired !== null && numberToCheck < this.lowerRequired) ||
+      (this.upperRequired && numberToCheck > this.upperRequired)
     ) {
       return { status: "Error", message: this.explanationRequirement };
     }
     if (
-      (this.lowerRecommended !== null && l < this.lowerRecommended) ||
-      (this.upperRecommended && l > this.upperRecommended)
+      (this.lowerRecommended !== null && numberToCheck < this.lowerRecommended) ||
+      (this.upperRecommended && numberToCheck > this.upperRecommended)
     ) {
       return { status: "Warning", message: this.explanationRecommendation };
     }
