@@ -19,41 +19,72 @@ export interface FactorList {
   [key: string]: GeneralFactor<string | number | boolean>;
 }
 
-const IS_NUMBER_REGEX=/^[-]?(\d+|[.]\d+|\d+[.]\d*|)$/;
-const IS_NUMBER_WITH_COMMAS_REGEX=/^[-]?([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/
+interface Domain {
+  min?: number;
+  max?: number;
+}
+
+interface UnitOptions {
+  [unitname: string]: number;
+}
+
+interface DeriveMapping {
+  [factorVale: string]: string | number;
+}
+
+interface DerivableOptions {
+  [deriver: string]: DeriveMapping;
+}
+interface FactorAsJson {
+  type: "string" | "number";
+  longExplanation: string;
+  placeholder: string;
+  recommendedDomain?: Domain;
+  requiredDomain?: Domain;
+  helpJson?: string;
+  initialValue?: string;
+  options?: string[];
+  units?: UnitOptions;
+  derivables?: DerivableOptions;
+}
+
+export interface InputJson {
+  [factorname: string]: FactorAsJson;
+}
+
+const IS_NUMBER_REGEX = /^[-]?(\d+|[.]\d+|\d+[.]\d*|)$/;
+const IS_NUMBER_WITH_COMMAS_REGEX = /^[-]?([\d,]+|[,]\d+|[\d,]+[,.]\d+)$/;
 
 enum FactorTypes {
-  NUMERIC='number',
-  STRING='string',
-};
+  NUMERIC = "number",
+  STRING = "string",
+}
 
 class Factors {
   factorList: FactorList = {};
 
-  constructor(data: d3.DSVRowArray<string> | null) {
+  constructor(data: InputJson | null) {
     console.log(data);
     console.log("data");
-    data?.forEach((element) => {
-      if (element.factorName !== undefined) {
-        //We strongly the expect the input from FactorDatabase.csv to contain this column.
-        switch (element.factorType) {
+    this.factorList = {};
+    if (data) {
+      Object.entries(data).forEach(([factorname, factorobject]) => {
+        switch (factorobject.type) {
           case FactorTypes.NUMERIC: {
-            this.factorList[element.factorName] = new NumericFactorPermanent(
-              element.factorName as string,
-              element.initialValue as number | "",
-              [
-                element.shortExplanation as string,
-                element.longExplanation as string,
-              ],
-              element.placeholder,
-              element.requiredDomain,
-              element.recommendedDomain,
-              element.options && element.options.includes("_")
-                ? element.options.split("_")
-                : [],
-              element.derivableStates && element.derivableStates.length > 0
-                ? element.derivableStates.split("_")
-                : []
+            this.factorList[factorname] = new NumericFactorPermanent(
+              factorname,
+              factorobject.initialValue
+                ? parseFloat(factorobject.initialValue)
+                : "",
+              factorobject.longExplanation,
+              factorobject.placeholder,
+              factorobject.requiredDomain ? factorobject.requiredDomain : null,
+              factorobject.recommendedDomain
+                ? factorobject.recommendedDomain
+                : null,
+              factorobject.units ? factorobject.units : {},
+              factorobject.helpJson ? factorobject.helpJson : null,
+              factorobject.derivables ? factorobject.derivables : {}
             );
             break;
           }
@@ -64,31 +95,33 @@ class Factors {
           //     break;
           //   }
           case FactorTypes.STRING: {
-            this.factorList[element.factorName] = new StringFactorPermanent(
-              element.factorName as string,
-              element.initialValue as string,
-              [
-                element.shortExplanation as string,
-                element.longExplanation as string,
-              ],
-              element.placeholder,
-              element.options?.split("_"),
-              element.derivableStates && element.derivableStates.length > 0
-                ? element.derivableStates.split("_")
-                : []
+            this.factorList[factorname] = new StringFactorPermanent(
+              factorname,
+              factorobject.initialValue ? factorobject.initialValue : "",
+              factorobject.longExplanation,
+              factorobject.placeholder,
+              factorobject.options ? factorobject.options : [],
+              factorobject.helpJson ? factorobject.helpJson : null,
+              factorobject.derivables ? factorobject.derivables : {}
             );
             break;
           }
           default:
             break;
         }
-      }
-    });
+      });
+    }
     console.log(this.factorList);
   }
 
   getRandomFactorOrder() {
     return Object.keys(this.factorList);
+  }
+
+  getHelpJson(factorname: string): string {
+    return this.factorList[factorname].helpJson
+      ? this.factorList[factorname].helpJson as string
+      : "No help available";
   }
 
   getFactorsAsStateObject() {
@@ -133,8 +166,12 @@ enum ExplanationStart {
   REQUIREMENT_PHRASING = "Should be",
 }
 
+function customRound(x: number): string {
+  return Number.parseFloat(x.toPrecision(2)).toPrecision();
+}
+
 function extractLimsAndExplanation(
-  domain: string | null,
+  domain: Domain | null,
   explanationStart: ExplanationStart,
   scalingFactor: number = 1
 ): ExplanationAndLimits {
@@ -144,29 +181,28 @@ function extractLimsAndExplanation(
     let lowerLim: null | number = null;
     let upperLim: null | number = null;
     let explanation: string = "";
-    let a = domain.split("-");
-    if (a[0] !== "") {
+    if ("min" in domain) {
       explanation += explanationStart;
-      lowerLim = parseFloat(a[0]) / scalingFactor;
-      if (a[1] !== "") {
-        upperLim = parseFloat(a[1]) / scalingFactor;
+      lowerLim = domain.min! / scalingFactor;
+      if ("max" in domain) {
+        upperLim = domain.max! / scalingFactor;
         explanation +=
           " between " +
-          (scalingFactor === 1 ? a[0] : lowerLim.toPrecision(2)) +
+          (scalingFactor === 1 ? domain.min : customRound(lowerLim)) +
           " and " +
-          (scalingFactor === 1 ? a[1] : upperLim.toPrecision(2));
+          (scalingFactor === 1 ? domain.max : customRound(upperLim));
       } else {
         explanation +=
           " larger than " +
-          (scalingFactor === 1 ? a[0] : lowerLim.toPrecision(2));
+          (scalingFactor === 1 ? domain.min : customRound(lowerLim));
       }
     } else {
-      if (a[1] !== "") {
-        upperLim = parseFloat(a[1]) / scalingFactor;
+      if ("max" in domain) {
+        upperLim = domain.max! / scalingFactor;
         explanation +=
           explanationStart +
           " smaller than " +
-          (scalingFactor === 1 ? a[1] : upperLim.toPrecision(2));
+          (scalingFactor === 1 ? domain.max : customRound(upperLim));
       }
     }
     return { lowerLim: lowerLim, upperLim: upperLim, explanation: explanation };
@@ -182,46 +218,49 @@ interface DeriveState {
 export abstract class GeneralFactor<T> {
   factorName: string;
   initialValue: T | "";
-  phrasings: string[]; //If the factor is not going to be asked, the phrasing should be nu
+  phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
   factorType: string = "abstract";
-  derivableStates: DeriveState[] = [];
+  derivableStates: DerivableOptions = {};
+  helpJson: string | null;
 
   constructor(
     factorName: string,
     initialValue: T | "",
-    phrasings: string[] = ["", ""],
+    phrasing: string,
     placeholder: string = "",
-    derivableStatesInitializer: string[] = []
+    helpJson: string | null = null,
+    derivableStatesInitializer: DerivableOptions
   ) {
     this.factorName = factorName;
     this.initialValue = initialValue;
-    this.phrasings = phrasings;
+    this.phrasing = phrasing;
     this.placeholder = placeholder;
-    this.initializeDerivableStates(derivableStatesInitializer);
+    this.helpJson = helpJson;
+    //this.initializeDerivableStates(derivableStatesInitializer);
   }
 
-  initializeDerivableStates(derivableStatesInitializer: string[]) {
-    if (derivableStatesInitializer.length === 0) {
-      return;
-    }
-    derivableStatesInitializer.forEach((deriveStateString: string) => {
-      const deriveStateComponents = deriveStateString.split("=");
-      this.derivableStates.push({
-        derivedFrom: deriveStateComponents[0],
-        derivedFromValue: deriveStateComponents[1],
-        derivedValue: deriveStateComponents[2],
-      });
-    });
-  }
+  // initializeDerivableStates(derivableStatesInitializer: string[]) {
+  //   if (derivableStatesInitializer.length === 0) {
+  //     return;
+  //   }
+  //   derivableStatesInitializer.forEach((deriveStateString: string) => {
+  //     const deriveStateComponents = deriveStateString.split("=");
+  //     this.derivableStates.push({
+  //       derivedFrom: deriveStateComponents[0],
+  //       derivedFromValue: deriveStateComponents[1],
+  //       derivedValue: deriveStateComponents[2],
+  //     });
+  //   });
+  // }
 
   getInitialValue(): T | "" {
     return this.initialValue;
   }
 
-  abstract checkInput(input: string | boolean, unit?: string): InputValidity 
+  abstract checkInput(input: string | boolean, unit?: string): InputValidity;
 
-  abstract getScalingFactor(unitName: string): number 
+  abstract getScalingFactor(unitName: string): number;
 }
 
 export class StringFactorPermanent extends GeneralFactor<string> {
@@ -229,12 +268,20 @@ export class StringFactorPermanent extends GeneralFactor<string> {
   constructor(
     factorName: string,
     initialValue: string,
-    phrasings: string[] = ["", ""],
+    phrasing: string,
     placeholder: string = "",
     options: string[] = [],
-    derivableStatesInitializer: string[]=[]
+    helpJson: string | null = null,
+    derivableStatesInitializer: DerivableOptions
   ) {
-    super(factorName, initialValue, phrasings, placeholder, derivableStatesInitializer);
+    super(
+      factorName,
+      initialValue,
+      phrasing,
+      placeholder,
+      helpJson,
+      derivableStatesInitializer
+    );
     this.factorType = "string";
     this.options = options;
   }
@@ -247,7 +294,7 @@ export class StringFactorPermanent extends GeneralFactor<string> {
   }
 
   getScalingFactor(unitName: string): number {
-    return 1
+    return 1;
   }
 }
 
@@ -258,45 +305,47 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
   upperRequired: number | null = null;
   explanationRecommendation: string = "";
   explanationRequirement: string = "";
-  unitOptions: string[] = [];
+  unitOptions: UnitOptions;
   unitDic: UnitTable = {};
-  requiredDomain: string | null;
-  recommendedDomain: string | null;
+  requiredDomain: Domain | null;
+  recommendedDomain: Domain | null;
 
   constructor(
     factorName: string,
     initialValue: number | "",
-    phrasings: string[] = ["", ""],
+    phrasing: string = "",
     placeholder: string = "",
-    requiredDomain: string | null = null,
-    recommendedDomain: string | null = null,
-    unitOptions: string[] = [],
-    derivableStatesInitializer: string[]=[],
+    requiredDomain: Domain | null = null,
+    recommendedDomain: Domain | null = null,
+    unitOptions: UnitOptions,
+    helpJson: string | null = null,
+    derivableStates: DerivableOptions
   ) {
-    super(factorName, initialValue, phrasings, placeholder, derivableStatesInitializer);
-    this.unitOptions = [];
-    let scalingFactor: number;
-    if (unitOptions.length > 0) {
-      //Initializing error messages for all possible choice of units.
-      unitOptions.forEach((d: string) => {
-        let v = d.split("=");
-        scalingFactor = parseFloat(v[1]);
-        this.unitDic[v[0]] = {
-          required: extractLimsAndExplanation(
-            requiredDomain,
-            ExplanationStart.REQUIREMENT_PHRASING,
-            scalingFactor
-          ),
-          recommended: extractLimsAndExplanation(
-            recommendedDomain,
-            ExplanationStart.RECOMMENDATION_PHRASING,
-            scalingFactor
-          ),
-          scalingFactor: scalingFactor,
-        };
-        this.unitOptions.push(v[0]);
-      });
-    }
+    super(
+      factorName,
+      initialValue,
+      phrasing,
+      placeholder,
+      helpJson,
+      derivableStates
+    );
+    this.unitOptions = unitOptions;
+    //Initializing error messages for all possible choice of units.
+    Object.entries(unitOptions).forEach(([unitName, scalingFactor]) => {
+      this.unitDic[unitName] = {
+        required: extractLimsAndExplanation(
+          requiredDomain,
+          ExplanationStart.REQUIREMENT_PHRASING,
+          scalingFactor
+        ),
+        recommended: extractLimsAndExplanation(
+          recommendedDomain,
+          ExplanationStart.RECOMMENDATION_PHRASING,
+          scalingFactor
+        ),
+        scalingFactor: scalingFactor,
+      };
+    });
     this.requiredDomain = requiredDomain;
     this.recommendedDomain = recommendedDomain;
     const elm = extractLimsAndExplanation(
@@ -317,7 +366,7 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
   }
 
   hasUnitOptions() {
-    return this.unitOptions.length > 0;
+    return Object.keys(this.unitOptions).length > 0;
   }
 
   getScalingFactor(unitName: string) {
@@ -333,7 +382,7 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
       return { status: "Missing", message: "" };
     }
     let isNumeric = IS_NUMBER_REGEX.test(trimmedInput);
-    
+
     if (!isNumeric) {
       if (IS_NUMBER_WITH_COMMAS_REGEX.test(trimmedInput)) {
         return {
@@ -347,7 +396,10 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
     return this.checkNumberInput(numberToCheck, unit);
   }
 
-  checkNumberInput(numberToCheck:number, unit: string | undefined):InputValidity{
+  checkNumberInput(
+    numberToCheck: number,
+    unit: string | undefined
+  ): InputValidity {
     if (unit && this.hasUnitOptions()) {
       let lowerRequired = this.unitDic[unit].required.lowerLim;
       let upperRequired = this.unitDic[unit].required.upperLim;
@@ -377,7 +429,8 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
       return { status: "Error", message: this.explanationRequirement };
     }
     if (
-      (this.lowerRecommended !== null && numberToCheck < this.lowerRecommended) ||
+      (this.lowerRecommended !== null &&
+        numberToCheck < this.lowerRecommended) ||
       (this.upperRecommended && numberToCheck > this.upperRecommended)
     ) {
       return { status: "Warning", message: this.explanationRecommendation };

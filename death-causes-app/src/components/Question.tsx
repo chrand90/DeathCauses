@@ -4,23 +4,25 @@ import Button from "react-bootstrap/Button";
 import Popover from "react-bootstrap/Popover";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import InputGroup from "react-bootstrap/InputGroup";
-import { Col, Form } from "react-bootstrap";
+import { Col, Form, Tooltip } from "react-bootstrap";
 import "./Question.css";
 import MarkDown from "react-markdown";
 import { InputValidity } from "../models/Factors";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { DropdownToggle } from "reactstrap";
+import Label from "react-bootstrap/FormLabel";
 
-export const BACKGROUNDCOLOR_DISABLED= "#c7c7c7";
-export const TEXTCOLOR_DISABLED="#999";
-export const BACKGROUNDCOLOR_CHOICE="#cef1f5";
-export const ERROR_COLOR="#fc0303";
-export const WARNING_COLOR="#bfa50d";
+export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
+export const TEXTCOLOR_DISABLED = "#999";
+export const BACKGROUNDCOLOR_CHOICE = "#cef1f5";
+export const ERROR_COLOR = "#fc0303";
+export const WARNING_COLOR = "#bfa50d";
+export const SUCCESS_COLOR = "#3E713F";
 
 export interface QuestionProps<T> {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
-  handleIgnoreFactor: (factorname: string) => void;
+  handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
   phrasing: string;
   factorAnswer: T;
@@ -28,11 +30,11 @@ export interface QuestionProps<T> {
   placeholder: string;
   inputvalidity: InputValidity;
   featured: boolean;
+  ignore: boolean;
+  windowWidth: number;
 }
 
-export interface QuestionStates {
-  ignore: boolean;
-}
+export interface QuestionStates {}
 
 export interface FormControlStyle {
   [key: string]: string;
@@ -45,8 +47,10 @@ interface QuestionContextProps {
   helpText: string;
   phrasing: string;
   secondLine: ReactElement | string;
-  featured: boolean
+  featured: boolean;
   unitText: string | React.ReactNode;
+  validityStatus: string;
+  windowWidth: number;
 }
 
 export class QuestionContext extends React.PureComponent<QuestionContextProps> {
@@ -69,6 +73,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     return (
       <div className="fixedWidth">
         <Form.Check
+          name={this.props.name}
           onChange={this.props.handleIgnoreFactor}
           checked={this.props.ignore}
           label="Ignore"
@@ -77,12 +82,104 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 
-  helpBoxButton() {//Popover til venstre for små skærme.
+  renderToolTipCheckBox(injected: any): React.ReactNode {
+    return (
+      <Tooltip id="button-tooltip" {...injected}>
+        Ignore factor
+      </Tooltip>
+    );
+  }
+
+  IgnoreCheckBoxSmall() {
+    return (
+      <div className="fixedWidthSmall">
+        <OverlayTrigger
+         placement="left"
+         overlay={<Tooltip id= "tmp">
+           Ignore
+         </Tooltip>}>
+        <Form.Check
+            className="form-check-small"
+            name={this.props.name}
+            onChange={this.props.handleIgnoreFactor}
+            checked={this.props.ignore}
+          />
+        </OverlayTrigger>
+
+      </div>
+    );
+  }
+
+  validityBoxStyling(){
+    let style: FormControlStyle={};
+    let boxContent: string="";
+    style['background-color'] = this.props.ignore ? BACKGROUNDCOLOR_DISABLED : "white"
+    switch(this.props.validityStatus){
+      case "Success" : {
+        style["color"]=SUCCESS_COLOR
+        boxContent="\u2713"
+        break;
+      }
+      case "Warning" : {
+        style["color"]=WARNING_COLOR
+        style["border-color"]=WARNING_COLOR
+        boxContent="\u25B2"
+        break;
+      }
+      case "Missing" : {
+        style["color"]="white"
+        break;
+      }
+      case "Error" : {
+        style["color"]=ERROR_COLOR
+        style["border-color"]=ERROR_COLOR
+        boxContent="\u2716"
+        break;
+      }
+      default:
+        break;
+    }
+    return {style, boxContent}
+
+  }
+
+  renderToolTipValidityBox(injected: any, message:string, style: FormControlStyle): React.ReactNode{
+    return (
+      <Tooltip id="button-tooltip-validity" {...injected} style={style}>
+        {message}
+      </Tooltip>
+    );
+  }
+  //
+  validityBox(){
+    const {style, boxContent} = this.validityBoxStyling()
+    const tooltipID='validity-tooltip-'+this.props.name
+    const tooltipClass="validity-tooltip-"+this.props.validityStatus.toLowerCase()
+    return (
+      <OverlayTrigger
+       placement='bottom-end'
+       show={ this.props.validityStatus==='Error'|| this.props.validityStatus==='Warning' ? undefined : false}
+       overlay={
+        <Tooltip id={tooltipID} className={tooltipClass}>
+        {this.props.secondLine}
+      </Tooltip> 
+       }>
+         <Label className="validity-box" style={style}>
+          {" "}
+          <strong>{boxContent}</strong>
+        </Label>
+      </OverlayTrigger>
+         
+    )
+  }
+
+  helpBoxButton() {
+    //Popover til venstre for små skærme.
     return (
       <OverlayTrigger
         trigger="click"
         rootClose={true}
-        placement="right"
+        placement={this.props.windowWidth <= 992 ? "left" : "right"}
         overlay={this.helpBox()}
       >
         <Button variant="light" className="btn-helpbox">
@@ -92,6 +189,8 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
       </OverlayTrigger>
     );
   }
+
+
 
   FactorNameColor() {
     if (this.props.ignore) {
@@ -124,7 +223,6 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
         <Dropdown.Toggle variant="success" id="dropdown-basic">
           Dropdown Button
         </Dropdown.Toggle>
-
         <Dropdown.Menu>
           <Dropdown.Item href="#/action-1">Action</Dropdown.Item>
           <Dropdown.Item href="#/action-2">Another action</Dropdown.Item>
@@ -152,23 +250,41 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 
+  getErrorMessageStyle(){
+    let errorMessageStyle: FormControlStyle = {};
+    if (this.props.validityStatus === "Error") {
+      errorMessageStyle["color"] = ERROR_COLOR;
+    }
+    if (this.props.validityStatus === "Warning") {
+      errorMessageStyle["color"] = WARNING_COLOR;
+    }
+    return errorMessageStyle
+  }
+
   render() {
     return (
       <Form.Row>
-        <Col xl={this.props.featured ? 12 : 4}>
-          {this.props.featured ? "" : this.inLineFactorNameHeader()}
-          {this.questionPhrasing()}
+        <Col xs={this.props.featured ? 12 : 4}>
+          {this.props.featured ? this.questionPhrasing() : 
+            <div style={{height:"34px", lineHeight:"34px"}}>{this.inLineFactorNameHeader()}</div>}
         </Col>
-        <Col xl={this.props.featured ? 12 : 8}>
+        <Col xs={this.props.featured ? 12 : 8}>
           <Form.Group>
-            <InputGroup className="mb-2">
+            <InputGroup>
               {this.props.children}
               <InputGroup.Append>
+                {this.props.featured ? null : this.validityBox()}
                 {this.helpBoxButton()}
-                {this.IgnoreCheckBox()}
+                {this.props.featured
+                  ? this.IgnoreCheckBox()
+                  : this.IgnoreCheckBoxSmall()}
               </InputGroup.Append>
             </InputGroup>
-            {this.props.secondLine}
+            {this.props.featured ? 
+              <Form.Label className="ErrorLabel" style={this.getErrorMessageStyle()}>
+                {this.props.secondLine} 
+              </Form.Label>
+              : null}
           </Form.Group>
         </Col>
       </Form.Row>

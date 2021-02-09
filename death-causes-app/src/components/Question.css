@@ -1,95 +1,143 @@
-.form-control{
-    height: 34px;
-    margin-right: 1px;
+.form-control {
+  height: 34px;
+  margin-right: 1px;
 }
 
-.input-group{
-    margin-bottom: 0 !important;
+.input-group {
+  margin-bottom: 0 !important;
 }
 
-.fixedWidth{
-    width: 80px;
-    text-align: right;
+.fixedWidth {
+  width: 80px;
+  text-align: right;
 }
 
-.form-group{
-    height:60px;
+.fixedWidthSmall {
+  width: 30px;
+  text-align: right;
+}
+
+.form-group {
+  height: 36px;
 }
 
 /*  Indeholder css for help button. -webkit-box-shadow og box-shadow er kopieret fra definitionen af .form-control(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css) for at de får samme udseende.  */
-.btn-helpbox{ 
-    background-color: rgb(233, 233, 233);
-    height: 34px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
-            box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-    -webkit-transition: border-color ease-in-out .15s, -webkit-box-shadow ease-in-out .15s;
-         -o-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s; 
-            transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
+.btn-helpbox {
+  background-color: rgb(233, 233, 233);
+  height: 34px;
+  line-height: 34px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-align: center;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  -webkit-transition: border-color ease-in-out 0.15s,
+    -webkit-box-shadow ease-in-out 0.15s;
+  -o-transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
+  transition: border-color ease-in-out 0.15s, box-shadow ease-in-out 0.15s;
 }
 
 .btn-helpbox:focus {
-    border-color: #66afe9;
-    outline: 0;
-    -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
-            box-shadow: inset 0 1px 1px rgba(0,0,0,.075), 0 0 8px rgba(102, 175, 233, .6);
+  border-color: #66afe9;
+  outline: 0;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075),
+    0 0 8px rgba(102, 175, 233, 0.6);
+}
 
-  }
- 
-  .ignore-label{
-      height: 17px;
-      font-size: x-small;
-      position: relative;
-  }
+.ignore-label {
+  height: 17px;
+  font-size: x-small;
+  position: relative;
+}
 
-  .form-check {
-      height: 34px;
-      font-size: small;
-      padding: 8px;
-  }
-  
-  .form-control[type=checkbox]{
-      position: relative;
-      height: 17px;
-      min-height: 16px;
-      margin: 0;
-      padding: 0;
-  }
+.form-check {
+  height: 34px;
+  font-size: small;
+  padding: 8px;
+}
 
-  .form-control[type=checkbox]:focus{
-    outline:0px !important;
-    box-shadow: none !important;
-  }
-  
-  .customInputGroup {
-      height: 34px;
-      padding: 8px;
-  }
+.form-check-small {
+  height: 34px;
+  font-size: medium;
+  padding: 8px;
+}
 
-  .ErrorLabel {
-      height:20px;
-      width: 100%;
-      font-size: small;
-      text-align: left;
-      display: inline-block;
-  }
+.validity-box {
+  height: 34px;
+  line-height: 34px;
+  width: 24px;
+  position: relative;
+  text-align: center;
+  border: 1px solid #ccc;
+}
 
-  .popover{
-    white-space: pre-wrap;  
-  }
-  
-  .form-control::-moz-placeholder {
-    color: #999;
-    opacity: 1;
-  }
-  .form-control:-ms-input-placeholder {
-    color: #999;
-    opacity: 1;
-  }
-  .form-control::-webkit-input-placeholder {
-    color: #999;
-    opacity: 1;
-  }
+.form-control[type="checkbox"] {
+  position: relative;
+  height: 17px;
+  min-height: 16px;
+  margin: 0;
+  padding: 0;
+}
 
-  
+.form-control[type="checkbox"]:focus {
+  outline: 0px !important;
+  box-shadow: none !important;
+}
+
+.customInputGroup {
+  height: 34px;
+  padding: 8px;
+}
+
+.ErrorLabel {
+  height: 20px;
+  width: 100%;
+  font-size: small;
+  text-align: left;
+  display: inline-block;
+}
+
+.popover {
+  white-space: pre-wrap;
+}
+
+.form-control::-moz-placeholder {
+  color: #999;
+  opacity: 1;
+}
+.form-control:-ms-input-placeholder {
+  color: #999;
+  opacity: 1;
+}
+.form-control::-webkit-input-placeholder {
+  color: #999;
+  opacity: 1;
+}
+
+
+.validity-tooltip-error > .tooltip-inner {
+  background-color: white;
+  color:#fc0303;
+  border: 1px solid #fc0303;
+  max-width: 100%;
+}
+
+.validity-tooltip-error > .arrow::before {
+  border-bottom-color: #fc0303 !important;
+}
+
+.validity-tooltip-warning > .tooltip-inner {
+  background-color: white;
+  color:#bfa50d;
+  border: 1px solid #bfa50d;
+  font-size: small;
+}
+
+.validity-tooltip-warning > .arrow::before {
+  border-bottom-color: #bfa50d !important;
+}
+

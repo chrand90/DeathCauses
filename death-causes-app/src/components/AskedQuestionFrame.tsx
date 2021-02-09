@@ -4,6 +4,8 @@ import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { ButtonToolbar } from "reactstrap";
 import { InputValidity } from "../models/Factors";
+import DropdownButton from "react-bootstrap/DropdownButton";
+import Dropdown from "react-bootstrap/Dropdown";
 
 interface AskedQuestionProps {
   factorName: string | undefined;
@@ -21,16 +23,32 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
 
   render() {
     return (
-      <Card style={{ marginBottom: "40px" }}>
+      <Card style={{ marginBottom: "20px", height: "90%" }}>
         <Card.Title>
           {this.props.factorName ? this.props.factorName : "No more questions"}
         </Card.Title>
         <Card.Body>{this.props.children}</Card.Body>
         <Card.Footer>
-          <ButtonToolbar>
+          <ButtonToolbar className="justify-content-between">
             <ButtonGroup>
-              <Button onClick={this.props.onStartOver}>Start over</Button>
-              <Button disabled={!this.props.previousPossible} onClick={this.props.onPrevious}>Previous</Button>
+              <Button
+                disabled={!this.props.previousPossible}
+                onClick={this.props.onPrevious}
+              >
+                Previous
+              </Button>
+            </ButtonGroup>
+            <ButtonGroup>
+              <DropdownButton
+                id="dropdown-basic-button"
+                title="Options"
+                size="sm"
+              >
+                <Dropdown.Item href="#/action-1" onClick={this.props.onStartOver}>Start over</Dropdown.Item>
+                <Dropdown.Item href="#/action-2">Skip to end</Dropdown.Item>
+              </DropdownButton>
+            </ButtonGroup>
+            <ButtonGroup>
               <Button
                 disabled={
                   this.props.validity === undefined ||
@@ -40,7 +58,6 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
               >
                 Next
               </Button>
-              <Button>Skip to end</Button>
             </ButtonGroup>
           </ButtonToolbar>
         </Card.Footer>
@@ -50,3 +67,6 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
 }
 
 export default AskedQuestionFramed;
+
+//<Button>Skip to end</Button>
+//<Button onClick={this.props.onStartOver}>Start over</Button>

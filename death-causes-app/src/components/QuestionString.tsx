@@ -30,19 +30,18 @@ export default class SimpleStringQuestion extends React.PureComponent<
     this.state = {
       ignore: false,
     };
-    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
   }
 
-  handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ ignore: event.currentTarget.checked }, (): void => {
-      if (this.state.ignore) {
-        this.props.handleIgnoreFactor(this.props.name);
-      }
-    });
-  }
+  // handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
+  //   this.setState({ ignore: event.currentTarget.checked }, (): void => {
+  //     if (this.state.ignore) {
+  //       this.props.handleIgnoreFactor(this.props.name);
+  //     }
+  //   });
+  // }
 
   getBackgroundColor() {
-    if (this.state.ignore) {
+    if (this.props.ignore) {
       return BACKGROUNDCOLOR_DISABLED;
     } else {
       return BACKGROUNDCOLOR_CHOICE;
@@ -50,7 +49,7 @@ export default class SimpleStringQuestion extends React.PureComponent<
   }
 
   getTextColor() {
-    if (this.state.ignore) {
+    if (this.props.ignore) {
       return TEXTCOLOR_DISABLED;
     } else {
       return "";
@@ -84,28 +83,23 @@ export default class SimpleStringQuestion extends React.PureComponent<
       <QuestionContext
         name={this.props.name}
         phrasing={this.props.phrasing}
-        handleIgnoreFactor={this.handleIgnoreFactor}
+        handleIgnoreFactor={this.props.handleIgnoreFactor}
         featured={this.props.featured}
         unitText=""
-        ignore={this.state.ignore}
+        ignore={this.props.ignore}
         helpText={this.props.helpText}
-        secondLine={
-          showmessage ? (
-            <Form.Label className="ErrorLabel" style={errorMessageStyle}>
-              {this.props.inputvalidity.message}
-            </Form.Label>
-          ) : (
-            ""
-          )
-        }
+        validityStatus={this.props.inputvalidity.status}
+        secondLine={showmessage ? this.props.inputvalidity.message : ""}
+        windowWidth={this.props.windowWidth}
       >
         <Form.Control
           as="select"
           name={this.props.name}
           value={this.props.factorAnswer}
           onChange={this.props.handleChange}
-          disabled={this.state.ignore}
+          disabled={this.props.ignore}
           style={formControlStyle}
+          autoFocus={this.props.featured}
         >
           <option value={this.props.placeholder} hidden>
             {this.props.placeholder}

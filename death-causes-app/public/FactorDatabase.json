@@ -1,0 +1,109 @@
+{
+    "BMI":{
+        "type":"number",
+        "placeholder":"kg/m^2",
+        "recommendedDomain":{"min":18,"max":40},
+        "requiredDomain": {"min":0},
+        "longExplanation": "What is your BMI",
+        "helpJson": "BMI is calculated as weight in kilograms divided by the square of height in meters. You can compute it on the [CDC website](https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html).\n A healthy BMI is between 18.5 and 25."
+    },
+    "Age":{
+        "type":"number",
+        "longExplanation": "How old are you today",
+        "placeholder":"Years",
+        "recommendedDomain":{"min":0,"max":110},
+        "requiredDomain": {"min":0},
+        "units":{"Years":1.0, "Days":0.00273785078}
+    },
+    "Waist":{
+        "type":"number",
+        "longExplanation":"What is the circumference of your waist",
+        "placeholder":"cm",
+        "recommendedDomain":{"min":60,"max":170},
+        "requiredDomain": {"min":0},
+        "units":{"cm":1.0, "Inches": 2.54}
+    },
+    "Caffeine":{
+        "type":"number",
+        "longExplanation":"How much coffee do you consume in a normal day",
+        "placeholder":"Cups",
+        "recommendedDomain":{"min":0,"max":10},
+        "requiredDomain": {"min":0},
+        "helpJson":"A standard cup is around 150 ml (=5 ounces) of coffee made of 7 grams of coffee beans. Espressos are normally made with around 7 grams of coffee beans as well, so they should also be considered full cups.",
+        "units":{"Cups":1.0, "Liters": 0.15, "Ounces":5.072108}
+    },
+    "Fish":{
+        "type":"number",
+        "longExplanation":"How much fish do you eat in a normal week",
+        "placeholder":"Servings",
+        "recommendedDomain":{"min":0},
+        "requiredDomain": {"min":0},
+        "helpJson":"A serving is 100 grams (=0.22 pounds) of fish or shellfish.",
+        "units":{"Servings":1.0, "Grams": 0.01}
+    },
+    "Vegetables":{
+        "type":"number",
+        "longExplanation":"How much vegetable do you eat in a normal day",
+        "placeholder":"Servings",
+        "recommendedDomain":{"min":0},
+        "requiredDomain": {"min":0},
+        "helpJson":"A serving is 100 grams (=0.22 pounds) of culinary vegetables. Even though tomatoes and pumpkins are botanically speaking berry and fruits, they are still culinary vegetables because they are used as such.",
+        "units":{"Servings":1.0, "Grams": 0.01}
+    },
+    "Fluids":{
+        "type":"number",
+        "longExplanation":"How much liquid do you drink in a normal day",
+        "placeholder":"Liters",
+        "recommendedDomain":{"min":0},
+        "requiredDomain": {"min":0},
+        "helpJson":"Anything that is drunk counts as liquid, including alcoholic beverages.",
+        "units":{"Liters":1.0, "US Cups":4.22675}
+    },
+    "HeadTrauma":{
+        "type":"number",
+        "longExplanation":"How many concussions have you had that caused hospitilization, memory loss or loss of conscience",
+        "placeholder":"Number",
+        "recommendedDomain":{"min":0},
+        "requiredDomain": {"min":0}
+    },
+    "Drinking":{
+        "type":"number",
+        "longExplanation":"How much alcohol do you drink in a normal week",
+        "placeholder":"Drinks",
+        "recommendedDomain":{"min":0,"max":40},
+        "requiredDomain": {"min":0},
+        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol."
+    },
+    "Sex":{
+        "type":"string",
+        "longExplanation":"What is your biological sex",
+        "placeholder":"Choose sex",
+        "initialValue":"Choose sex",
+        "options":["Male","Female"]
+    },
+    "OralContraceptiveStatus":{
+        "type":"string",
+        "longExplanation":"What is your history with oral contraceptives",
+        "placeholder":"Status",
+        "initialValue":"Status",
+        "options":["Former user","Current user","Never used"],
+        "derivables":{"Sex": {"Male":"Never used"}}
+    },
+    "OralContraceptiveSinceStop":{
+        "type":"number",
+        "longExplanation":"How much time has passed since you stopped taking oral contraceptives",
+        "placeholder": "Years",
+        "recommendedDomain":{"min":0, "max":110},
+        "requiredDomain": {"min":0},
+        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Current user":0}}
+    },
+    "OralContraceptiveTillStop":{
+        "type":"number",
+        "longExplanation":"For how long will you continue to take oral contraceptives",
+        "placeholder": "Years",
+        "recommendedDomain":{"min":0,"max":110},
+        "requiredDomain": {"min":0},
+        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Former user":0}}
+    }
+
+}

@@ -1,4 +1,3 @@
-import * as d3 from "d3";
 import { json } from "d3";
 import React, { ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
@@ -11,6 +10,7 @@ import Factors, {
   GeneralFactor,
   InputValidity,
   FactorAnswerUnitScalings,
+  InputJson,
 } from "../models/Factors";
 import HelpJsons from "../models/HelpJsons";
 import "./QuestionMenu.css";
@@ -20,15 +20,17 @@ import AskedQuestionFramed from "./AskedQuestionFrame";
 
 interface QuestionMenuProps {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
-  }
+}
 
 interface QuestionMenuStates {
   validities: InputValidities;
   factorAnswers: FactorAnswers;
   factorAnswerScales: FactorAnswerUnitScalings;
+  activelyIgnored: ignoreList;
   hasBeenAnswered: string[];
   answeringProgress: "answering" | "finished";
   currentFactor: string;
+  windowWidth: number;
 }
 
 interface InputValidities {
@@ -39,8 +41,21 @@ interface dicWithFirstKey {
   [key: string]: any;
 }
 
+interface ignoreList {
+  [key: string]: boolean;
+}
+
 function getDicOrder(dic: dicWithFirstKey) {
   return Object.keys(dic);
+}
+
+function getViewport () {
+  // https://stackoverflow.com/a/8876069
+  const width = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  )
+  return width
 }
 
 class QuestionMenu extends React.Component<
@@ -50,6 +65,8 @@ class QuestionMenu extends React.Component<
   factors: Factors;
   helpjsons: HelpJsons;
   factorOrder: string[];
+
+  
 
   constructor(props: QuestionMenuProps) {
     super(props);
@@ -61,40 +78,50 @@ class QuestionMenu extends React.Component<
       hasBeenAnswered: [],
       answeringProgress: "answering",
       currentFactor: "",
+      activelyIgnored: {},
+      windowWidth: getViewport()
     };
     this.factors = new Factors(null);
     this.helpjsons = {};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
-    this.handleValidityAndIgnoreFactor = this.handleValidityAndIgnoreFactor.bind(this);
     this.previousQuestion = this.previousQuestion.bind(this);
     this.startOverQuestionnaire = this.startOverQuestionnaire.bind(this);
     this.handleUnitChange = this.handleUnitChange.bind(this);
+    this.updateWidth = this.updateWidth.bind(this);
     // this.handleCallback = this.handleCallback.bind(this)
   }
 
+  updateWidth(){
+    this.setState({ windowWidth: getViewport() });
+  }
+
+
   componentDidMount() {
     this.loadFactorNames();
+    window.addEventListener('resize', this.updateWidth);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.updateWidth);
   }
 
   loadFactorNames() {
     setTimeout(
       () =>
-        Promise.all([
-          d3.csv("FactorDatabase.csv"),
-          json("helpjsons.json"),
-        ]).then((data) => {
-          this.factors = new Factors(data[0]);
-          this.helpjsons = data[1] as HelpJsons;
-          this.factorOrder = this.factors.getRandomFactorOrder()
+        Promise.all([json("FactorDatabase.json")]).then((data) => {
+          this.factors = new Factors(data[0] as InputJson);
+          this.factorOrder = this.factors.getRandomFactorOrder();
           this.setState(
-            { factorAnswers: this.factors.getFactorsAsStateObject(),
-            currentFactor: this.factorOrder[0] },
+            {
+              factorAnswers: this.factors.getFactorsAsStateObject(),
+              currentFactor: this.factorOrder[0],
+            },
             () => this.initializeValidities()
           );
         }),
-      2000
+      500
     );
   }
 
@@ -118,7 +145,15 @@ class QuestionMenu extends React.Component<
       if (validity.status === "Error") {
         submittable = false;
       }
-      if (validity.status === "Missing") {
+      if (
+        validity.status === "Missing" &&
+        !(
+          factorName in this.state.activelyIgnored &&
+          this.state.activelyIgnored[factorName]
+        ) &&
+        (this.state.hasBeenAnswered.includes(factorName) ||
+          this.state.currentFactor === factorName)
+      ) {
         validitiesToBeChanged[factorName] = {
           message: "Ignored by the model",
           status: "Warning",
@@ -135,7 +170,6 @@ class QuestionMenu extends React.Component<
   }
 
   handleSubmit(event: React.FormEvent) {
-    //TODO: brug en bedre måde at tjekke validites.
     event.preventDefault();
     const {
       missingWarnings,
@@ -173,6 +207,26 @@ class QuestionMenu extends React.Component<
     }
   }
 
+  redoAllValidities(): void {
+    this.setState((prevState: QuestionMenuStates) => {
+      let new_validities: InputValidities = {};
+      Object.entries(prevState.factorAnswers).forEach(
+        ([factorname, factorval]) => {
+          new_validities[factorname] = this.factors.getInputValidity(
+            factorname,
+            factorval as string,
+            factorname in prevState.factorAnswerScales
+              ? prevState.factorAnswerScales[factorname].unitName
+              : undefined
+          );
+        }
+      );
+      return {
+        validities: new_validities,
+      };
+    });
+  }
+
   handleInputChange(ev: ChangeEvent<HTMLInputElement>): void {
     const { name, type } = ev.currentTarget;
     const value = ev.currentTarget.value;
@@ -181,7 +235,13 @@ class QuestionMenu extends React.Component<
       return {
         validities: {
           ...prevState.validities,
-          [name]: this.factors.getInputValidity(name, value),
+          [name]: this.factors.getInputValidity(
+            name,
+            value,
+            name in prevState.factorAnswerScales
+              ? prevState.factorAnswerScales[name].unitName
+              : undefined
+          ),
         },
         factorAnswers: {
           ...prevState.factorAnswers,
@@ -191,7 +251,10 @@ class QuestionMenu extends React.Component<
     });
   }
 
-  handleIgnoreFactor(factorname: string): void {
+  handleIgnoreFactor(e: React.ChangeEvent<HTMLInputElement>): void {
+    const { name, type } = e.currentTarget;
+    const factorname = name;
+    const value = e.currentTarget.checked;
     this.setState((prevState: QuestionMenuStates) => {
       return {
         validities: {
@@ -202,38 +265,38 @@ class QuestionMenu extends React.Component<
           ...prevState.factorAnswers,
           [factorname]: "",
         },
+        activelyIgnored: {
+          ...prevState.activelyIgnored,
+          [factorname]: value,
+        },
       };
     });
   }
 
   handleUnitChange(name: string, newUnitName: string): void {
-    this.setState(
-      (prevState: QuestionMenuStates) => {
-        return {
-          factorAnswerScales: {
-            ...prevState.factorAnswerScales,
-            [name]: {
-              unitName: newUnitName,
-              scale: this.factors.getScalingFactor(name, newUnitName),
-            },
+    this.setState((prevState: QuestionMenuStates) => {
+      return {
+        factorAnswerScales: {
+          ...prevState.factorAnswerScales,
+          [name]: {
+            unitName: newUnitName,
+            scale: this.factors.getScalingFactor(name, newUnitName),
           },
-          validities: {
-            ...prevState.validities,
-            [name]: 
-              this.factors.getInputValidity(
-                name,
-                this.state.factorAnswers[name] as string,
-                newUnitName
-                )
-          },
-        };
-      }
-    );
+        },
+        validities: {
+          ...prevState.validities,
+          [name]: this.factors.getInputValidity(
+            name,
+            this.state.factorAnswers[name] as string,
+            newUnitName
+          ),
+        },
+      };
+    });
   }
 
-
-  handleValidityAndChangeUnits(factorname: string, newUnitName: string): void {
-    return
+  //handleValidityAndChangeUnits(factorname: string, newUnitName: string): void {
+  //  return;
     // this.setState(
     //   (prevState: { validities: InputValidities }) => {
     //     return {
@@ -251,9 +314,9 @@ class QuestionMenu extends React.Component<
     //     this.props.handleChangeUnit(factorname, newUnitName);
     //   }
     // );
-  }
+  //}
 
-  handleValidityAndIgnoreFactor(factorname: string): void {
+  //handleValidityAndIgnoreFactor(factorname: string): void {
     // this.setState(
     //   (prevState: { validities: InputValidities }) => {
     //     return {
@@ -273,7 +336,7 @@ class QuestionMenu extends React.Component<
     //     this.props.handleIgnoreFactor(factorname);
     //   }
     // );
-  }
+  //}
 
   // handleCallback(event) {
   //   this.props.handleChange(event)
@@ -284,9 +347,7 @@ class QuestionMenu extends React.Component<
   // }
 
   getHelpText(factorName: string): string {
-    return factorName in this.helpjsons
-      ? this.helpjsons[factorName]
-      : "No help available";
+    return this.factors.getHelpJson(factorName);
   }
 
   getQuestion(
@@ -301,14 +362,18 @@ class QuestionMenu extends React.Component<
             key={factorName}
             name={factorName}
             factorAnswer={this.state.factorAnswers[factorName] as number}
-            phrasing={featured ? factor.phrasings[1] : factor.phrasings[0]}
-            unitOptions={(factor as NumericFactorPermanent).unitOptions}
+            phrasing={featured ? factor.phrasing : ""}
+            unitOptions={Object.keys(
+              (factor as NumericFactorPermanent).unitOptions
+            )}
             handleChange={this.handleInputChange}
-            handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
+            handleIgnoreFactor={this.handleIgnoreFactor}
             inputvalidity={this.state.validities[factorName]}
             helpText={this.getHelpText(factorName)}
             featured={featured}
             handleUnitChange={this.handleUnitChange}
+            ignore={this.state.activelyIgnored[factorName]}
+            windowWidth={this.state.windowWidth}
             placeholder={
               factorName in this.state.factorAnswerScales
                 ? this.state.factorAnswerScales[factorName].unitName
@@ -324,13 +389,15 @@ class QuestionMenu extends React.Component<
             name={factorName}
             placeholder={factor.placeholder}
             factorAnswer={this.state.factorAnswers[factorName] as string}
-            phrasing={featured ? factor.phrasings[1] : factor.phrasings[0]}
+            phrasing={featured ? factor.phrasing : ""}
             options={(factor as StringFactorPermanent).options}
             handleChange={this.handleInputChange}
-            handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
+            handleIgnoreFactor={this.handleIgnoreFactor}
             helpText={this.getHelpText(factorName)}
             inputvalidity={this.state.validities[factorName]}
             featured={featured}
+            ignore={this.state.activelyIgnored[factorName]}
+            windowWidth={this.state.windowWidth}
           />
         );
       }
@@ -341,41 +408,40 @@ class QuestionMenu extends React.Component<
   }
 
   startOverQuestionnaire() {
-    this.setState({
-      hasBeenAnswered: [],
-      currentFactor: this.factorOrder[0],
-      answeringProgress: "answering",
-    });
+    this.setState(
+      {
+        hasBeenAnswered: [],
+        currentFactor: this.factorOrder[0],
+        answeringProgress: "answering",
+      },
+      () => this.redoAllValidities()
+    );
   }
 
   previousQuestion() {
     this.setState((previousState: QuestionMenuStates) => {
+      const newCurrentFactor =
+        previousState.hasBeenAnswered[previousState.hasBeenAnswered.length - 1];
       return {
-        currentFactor:
-          previousState.hasBeenAnswered[
-            previousState.hasBeenAnswered.length - 1
-          ],
+        currentFactor: newCurrentFactor,
         hasBeenAnswered: previousState.hasBeenAnswered.slice(0, -1),
         answeringProgress: "answering",
+        validities: {
+          ...previousState.validities,
+          [newCurrentFactor]: this.factors.getInputValidity(
+            newCurrentFactor,
+            previousState.factorAnswers[newCurrentFactor] as string,
+            newCurrentFactor in previousState.factorAnswerScales
+              ? previousState.factorAnswerScales[newCurrentFactor].unitName
+              : undefined
+          ),
+        },
       };
     });
   }
 
   finishQuestionnaire() {
     this.setState({ answeringProgress: "finished" });
-  }
-
-  startOver(){
-    this.setState((previousState: QuestionMenuStates) => {
-      return {
-        currentFactor:
-          previousState.hasBeenAnswered[
-            previousState.hasBeenAnswered.length - 1
-          ],
-        hasBeenAnswered: previousState.hasBeenAnswered.slice(0, -1),
-        answeringProgress: "answering",
-      };
-    });
   }
 
   getCurrentFactor() {
@@ -423,7 +489,9 @@ class QuestionMenu extends React.Component<
     const submittable: boolean = this.isSubmittable();
     const questionList = Object.entries(this.factors.factorList).map(
       ([factorName, factor]) => {
-        return this.getQuestion(factorName, factor);
+        if (this.state.hasBeenAnswered.includes(factorName)) {
+          return this.getQuestion(factorName, factor);
+        }
       }
     );
     return (
@@ -448,7 +516,16 @@ class QuestionMenu extends React.Component<
             </div>
           </div>
 
-          {this.getQuestionToAnswer()}
+          <div
+            style={
+              this.state.answeringProgress === "finished"
+                ? {}
+                : { height: "330px" }
+            }
+          >
+            {this.getQuestionToAnswer()}
+          </div>
+
           {questionList}
         </form>
       </div>
