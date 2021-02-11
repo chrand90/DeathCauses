@@ -24,9 +24,20 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
   render() {
     return (
       <Card style={{ marginBottom: "20px", height: "90%" }}>
-        <Card.Title>
-          {this.props.factorName ? this.props.factorName : "No more questions"}
-        </Card.Title>
+        <Card.Header>
+        <div className="d-flex justify-content-between">
+          <div>
+            5/7
+          </div>
+          <Card.Title>
+            {this.props.factorName ? this.props.factorName : "No more questions"}
+          </Card.Title>
+        <div>
+          0
+        </div>
+        </div>
+          
+        </Card.Header>
         <Card.Body>{this.props.children}</Card.Body>
         <Card.Footer>
           <ButtonToolbar className="justify-content-between">

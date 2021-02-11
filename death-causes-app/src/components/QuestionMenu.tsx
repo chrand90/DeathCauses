@@ -11,6 +11,7 @@ import Factors, {
   InputValidity,
   FactorAnswerUnitScalings,
   InputJson,
+  FactorMaskings,
 } from "../models/Factors";
 import HelpJsons from "../models/HelpJsons";
 import "./QuestionMenu.css";
@@ -31,6 +32,7 @@ interface QuestionMenuStates {
   answeringProgress: "answering" | "finished";
   currentFactor: string;
   windowWidth: number;
+  factorMaskings: FactorMaskings;
 }
 
 interface InputValidities {
@@ -49,13 +51,13 @@ function getDicOrder(dic: dicWithFirstKey) {
   return Object.keys(dic);
 }
 
-function getViewport () {
+function getViewport() {
   // https://stackoverflow.com/a/8876069
   const width = Math.max(
     document.documentElement.clientWidth,
     window.innerWidth || 0
-  )
-  return width
+  );
+  return width;
 }
 
 class QuestionMenu extends React.Component<
@@ -65,8 +67,6 @@ class QuestionMenu extends React.Component<
   factors: Factors;
   helpjsons: HelpJsons;
   factorOrder: string[];
-
-  
 
   constructor(props: QuestionMenuProps) {
     super(props);
@@ -79,7 +79,8 @@ class QuestionMenu extends React.Component<
       answeringProgress: "answering",
       currentFactor: "",
       activelyIgnored: {},
-      windowWidth: getViewport()
+      windowWidth: getViewport(),
+      factorMaskings: {},
     };
     this.factors = new Factors(null);
     this.helpjsons = {};
@@ -93,18 +94,17 @@ class QuestionMenu extends React.Component<
     // this.handleCallback = this.handleCallback.bind(this)
   }
 
-  updateWidth(){
+  updateWidth() {
     this.setState({ windowWidth: getViewport() });
   }
 
-
   componentDidMount() {
     this.loadFactorNames();
-    window.addEventListener('resize', this.updateWidth);
+    window.addEventListener("resize", this.updateWidth);
   }
 
   componentWillUnmount() {
-    window.removeEventListener('resize', this.updateWidth);
+    window.removeEventListener("resize", this.updateWidth);
   }
 
   loadFactorNames() {
@@ -232,6 +232,8 @@ class QuestionMenu extends React.Component<
     const value = ev.currentTarget.value;
 
     this.setState((prevState: QuestionMenuStates) => {
+      const newFactorAnswers = { ...prevState.factorAnswers, [name]: value };
+      this.factors.updateMasked(newFactorAnswers, name, prevState.factorMaskings);
       return {
         validities: {
           ...prevState.validities,
@@ -243,10 +245,7 @@ class QuestionMenu extends React.Component<
               : undefined
           ),
         },
-        factorAnswers: {
-          ...prevState.factorAnswers,
-          [name]: value,
-        },
+        factorAnswers: newFactorAnswers,
       };
     });
   }
@@ -297,45 +296,45 @@ class QuestionMenu extends React.Component<
 
   //handleValidityAndChangeUnits(factorname: string, newUnitName: string): void {
   //  return;
-    // this.setState(
-    //   (prevState: { validities: InputValidities }) => {
-    //     return {
-    //       validities: {
-    //         ...prevState.validities,
-    //         [factorname]: this.props.factors.getInputValidity(
-    //           factorname,
-    //           this.props.factorAnswers[factorname] as string,
-    //           newUnitName
-    //         ),
-    //       },
-    //     };
-    //   },
-    //   () => {
-    //     this.props.handleChangeUnit(factorname, newUnitName);
-    //   }
-    // );
+  // this.setState(
+  //   (prevState: { validities: InputValidities }) => {
+  //     return {
+  //       validities: {
+  //         ...prevState.validities,
+  //         [factorname]: this.props.factors.getInputValidity(
+  //           factorname,
+  //           this.props.factorAnswers[factorname] as string,
+  //           newUnitName
+  //         ),
+  //       },
+  //     };
+  //   },
+  //   () => {
+  //     this.props.handleChangeUnit(factorname, newUnitName);
+  //   }
+  // );
   //}
 
   //handleValidityAndIgnoreFactor(factorname: string): void {
-    // this.setState(
-    //   (prevState: { validities: InputValidities }) => {
-    //     return {
-    //       validities: {
-    //         ...prevState.validities,
-    //         [factorname]: this.props.factors.getInputValidity(
-    //           factorname,
-    //           "",
-    //           factorname in this.props.factorAnswerScales
-    //             ? this.props.factorAnswerScales[factorname].unitName
-    //             : undefined
-    //         ),
-    //       },
-    //     };
-    //   },
-    //   () => {
-    //     this.props.handleIgnoreFactor(factorname);
-    //   }
-    // );
+  // this.setState(
+  //   (prevState: { validities: InputValidities }) => {
+  //     return {
+  //       validities: {
+  //         ...prevState.validities,
+  //         [factorname]: this.props.factors.getInputValidity(
+  //           factorname,
+  //           "",
+  //           factorname in this.props.factorAnswerScales
+  //             ? this.props.factorAnswerScales[factorname].unitName
+  //             : undefined
+  //         ),
+  //       },
+  //     };
+  //   },
+  //   () => {
+  //     this.props.handleIgnoreFactor(factorname);
+  //   }
+  // );
   //}
 
   // handleCallback(event) {

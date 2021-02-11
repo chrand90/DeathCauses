@@ -12,6 +12,8 @@ import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { DropdownToggle } from "reactstrap";
 import Label from "react-bootstrap/FormLabel";
+import { Left } from "react-bootstrap/lib/Media";
+import { treemapSlice } from "d3";
 
 export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
 export const TEXTCOLOR_DISABLED = "#999";
@@ -143,14 +145,6 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
 
   }
 
-  renderToolTipValidityBox(injected: any, message:string, style: FormControlStyle): React.ReactNode{
-    return (
-      <Tooltip id="button-tooltip-validity" {...injected} style={style}>
-        {message}
-      </Tooltip>
-    );
-  }
-  //
   validityBox(){
     const {style, boxContent} = this.validityBoxStyling()
     const tooltipID='validity-tooltip-'+this.props.name
@@ -200,7 +194,38 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     }
   }
 
-  inLineFactorNameHeader() {
+  pixelsForFactorNameHeader(){
+    let widthOfArea=this.props.windowWidth
+    if(widthOfArea >= 1200){
+      widthOfArea=widthOfArea * 1/3
+    }
+    else if(widthOfArea>=992){
+      widthOfArea=widthOfArea*5/12
+    }
+    widthOfArea=widthOfArea * 1 /3
+    return widthOfArea
+  }
+
+  fontSizeForFactorNameHeader(){
+    const pixelHeight=1.6
+    const minimumSize=13
+    let l =this.props.name.length
+    let writtenName=this.props.name
+    const p= this.pixelsForFactorNameHeader()
+    const pixelsPerLetter= p/l
+    let fontSize=Math.min(pixelsPerLetter*pixelHeight, 17)
+    if(fontSize<minimumSize){
+      const sliceval=Math.floor((p*pixelHeight/minimumSize-3)/2)
+      writtenName=writtenName.slice(0,sliceval)+"..."+writtenName.slice(-sliceval)
+    }
+    l =writtenName.length
+    const pixelsPerLetterAlternative= p/l
+    fontSize= Math.min(pixelsPerLetterAlternative*1.6, 17)
+    return { fontSize , writtenName }
+  }
+
+  inLineFactorNameHeader() {  
+    const {fontSize, writtenName} = this.fontSizeForFactorNameHeader()
     return (
       <div>
         <p
@@ -209,9 +234,10 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
             fontWeight: "bold",
             marginBottom: "0px",
             textAlign: "left",
+            fontSize: fontSize.toPrecision()+'px'
           }}
         >
-          {this.props.name}
+          {writtenName}
         </p>
       </div>
     );

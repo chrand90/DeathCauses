@@ -96,10 +96,10 @@ class App extends React.Component<any, AppState> {
         <Header />
         <Container fluid>
         <Row>
-          <Col  lg={4}  xl={3} style={{ padding: '0px' }}>
+          <Col  lg={5}  xl={4} style={{ padding: '0px' }}>
             {this.renderQuestionMenu()}
           </Col>
-          <Col  lg={8}  xl={9} style={{ padding: '0px' }}>
+          <Col  lg={7}  xl={8} style={{ padding: '0px' }}>
             {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
           </Col>
         </Row>

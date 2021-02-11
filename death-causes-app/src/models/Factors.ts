@@ -10,6 +10,19 @@ export interface FactorAnswerUnitScalings {
   [id: string]: FactorAnswerUnitScaling;
 }
 
+interface FactorMasking {
+  effectiveValue: string;
+  maskedByFactor: string;
+  maskedByValue: string;
+}
+export interface FactorMaskings {
+  [maskedFactor: string]: FactorMasking
+}
+
+interface FactorMaskingsWithNulls {
+  [maskedFactor: string]: FactorMasking | null;
+}
+
 export interface InputValidity {
   status: "Error" | "Warning" | "Missing" | "Success";
   message: string;
@@ -29,7 +42,7 @@ interface UnitOptions {
 }
 
 interface DeriveMapping {
-  [factorVale: string]: string | number;
+  [factorValue: string]: string ;
 }
 
 interface DerivableOptions {
@@ -60,8 +73,52 @@ enum FactorTypes {
   STRING = "string",
 }
 
+interface DerivableOptionsSet {
+  [causedFactor: string]: DerivableOptions;
+}
+
+function reverseDeriveMapping(dos: DerivableOptionsSet){
+  let res: DerivableOptionsSet={}
+  let inner: DeriveMapping;
+  let middle: DerivableOptions;
+  Object.entries(dos).forEach( ([causedFactor, dom] )=>{
+    Object.entries(dom).forEach( ([causativeFactor, dm]) => {
+      Object.entries(dm).forEach(([causativeFactorValue, causedFactorValue]) => {
+        if(!(causativeFactor in res)){
+          inner = {}
+          inner[causativeFactorValue]=causedFactorValue
+          middle = {}
+          middle[causedFactor]=inner
+          res[causativeFactor]=middle
+        }
+        else if(!(causedFactor in res[causativeFactor])){
+          inner = {}
+          inner[causativeFactorValue]=causedFactorValue
+          res[causativeFactor][causedFactor]=inner
+        }
+        else{
+          res[causativeFactor][causedFactor][causativeFactorValue]=causedFactorValue
+        }
+      })
+    })
+  })
+  return res
+}
+
+function removeNulls(fin: FactorMaskingsWithNulls): FactorMaskings{
+  let res: FactorMaskings={}
+  Object.entries(fin).forEach(([factorname, maskValue])=> {
+    if(maskValue){
+      res[factorname]=maskValue
+    }
+  })
+  return res
+}
+
 class Factors {
   factorList: FactorList = {};
+  reverseDerivables: DerivableOptionsSet={};
+
 
   constructor(data: InputJson | null) {
     console.log(data);
@@ -111,8 +168,51 @@ class Factors {
         }
       });
     }
-    console.log(this.factorList);
+    this.initializeReverseDerivables()
   }
+
+  initializeReverseDerivables(){
+    let derivables: DerivableOptionsSet={}
+    Object.entries(this.factorList).forEach( ([factorname, factorobject])=> {
+      derivables[factorname]=factorobject.derivableStates
+    })
+    this.reverseDerivables=reverseDeriveMapping(derivables)
+  }
+
+  updateMasked(factorAnswers: FactorAnswers, changedFactor: string, oldMaskedValues: FactorMaskings): FactorMaskings | "nothing changed" {
+    if(!(changedFactor in this.reverseDerivables)){
+      return "nothing changed"
+    }
+    let factorsToCheck: string[]=[changedFactor]
+    let factorToCheck: string;
+    let factorMaskingChanges: FactorMaskingsWithNulls={};
+    while(factorsToCheck.length>0){
+      factorToCheck=factorsToCheck.pop()!
+      if(factorToCheck in this.reverseDerivables){//this means that something may have changed
+        const factorValue= factorAnswers[factorToCheck] as string//by design of factordatabase.json, this is a string
+        const maskedFactors= this.reverseDerivables[factorToCheck]
+        Object.entries(maskedFactors).forEach( ([maskedFactor, maskingObject]) => {
+          if(factorValue in maskingObject){
+            factorMaskingChanges[maskedFactor]= {
+              effectiveValue: maskingObject[factorValue],
+              maskedByFactor: factorToCheck,
+              maskedByValue: factorValue
+            }
+          }
+          else{
+            factorMaskingChanges[maskedFactor]=null
+          }
+        })
+        factorsToCheck=factorsToCheck.concat(Object.keys(maskedFactors))
+      }
+    }
+    const newFactorMaskingsWithNulls: FactorMaskingsWithNulls= {...oldMaskedValues, ...factorMaskingChanges}
+    console.log("newFactorMaskings");
+    console.log(newFactorMaskingsWithNulls)
+    return removeNulls(newFactorMaskingsWithNulls)
+  } 
+
+
 
   getRandomFactorOrder() {
     return Object.keys(this.factorList);
@@ -221,22 +321,24 @@ export abstract class GeneralFactor<T> {
   phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
   factorType: string = "abstract";
-  derivableStates: DerivableOptions = {};
   helpJson: string | null;
+  derivableStates: DerivableOptions;
+  
 
   constructor(
     factorName: string,
     initialValue: T | "",
     phrasing: string,
     placeholder: string = "",
+    derivableStates: DerivableOptions={},
     helpJson: string | null = null,
-    derivableStatesInitializer: DerivableOptions
   ) {
     this.factorName = factorName;
     this.initialValue = initialValue;
     this.phrasing = phrasing;
     this.placeholder = placeholder;
     this.helpJson = helpJson;
+    this.derivableStates= derivableStates;
     //this.initializeDerivableStates(derivableStatesInitializer);
   }
 
@@ -279,8 +381,9 @@ export class StringFactorPermanent extends GeneralFactor<string> {
       initialValue,
       phrasing,
       placeholder,
-      helpJson,
-      derivableStatesInitializer
+      derivableStatesInitializer,
+      helpJson
+      
     );
     this.factorType = "string";
     this.options = options;
@@ -326,8 +429,8 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
       initialValue,
       phrasing,
       placeholder,
+      derivableStates,
       helpJson,
-      derivableStates
     );
     this.unitOptions = unitOptions;
     //Initializing error messages for all possible choice of units.
