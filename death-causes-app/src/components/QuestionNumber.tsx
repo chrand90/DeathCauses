@@ -25,9 +25,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
 > {
   constructor(props: NumericQuestionProps) {
     super(props);
-    this.state = {
-      ignore: false,
-    };
   }
 
   TextInputBackgroundColor() {
@@ -66,6 +63,27 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     }
     return { formControlStyle, showmessage, errorMessageStyle };
   }
+
+  compare(a:any,b:any){
+    return String(a)+'==='+String(b)+': '+String(a===b)
+  }
+
+  // shouldComponentUpdate(nextProps: Readonly<NumericQuestionProps>, nextState: Readonly<QuestionStates>, nextContext: any){
+  //   console.log("deciding whether to render " + this.props.name)
+  //   console.log('Props:');
+  //   console.log("featured "+this.compare(this.props.featured, nextProps.featured))
+  //   console.log("ignore "+this.compare(this.props.ignore, nextProps.ignore))
+  //   console.log("inputvalidity "+this.compare(this.props.inputvalidity, nextProps.inputvalidity))
+  //   console.log("windowWidth "+this.compare(this.props.windowWidth, nextProps.windowWidth))
+  //   console.log("unitOptions "+this.compare(this.props.unitOptions, nextProps.unitOptions))
+  //   console.log('States:');
+    
+    
+    
+    
+    
+  //   return true;
+  // }
 
   unitButtonOrText() {
     if (this.props.unitOptions.length > 0) {

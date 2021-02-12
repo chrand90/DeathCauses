@@ -91,6 +91,10 @@ class QuestionMenu extends React.Component<
     this.startOverQuestionnaire = this.startOverQuestionnaire.bind(this);
     this.handleUnitChange = this.handleUnitChange.bind(this);
     this.updateWidth = this.updateWidth.bind(this);
+    this.finishQuestionnaire = this.finishQuestionnaire.bind(this);
+    this.insertRandomNessInQuestionnarie = this.insertRandomNessInQuestionnarie.bind(
+      this
+    );
     // this.handleCallback = this.handleCallback.bind(this)
   }
 
@@ -181,8 +185,12 @@ class QuestionMenu extends React.Component<
           let newAnswerProgress = prevState.answeringProgress;
           let newHasBeenAnswered = [...prevState.hasBeenAnswered];
           let newCurrentFactor = prevState.currentFactor;
-          if (prevState.answeringProgress === "answering") {
-            newHasBeenAnswered.push(prevState.currentFactor);
+          while (
+            newAnswerProgress === "answering" &&
+            (newCurrentFactor in prevState.factorMaskings ||
+              newCurrentFactor === prevState.currentFactor)
+          ) {
+            newHasBeenAnswered.push(newCurrentFactor);
             if (newHasBeenAnswered.length === this.factorOrder.length) {
               newAnswerProgress = "finished";
               newCurrentFactor = "";
@@ -221,6 +229,8 @@ class QuestionMenu extends React.Component<
           );
         }
       );
+      console.log('validities')
+      console.log(new_validities)
       return {
         validities: new_validities,
       };
@@ -233,7 +243,17 @@ class QuestionMenu extends React.Component<
 
     this.setState((prevState: QuestionMenuStates) => {
       const newFactorAnswers = { ...prevState.factorAnswers, [name]: value };
-      this.factors.updateMasked(newFactorAnswers, name, prevState.factorMaskings);
+      const x = this.factors.updateMasked(
+        newFactorAnswers,
+        name,
+        prevState.factorMaskings
+      );
+      let newMasks: any;
+      if (x === "nothing changed") {
+        newMasks = {};
+      } else {
+        newMasks = { factorMaskings: x };
+      }
       return {
         validities: {
           ...prevState.validities,
@@ -246,6 +266,7 @@ class QuestionMenu extends React.Component<
           ),
         },
         factorAnswers: newFactorAnswers,
+        ...newMasks,
       };
     });
   }
@@ -362,16 +383,18 @@ class QuestionMenu extends React.Component<
             name={factorName}
             factorAnswer={this.state.factorAnswers[factorName] as number}
             phrasing={featured ? factor.phrasing : ""}
-            unitOptions={Object.keys(
-              (factor as NumericFactorPermanent).unitOptions
-            )}
+            unitOptions={(factor as NumericFactorPermanent).unitStrings}
             handleChange={this.handleInputChange}
             handleIgnoreFactor={this.handleIgnoreFactor}
             inputvalidity={this.state.validities[factorName]}
             helpText={this.getHelpText(factorName)}
             featured={featured}
             handleUnitChange={this.handleUnitChange}
-            ignore={this.state.activelyIgnored[factorName]}
+            ignore={
+              factorName in this.state.activelyIgnored
+                ? this.state.activelyIgnored[factorName]
+                : false
+            }
             windowWidth={this.state.windowWidth}
             placeholder={
               factorName in this.state.factorAnswerScales
@@ -395,7 +418,11 @@ class QuestionMenu extends React.Component<
             helpText={this.getHelpText(factorName)}
             inputvalidity={this.state.validities[factorName]}
             featured={featured}
-            ignore={this.state.activelyIgnored[factorName]}
+            ignore={
+              factorName in this.state.activelyIgnored
+                ? this.state.activelyIgnored[factorName]
+                : false
+            }
             windowWidth={this.state.windowWidth}
           />
         );
@@ -419,11 +446,14 @@ class QuestionMenu extends React.Component<
 
   previousQuestion() {
     this.setState((previousState: QuestionMenuStates) => {
-      const newCurrentFactor =
-        previousState.hasBeenAnswered[previousState.hasBeenAnswered.length - 1];
+      let i= previousState.hasBeenAnswered.length - 1
+      while(previousState.hasBeenAnswered[i] in this.state.factorMaskings && i>0){
+        i=i-1
+      }
+      const newCurrentFactor = previousState.hasBeenAnswered[i];
       return {
         currentFactor: newCurrentFactor,
-        hasBeenAnswered: previousState.hasBeenAnswered.slice(0, -1),
+        hasBeenAnswered: previousState.hasBeenAnswered.slice(0, i),
         answeringProgress: "answering",
         validities: {
           ...previousState.validities,
@@ -440,7 +470,42 @@ class QuestionMenu extends React.Component<
   }
 
   finishQuestionnaire() {
-    this.setState({ answeringProgress: "finished" });
+    this.setState({
+      answeringProgress: "finished",
+      hasBeenAnswered: this.factorOrder,
+      currentFactor: "",
+    });
+  }
+
+  insertRandomNessInQuestionnarie() {
+    const {
+      factorAnswers,
+      factorMaskings,
+    } = this.factors.simulateFactorAnswersAndMaskings();
+    this.setState(
+      {
+        answeringProgress: "finished",
+        hasBeenAnswered: this.factorOrder,
+        currentFactor: "",
+        factorAnswers: factorAnswers,
+        factorMaskings: factorMaskings,
+      },
+      () => this.redoAllValidities()
+    );
+  }
+
+  getCounter() {
+    let denominator =
+      this.factorOrder.length - Object.keys(this.state.factorMaskings).length;
+    let numerator =
+      this.state.hasBeenAnswered.length -
+      this.state.hasBeenAnswered.filter((factorAnswer) => {
+        return factorAnswer in this.state.factorMaskings;
+      }).length+1;
+    if(numerator>denominator){
+      return denominator + "/" +denominator
+    }
+    return numerator + "/" + denominator;
   }
 
   getCurrentFactor() {
@@ -459,6 +524,9 @@ class QuestionMenu extends React.Component<
           previousPossible={this.state.hasBeenAnswered.length > 0}
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
+          onFinishNow={this.finishQuestionnaire}
+          onFinishRandomly={this.insertRandomNessInQuestionnarie}
+          leftCornerCounter={this.getCounter()}
         />
       );
     }
@@ -471,6 +539,9 @@ class QuestionMenu extends React.Component<
           previousPossible={this.state.hasBeenAnswered.length > 0}
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
+          onFinishNow={this.finishQuestionnaire}
+          onFinishRandomly={this.insertRandomNessInQuestionnarie}
+          leftCornerCounter={this.getCounter()}
         >
           {this.getQuestion(
             this.state.currentFactor,
@@ -488,7 +559,10 @@ class QuestionMenu extends React.Component<
     const submittable: boolean = this.isSubmittable();
     const questionList = Object.entries(this.factors.factorList).map(
       ([factorName, factor]) => {
-        if (this.state.hasBeenAnswered.includes(factorName)) {
+        if (
+          this.state.hasBeenAnswered.includes(factorName) &&
+          !(factorName in this.state.factorMaskings)
+        ) {
           return this.getQuestion(factorName, factor);
         }
       }

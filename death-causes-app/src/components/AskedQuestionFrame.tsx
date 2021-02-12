@@ -14,6 +14,9 @@ interface AskedQuestionProps {
   previousPossible: boolean;
   onPrevious: () => void;
   onStartOver: () => void;
+  onFinishNow: () => void;
+  onFinishRandomly: () => void;
+  leftCornerCounter: string;
 }
 
 class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
@@ -27,7 +30,7 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
         <Card.Header>
         <div className="d-flex justify-content-between">
           <div>
-            5/7
+            {this.props.leftCornerCounter}
           </div>
           <Card.Title>
             {this.props.factorName ? this.props.factorName : "No more questions"}
@@ -56,7 +59,8 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
                 size="sm"
               >
                 <Dropdown.Item href="#/action-1" onClick={this.props.onStartOver}>Start over</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Skip to end</Dropdown.Item>
+                <Dropdown.Item href="#/action-2" onClick={this.props.onFinishNow}>Go to end</Dropdown.Item>
+                <Dropdown.Item href="#/action-3" onClick={this.props.onFinishRandomly}>Random</Dropdown.Item>
               </DropdownButton>
             </ButtonGroup>
             <ButtonGroup>

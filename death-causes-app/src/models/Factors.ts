@@ -189,7 +189,10 @@ class Factors {
     while(factorsToCheck.length>0){
       factorToCheck=factorsToCheck.pop()!
       if(factorToCheck in this.reverseDerivables){//this means that something may have changed
-        const factorValue= factorAnswers[factorToCheck] as string//by design of factordatabase.json, this is a string
+        let factorValue= factorAnswers[factorToCheck] as string//by design of factordatabase.json, this is a string
+        if(factorToCheck in factorMaskingChanges && factorMaskingChanges[factorToCheck]){
+          factorValue=factorMaskingChanges[factorToCheck]?.effectiveValue! //putting on exclamation point because we have just tested for null-value
+        }
         const maskedFactors= this.reverseDerivables[factorToCheck]
         Object.entries(maskedFactors).forEach( ([maskedFactor, maskingObject]) => {
           if(factorValue in maskingObject){
@@ -210,7 +213,32 @@ class Factors {
     console.log("newFactorMaskings");
     console.log(newFactorMaskingsWithNulls)
     return removeNulls(newFactorMaskingsWithNulls)
-  } 
+  }
+  
+  simulateFactorAnswersAndMaskings(){
+    let factorMaskings: FactorMaskings={}
+    let factorAnswers: FactorAnswers={}
+    let factorMaskingCandidate: FactorMaskings | "nothing changed";
+    Object.keys(this.factorList).forEach( (factorname) => {
+      factorAnswers[factorname]=""
+    })
+    Object.entries(this.factorList).forEach( ([factorName, factorobject]) => {
+      if(factorName in factorMaskings){
+        factorAnswers[factorName]=String(factorMaskings[factorName].effectiveValue)
+      }
+      else{
+        factorAnswers[factorName]=factorobject.simulateValue()
+      }
+      if(factorobject.factorType==="string"){
+        factorMaskingCandidate= this.updateMasked(factorAnswers, factorName, factorMaskings)
+        if(factorMaskingCandidate!=="nothing changed"){
+          factorMaskings=factorMaskingCandidate
+        }
+      }
+      
+    });
+    return {factorAnswers, factorMaskings}
+  }
 
 
 
@@ -363,6 +391,8 @@ export abstract class GeneralFactor<T> {
   abstract checkInput(input: string | boolean, unit?: string): InputValidity;
 
   abstract getScalingFactor(unitName: string): number;
+
+  abstract simulateValue(): string | number;
 }
 
 export class StringFactorPermanent extends GeneralFactor<string> {
@@ -390,7 +420,7 @@ export class StringFactorPermanent extends GeneralFactor<string> {
   }
 
   checkInput(val: string, unit = undefined): InputValidity {
-    if (val in this.options) {
+    if (this.options.includes(val)) {
       return { status: "Success", message: "" };
     }
     return { status: "Missing", message: "" };
@@ -398,6 +428,10 @@ export class StringFactorPermanent extends GeneralFactor<string> {
 
   getScalingFactor(unitName: string): number {
     return 1;
+  }
+
+  simulateValue(): string {
+    return this.options[Math.floor(Math.random() * Math.floor(this.options.length))]
   }
 }
 
@@ -410,6 +444,7 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
   explanationRequirement: string = "";
   unitOptions: UnitOptions;
   unitDic: UnitTable = {};
+  unitStrings: string[];
   requiredDomain: Domain | null;
   recommendedDomain: Domain | null;
 
@@ -433,6 +468,7 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
       helpJson,
     );
     this.unitOptions = unitOptions;
+    this.unitStrings = Object.keys(unitOptions)
     //Initializing error messages for all possible choice of units.
     Object.entries(unitOptions).forEach(([unitName, scalingFactor]) => {
       this.unitDic[unitName] = {
@@ -539,6 +575,12 @@ export class NumericFactorPermanent extends GeneralFactor<number> {
       return { status: "Warning", message: this.explanationRecommendation };
     }
     return { status: "Success", message: "" };
+  }
+
+  simulateValue(): string {
+    const lower: number=this.lowerRecommended ? this.lowerRecommended : ( this.upperRecommended ? Math.min(this.upperRecommended-0.1, 0) : 0)
+    const upper=this.upperRecommended ? this.upperRecommended : ( this.lowerRecommended ? Math.max(this.lowerRecommended+0.1,10) : 10)
+    return Number((lower+Math.random()*(upper-lower)).toPrecision(3)).toPrecision()
   }
 }
 
