@@ -104,6 +104,143 @@
         "recommendedDomain":{"min":0,"max":110},
         "requiredDomain": {"min":0},
         "derivables":{"OralContraceptiveStatus": {"Never used":0, "Former user":0}}
+    },
+    "RedMeat":{
+        "type":"number",
+        "longExplanation":"How much red meat (beef/pork/lamb) do you eat in a normal day",
+        "placeholder":"Grams",
+        "recommendedDomain":{"min":0, "max":500},
+        "requiredDomain":{"min":0},
+        "units":{"Grams":1.0,"Ounces":28.3495}
+    },
+    "HCV":{
+        "type":"string",
+        "longExplanation":"Are you infected with Hepatitis C",
+        "placeholder":"Choose Yes/No",
+        "initialValue":"Choose Yes/No",
+        "options":["Yes","No"]
+    },
+    "HIV":{
+        "type":"string",
+        "longExplanation":"Are you infected with HIV or AIDS",
+        "placeholder":"Choose Yes/No",
+        "initialValue":"Choose Yes/No",
+        "options":["Yes","No"]
+    },
+    "Diabetes":{
+        "type":"string",
+        "longExplanation":"Do you have diabetes",
+        "placeholder":"Choose Yes/No",
+        "initialValue":"Choose Yes/No",
+        "options":["Yes","No"]
+    },
+    "Smoking":{
+        "type":"string",
+        "longExplanation":"What is your history with smoking",
+        "placeholder":"Status",
+        "initialValue":"Status",
+        "options":["Never smoked","Former smoker", "Current smoker"]
+    },
+    "SmokingStopped":{
+        "type":"number",
+        "longExplanation":"What is your history with smoking",
+        "placeholder":"Years",
+        "recommendedDomain":{"min":0, "max":110},
+        "requiredDomain":{"min":0},
+        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}}
+    },
+    "SmokeTypicalAmount":{
+        "type":"number",
+        "longExplanation":"When you did smoke how much did you smoke in a normal day",
+        "placeholder":"Cigarettes",
+        "recommendedDomain":{"min":0, "max":40},
+        "requiredDomain":{"min":0},
+        "units":{"Cigarettes":1.0,"Packs":20.0},
+        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}}
+    },
+    "SmokeIntensity":{
+        "type":"number",
+        "longExplanation":"How much do you smoke in a normal day",
+        "placeholder":"Cigarettes",
+        "recommendedDomain":{"min":0, "max":40},
+        "requiredDomain":{"min":0},
+        "units":{"Cigarettes":1.0,"Packs":20.0},
+        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+
+    },
+    "SmokeDuration":{
+        "type":"number",
+        "longExplanation":"How much time has passed since you started smoking",
+        "placeholder":"Years",
+        "recommendedDomain":{"min":0, "max":110},
+        "requiredDomain":{"min":0},
+        "units":{"Years":1.0,"Months":0.083333333,"Days":0.00273785078},
+        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+    },
+    "SmokePastAmount":{
+        "type":"number",
+        "longExplanation":"During all your years smoking, what has been the average amount smoked in a normal day",
+        "placeholder":"Cigarettes",
+        "recommendedDomain":{"min":0, "max":40},
+        "requiredDomain":{"min":0},
+        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+    },
+    "IndoorTanning":{
+        "type":"number",
+        "longExplanation":"How much time have you spent in indoor tanning beds in your life",
+        "placeholder":"Hours",
+        "recommendedDomain":{"min":0, "max":60},
+        "requiredDomain":{"min":0}
+    },
+    "Race":{
+        "type":"string",
+        "longExplanation":"What race best describes your skin",
+        "placeholder":"Choose Race",
+        "initialValue":"Choose Race",
+        "options":["White","Black", "Asian","Pacific"]
+    },
+    "MaxDrinking":{
+        "type":"number",
+        "longExplanation":"In a normal week what is the highest amount of alcohol drunk during a sinle day",
+        "placeholder":"Drinks",
+        "recommendedDomain":{"min":0, "max":30},
+        "requiredDomain":{"min":0},
+        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol."
+    },
+    "Greens":{
+        "type":"number",
+        "longExplanation":"How much vegetables and fruit do you eat in a normal day",
+        "placeholder":"Number",
+        "recommendedDomain":{"min":0 },
+        "requiredDomain":{"min":0},
+        "units":{"Number":1.0,"Grams":0.01},
+        "helpJson":"Greens consist of both vegetables and fruits. A standard green weighs 100 grams."
+    },
+    "FamilyHistoryParkinson":{
+        "type":"string",
+        "longExplanation":"Does any person in your genetic family have or have had Parkinsons",
+        "placeholder":"Choose Yes/No",
+        "initialValue":"Choose Yes/No",
+        "options":["Yes","No"]
+    },
+    "PesticideExposure":{
+        "type":"number",
+        "longExplanation":"In how many days have you been exposed to pesticides",
+        "placeholder":"Number",
+        "recommendedDomain":{"min":0 ,"max":300},
+        "requiredDomain":{"min":0},
+        "helpJson":"Your are exposed to pesticides primarily when you apply it either in your garden or in a field."
+    },
+    "Depression":{
+        "type":"string",
+        "longExplanation":"Are your depressed now",
+        "placeholder":"Choose Yes/No",
+        "initialValue":"Choose Yes/No",
+        "options":["Yes","No"]
     }
+
+    
+    
+
 
 }
