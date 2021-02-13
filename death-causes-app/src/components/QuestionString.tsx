@@ -8,37 +8,19 @@ import {
   WARNING_COLOR,
   QuestionContext
 } from "./Question";
-import { InputValidity } from '../models/Factors';
+import { InputValidity } from '../models/FactorAbstract';
 import React from "react";
 import {Form} from "react-bootstrap";
-
 
 interface StringQuestionProps extends QuestionProps<string> {
   placeholder: string;
   inputvalidity: InputValidity;
   options: string[];
 }
-
-
-
 export default class SimpleStringQuestion extends React.PureComponent<
   StringQuestionProps,
   QuestionStates
 > {
-  constructor(props: StringQuestionProps) {
-    super(props);
-    this.state = {
-      ignore: false,
-    };
-  }
-
-  // handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
-  //   this.setState({ ignore: event.currentTarget.checked }, (): void => {
-  //     if (this.state.ignore) {
-  //       this.props.handleIgnoreFactor(this.props.name);
-  //     }
-  //   });
-  // }
 
   getBackgroundColor() {
     if (this.props.ignore) {
@@ -62,13 +44,11 @@ export default class SimpleStringQuestion extends React.PureComponent<
       color: this.getTextColor(),
     };
     let showmessage: boolean = false;
-    let errorMessageStyle: FormControlStyle = {};
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
       formControlStyle["border-color"] = WARNING_COLOR;
-      errorMessageStyle["color"] = WARNING_COLOR;
     }
-    return { formControlStyle, showmessage, errorMessageStyle };
+    return { formControlStyle, showmessage };
   }
 
   render() {
@@ -76,7 +56,6 @@ export default class SimpleStringQuestion extends React.PureComponent<
     const {
       formControlStyle,
       showmessage,
-      errorMessageStyle,
     } = this.getErrorStyles();
 
     return (
@@ -85,7 +64,7 @@ export default class SimpleStringQuestion extends React.PureComponent<
         phrasing={this.props.phrasing}
         handleIgnoreFactor={this.props.handleIgnoreFactor}
         featured={this.props.featured}
-        unitText=""
+        unitText={null}
         ignore={this.props.ignore}
         helpText={this.props.helpText}
         validityStatus={this.props.inputvalidity.status}

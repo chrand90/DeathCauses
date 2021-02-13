@@ -7,7 +7,7 @@ import {
   WARNING_COLOR,
   QuestionContext,
 } from "./Question";
-import { InputValidity } from "../models/Factors";
+import { InputValidity } from "../models/FactorAbstract";
 import React from "react";
 import { Form } from "react-bootstrap";
 import UnitPicker from "./UnitPicker";
@@ -23,9 +23,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
   NumericQuestionProps,
   QuestionStates
 > {
-  constructor(props: NumericQuestionProps) {
-    super(props);
-  }
 
   TextInputBackgroundColor() {
     if (this.props.ignore) {
@@ -35,55 +32,28 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     }
   }
 
-  // handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
-  //   this.setState({ ignore: event.currentTarget.checked }, (): void => {
-  //       this.props.handleIgnoreFactor(this.props.name, event.currentTarget.checked);
-  //   });
-  // }
-
   getErrorStyles() {
     let formControlStyle: FormControlStyle = {
       background: this.TextInputBackgroundColor(),
     };
     let showmessage: boolean = false;
-    let errorMessageStyle: FormControlStyle = {};
     if (this.props.inputvalidity.status === "Error") {
       showmessage = true;
-      //formControlStyle["border-width"]="4px";
       formControlStyle["border-color"] = ERROR_COLOR;
       formControlStyle["color"] = ERROR_COLOR;
-      errorMessageStyle["color"] = ERROR_COLOR;
     }
     console.log("this.state.ignore");
     console.log(this.props.ignore);
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
       formControlStyle["border-color"] = WARNING_COLOR;
-      errorMessageStyle["color"] = WARNING_COLOR;
     }
-    return { formControlStyle, showmessage, errorMessageStyle };
+    return { formControlStyle, showmessage };
   }
 
   compare(a:any,b:any){
     return String(a)+'==='+String(b)+': '+String(a===b)
   }
-
-  // shouldComponentUpdate(nextProps: Readonly<NumericQuestionProps>, nextState: Readonly<QuestionStates>, nextContext: any){
-  //   console.log("deciding whether to render " + this.props.name)
-  //   console.log('Props:');
-  //   console.log("featured "+this.compare(this.props.featured, nextProps.featured))
-  //   console.log("ignore "+this.compare(this.props.ignore, nextProps.ignore))
-  //   console.log("inputvalidity "+this.compare(this.props.inputvalidity, nextProps.inputvalidity))
-  //   console.log("windowWidth "+this.compare(this.props.windowWidth, nextProps.windowWidth))
-  //   console.log("unitOptions "+this.compare(this.props.unitOptions, nextProps.unitOptions))
-  //   console.log('States:');
-    
-    
-    
-    
-    
-  //   return true;
-  // }
 
   unitButtonOrText() {
     if (this.props.unitOptions.length > 0) {
@@ -93,7 +63,7 @@ export default class SimpleNumericQuestion extends React.PureComponent<
             this.props.handleUnitChange(this.props.name, newUnit)
           }
           options={this.props.unitOptions}
-          size={this.props.featured ? "" : "11px"}
+          size={""}
         >
           {this.props.placeholder}
         </UnitPicker>
@@ -109,7 +79,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     const {
       formControlStyle,
       showmessage,
-      errorMessageStyle,
     } = this.getErrorStyles();
 
     return (

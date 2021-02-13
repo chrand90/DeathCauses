@@ -3,7 +3,7 @@ import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { ButtonToolbar } from "reactstrap";
-import { InputValidity } from "../models/Factors";
+import { InputValidity } from "../models/FactorAbstract";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 
@@ -20,9 +20,6 @@ interface AskedQuestionProps {
 }
 
 class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
-  constructor(props: AskedQuestionProps) {
-    super(props);
-  }
 
   render() {
     return (
@@ -36,10 +33,9 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
             {this.props.factorName ? this.props.factorName : "No more questions"}
           </Card.Title>
         <div>
-          0
+          {""}
         </div>
         </div>
-          
         </Card.Header>
         <Card.Body>{this.props.children}</Card.Body>
         <Card.Footer>
@@ -82,6 +78,3 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
 }
 
 export default AskedQuestionFramed;
-
-//<Button>Skip to end</Button>
-//<Button onClick={this.props.onStartOver}>Start over</Button>
