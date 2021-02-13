@@ -89,7 +89,7 @@ class App extends React.Component<any, AppState> {
     return (
       <VizWindow
         factorAnswersSubmitted={this.state.factorAnswersSubmitted}
-        relationLinkData={this.relationLinkData}
+        relationLinkData={this.relationLinkData!}
         elementInFocus={this.state.elementInFocus}
         changeElementInFocus={this.changeFocus}
       />

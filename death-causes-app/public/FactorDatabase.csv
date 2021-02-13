@@ -1,30 +1,30 @@
-factorName,factorType,phrasing,placeholder,initialValue,recommendedDomain,requiredDomain,options
-BMI,number,BMI kg/m^2,BMI,,18-40,0-,
-Age,number,Age today,Years,,0-110,0-,
-Waist,number,Waist circumference cm,Centimeters around waist,,60-170,0-,
-Caffeine,number,Coffees per day,Number of cups,,0-10,0-,
-Fish,number,Fish per week,Servings (grams),,0-,0-,
-Vegetables,number,Vegetables per day,'Servings (100 grams),,0-,0-,
-Fluids,number,Fluids drunk per day ml,'mililiters of fluid',,0-,0-,
-HeadTrauma,number,Headtraumas in life,'Number of Head Traumas',,0-,0-,
-Drinking,number,Alcholic drinks per week,'Alcoholic drinks',,0-40,0-,
-Gender,string,Sex,Choose sex,Choose sex,,,Male_Female_Other
-OralContraceptiveTypicalAmmount,string,Ever taken oral contraceptives,Choose Yes/No,Choose Yes/No,,,Yes_No
-OralContraceptiveSinceStop,number,Time since taking oral contraceptives,Years,,0-200,0-,,
-RedMeat,number,Red meat per day,grams,,0-
-HCVHistory,string,HCV infected,Status,Status,,,Yes_No
-HIVHistory,string,HIV infected,Status,Status,,,Yes_No
-Diabetes,string,Diabetes patient,Status,Status,,,Yes_No
-SmokeSinceStop,number,Time since stopped smoking,Years,,0-,0-,
-SmokeTypicalAmmount,number,Cigarettes per day when smoking,Cigarettes,,0-60,0-,
-SmokeIntensity,number,Cigarettes per day today,Cigarettes,,0-60,0-,
-SmokeCumulative,number,Cigarette-years smoked,Cig-years,,0-800,0-,
-IndoorTanning,number,Indoor tanning in life,Hours,,0-60,0-,
-Race,string,Race,Race,Race,,,White_Asian_Pacific_Black
-MaxDrinking,number,Peak drinking in week,Drinks,,0-15,0-,
-Greens,number,Greens per day,Greens,,0-,0-
-FamilyHistoryParkinson,string,Parkinsons in family,Status,Status,,,Yes_No
-PesticideExposureDays,number,Days with pesticides in life,Days,,0-600,0-,
-Depression,string,Depressed now,Status,Statues,,,Yes_No
-PhysicalActivityTotal,number
-PhysicalActivityHard,number
+factorName,factorType,shortExplanation,longExplanation,placeholder,initialValue,recommendedDomain,requiredDomain,options,derivableStates
+BMI,number,BMI,What is your BMI,kg/m^2,,18-40,0-,,
+Age,number,Age today,How old are you today,Years,,0-110,0-,Years=1_Days=0.00273785078,
+Waist,number,Circumference,What is the circumference of your waist,Centimeters,,60-170,0-,Centimeters=1_Inches=2.54,
+Caffeine,number,Per day,How much caffeine do you consume in a normal day,Cups of coffee,,0-10,0-,,
+Fish,number,Per week,How much fish do you eat in a normal week,Servings,,0-,0-,,
+Vegetables,number,Per day,How much vegetable do you eat in a normal day,Servings,,0-,0-,,
+Fluids,number,Per day,How much liquid do you drink in a normal day,ml,,0-,0-,,
+HeadTrauma,number,In lifetime,How many head traumas have you had in your entire lifetime,Number,,0-,0-,,
+Drinking,number,Per week,How much alcohol do you drink in a normal week,Drinks,,0-40,0-,,
+Sex,string,Biological,What is your biological sex?,Choose sex,Choose sex,,,Male_Female_Other,
+OralContraceptivesStatus,string,Status,"What is your history with oral contraceptives",Status,Status,,,Former user_Current user_Never used,Sex=Male=Never used
+OralContraceptivesStopped,number,Time since you stopped,How much time has passed since you stopped taking oral contraceptives,Years,,0-,0-,,OralContraceptivesStatus=Never used=0_OralContraceptiveStatus=Former user=0
+OralContraceptivesStop,number,Time until you stop,After how much time will you stop taking oral contraceptives,Years,,0-20,0-,,OralContraceptivesStatus=Never used=0_OralContraceptiveStatus=Current user=0
+RedMeat,number,Beef/lamb/pork per day,How much red meat (beef/pork/lamb) do you eat per day,grams,,0-,0-,,
+HCV,string,Infected,Are you infected with Hepatitis C,Choose Yes/No,Choose Yes/No,,,Yes_No,
+HIV,string,Infected,Are you infected with HIV or AIDS,Choose Yes/No,Choose Yes/No,,,Yes_No,
+Diabetes,string,Have diabetes,Do you have diabetes,Choose Yes/No,Choose Yes/No,,,Yes_No,
+SmokingStatus,string,Status,What is your history with smoking,Status,Status,,,Former smoker_Current smoker_Never smoked,
+SmokingStopped,number,Time since you stopped,How much time has passed since you stopped smoking,Years,,0-,0-,,SmokingStatus=Current user=0_SmokingStatus=Never smoked=0
+SmokeTypicalAmount,number,Amount smoked per day,How much did you smoke in a normal day when you were a smoker,Cigarettes,,0-60,0-,,SmokingStatus=Current user=0_SmokingStatus=Never smoked=0
+SmokeIntensity,number,Amount you smoke per day,How much do you smoke in a normal day,Cigarettes,,0-60,0-,,SmokingStatus=Former user=0_SmokingStatus=Never smoked=0
+SmokingTotal,number,Amount smoked in total,How much have you smoked in your life up to this day,Cig-years,,0-800,0-,,SmokingStatus=Never smoked=0
+IndoorTanning,number,Total time,How much time have you spent in indoor tanning beds in your entire lifetime,Hours,,0-60,0-,,
+Race,string,In relation to skin,What race best describes your skin,Choose Race,Choose Race,,,White_Asian_Pacific_Black,
+MaxDrinking,number,Max in a day per week,"In a normal week, what is highest amount of alcohol you drink in a single day",Drinks,,0-15,0-,,
+Greens,number,Vegetables and fruits per day,How much vegetable and fruit do you eat in a normal day?,Servings,,0-,0-,,
+FamilyHistoryParkinson,string,Parkinsons in family,Does any person in your genetic family have or have had Parkinsons,Choose Yes/No,Choose Yes/No,,,Yes_No,
+PesticideExposureDays,number,Days with pesticides in life,How many days have you been exposed to pesticides in your entire lifetime,Days,,0-600,0-,,
+Depression,string,Today or in the past,Do you have or have you ever had depression?,Choose Yes/No,Choose Yes/No,,,Yes_No,

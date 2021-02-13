@@ -1,62 +1,134 @@
-import React, { ChangeEvent, ReactElement } from "react";
-import "./QuestionMenu.css";
+import { json } from "d3";
+import React, { ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
-import { Row, Col, Form } from "react-bootstrap";
-import Factors from "../models/Factors";
-import { SimpleNumericQuestion, SimpleStringQuestion } from "./Question";
-import { FactorAnswers, InputValidity } from "../models/Factors";
-import { Label } from "reactstrap";
+import { Label, Spinner } from "reactstrap";
+import StringFactorPermanent from "../models/FactorString";
+import NumericFactorPermanent from "../models/FactorNumber";
+import GeneralFactor, { InputValidity } from "../models/FactorAbstract";
+import InputJson from '../models/FactorJsonInput';
+import Factors, {
+  FactorAnswers,
+  FactorAnswerUnitScalings,
+  FactorMaskings,
+} from "../models/Factors";
 import HelpJsons from "../models/HelpJsons";
+import "./QuestionMenu.css";
+import SimpleNumericQuestion from "./QuestionNumber";
+import SimpleStringQuestion from "./QuestionString";
+import AskedQuestionFramed from "./AskedQuestionFrame";
 
-interface I_QuestionMenu {
-  factorAnswers: FactorAnswers;
-  factors: Factors;
-  helpjsons: HelpJsons;
-  handleChange: (name: string, value: boolean | string | number | null) => void;
-  handleSuccessfullSubmit: () => void;
-  handleIgnoreFactor: (factorname: string) => void;
+interface QuestionMenuProps {
+  handleSuccessfulSubmit: (f: FactorAnswers) => void;
 }
 
-interface I_QuestionMenuStates {
+interface QuestionMenuStates {
   validities: InputValidities;
-  updateCycle: number;
+  factorAnswers: FactorAnswers;
+  factorAnswerScales: FactorAnswerUnitScalings;
+  activelyIgnored: ignoreList;
+  hasBeenAnswered: string[];
+  answeringProgress: "answering" | "finished";
+  currentFactor: string;
+  windowWidth: number;
+  factorMaskings: FactorMaskings;
 }
 
 interface InputValidities {
   [key: string]: InputValidity;
 }
 
+interface ignoreList {
+  [key: string]: boolean;
+}
+
+function getViewport() {
+  const width = Math.max(
+    document.documentElement.clientWidth,
+    window.innerWidth || 0
+  );
+  return width;
+}
+
 class QuestionMenu extends React.Component<
-  I_QuestionMenu,
-  I_QuestionMenuStates
+  QuestionMenuProps,
+  QuestionMenuStates
 > {
-  constructor(props: I_QuestionMenu) {
+  factors: Factors;
+  helpjsons: HelpJsons;
+  factorOrder: string[];
+
+  constructor(props: QuestionMenuProps) {
     super(props);
+    this.factorOrder = []; 
     this.state = {
-      validities: this.initialize_validities(this.props.factorAnswers),
-      updateCycle: 0,
+      validities: {},
+      factorAnswers: {},
+      factorAnswerScales: {},
+      hasBeenAnswered: [],
+      answeringProgress: "answering",
+      currentFactor: "",
+      activelyIgnored: {},
+      windowWidth: getViewport(),
+      factorMaskings: {},
     };
+    this.factors = new Factors(null);
+    this.helpjsons = {};
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleValidityAndChange = this.handleValidityAndChange.bind(this);
-    this.handleValidityAndIgnoreFactor = this.handleValidityAndIgnoreFactor.bind(
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
+    this.previousQuestion = this.previousQuestion.bind(this);
+    this.startOverQuestionnaire = this.startOverQuestionnaire.bind(this);
+    this.handleUnitChange = this.handleUnitChange.bind(this);
+    this.updateWidth = this.updateWidth.bind(this);
+    this.finishQuestionnaire = this.finishQuestionnaire.bind(this);
+    this.insertRandom = this.insertRandom.bind(
       this
     );
-    // this.handleCallback = this.handleCallback.bind(this)
   }
 
-  initialize_validities(factorAnswers: FactorAnswers): InputValidities {
+  updateWidth() {
+    this.setState({ windowWidth: getViewport() });
+  }
+
+  componentDidMount() {
+    this.loadFactorNames();
+    window.addEventListener("resize", this.updateWidth);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("resize", this.updateWidth);
+  }
+
+  loadFactorNames() {
+    setTimeout(
+      () =>
+        Promise.all([json("FactorDatabase.json")]).then((data) => {
+          this.factors = new Factors(data[0] as InputJson);
+          this.factorOrder = this.factors.getRandomFactorOrder();
+          this.setState(
+            {
+              factorAnswers: this.factors.getFactorsAsStateObject(),
+              currentFactor: this.factorOrder[0],
+            },
+            () => this.initializeValidities()
+          );
+        }),
+      500
+    );
+  }
+
+  initializeValidities() {
     let res: InputValidities = {};
-    for (let factorName in factorAnswers) {
-      res[factorName] = this.props.factors.getInputValidity(
+    for (let factorName in this.state.factorAnswers) {
+      res[factorName] = this.factors.getInputValidity(
         factorName,
-        factorAnswers[factorName] as string
+        this.state.factorAnswers[factorName] as string
       );
     }
-    return res;
+    this.setState({ validities: res });
   }
 
-  handleSubmit(event: React.FormEvent) { //TODO: brug en bedre måde at tjekke validites.
-    event.preventDefault();
+  checkAllFormsForErrorAndMissing() {
     let submittable = true;
     let validitiesToBeChanged: InputValidities = {};
     for (let factorName in this.state.validities) {
@@ -65,140 +137,375 @@ class QuestionMenu extends React.Component<
       if (validity.status === "Error") {
         submittable = false;
       }
-      if (validity.status === "Missing") {
+      if (
+        validity.status === "Missing" &&
+        !(
+          factorName in this.state.activelyIgnored &&
+          this.state.activelyIgnored[factorName]
+        ) &&
+        (this.state.hasBeenAnswered.includes(factorName) ||
+          this.state.currentFactor === factorName)
+      ) {
         validitiesToBeChanged[factorName] = {
           message: "Ignored by the model",
-          status: "Missing",
+          status: "Warning",
         };
       }
     }
+    return { missingWarnings: validitiesToBeChanged, submittable: submittable };
+  }
+
+  isSubmittable() {
+    return Object.values(this.state.validities).every((d: InputValidity) => {
+      return d.status !== "Error";
+    });
+  }
+
+  handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    const {
+      missingWarnings,
+      submittable,
+    } = this.checkAllFormsForErrorAndMissing();
     if (submittable) {
       this.setState(
-        (prevState: { validities: InputValidities; updateCycle: number }) => {
+        (prevState: QuestionMenuStates) => {
+          let newAnswerProgress = prevState.answeringProgress;
+          let newHasBeenAnswered = [...prevState.hasBeenAnswered];
+          let newCurrentFactor = prevState.currentFactor;
+          while (
+            newAnswerProgress === "answering" &&
+            (newCurrentFactor in prevState.factorMaskings ||
+              newCurrentFactor === prevState.currentFactor)
+          ) {
+            newHasBeenAnswered.push(newCurrentFactor);
+            if (newHasBeenAnswered.length === this.factorOrder.length) {
+              newAnswerProgress = "finished";
+              newCurrentFactor = "";
+            } else {
+              newCurrentFactor = this.factorOrder[newHasBeenAnswered.length];
+            }
+          }
           return {
             validities: {
               ...prevState.validities,
-              ...validitiesToBeChanged,
+              ...missingWarnings,
             },
-            updateCycle: prevState.updateCycle + 1,
+            hasBeenAnswered: newHasBeenAnswered,
+            answeringProgress: newAnswerProgress,
+            currentFactor: newCurrentFactor,
           };
         },
         () => {
-          console.log(this.state.validities);
-          this.props.handleSuccessfullSubmit();
+          this.props.handleSuccessfulSubmit(this.state.factorAnswers);
         }
       );
     }
   }
 
-  //Overvej at flytte denne op i App.tsx for at undgå dobbeltrendering
-  handleValidityAndChange(ev: ChangeEvent<HTMLInputElement>): void {
-    var value: string | boolean;
-    const { name, type } = ev.currentTarget;
-    type === "checkbox"
-      ? (value = ev.currentTarget.checked)
-      : (value = ev.currentTarget.value);
-    this.setState(
-      (prevState: { validities: InputValidities }) => {
-        return {
-          validities: {
-            ...prevState.validities,
-            [name]: this.props.factors.getInputValidity(name, value),
-          },
-        };
-      },
-      () => {
-        this.props.handleChange(name, value);
+  redoAllValidities(): void {
+    this.setState((prevState: QuestionMenuStates) => {
+      let new_validities: InputValidities = {};
+      Object.entries(prevState.factorAnswers).forEach(
+        ([factorname, factorval]) => {
+          new_validities[factorname] = this.factors.getInputValidity(
+            factorname,
+            factorval as string,
+            factorname in prevState.factorAnswerScales
+              ? prevState.factorAnswerScales[factorname].unitName
+              : undefined
+          );
+        }
+      );
+      return {
+        validities: new_validities,
+      };
+    });
+  }
+
+  handleInputChange(ev: ChangeEvent<HTMLInputElement>): void {
+    const { name } = ev.currentTarget;
+    const value = ev.currentTarget.value;
+
+    this.setState((prevState: QuestionMenuStates) => {
+      const newFactorAnswers = { ...prevState.factorAnswers, [name]: value };
+      const possiblyNewMasks: FactorMaskings | "nothing changed" = this.factors.updateMasked(
+        newFactorAnswers,
+        name,
+        prevState.factorMaskings
+      );
+      let newMasks: any;
+      if (possiblyNewMasks === "nothing changed") {
+        newMasks = {};
+      } else {
+        newMasks = { factorMaskings: possiblyNewMasks };
       }
+      return {
+        validities: {
+          ...prevState.validities,
+          [name]: this.factors.getInputValidity(
+            name,
+            value,
+            name in prevState.factorAnswerScales
+              ? prevState.factorAnswerScales[name].unitName
+              : undefined
+          ),
+        },
+        factorAnswers: newFactorAnswers,
+        ...newMasks,
+      };
+    });
+  }
+
+  handleIgnoreFactor(e: React.ChangeEvent<HTMLInputElement>): void {
+    const { name } = e.currentTarget;
+    const factorname = name;
+    const value = e.currentTarget.checked;
+    this.setState((prevState: QuestionMenuStates) => {
+      return {
+        validities: {
+          ...prevState.validities,
+          [factorname]: this.factors.getInputValidity(factorname, ""),
+        },
+        factorAnswers: {
+          ...prevState.factorAnswers,
+          [factorname]: "",
+        },
+        activelyIgnored: {
+          ...prevState.activelyIgnored,
+          [factorname]: value,
+        },
+      };
+    });
+  }
+
+  handleUnitChange(name: string, newUnitName: string): void {
+    this.setState((prevState: QuestionMenuStates) => {
+      return {
+        factorAnswerScales: {
+          ...prevState.factorAnswerScales,
+          [name]: {
+            unitName: newUnitName,
+            scale: this.factors.getScalingFactor(name, newUnitName),
+          },
+        },
+        validities: {
+          ...prevState.validities,
+          [name]: this.factors.getInputValidity(
+            name,
+            this.state.factorAnswers[name] as string,
+            newUnitName
+          ),
+        },
+      };
+    });
+  }
+
+  getHelpText(factorName: string): string {
+    return this.factors.getHelpJson(factorName);
+  }
+
+  getQuestion(
+    factorName: string,
+    factor: GeneralFactor<string | boolean | number>,
+    featured: boolean = false
+  ) {
+    switch (factor.factorType) {
+      case "number": {
+        return (
+          <SimpleNumericQuestion
+            key={factorName}
+            name={factorName}
+            factorAnswer={this.state.factorAnswers[factorName] as number}
+            phrasing={factor.phrasing}
+            unitOptions={(factor as NumericFactorPermanent).unitStrings}
+            handleChange={this.handleInputChange}
+            handleIgnoreFactor={this.handleIgnoreFactor}
+            inputvalidity={this.state.validities[factorName]}
+            helpText={this.getHelpText(factorName)}
+            featured={featured}
+            handleUnitChange={this.handleUnitChange}
+            ignore={
+              factorName in this.state.activelyIgnored
+                ? this.state.activelyIgnored[factorName]
+                : false
+            }
+            windowWidth={this.state.windowWidth}
+            placeholder={
+              factorName in this.state.factorAnswerScales
+                ? this.state.factorAnswerScales[factorName].unitName
+                : factor.placeholder
+            }
+          />
+        );
+      }
+      case "string": {
+        return (
+          <SimpleStringQuestion
+            key={factorName}
+            name={factorName}
+            placeholder={factor.placeholder}
+            factorAnswer={this.state.factorAnswers[factorName] as string}
+            phrasing={factor.phrasing}
+            options={(factor as StringFactorPermanent).options}
+            handleChange={this.handleInputChange}
+            handleIgnoreFactor={this.handleIgnoreFactor}
+            helpText={this.getHelpText(factorName)}
+            inputvalidity={this.state.validities[factorName]}
+            featured={featured}
+            ignore={
+              factorName in this.state.activelyIgnored
+                ? this.state.activelyIgnored[factorName]
+                : false
+            }
+            windowWidth={this.state.windowWidth}
+          />
+        );
+      }
+      default: {
+        break;
+      }
+    }
+  }
+
+  startOverQuestionnaire() {
+    this.setState(
+      {
+        hasBeenAnswered: [],
+        currentFactor: this.factorOrder[0],
+        answeringProgress: "answering",
+      },
+      () => this.redoAllValidities()
     );
   }
 
-  handleValidityAndIgnoreFactor(factorname: string): void {
-    this.setState(
-      (prevState: { validities: InputValidities }) => {
-        return {
-          validities: {
-            ...prevState.validities,
-            [factorname]: this.props.factors.getInputValidity(factorname, ""),
-          },
-        };
-      },
-      () => {
-        this.props.handleIgnoreFactor(factorname);
+  previousQuestion() {
+    this.setState((previousState: QuestionMenuStates) => {
+      let i = previousState.hasBeenAnswered.length - 1;
+      while (
+        previousState.hasBeenAnswered[i] in this.state.factorMaskings &&
+        i > 0
+      ) {
+        i = i - 1;
       }
+      const newCurrentFactor = previousState.hasBeenAnswered[i];
+      return {
+        currentFactor: newCurrentFactor,
+        hasBeenAnswered: previousState.hasBeenAnswered.slice(0, i),
+        answeringProgress: "answering",
+        validities: {
+          ...previousState.validities,
+          [newCurrentFactor]: this.factors.getInputValidity(
+            newCurrentFactor,
+            previousState.factorAnswers[newCurrentFactor] as string,
+            newCurrentFactor in previousState.factorAnswerScales
+              ? previousState.factorAnswerScales[newCurrentFactor].unitName
+              : undefined
+          ),
+        },
+      };
+    });
+  }
+
+  finishQuestionnaire() {
+    this.setState({
+      answeringProgress: "finished",
+      hasBeenAnswered: this.factorOrder,
+      currentFactor: "",
+    });
+  }
+
+  insertRandom() {
+    const {
+      factorAnswers,
+      factorMaskings,
+    } = this.factors.simulateFactorAnswersAndMaskings();
+    this.setState(
+      {
+        answeringProgress: "finished",
+        hasBeenAnswered: this.factorOrder,
+        currentFactor: "",
+        factorAnswers: factorAnswers,
+        factorMaskings: factorMaskings,
+      },
+      () => this.redoAllValidities()
     );
   }
 
-  // handleCallback(event) {
-  //   this.props.handleChange(event)
-  // }
+  getCounter() {
+    let denominator =
+      this.factorOrder.length - Object.keys(this.state.factorMaskings).length;
+    let numerator =
+      this.state.hasBeenAnswered.length -
+      this.state.hasBeenAnswered.filter((factorAnswer) => {
+        return factorAnswer in this.state.factorMaskings;
+      }).length +
+      1;
+    if (numerator > denominator) {
+      return denominator + "/" + denominator;
+    }
+    return numerator + "/" + denominator;
+  }
 
-  // handleCallback2 = (event) => {
-  //   this.props.handleChange(event)
-  // }
+  getCurrentFactor() {
+    return Object.keys(this.state.factorAnswers).find((factorName: string) => {
+      return !(factorName in this.state.hasBeenAnswered);
+    });
+  }
 
-  getHelpText(factorName:string):string{
-    return (
-      factorName in this.props.helpjsons
-                  ? this.props.helpjsons[factorName].join("")
-                  : "No help available"
-    )
+  getQuestionToAnswer() {
+    if (this.state.answeringProgress === "finished") {
+      return (
+        <AskedQuestionFramed
+          factorName={undefined}
+          validity={undefined}
+          onSubmit={this.handleSubmit}
+          previousPossible={this.state.hasBeenAnswered.length > 0}
+          onPrevious={this.previousQuestion}
+          onStartOver={this.startOverQuestionnaire}
+          onFinishNow={this.finishQuestionnaire}
+          onFinishRandomly={this.insertRandom}
+          leftCornerCounter={this.getCounter()}
+        />
+      );
+    }
+    if (this.state.currentFactor) {
+      return (
+        <AskedQuestionFramed
+          factorName={this.state.currentFactor}
+          validity={this.state.validities[this.state.currentFactor]}
+          onSubmit={this.handleSubmit}
+          previousPossible={this.state.hasBeenAnswered.length > 0}
+          onPrevious={this.previousQuestion}
+          onStartOver={this.startOverQuestionnaire}
+          onFinishNow={this.finishQuestionnaire}
+          onFinishRandomly={this.insertRandom}
+          leftCornerCounter={this.getCounter()}
+        >
+          {this.getQuestion(
+            this.state.currentFactor,
+            this.factors.factorList[this.state.currentFactor],
+            true
+          )}
+        </AskedQuestionFramed>
+      );
+    }
+    return "Something went wrong";
   }
 
   renderQuestionList() {
-    let factorAnswers = this.props.factorAnswers;
-    //this should make a list of questions. At its disposal, it has the this.props.factor_database and this.props.factor_answers.
-    const submittable: boolean = Object.values(this.state.validities).every(
-      (d: InputValidity) => {
-        return d.status !== "Error";
-      }
-    );
-    console.log(submittable);
-    console.log(this.state.validities);
-    console.log("render QuestionMenu");
-    const questionlist = Object.entries(this.props.factors.factorList).map(
+    const submittable: boolean = this.isSubmittable();
+    const questionList = Object.entries(this.factors.factorList).map(
       ([factorName, factor]) => {
-        switch (factor.factorType) {
-          case 'number': {
-            return (
-              <SimpleNumericQuestion
-              key={factorName}
-              name={factorName}
-              placeholder={factor.placeholder}
-              factorAnswer={this.props.factorAnswers[factorName] as number}
-              phrasing={factor.phrasing}
-              handleChange={this.handleValidityAndChange}
-              handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
-              inputvalidity={this.state.validities[factorName]}
-              updateCycle={this.state.updateCycle}
-              helpText={this.getHelpText(factorName)}
-            />
-            );
-          }
-          case 'string': {
-            return (
-              <SimpleStringQuestion
-                key={factorName}
-                name={factorName}
-                placeholder={factor.placeholder}
-                factorAnswer={this.props.factorAnswers[factorName] as string}
-                phrasing={factor.phrasing}
-                options={factor.options}
-                handleChange={this.handleValidityAndChange}
-                handleIgnoreFactor={this.handleValidityAndIgnoreFactor}
-                helpText={this.getHelpText(factorName)}
-                updateCycle={this.state.updateCycle}
-                inputvalidity={this.state.validities[factorName]}
-                />
-            )
-          }
-          default: {
-            break
-          }
+        if (
+          this.state.hasBeenAnswered.includes(factorName) &&
+          !(factorName in this.state.factorMaskings)
+        ) {
+          return this.getQuestion(factorName, factor);
         }
+        return null 
       }
     );
-    console.log(questionlist);
     return (
       <div>
         <p>
@@ -206,119 +513,37 @@ class QuestionMenu extends React.Component<
           and expected lifespan
         </p>
         <form noValidate onSubmit={this.handleSubmit}>
-
-        <div>
-            <div>
+          <div>
               <Button variant="primary" type="submit" disabled={!submittable}>
                 Compute
               </Button>
-            </div>
-            <div>
               {submittable ? (
                 ""
               ) : (
                 <Label className="errorLabel">*Fix inputs</Label>
               )}
-            </div>
           </div>
 
-          {questionlist}
-
-          {/*<Form.Row>
-              <Form.Label column sm={4}>
-                Fish consumed / week</Form.Label>
-              <Col>
-                <Form.Control type="text" placeholder="grams of fish" name="fish" value={factorAnswers.fish} onChange={this.props.handleChange} />
-              </Col>
-            </Form.Row>
-            <Form.Row>
-              <Form.Label column sm={4}>
-                Waist circumference</Form.Label>
-              <Col>
-                <Form.Control type="text" placeholder="waist cm" name="waist" value={factorAnswers.waist} onChange={this.props.handleChange} />
-              </Col>
-            </Form.Row>
-            <Form.Row>
-              <Form.Label column sm={4}>
-                BMI</Form.Label>
-              <Col>
-                <Form.Control type="text" placeholder="Age" name="age" value={factorAnswers.age} onChange={this.props.handleChange} />
-              </Col>
-            </Form.Row>
-            <Form.Row>
-              <Form.Label column sm={4}>
-                Gender</Form.Label>
-              <Col>
-                <Form.Control as="select" placeholder="Gender" name="gender" value={factorAnswers.gender} onChange={this.props.handleChange}>
-                  <option selected disabled>Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </Form.Control>
-              </Col>
-            </Form.Row>
-            <Form.Row>
-              <Form.Label column sm={4}>
-                Diabetes</Form.Label>
-              <Col>
-                <Form.Control type="checkbox" name="diabetes" checked={factorAnswers.diabetes} onChange={this.props.handleChange} />
-              </Col>
-            </Form.Row>*/}
-
-
-          {/* <label>Gender
-      <input type="radio" id="male" name="gender" value="Male" />
-            <label htmlFor="male">Male</label> <br />
-            <input type="radio" id="female" name="gender" value="Female" />
-            <label htmlFor="female">Female</label> <br />
-            <input type="radio" id="other" name="gender" vlaue="Other" />
-            <label htmlFor="other">Other</label> <br />
-          </label>
-          <br />
-      Age:
-      <input type="date" />
-          <br />
-          <br />
-          <br />
-          <div class="line">
-            <label for="input">What is your BMI?</label>
-            <div>
-              <input type="text" placeholder="BMI: 18-25" name="bmi" value={this.props.bmi} onChange={this.props.handleChange} />
-            </div>
+          <div
+            style={
+              this.state.answeringProgress === "finished"
+                ? {}
+                : { height: "330px" }
+            }
+          >
+            {this.getQuestionToAnswer()}
           </div>
-          <br />
-          <br />
-          <br />
-          <br />
 
-      Do you have depression?
-
-      <input type="radio" id="yes" name="depression" value="yes" />
-          <label htmlFor="yes">Yes</label>
-
-          <input type="radio" id="no" name="depression" value="no" />
-          <label htmlFor="no">No</label>
-          <br />
-
-
-      Do you drink alcohol?
-
-      <input type="radio" id="yes" name="alcohol" value="yes" />
-          <label htmlFor="yes">Yes</label>
-
-          <input type="radio" id="no" name="alcohol" value="no" />
-          <label htmlFor="no">No</label>
-          <br />
-          <li>If yes, how much do you maximum drink in a week?</li>
-          <br />
-      Your waist circumference?
-      <input type="text" name="waist" placeholder="cm" value={this.props.waist} onChange={this.handleCallback} /> */}
+          {questionList}
         </form>
       </div>
     );
   }
 
   render() {
+    if (Object.keys(this.state.validities).length === 0) {
+      return <Spinner></Spinner>;
+    }
     return (
       <div className="questionmenu">
         <h4> Risk factors </h4>
