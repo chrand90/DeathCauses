@@ -7,7 +7,7 @@ import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
 
 interface VizWindowProps {
-  factorAnswers: FactorAnswers | null;
+  factorAnswersSubmitted: FactorAnswers | null;
   relationLinkData: RelationLinks;
   elementInFocus: string;
   changeElementInFocus: (d: string) => void;
