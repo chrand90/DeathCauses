@@ -9,10 +9,54 @@ from data_frame import initialize_data_frame_by_columns
 
 from age_numbers import get_age_distribution, get_age_totals # to adjust the risk ratio to the age intervals
 
-def integrate_all_in_folder(age_intervals, folder):
+DEATHCAUSE_CATEGORY="Death cause category"
+DEATHCAUSE="Death cause"
+
+def remove_duplicates_and_Age(listi):
+    if "Age" in listi:
+        listi.remove("Age")
+    return list(set(listi))
+
+def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages):
+    riskfactorgroup = {}
+    normalizers, RRs, string_interaction_name = integrate_one(rr_dir, age_intervals, age_distribution)
+
+    normalizer_age_object = initialize_data_frame_by_columns(Age=Ages, values_list=normalizers)
+    print('normalizer age object -----------------------------------------------------')
+    print(normalizer_age_object)
+    riskfactorgroup['normalisingFactors'] = normalizer_age_object.get_as_standard_age_prevalences()
+    riskfactorgroup['interactionFunction'] = string_interaction_name
+    riskratiotables = []
+    riskfactor_names=[]
+
+    for RR in RRs:
+        RRlist = RR.get_as_list_of_lists()
+        factor_names = RR.get_FactorNames()
+        interpolated_RR_or_empty = interpolate_one_spline(RR)
+        if interpolated_RR_or_empty is None:  # checking if there was something to interpolate
+            interpolated_RR = []
+        else:
+            interpolated_RR = interpolated_RR_or_empty.get_as_list_of_lists()
+        riskratiotable = {'riskRatioTable': RRlist,
+                          'riskFactorNames': factor_names,
+                          'interpolationTable': interpolated_RR}
+        riskratiotables.append(riskratiotable)
+        riskfactor_names.extend(factor_names)
+    riskfactorgroup['riskRatioTables'] = riskratiotables
+    return riskfactorgroup, remove_duplicates_and_Age(riskfactor_names)
+
+def integrate_and_interpolate_all(age_intervals, folder):
     '''
     input: age_intervals: list of tuples of intervals with start and end. 
     '''
+
+    relations=get_cause_hierarchy(folder)
+    cause_dirs=search_for_causes(folder)
+    rr_dirs=search_for_rrs(folder)
+
+    for disease, d_dic in relations.items():
+        print(disease, ": ", d_dic["type"])
+
     
     writtenF_dirs=search_for_writtenF_directories(folder)
     
@@ -20,39 +64,29 @@ def integrate_all_in_folder(age_intervals, folder):
     
     Ages=age_distribution.get_col("Age")
     
-    to_be_jsoned={}
-    for ICD_dir,rr_dirs in writtenF_dirs:
-        cause_name=extract_cause_name(ICD_dir)
-        rr_norms=[]
+    death_causes={}
+    death_cause_categories={}
+    for cause_dir in cause_dirs:
+        cause_name = extract_cause_name(cause_dir)
+        frequencies = getFrequencies(cause_dir + os.sep)  # , total_population)
+        death_causes[cause_name] = {'Age': frequencies.get_as_standard_age_prevalences(),
+                                    'RiskFactorGroups':[]}
+
+    for disease, d_dic in relations.items():
+        if d_dic['type']==DEATHCAUSE_CATEGORY:
+            death_cause_categories[disease] = {'RiskFactorGroups':[]}
+
+    for disease, rr_dirs in rr_dirs.items():
         for rr_dir in rr_dirs:
-            #print rr_dir
-            riskfactorgroup={}
-            normalizers, RRs, string_interaction_name=integrate_one(rr_dir,age_intervals, age_distribution)
-            
-            normalizer_age_object=initialize_data_frame_by_columns( Age=Ages, values_list=normalizers)
-            print('normalizer age object -----------------------------------------------------')
-            print(normalizer_age_object)
-            riskfactorgroup['normalisingFactors']=normalizer_age_object.get_as_standard_age_prevalences()
-            riskfactorgroup['interactionFunction']=string_interaction_name
-            riskratiotables=[]
-            for RR in RRs:
-                RRlist=RR.get_as_list_of_lists()
-                factor_names=RR.get_FactorNames()
-                interpolated_RR_or_empty=interpolate_one_spline(RR)
-                if interpolated_RR_or_empty is None: #checking if there was something to interpolate
-                    interpolated_RR=[]
-                else:
-                    interpolated_RR=interpolated_RR_or_empty.get_as_list_of_lists()
-                riskratiotable={'riskRatioTable':RRlist,
-                                'riskFactorNames':factor_names,
-                                'interpolationTable':interpolated_RR}
-                riskratiotables.append(riskratiotable)
-            riskfactorgroup['riskRatioTables']=riskratiotables            
-            rr_norms.append(riskfactorgroup)
-        frequencies=getFrequencies(ICD_dir+os.sep)#, total_population)
-        to_be_jsoned[cause_name]={'Age':frequencies.get_as_standard_age_prevalences(),
-                                  'RiskFactorGroups':rr_norms}
-    return to_be_jsoned
+            print(rr_dir)
+            rr_norm, riskfactor_names=integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
+            relations[disease]["ancestors"].extend(riskfactor_names)
+            if disease in death_causes:
+                death_causes[disease]["RiskFactorGroups"].append(rr_norm)
+            else:
+                death_cause_categories[disease]['RiskFactorGroups'].append(rr_norm)
+
+    return relations, death_causes, death_cause_categories
             
 def extract_cause_name(ICD_dir):
     return ICD_dir.split(os.sep)[-2]
@@ -61,8 +95,10 @@ def extract_cause_name(ICD_dir):
 def run(age_intervals=None):
     if age_intervals is None:
         age_intervals= get_age_totals()[0]
-    transform_to_json(integrate_all_in_folder(age_intervals, "Causes"), "Causes.json")
-    transform_to_json(get_cause_hierarchy('Causes'), 'CauseHierarchy.json')
+    relations, death_causes, death_cause_categories=integrate_and_interpolate_all(age_intervals, "Causes")
+    transform_to_json(relations, "CauseRelations.json")
+    transform_to_json(death_causes, "Causes.json")
+    transform_to_json(death_cause_categories, "CauseCategories.json")
     #transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
 
@@ -128,6 +164,28 @@ def getAllCategories(listOfDataframes):
 # def similarize_rrs(rrs):
 #     return rrs
 
+def search_for_causes(folder):
+    cause_dirs=[]
+    list_of_files=os.walk(os.path.join(os.pardir, "Database", folder))
+    for path,dirs_within,_ in list_of_files:
+        if "ICDfiles" in dirs_within:
+            cause_dirs.append(path+os.sep+"ICDfiles")
+    return cause_dirs
+
+def search_for_rrs(folder):
+    rr_dirs={}
+    list_of_files=os.walk(os.path.join(os.pardir, "Database", folder))
+    for path,dirs_within,_ in list_of_files:
+        for potential_rr in dirs_within:
+            if potential_rr.startswith('rr_'):
+                disease=path.split(os.sep)[-1]
+                if disease in rr_dirs:
+                    rr_dirs[disease].append(os.path.join(path, potential_rr))
+                else:
+                    rr_dirs[disease]=[os.path.join(path, potential_rr)]
+    return rr_dirs
+
+
 def search_for_writtenF_directories(folder):
     writtenF_dirs=[]
     list_of_files=os.walk(os.path.join(os.pardir, "Database", folder))
@@ -150,15 +208,33 @@ def get_cause_hierarchy(folder):
         if "ICDfiles" in dirs_within:
             ch=get_ancestor_chain(path, start_folder)
             if len(ch)>1:
-                for p,c in zip(ch[:-1], ch[1:]):
-                    parents[c]=p
+                for index, (child, ancestor) in enumerate(zip(ch[1:][::-1], ch[:-1][::-1])):
+                    if index==0: #this means we are dealing with a death cause end note
+                        if ancestor:
+                            parents[child] = {"type": DEATHCAUSE, "ancestors": [ancestor]}
+                        else:
+                            parents[child] = {"type": DEATHCAUSE, "ancestors": []}
+
+                    else:
+                        if child not in parents:
+                            parents[child]={"type": DEATHCAUSE_CATEGORY, "ancestors":[]}
+                            if ancestor:
+                                parents[child]["ancestors"].append(ancestor)
     return parents
    
 
 if __name__ == "__main__":
+    #get_cause_hierarchy("Causes")
+    # start_folder = os.path.join(os.pardir, "Database", "Causes")
+    # list_of_files = os.walk(start_folder)
+    # for path, dirs_within, _ in list_of_files:
+    #     if "ICDfiles" in dirs_within:
+    #         print(get_ancestor_chain(path, start_folder))
+    # import sys
+    # sys.exit()
     start=time.time()
-    print([f for f in os.walk(os.path.join(os.pardir, "Database", 'Causes'))])
-    print(get_cause_hierarchy('Causes'))
+    #print([f for f in os.walk(os.path.join(os.pardir, "Database", 'Causes'))])
+    #print(get_cause_hierarchy('Causes'))
     alist= search_for_writtenF_directories("Causes")
     #print alist
     #run()

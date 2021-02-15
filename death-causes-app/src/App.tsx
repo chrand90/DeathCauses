@@ -1,3 +1,4 @@
+import {json} from "d3";
 import React, { MouseEvent } from "react";
 import { Col, Container, Row } from "reactstrap";
 import "./App.css";
@@ -16,10 +17,10 @@ interface AppState {
   factorAnswersSubmitted: FactorAnswers | null;
   factorDatabase: any;
   elementInFocus: string;
+  relationLinkData: RelationLinks | null;
 }
 
 class App extends React.Component<any, AppState> {
-  relationLinkData: RelationLinks | null = null;
 
   constructor(props: any) {
     super(props);
@@ -28,8 +29,10 @@ class App extends React.Component<any, AppState> {
       factorAnswersSubmitted: null,
       factorDatabase: null,
       elementInFocus: "BMI",
+      relationLinkData: null,
     };
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
+    this.changeFocus = this.changeFocus.bind(this);
   }
 
   changeFocus(newElementInFocus: string) {
@@ -72,8 +75,18 @@ class App extends React.Component<any, AppState> {
     // console.log(age)
   }
 
+  loadRelationLinks() {
+    Promise.all([
+      json("AffectPointers.json")
+    ]).then((data) => {
+
+      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)});
+    });
+  }
+
   componentDidMount() {
     this.loadFactorDatabase();
+    this.loadRelationLinks()
     this.setState({
       factorDatabase: causesData,
     });
@@ -89,7 +102,7 @@ class App extends React.Component<any, AppState> {
     return (
       <VizWindow
         factorAnswersSubmitted={this.state.factorAnswersSubmitted}
-        relationLinkData={this.relationLinkData!}
+        relationLinkData={this.state.relationLinkData!}
         elementInFocus={this.state.elementInFocus}
         changeElementInFocus={this.changeFocus}
       />
@@ -107,7 +120,7 @@ class App extends React.Component<any, AppState> {
             </Col>
             <Col lg={7} xl={8} style={{ padding: "0px" }}>
               {this.state.factorAnswersSubmitted &&
-              this.relationLinkData !== null
+              this.state.relationLinkData !== null
                 ? this.renderVizWindow()
                 : "yolo"}
             </Col>

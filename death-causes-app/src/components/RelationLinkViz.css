@@ -4,7 +4,7 @@
     stroke-dasharray:5, 5;
 }
 
-div.tooltip {	
+div.arrowexplanation {	
     position: absolute;			
     text-align: left;
     min-width:50px;			

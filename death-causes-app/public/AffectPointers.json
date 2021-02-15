@@ -13,14 +13,6 @@
   },
   "Stroke": { "type": "Death cause", "ancestors": ["HeartDisease", "Greens"] },
   "Greens": { "type": "Input factor", "ancestors": [] },
-  "PhysicalActivityTotal": {
-    "type": "Computed factor",
-    "ancestors": [
-      "PhysicalActivityLight",
-      "PhysicalActivityMedium",
-      "PhysicalActivityHard"
-    ]
-  },
   "PhysicalActivityLight": { "type": "Input factor", "ancestors": [] },
   "PhysicalActivityMedium": { "type": "Input factor", "ancestors": [] },
   "PhysicalActivityHard": { "type": "Input factor", "ancestors": [] },
@@ -29,5 +21,14 @@
   "Waist": { "type": "Input factor", "ancestors": [] },
   "ColonCancer": {"type":"Death cause","ancestors":["PhysicalActivityTotal"] },
   "BMI2": {"type":"Computed factor", "ancestors":["BMI"]},
-  "KidneyDisease": {"type":"Death cause", "ancestors":["BMI2"]}
+  "KidneyDisease": {"type":"Death cause", "ancestors":["BMI2"]},
+  "KidneyCancer": {"type":"Death cause", "ancestors":[]},
+  "SmokeSinceStop": {"type":"Computed factor", "ancestors":["SmokeStopped"]},
+  "PhysicalTotal": {
+    "type": "Computed factor",
+    "ancestors": [
+      "PhysicalMedium",
+      "PhysicalHard"
+    ]
+  }
 }

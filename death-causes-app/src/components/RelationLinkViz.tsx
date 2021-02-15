@@ -162,7 +162,7 @@ export default class RelationLinkViz {
 
     var tooltipdiv = d3.select('body')
       .append("div")
-      .attr("class", "tooltip")
+      .attr("class", "arrowexplanation")
       .style("opacity", 0);
 
     const underlines = svg

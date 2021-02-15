@@ -113,14 +113,14 @@
         "requiredDomain":{"min":0},
         "units":{"Grams":1.0,"Ounces":28.3495}
     },
-    "HCV":{
+    "HCVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with Hepatitis C",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
         "options":["Yes","No"]
     },
-    "HIV":{
+    "HIVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with HIV or AIDS",
         "placeholder":"Choose Yes/No",
@@ -237,7 +237,24 @@
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
         "options":["Yes","No"]
+    },
+    "PhysicalMedium":{
+        "type":"number",
+        "longExplanation":"How much time do you spend making medium intensity physical activity",
+        "placeholder":"Number",
+        "recommendedDomain":{"min":0 ,"max":1000},
+        "requiredDomain":{"min":0},
+        "helpJson":"Medium physical activity includes brisk walking, gardening, tennis doubles etc."
+    },
+    "PhysicalHard":{
+        "type":"number",
+        "longExplanation":"How much time do you spend making high intensity physical activity",
+        "placeholder":"Number",
+        "recommendedDomain":{"min":0 ,"max":1000},
+        "requiredDomain":{"min":0},
+        "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc."
     }
+
 
     
     
