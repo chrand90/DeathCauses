@@ -1,0 +1,5 @@
+#from the paper Global burden of cancers attributable to infections in 2012: a synthetic analysis, we get that all Cervix cancers have had the HPV virus, so we can use the effictiveness of the vaccine as risk ratio
+HPVVaccine	RR
+None	1.0
+9vHPV	0.1
+4vHPV	0.3

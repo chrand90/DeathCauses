@@ -2,7 +2,7 @@
 #credibility is from 15454*0.95^15-1-1
 #
 #all the numbers are from the article "waistcircumference bmi.pdf" aka 
-#FORD, EARL S., ALI H. MOKDAD, AND WAYNE H. GILES. Trends in waist circumference among U.S. adults.Obes Res. 2003;11:1223-1231.
+#FORD, EARL S., ALI H. MOKDAD, AND WAYNE H. GILES. Trends in waist circumference among U.S. adults.Obes Res. 2003;11:1223,1231.
 #Table 7
 #
 #
@@ -10,21 +10,21 @@
 #in each category is used. This means all numbers are taken from the original model and divided by 3*2
 #
 BMI	WaistCircumference	Gender	freq
--25	102-160	Female	0.006583333
--25	88-102	Female	0.006583333
--25	-88	Female	0.1535
-25-30	102-160	Female	0.035833333
-25-30	88-102	Female	0.035833333
-25-30	-88	Female	0.0950
-30-50	102-160	Female	0.080333333
-30-50	88-102	Female	0.080333333
-30-50	-88	Female	0.0060
--25	102-160	Male	0.01316667
--25	88-102	Male	0.07675
--25	-88	Male	0.07675
-25-30	102-160	Male	0.07166667
-25-30	88-102	Male	0.04750
-25-30	-88	Male	0.04750
-30-50	102-160	Male	0.16066667
-30-50	88-102	Male	0.00300
-30-50	-88	Male	0.00300
+14,25	102,160	Female	0.006583333
+14,25	88,102	Female	0.006583333
+14,25	60,88	Female	0.1535
+25,30	102,160	Female	0.035833333
+25,30	88,102	Female	0.035833333
+25,30	60,88	Female	0.0950
+30,50	102,160	Female	0.080333333
+30,50	88,102	Female	0.080333333
+30,50	60,88	Female	0.0060
+14,25	102,160	Male	0.01316667
+14,25	88,102	Male	0.07675
+14,25	60,88	Male	0.07675
+25,30	102,160	Male	0.07166667
+25,30	88,102	Male	0.04750
+25,30	60,88	Male	0.04750
+30,50	102,160	Male	0.16066667
+30,50	88,102	Male	0.00300
+30,50	60,88	Male	0.00300

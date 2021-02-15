@@ -88,8 +88,8 @@ class App extends React.Component<any, AppState> {
     this.loadFactorDatabase();
     this.loadRelationLinks()
     this.setState({
-      factorDatabase: causesData,
-    });
+      factorDatabase: causesData
+    })
   }
 
   renderQuestionMenu() {
@@ -109,7 +109,7 @@ class App extends React.Component<any, AppState> {
     );
   }
   render() {
-    console.log("Renders App");
+    console.log('Renders App')
     return (
       <div className="App">
         <Header />
@@ -129,6 +129,7 @@ class App extends React.Component<any, AppState> {
       </div>
     );
   }
+
 }
 
 export default App;

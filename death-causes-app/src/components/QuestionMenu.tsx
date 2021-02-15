@@ -191,9 +191,6 @@ class QuestionMenu extends React.Component<
               ...prevState.validities,
               ...missingWarnings,
             },
-            hasBeenAnswered: newHasBeenAnswered,
-            answeringProgress: newAnswerProgress,
-            currentFactor: newCurrentFactor,
           };
         },
         () => {

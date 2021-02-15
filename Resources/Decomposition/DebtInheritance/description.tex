@@ -1,0 +1,615 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage[danish]{babel}
+\usepackage[utf8]{inputenc}
+\renewcommand{\danishhyphenmins}{22}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{algorithm}
+\usepackage[noend]{algpseudocode}
+\newcommand{\Cov}{\textup{Cov}}
+\newcommand{\xdot}{x_{\cdot}}
+\usepackage{SASnRdisplay}
+\usepackage{mathtools}
+\newcommand{\Rroom}[2]{\mathbb R^{#1 \times #2}}
+\renewcommand{\i}{^{-1}}
+\newcommand{\tr}{\textup{tr}}
+\usepackage{bm}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+\usepackage[shortlabels]{enumitem}
+\definecolor{blue1}{rgb}{0.7,0.8,1}
+\definecolor{blue2}{rgb}{0.6,0.8,1}
+\definecolor{blue3}{rgb}{0.7,0.9,1}
+\definecolor{blue4}{rgb}{0.6,0.7,1}
+
+\definecolor{red1}{rgb}{1,0.5,0.7}
+\definecolor{red2}{rgb}{1,0.7,0.75}
+\definecolor{red3}{rgb}{1,0.7,0.5}
+\definecolor{red4}{rgb}{1,0.8,0.7}
+\definecolor{red5}{rgb}{1,0.5,0.5}
+
+\definecolor{gron}{rgb}{0,0.6,0}
+
+\newcommand{\bigzero}{\mbox{\normalfont\Large\bfseries 0}}
+\newcommand{\rvline}{\hspace*{-\arraycolsep}\vline\hspace*{-\arraycolsep}}
+
+\newtheorem{proposition}{Proposition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{korollar}{Korollar}
+\newtheorem{saetning}{Sætning}
+
+
+\begin{document}
+
+
+Lad som sædvanlig $U(F_I)=p_d(a,\psi_{F_I})-p_d(a, \psi_{0})$ og $U_*=U(F_{\{1,\dots,N\}})$. Som tidligere er faktorsvarene $\psi_{F_I}$ defineret således at det er det er de faktorsvar der giver den laveste $p_d(a,\psi)$ samtidig med at for $i\in I$ er $\psi_i=F_{i}$ - altså at vi har indsat de indtastede faktorsvar på alle index i $\psi$, $I$. Definer
+\begin{align*}
+S(F_I)=U(F_I)-\sum_{J\subseteq I, J\neq \emptyset, J\neq I} S(F_J)
+\end{align*}
+Så gælder
+\begin{align*}
+U(F_I)=\sum_{J\subseteq I, J\neq \emptyset}S(F_i)
+\end{align*}
+Dog er ikke alle $S(F_i)$'erne positive og kan derfor ikke bruges i dekompositionen. Dog påstår jeg
+
+\begin{proposition}\label{divided}
+Definer
+\begin{align}
+V(F_i)=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{S(F_J)}{|J|}\label{V}
+\end{align}
+for alle $i=1, \dots, N$. Da er
+\begin{align}
+V(F_i)&\geq 0 \quad \forall i\in \{1, \dots, N\}\\
+\sum_{i=1}^NV(F_i)&=U_*
+\end{align}
+\end{proposition}
+\begin{proof}
+Beviset er ikke lavet, men det er understøttet af simulationer. 
+\end{proof}
+
+Proposition \ref{divided} siger at $V(F_i)$'erne kan dekomponere $U_*$. Formen \eqref{V} kan fortolkes som at hver eneste faktor ``arver'' fra alle de interaktioner, hvor den indgår. Arven deles ligeligt mellem efterkommere.
+
+\begin{lemma}\label{alternating}
+Der gælder
+\begin{equation}
+S(F_I)=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|J|+|I|} U(F_J)
+\end{equation}
+\end{lemma}
+\begin{proof}
+Kan laves (og er lavet) med induktion. 
+\end{proof}
+
+
+\subsection{Multiplikativitet}
+
+I vores framework sker det ofte at der er multiplikativ effekt mellem riskratiotables.
+\begin{equation}
+p_d(a,\psi)=P_d(a)\cdot \frac{1}{\prod_{i=n}^n \textup{mult}_i} \prod_{i=1}^n \textup{RR}_i(\psi)\label{multiplicative_groups}
+\end{equation}
+hvor $\text{RR}_i$ er en samlet riskratiotabel for den $i$'te riskfactor group. Definer nu 
+\begin{align}
+\mathcal F_i&=\{\textup{faktorer i den $i$'te riskfactor group}\}\\
+U_i(F_I\cap \mathcal F_i)&=\textup{RR}_i(\psi_{F_I\cap \mathcal F_i})\\
+C&=P_d(a)\cdot \frac{1}{\prod_{i=1}^n \textup{mult}_i} 
+\end{align}
+hvor $\psi_{F_I \cap \mathcal F_i}$ skal forstås som den $\psi$-vektor der giver den laveste værdi af $\textup{RR}_i$-tabellen under betingelsen at $\psi$ har input-faktorsvarene for alle faktorer i $F_I$. (Som input i $\textup{RR}_i$-tabellen er det lidt overflødigt at skrive $F_I\cap \mathcal F_i$ og ikke bare $F_I$, da $\textup{RR}_i$ tabellen i forvejen ignorer alle faktorer der ikke har noget med den at gøre). Vi kan derfor skrive
+\begin{align}
+p_d(a,\psi_{F_I})=C\cdot \prod_{i=1}^n U_i(F_I\cap \mathcal F_i)
+\end{align}
+For at udnytte denne konstruktion bedst muligt ændrer vi også notation 
+\begin{align*}
+\tilde U(F_I)&:=\frac{p_d(a,\psi_{F_I})}{C}=\prod_{i=1}^nU_i(F_I\cap \mathcal F_i)\\
+\tilde S(F_I)&=\tilde U(F_I)-\sum_{J\subseteq I, J\neq I} \tilde S(F_J)
+\end{align*}
+Noter at 
+\begin{enumerate}[a.]
+\item
+Nu eksisterer $\tilde U(F_{\emptyset})$ og $\tilde S(F_{\emptyset})$ og er lig med hinanden
+\begin{equation}
+\tilde U(F_{\emptyset})=\tilde S(F_{\emptyset})=\frac{p_d(a,\psi_0)}{C}
+\end{equation}
+\item
+Forbindelsen mellem det gamle $U$ og det nye $\tilde U$ er
+\begin{equation}
+U(F_I)=C\cdot \bigl[\tilde U(F_I)-\tilde U(F_{\emptyset})\bigr]
+\end{equation}
+\item
+Sammenhængen mellem $\tilde S$ og $S$ er
+\begin{equation}
+S(F_I)=C\cdot \tilde S(F_I) \quad I\neq \emptyset\label{SStilde}
+\end{equation}
+\end{enumerate}
+Sammenhængen \eqref{SStilde} retfærdiggør også definitionen
+\begin{equation}
+\tilde V(F_i)=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{\tilde S(F_J)}{|J|},
+\end{equation}
+fordi med dette $\tilde V(F_i)$ kan vi nemt finde $V(F_i)=C\cdot \tilde V(F_i)$. Vi kan også lave en tilde-version af Lemma \ref{alternating}
+\begin{korollar}\label{alternating_tilde}
+Der gælder
+\begin{equation}
+\tilde S(F_I)=\sum_{J\subseteq I} (-1)^{|J|+|I|} \tilde U(F_J)
+\end{equation}
+\end{korollar}
+\begin{proof}
+Det kan udregnes direkte
+\begin{align*}
+\tilde S(F_I)&=\frac{1}{C}\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} U(F_J)\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \bigl[\tilde U(F_J)-\tilde U(F_{\emptyset})\bigr]\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\sum_{J\subseteq I, I\neq \emptyset} (-1)^{|J|}\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\sum_{s=1}^{|I|} (-1)^{|J|}{|I| \choose s}\\
+&=\begin{lgathered}[t]\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J)\\ \,\,-(-1)^{|I|}U(F_{\emptyset})\biggl(\Bigl[\sum_{s=0}^{|I|} (-1)^{|J|}{|I| \choose s}1^{|I|-|J|}\Bigr]-1\biggr)\end{lgathered}\\
+&=\sum_{J\subseteq I, J\neq \emptyset} (-1)^{|I|+|J|} \tilde U(F_J) -(-1)^{|I|}U(F_{\emptyset})\bigl(-1\bigr)\\
+&=\sum_{J\subseteq I} (-1)^{|I|+|J|} \tilde U(F_J)
+\end{align*}
+\end{proof}
+
+\subsubsection*{
+\textbf{Fra nu af dropper vi tilde-notationen, og bruger ikke længere de gamle variable uden tilde.}}
+
+\begin{lemma}\label{tilde_sis}
+Definer rekursivt
+\begin{equation}
+ S_i(F_I\cap \mathcal F_i)= U_i(F_I\cap \mathcal F_i)-\sum_{J\subseteq \cap \mathcal F_i, J\neq I} S_i(F_J)
+\end{equation}
+Så gælder 
+\begin{equation}
+ S_i(F_I)=\sum_{J\subseteq I}(-1)^{|J|+|I|} U_i(F_J), \quad I\subseteq \mathcal F_i\label{si}
+\end{equation}
+og
+\begin{equation}
+ S(F_I)=\prod_{i=1}^n  S(F_{I\cap \mathcal F_i})\label{si_decomposition}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Formel \eqref{si} kan udledes på samme måde som et specialtilfælde af Korollar \ref{alternating_tilde}. Vi viser \eqref{si_decomposition} for $n=2$ og deraf følger resten nemt. Lad $I\subseteq \{1, \dots, N\}$. Skriv $L=I\cap \mathcal F_1$, $K=I\cap \mathcal F_2$. Så er
+\begin{align*}
+ S_1(F_K) S_2(F_L)&=\sum_{J\subseteq K} (-1)^{|J|+|K|} U_1(F_J)\sum_{M\subseteq L} (-1)^{|M|+|L|} U_2(F_M)\\
+&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|} U(F_{J\cup M})\\
+&=\sum_{J\subseteq K}\sum_{M\subseteq L} (-1)^{|J|+|K|+|L|+|M|} U(F_{J\cup M})\\
+&=\sum_{J\subseteq K\cup L}(-1)^{|J|+|L|+|K|} U(F_J)\\
+&=\sum_{J\subseteq I}(-1)^{|J|+|I|} U(F_J)\\
+&= S(F_I)
+\end{align*}
+\end{proof}
+Med dette i hånden kan vi udregne $ V(F_i)$ hurtigere.
+\begin{saetning}\label{saetning_fast_computation}
+Lad $i\in \{1, \dots, N\}$ og lad $j_i$ være det indeks som opfylder $i\in \mathcal F_{j_i}$. Da er
+\begin{equation}
+ V(F_i)=\sum_{s=1}^N\frac{1}{s}\sum_{t=1}^{N-s}\alpha_{t,{j_i},i}\beta_{t-s, \{1, \dots, N\}\setminus \{j_i\}}
+\end{equation}
+hvor \begin{align}
+\alpha_{t,j,i}&=\sum_{\substack{J\subseteq \mathcal F_j, i\in J\\ |J|=t}} S_j(F_{J})\\
+\beta_{t,j}&=\sum_{\substack{J\subseteq \mathcal F_j\\ |J|=t}} S_j(F_{J})\\
+\beta_{t,I}&=\sum_{\substack{t_i\in \{0, \dots, N\}\\,
+i\in I, \sum t_i=t}} \Biggl(\prod_{i\in I} \beta_{t_i,i}\Biggr)
+\end{align}
+\end{saetning}
+\begin{proof}
+Formlen følger ved at anvende Lemma \ref{tilde_sis} på $ V(F_i)$. Antag for simplicitet at $j_i=1$.
+\begin{align}
+ V(F_i)&=\sum_{\substack{J\subseteq\{1,\dots, N\}\\ J\neq \emptyset, i\in J}} \frac{ S(F_J)}{|J|}\nonumber\\
+&=\sum_{s=1}^{N} \Biggl(\sum_{\substack{s_1, \dots, s_n\in \{0, \dots, N\},\\
+s_1+\dots+s_n=s}}\biggl(\sum_{\substack{J_1\subseteq \mathcal F_1, \dots, J_n\subseteq \mathcal F_n\\
+i\in J_{j_i}, |J_j|=s_j}} \frac{ \prod_{j=1}^nS_j(F_{J_j})}{|s|}\biggr)\Biggr)\nonumber\\
+&=\sum_{s=1}^{N}\frac{1}{s} \Biggl(\sum_{\substack{s_1, \dots, s_n\in \{0, \dots, N\},\\
+s_1+\dots+s_n=s}}\biggl(\begin{lgathered}[t]\sum_{\substack{J_1\subseteq \mathcal F_1,\\|J_1|=s_1, i\in J_1}}S_1(F_{J_1})\\
+\cdot \prod_{j=2}^n \sum_{\substack{J_j\subseteq \mathcal F_j,|J_j|=s_j}} S_j(F_{J_j})\biggr)\Biggr)\end{lgathered}\label{extract_alpha_term}\\
+&=\sum_{s=1}^{N}\frac{1}{s} \Biggl(\sum_{\substack{s_1, \dots, s_n\in \{0, \dots, N\},\\
+s_1+\dots+s_n=s}}\biggl(\alpha_{s_1, 1,i} \prod_{j=2}^n \beta_{s_j,j}\biggr)\Biggr)\nonumber
+\end{align}
+Det ses at $\alpha_{0,i,j}=0$ ud fra definitionen hvilket gør at vi kan nøjes med at summe over $s_1\geq 0$. Vi kan også splitte summen over $s_1, \dots, s_n$ op i to; en over $s_1$ og en over de resterende variable. Det giver
+\begin{align*}
+V(F_i)&=\sum_{s=1}^{N}\frac{1}{s}\sum_{s_1=1}^n \alpha_{s_1, 1,i}  \Biggl(\sum_{\substack{s_2, \dots, s_n\in \{0,\dots, s-s_1\},\\ s_2+\dots+s_n=s-s_1}}\biggl( \prod_{j=2}^n \beta_{s_j,j}\biggr)\Biggr)\\
+&=\sum_{s=1}^{N}\frac{1}{s}\sum_{s_1=1}^n \alpha_{s_1, 1,i} \beta_{s-s_1, \{1, \dots, N\}\setminus \{1\}}
+\end{align*}
+Dette viser sætningen for $j_1=1$. For et generelt $j_1\in \{1, \dots, n\}$ er det bare summen $\sum S_{j_i}(F_{J_{j_i}})$, som skal trækkes uden for parentes i \eqref{extract_alpha_term} og så følger den generelle sætning på lignende vis. 
+\end{proof}
+
+\subsection{Vægtning af faktorer}\label{rangering}
+Der er stor forskel på hvor stor forskel der er på hvor nemt det er at ændre en risikofaktor. Ens biologiske køn kan man for eksempel ikke ændre, men man kan godt variere hvor meget man ryger. Vi forventer derfor at brugere er mindre interesserede i interaktionen mellem køn og rygning og mere interesseret i hvad deres forskellige rygevaner gør \emph{givet deres køn}. Derfor forestiller vi os at alle faktorer får en diskret vægtning afhængig af hvor nemme de er at ændre. Lad $F_{Q_1}$ være de faktorer, der er vægtet lavest. Da dekomponerer vi først
+\begin{equation}
+ U(F_{Q_1})\propto p_d(a,\psi_{F_{Q_1}})
+\end{equation}
+med $ U({F_\emptyset})=p_d(a, \psi_0)$. Hvis der er faktorer med en anden rangering samlet i $F_{Q_2}$, komponerer vi dernæst 
+\begin{equation}
+ U(F_{Q_2}\cup F_{Q_1})\propto p_d(a,\psi_{F_{Q_2\cup Q_1}})\label{nextRs}
+\end{equation}
+med $U (F_{\emptyset})\propto p_d(a, \psi_{F_{Q_1}})$. Det vil sige at vi lader som om $\psi_0$ har fået indsat de indtastede $F_{Q_1}$-værdier. Som konsekvens bliver alle eventuelle forstærkende interaktioner mellem $Q_1$-variablene og $Q_2$-variablene lavet om til rene $Q_2$-bidrag.  Omvendt bliver eventuelle inhiberende interaktioner lavet om til rene $Q_1$-bidrag. Denne virkemåde er lige, hvad vi vil have! Hvis der er flere distinkte niveauer af rangeringer, sker udregningen på samme måde som i \eqref{nextRs}. 
+
+Ligesom før kan vi bare ignorere normaliseringskonstanten $C$ og først gange den på til sidst, da det er lige meget om vi dekomponerer $p_d(a, \psi_{F_Q})$ eller $p_d(a,\psi_{F_Q})/C$. Vi skal dog, selvfølgelig, huske at udregne det fulde $ U$ baseret på produktet af alle $U_i$'erne.
+\begin{equation}
+ U(F_Q)=\prod_{i=1}^nU_i(F_Q\cap \mathcal F_i)
+\end{equation}
+
+\subsection{Algoritme}
+Baseret på Sætning \ref{saetning_fast_computation} og ovenstående sektion, foreslås Algorithm \ref{inner_causes_Vs_multiplicity}. 
+
+\begin{algorithm}
+\caption{Udregning af $V(F_i)$'er}\label{inner_causes_Vs_multiplicity}
+\begin{algorithmic}[1]
+\Procedure{getInnerCauses}{f}
+\State $F_{Q_1}, \dots, F_{Q_r} \gets \text{divideFactorsBasedOnWeight}(F_{\{1, \dots, N\}})$
+\State \textit{InnerCauses} $ \gets \text{list}()$
+ \For{$F_Q\in \{F_{Q_1}, \dots, F_{Q_r}\}$}  
+ \State $\beta_{s,j} \gets 0$ for all $s,j$
+ \State $\alpha_{s,j,i} \gets 0$ for all $s,j,i$
+ \For {$j=1, \dots, n$}
+ \For {$J\subseteq F_Q\cap \mathcal F_j$}
+ \State compute $S_j(F_J)$
+ \State $s\gets |J|$
+ \State $\beta_{s,j} \gets \beta_{s,j}+S_j(F_J)$
+ \For {$i\in F_Q\cap \mathcal F_j$}
+ \State $\alpha_{s,j,i} \gets \alpha_{s,j,i} + S_j(F_J)$
+ \EndFor
+ \EndFor
+ \EndFor
+ \State $(\beta_{s,\{1, \dots, n\}\setminus \{j\}})_{s\geq 0, j=1, \dots, n} \gets $ computeBetaSums$(\{\beta_{s,j}\})$
+ \State $V(F_i) \gets 0$ \text{ for all } $i \in F_Q$
+ \For {$i\in F_R$}
+ \For {$k=1, \dots, |\mathcal F_{j_i}|$}
+ \For {$l=0, \dots, |F_Q|-|\mathcal F_{j_i}|$}
+ \State $V(F_i)\gets V(F_i)+\alpha_{k,j_i,i}\beta_{l,\{1, \dots,n\}\setminus \{j_i\}}/(k+l)$
+ \EndFor
+ \EndFor
+ \EndFor
+ \State \textit{InnerCauses}.add($\bigl(V(F_i)\bigr)_{i\in F_Q}$)
+  \EndFor
+  \State \Return \textit{InnerCauses}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\subsection{Interaktioner}
+
+I stedet for at reducere al skyld til kun en enkelt faktor kan vi også formidle mere af den information, der ligger i $S(F_J)$'erne. Det store problem er at nogle af $S(F_J)$'erne kan være negative og så kan de ikke visualiseres på en nem måde. Jeg vil her foreslå et kompromis mellem at formidle $S(F_J)$'erne i deres helhed og på en forståelig måde. 
+
+\subsubsection{Containment}
+I dette scheme går vi efter at afgrænse de negative interaktioner og tage dem som et specialtilfælde. Vi betrager kun en enkelt riskfactorgruppe, $\mathcal F=\{1, \dots, M\}$. Lad
+\begin{equation}
+\mathcal H_i=\bigl\{\begin{lgathered}[t]k\in \mathcal F \mid \exists m: J_1, \dots, J_m\subseteq \mathcal F, i\in J_1, k\in J_m, J_j\neq\emptyset, \\ S(F_{J_1\cup J_2})<0, \dots, S(F_{J_{m-1} \cup J_m})<0\bigr\}\end{lgathered}
+\end{equation}
+Med andre ord er $\mathcal H_i$ alle de faktorer, som den $i$'te faktor har en negativ interaktion med - eller alle de faktorer som er forbundne til den $i$'te faktor via negative interaktioner. Mængderne $\mathcal H_1, \dots, \mathcal H_M$ udgør en inddeling af $F$, hvis vi ser bort fra duplikaterne. For alle (unikke) $\mathcal H\in \{\mathcal H_1, \dots, \mathcal H_M | H_j\neq \emptyset\}$ gør vi det følgende:
+\begin{enumerate}
+\item
+Udregn 
+\begin{equation}
+W(F_{\mathcal H})=U(F_{\mathcal H})- \sum_{i\in \mathcal H} S(F_i)
+\end{equation}
+Man skal fortolke $W(F_{\mathcal H})$ som forskellen mellem den samlede sandsynlighed i $F_{\mathcal H}$ og den der kan forklares udelukkende fra de marginale. Hvis interaktionen mellem faktorerne i $\mathcal H$ er additiv ville $W(F_{\mathcal H})=0$. Da vi ved der er negative interaktioner i $\mathcal H$ vil vi dog ofte forvente at $W(F_{\mathcal H})<0$, men det kan også ske at $W(F_{\mathcal H})\geq 0$. 
+\item
+Hvis $W(F_{\mathcal H})\geq 0$ laver vi dekomponeringen
+\begin{align}
+F_i &\mapsto S(F_i) \quad \forall i \in \mathcal H\\
+F_{\mathcal H} &\mapsto W(F_{\mathcal H})
+\end{align}
+og alle andre faktormængder $I\subseteq H$ får værdien 0. Da vil 
+\begin{itemize}
+\item
+Summen af alle led i dekomponeringen give $U(F_{\mathcal H})$ som ønsket
+\item
+Alle led vil være positive
+\item
+Fortolkningen af leddet hørende til $F_{\mathcal H}$ vil være lidt generisk som ``en uspecificeret multifaktoriel interaktion mellem $F_{\mathcal H}$''.
+\end{itemize}
+\item
+Hvis $W(F_{\mathcal H})<0$ vil vi transformere noget af eller hele $S(F_i)$-summen om til ELLER-led. Definer hertil $S^{(i)}$ som er det $i$'te mindste tal i mængden $\{S(F_i)\mid i \in \mathcal H\}$
+\begin{enumerate}[(i)]
+\item
+Hvis $-W(F_{\mathcal H})\leq S^{(1)}\frac{|\mathcal H|}{2}$ kan vi lave dekomponeringen
+\begin{align}
+F_i &\mapsto S(F_i) + W(F_{\mathcal H})\frac{2}{|\mathcal H|} \quad \forall i\in \mathcal H\\
+F_{\mathcal H}&\mapsto -W(F_{\mathcal H})
+\end{align}
+Vi vil igen have at all leddene er positive og vil summe til $U(F_{\mathcal H})$. Fortolkningen af $F_{\mathcal H}$-leddet vil være 
+\begin{equation}
+F_{j_1} \textup{ ELLER } F_{j_2} \textup{ ELLER } \cdots \textup{ ELLER } F_{j_{|\mathcal H|}} 
+\end{equation}
+for $\mathcal H=\{j_1, \dots, j_{|\mathcal H|}\}$. Dette ELLER-led skal forstås som at risikoen er uniformt fordelt henover dets medlemmer.
+\item
+Hvis $-W(F_{\mathcal H})> S^{(1)}\frac{|\mathcal H|}{2}$ trækker vi først $S^{(|\mathcal H|)}\frac{2}{|\mathcal H|}$ fra alle de marginale $S(F_i)$'er og fordeler derefter resten af det negative $W(F_{\mathcal H})$ blandt de resterende positive $S(F_i)$'er. Det fortsættes med indtil al $W(F_{\mathcal H})$-''gælden'' er fordelt. Hvis ikke vi når at uddele al gælden før vi løber tør for $S(F_i)$-masse, reskalerer vi til sidst. Hvis vi definerer dekomponeringsleddet for $F_I$ som $D(F_I)$, kan det beskrives algoritmisk ved Algorithm \ref{debt_distribution}
+\begin{algorithm}
+\caption{Udregning af $D(F_I)$'er}\label{debt_distribution}
+\begin{algorithmic}[1]
+\Procedure{DistributeDebt}{$\{S(F_i)\}_{i\in\mathcal H}, W(F_{\mathcal H})$}
+\State $D(F_i)\gets S(F_i)$ for all $i\in \mathcal H$.
+\State $D(F_I)\gets 0$ for $I\subseteq \mathcal H$.
+\State $\text{debt}\gets -W(F_{\mathcal H})$.
+\State $R_1, \dots, R_{|\mathcal H|} \gets \textup{ranks}(\{S(F_i)\}_{i\in \mathcal H}, \textup{ties}=\textup{``assign at random''})$
+\State $S^{(i)}\gets S(F_{R_i})$ for all $i\in \mathcal H$
+\State $j \gets 1$
+\While {$\text{debt}>0 \,\,\textbf{and}\,\, j\leq |\mathcal H|$}
+\State $\text{debt\_reduction}\gets \min(\text{debt}, (S^{(j)}-S^{(j-1)})\cdot (|H|-j+1)/2 )$
+\For {$k=j, \dots, |\mathcal H|$}
+\State $D(F_{R_k}) \gets D(F_{R_k}) - \text{debt\_reduction}\cdot 2/(|H|-j+1)$
+\EndFor
+\State $D(F_{\mathcal H\setminus \{ R_1, \dots, R_{j-1} \}}) \gets \textup{debt\_reduction}$
+\EndWhile
+\If {$\textup{debt}>0$}
+\State $\textup{rescale} \gets   (W(F_{\mathcal H})- \sum_{i\in \mathcal H} S(F_i))/ \sum_{I\subseteq \mathcal H} D(F_I)$
+\State $D(F_I) \gets D(F_I)\cdot \textup{rescale}$ for alle $I\subseteq \mathcal H$.
+\EndIf
+\State \Return $\{D(F_I)\}_{I\subseteq \mathcal H}$
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+\end{enumerate}
+ 
+\end{enumerate}
+
+Efter man har kørt ovenstående er alle de resterende interaktioner inden for riskfactorgruppen positive og vi kan altså bruge dekomponeringen
+\begin{align}
+U(F_{\mathcal F})&=\sum_{I\subseteq \mathcal F} E(F_I)\\
+E(F_I)&=\begin{cases}
+D(F_I) \qquad & \textup{hvis der er et $i$ så } I\subseteq \mathcal H_i\\
+S(F_I) \qquad & \textup{ellers.}
+\end{cases}
+\end{align}
+Når der er $n$ riskfactorgrupper ganger vi de enkelte led sammen
+\begin{align}
+E(F_J)=\prod_{i=1}^nE_i(F_J\cap \mathcal F_i)\label{Sproduct}
+\end{align}
+Hvis $E_i(F_J\cap \mathcal F_i)=S_i(F_J\cap \mathcal F_i)$ for alle $i$ vil $E(F_J)=S(F_J)$ på grund af Lemma \ref{tilde_sis}. Vi kan da fortolke $S(F_J)$ hvor $J=\{j_1, \dots, j_{|J|}\}$ som
+\begin{equation}
+\textup{at dø af dødsårsagen på grund af $F_{j_1}$ \textbf{og} $F_{j_2}$ \textbf{og} $\cdots$ \textbf{og} $F_{j_{|J|}}$ }
+\end{equation}
+Hvis der i \eqref{Sproduct} findes led hvor $E_i(F_J\cap \mathcal F_i)=D_i(F_J\cap \mathcal F_i)$ er der ikke umiddelbart en mening med produktet. Jeg foreslår dog denne fortolkning
+\begin{gather}
+\textup{ Fortolkning($E_1(J\cap \mathcal F_1)$) \textbf{og} $\cdots$ \textbf{og} Fortolkning($E_n(J\cap \mathcal F_n)$)},\\
+\textup{Fortolkning}(E_i(K)=\begin{cases}
+F_{k_1} \textbf{ eller}\cdots \textbf{eller } F_{k_{|K|}} \quad &\textup{hvis } D_i(F_K)=E_i(F_K)\\
+F_{k_1} \textbf{ og}\cdots \textbf{og } F_{k_{|K|}} \quad &\textup{hvis } S_i(F_K)=E_i(F_K)\\
+\end{cases}
+\end{gather}
+Det bibeholder og-fortolkningen mellem led fra forskellige risk factorgrupper. 
+
+\subsubsection{Speed-up}
+
+Udregning af alle krydsprodukter har kompleksitet $O(2^N)$ - som netop er den størrelsesorden som gjorde at vi udregnede $ V(F_i)$'erne på en alternativ måde. For at gøre udregningen af $E_i(F_K)$-leddene hurtigere kan  vi nøjes med at udregne de $k$ højeste interaktionsled af orden større end 1. 
+
+Lad $e(i,j)$ være den $i$'te største $E_j(F_I)$, hvor $I\subseteq \mathcal F_j$. Det største kombinerede $E$-led er 
+\begin{equation}
+e(1,1)\cdot e(1,2)\cdots e(1,n) \label{e1}
+\end{equation}
+Det næsthøjeste $e$-led fås ved at erstatte en af $e(1,j)$'erne med $e(2,j)$ - netop den hvor $e(1,j)/e(2,j)$ er højest. Når vi skal finde det tredjehøjeste $e$-led bliver det mere kompliceret. Det tredjehøjeste led kan være på formen
+\begin{equation}
+e(1,1) \cdots e(1,i-1) e(2,i) e(1,i+1)\cdots e(1,n) \label{e2i}
+\end{equation}
+men det kan også være på formen
+\begin{equation}
+e(1,1) \cdots e(1,j-1) e(3,j) e(1,j+1)\cdots e(1,n)\label{e3j}
+\end{equation}
+Det kan dog ikke være på formen
+\begin{equation}
+e(1,1) \cdots e(1,i-1) e(2,i) e(1,i+1)\cdots e(1,j-1) \cdot e(2,j) \cdot e(1,j+1) \cdots e(1,n)
+\end{equation}
+fordi det er a priori mindre end \eqref{e2i}. Generelt kan vi sige at den $k$'te højeste er enten
+\begin{enumerate}
+\item
+Hvis $k=1$ er det \eqref{e1}
+\item
+på formen \eqref{e2i}, \eqref{e3j}, eller ``dybere''
+\item
+Et ``merge'' af to af de $k-1$ højeste tidligere led. Dvs.
+\begin{align}
+\textup{merge}(\prod_{i=1}^n e(i,j_i), \prod_{i=1}^n e(i,k_i))=\prod_{i=1}^n e(i,\max(j_i,k_i))
+\end{align}
+\end{enumerate}
+Det fører til Algorithm \ref{khighest}
+
+\begin{algorithm}
+\caption{Finde de $k$ højeste $E(F_K)$-led}\label{khighest}
+\begin{algorithmic}[1]
+\Procedure{KHighest}{$\{e(i,j)\}, k$}
+\State $\text{scale} \gets \prod_{i=1}^n e(i,1)$
+\State $\text{taken} \gets \text{dictionary}()$
+\State $\text{taken}[(1,1, \dots, 1)]=1$
+\State $\text{candidates} \gets \text{dictionary}()$
+\For {$j=1, \dots, n$}
+\State $\text{candidates}[1+e_j]=e(2,j)/e(1,j)$
+\EndFor
+\While {$\text{length}(\text{taken})<k$}
+\State $v\gets \arg \max( \text{candidates})$
+\State $\text{reduction} \gets \text{candidates}[v]$
+\State $\text{delete candidates}[v]$
+\State $\text{taken}[v] \gets \text{reduction}$
+\If {$v_j=1$ for alle $j=1, \dots, n$ på nær én}
+\State $l\gets \text{indexNotOne}(v)$
+\State $\text{candidates}[v+e_l]\gets \text{reduction}\frac{e(l,v_l+1)}{e(l,v_l)}$
+\EndIf
+\For {$w,r \in \textup{taken}$}
+\If {($w_j>v_j$ for mindst et $j$ \textbf{og}\\ \hspace{2.5cm}$w_jv_j=\max(w_jv_j)$ for alle $j$)}
+\State $\textup{newCandidate}\gets \textup{pairwiseMax}(w,v)$
+\State candidates$[\textup{newCandidate}] \gets r\cdot\text{reduction} $
+\EndIf
+\EndFor
+\EndWhile
+\State \Return {taken, scale}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+\begin{algorithm}
+\caption{Udregne $\beta_{s,\{1, \dots, N\}\setminus \{i\}}$'er}\label{compute_betas}
+\begin{algorithmic}[1]
+\Procedure{ComputeBetaSums}{$\{\beta_{s,j}\}, k$}
+\State $m_1 \gets \text{highestNumberLowerThanMedian}(1, \dots, n)$
+\State $m_2 \gets \text{lowestNumberHigherThanMedian}(1, \dots, n)$
+\State $\text{path1} \gets (\text{next\_sequence}=1:m_1, \textup{visited}=(), \beta^*=())$
+\State $\text{path2} \gets (\text{next\_sequence}=m_2:n, \textup{visited}=(), \beta^*=())$
+\While {$\text{length}(\textup{paths})<0$}
+\State $\text{path}\gets \textup{pop}(\textup{paths})$
+\State $\tilde \beta \gets (0, \dots, 0)$
+\State $j \gets \textup{pop}(\textup{path}.\textup{next\_sequence})$ 
+\For {$\textup{index}_1, \beta_1 \in \textup{path}.\beta^*$}
+\For {$\textup{index}_2, \beta_2 \in \{\beta_{0,j}, \dots, \beta_{s_{\textup{max}}, j}\}$}
+\State $\tilde  \beta[\textup{index}_1+\textup{index}_2] \gets \beta_1+\beta_2$
+\EndFor
+\EndFor
+\EndWhile
+\State $\text{scale} \gets \prod_{i=1}^n e(i,1)$
+\State $\text{taken} \gets \text{dictionary}()$
+\State $\text{taken}[(1,1, \dots, 1)]=1$
+\State $\text{candidates} \gets \text{dictionary}()$
+\For {$j=1, \dots, n$}
+\State $\text{candidates}[1+e_j]=e(2,j)/e(1,j)$
+\EndFor
+\While {$\text{length}(\text{taken})<k$}
+\State $v\gets \arg \max( \text{candidates})$
+\State $\text{reduction} \gets \text{candidates}[v]$
+\State $\text{delete candidates}[v]$
+\State $\text{taken}[v] \gets \text{reduction}$
+\If {$v_j=1$ for alle $j=1, \dots, n$ på nær én}
+\State $l\gets \text{indexNotOne}(v)$
+\State $\text{candidates}[v+e_l]\gets \text{reduction}\frac{e(l,v_l+1)}{e(l,v_l)}$
+\EndIf
+\For {$w,r \in \textup{taken}$}
+\If {($w_j>v_j$ for mindst et $j$ \textbf{og}\\ \hspace{2.5cm}$w_jv_j=\max(w_jv_j)$ for alle $j$)}
+\State $\textup{newCandidate}\gets \textup{pairwiseMax}(w,v)$
+\State candidates$[\textup{newCandidate}] \gets r\cdot\text{reduction} $
+\EndIf
+\EndFor
+\EndWhile
+\State \Return {taken, scale}
+\EndProcedure
+\end{algorithmic}
+\end{algorithm}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+\newpage
+\appendix
+\section{Tør ikke slette endnu}
+\begin{lemma}\label{coefficient}
+Vi kan skrive
+\begin{equation}
+V(F_i)=\sum_{K\subseteq \{1, \dots, N\}, K\neq \emptyset} U(F_K)a_K
+\end{equation}
+hvor 
+\begin{equation}
+a_K=\begin{cases} \sum_{s=0}^{N-|K|} (-1)^s \frac{1}{|K|+s}{N-|K|\choose s} \quad &\textup{hvis } i\in K\\
+\sum_{s=1}^{N-|K|}\frac{1}{|K|+s}{N-|K|-1 \choose s-1} (-1)^s &\textup{hvis } i\not\in K
+\end{cases}
+\end{equation}
+\end{lemma}
+\begin{proof}
+Formlen kan ses ved at skrive
+\begin{align*}
+V(F_i)&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{S(F_J)}{|J|}\\
+&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J}  \frac{1}{|J|}\sum_{K\subseteq J, K\neq \emptyset} (-1)^{|J|+|K|} U(F_K)\\
+&=\sum_{K\subseteq \{1, \dots, N\}, K\neq \emptyset} \biggl( U(F_K)\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}\biggr)
+\end{align*}
+Vi kan derfor konkludere at $a_K$ findes og er lig med
+\begin{align}
+a_K=\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}
+\end{align}
+Det kan vi skrive om ved at stratificere efter $|J|$. 
+\begin{align*}
+a_K&=\sum_{s=0}^{N}\sum_{J, K\subseteq J, i\in J, |J|=s}(-1)^{s+|K|} \frac{1}{s}\\
+a_K&=\sum_{s=0}^{N}(-1)^{s+|K|} \frac{1}{s}\#\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}
+\end{align*}
+Mængden $\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}$ er tom hvis $s<|K|$. Den er også tom hvis $i\not\in K$ og $|s|=K$. Hvis $i\in K$ og $s\geq |K|$ kan vi vælge elementerne $J\setminus K$ uniformt fra $\{1, \dots, N\}\setminus K$. Det giver ${N-|K| \choose s-|K|}$ muligheder. Dvs.
+\begin{align*}
+a_K&=\sum_{s=|K|}^{N}(-1)^{s+|K|} \frac{1}{s}{N-|K| \choose s-|K|}\\
+&=\sum_{s=|K|}^{N}(-1)^{s-|K|} \frac{1}{s}{N-|K| \choose s-|K|}\\
+&=\sum_{s=0}^{N-|K|}(-1)^{s} \frac{1}{s+|K|}{N-|K| \choose s}
+\end{align*}
+Hvis $i\not \in K$, består alle elmenter i $\bigl\{J, K\subseteq J, i\in J, |J|=s\bigr\}$ af foreningen af $K$, $\{i\}$ og et antal indices fra $\{1, \dots, N\} \setminus (K\cup \{i\})$. Disse indices skal igen vælges uniformt, og hvis der skal være $s$ elementer i $J$, kan det gøres på ${N-|K|-1 \choose s-|K|-1}$ måder. Alt i alt får vi
+\begin{align*}
+a_K&=\sum_{s=|K|+1}^{N}(-1)^{s+|K|}\frac{1}{s}{N-|K|-1 \choose s-|K|-1}\\
+&=\sum_{s=1}^{N-|K|}(-1)^{s}\frac{1}{s+|K|}{N-|K|-1 \choose s-1}\\
+\end{align*}
+\end{proof}
+Vi kan også udlede en tilde-version af Lemma \ref{coefficient}. Hvis vi følger udregningen
+\begin{align}
+\tilde V(F_i)&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J} \frac{\tilde S(F_J)}{|J|}\nonumber\\
+&=\sum_{J\subseteq\{1,\dots, N\}, J\neq \emptyset, i\in J}  \frac{1}{|J|}\sum_{K\subseteq J} (-1)^{|J|+|K|} \tilde U(F_K)\nonumber\\
+&=\sum_{K\subseteq \{1, \dots, N\}} \biggl( \tilde U(F_K)\sum_{J, K\subseteq J, i\in J} (-1)^{|J|+|K|} \frac{1}{|J|}\biggr)
+\end{align}
+Vi ser straks at koefficienterne for $\tilde U(F_K), K\neq \emptyset$ er de samme som i Lemma \ref{coefficient}. Lad os nu betrage $a_{\emptyset}$. Som i beviset for Lemma \ref{coefficient} kan vi se at koefficienten for $a_{\emptyset}$ er 
+\begin{align*}
+a_{\emptyset}&=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} \#\{J, J\subseteq \emptyset, i\in J, |J|=s \}\\
+&=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} \#\{J, i\in J, |J|=s \}\\
+\end{align*}
+Et $J$ i mængden $\{J, i\in J, |J|=s \}$ kan vælges på ${N-1 \choose s-1}$ måder, da der er så mange forskellige valg af elementer som ikke er $i$. Det giver
+\begin{equation}
+a_{\emptyset}=\sum_{s=1}^{|N|}\frac{1}{s}(-1)^{s} {N-1 \choose s-1} \\
+\end{equation}
+Alt i alt kan vi konkludere følgende korollar
+\begin{korollar}\label{coefficient_tilde}
+Vi kan skrive
+\begin{equation}
+\tilde V(F_i)=\sum_{K\subseteq \{1, \dots, N\}} \tilde U(F_K)a_K \label{Vformula}
+\end{equation}
+hvor 
+\begin{equation}
+a_K=\begin{cases} \sum_{s=0}^{N-|K|} (-1)^s \frac{1}{|K|+s}{N-|K|\choose s} \quad &\textup{hvis } i\in K\\
+\sum_{s=1}^{N-|K|}\frac{1}{|K|+s}{N-|K|-1 \choose s-1} (-1)^s &\textup{hvis } i\not\in K
+\end{cases}
+\end{equation}
+\end{korollar}
+Udregningen af \eqref{Vformula} er umiddelbart af kompleksitet $O(2^N)$ hvor $N$ er antallet af faktorer. Det kan godt være lang tid hvis der er mange riskfactor grupper, så vi ønsker at finde en hurtigere måde at udregne det på. Antag som før at der er $n$ grupper. Så kan vi skrive
+\begin{align*}
+\tilde V(F_i)=\sum_{K\subseteq \{1, \dots, N\}} a_K \prod_{j=1}^n U_j(F_K\cap \mathcal F_j)
+\end{align*}
+Vi kan nu bruge at $a$ kun afhænger af $K$ gennem $|K|$ samt sandhedsværdien af $i\in K$. Notationsmæssigt indfører vi derfor $a_{s}(i\in K)$ og $a_s(i\not\in K)$, som står for $a_K$-koefficienten når $|K|=s$ og $i$ hhv. ligger og ikke ligger i $K$. 
+\begin{align}
+\tilde V(F_i)&=\sum_{s=0}^N \biggl(\begin{lgathered}[t]a_s(i\in K) \sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s,
+i\in K}}\prod_{j=1}^n \tilde U_j(F_K\cap \mathcal F_j)\\
++a_s(i\not\in K) \sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s,
+i\not\in K}}\prod_{j=1}^n \tilde  U_j(F_K\cap \mathcal F_j)\biggr)\end{lgathered}
+\end{align}
+Lad nu $j(i)$ være den af de $n$ riskfactor groups hvor $i$ ligger. Antag uden tab af generalitet at $j(i)=1$. På grund af vores riskfactor struktur har vi sammenhængen $\{1, \dots, N\}=\mathcal F_1\cup \cdots \cup \mathcal F_n$, hvilket vi kan bruge til at skrive
+\begin{align}
+ &\sum_{\substack{K\subseteq \{1, \dots, N\},\\ |K|=s, i\in K}}\prod_{j=1}^n \tilde U_j(F_K\cap \mathcal F_j)\\
+ &= \sum_{\substack{s_1, \dots, s_n\in \{0,\dots,N\},\\
+s_1+\dots+s_n=s}} \sum_{\substack{K_1\subseteq \mathcal F_1, \\ |K_1|=s_1, i\in K_1}}\sum_{\substack{K_2\subseteq \mathcal F_2, \\ |K_2|=s_2}}\cdots \sum_{\substack{K_n\subseteq \mathcal F_n, \\ |K_n|=s_n}} \prod_{j=1}^n \tilde U_j(F_{K_j}\cap \mathcal F_j)\\
+&=\begin{lgathered}[t]\sum_{s_1\in \{0, \dots, N\}}\sum_{\substack{K_1\subseteq \mathcal F_1, \\ |K_1|=s_1, i\in K_1}} \tilde U_1(F_{K_1}) \sum_{s_2\in \{0, \dots, N\}}\sum_{\substack{K_2\subseteq \mathcal F_2, \\ |K_2|=s_2}}\tilde U_2(F_{K_2})\cdots \\ \cdots\sum_{\substack{K_n\subseteq \mathcal F_2, \\  |K_n|=s-s_1-\dots-s_{n-1}}}\tilde U_n(F_{K_n})\end{lgathered}
+\end{align}
+Dette udtryk er meget nyttigt da det i høj grad kan splittes op i produkter af summer. Lad for alle $s=0,\dots, N$
+\begin{align}
+\beta_{s,j}&=\sum_{\substack{K\subseteq \mathcal F_j,\\ |K|=s}} \tilde U_j(F_K), \quad  j=1, \dots, n\\
+\beta_{s,J}&=\sum_{\substack{s_{j} \in \{0, \dots, N\},\\ \sum_{J} s_{j}=s}}\biggl( \prod_{j \in J} \beta_{s_j,j}\biggr), \quad J\subseteq \{1, \dots, n\}\\
+\alpha_{s,j,i}&=\sum_{\substack{K\subseteq \mathcal F_j, \\
+i\in K, |K|=s}}\tilde U_j(F_K), \quad j=1,\dots, n, i\in\mathcal F_j \\
+\alpha_{s,j,i^*}&=\sum_{\substack{K\subseteq \mathcal F_j, \\
+i\not\in K, |K|=s}}\tilde U_j(F_K), \quad j=1,\dots, n, i\in\mathcal F_j 
+\end{align}
+Definer ligeledes for kvotienterne $a_K$ i Korollar \ref{coefficient_tilde},
+\begin{align}
+a_{s}^*&=\sum_{x=1}^{N-s}(-1)^x\frac{1}{s+x}{N-s-1 \choose x-1} \\
+a_s&=\sum_{x=0}^{N-s} (-1)^x \frac{1}{s+x}{N-s\choose x}
+\end{align}
+Da kan vi udregne 
+\begin{align}
+V(F_i)=\sum_{s=0}^{N} \sum_{s_1=0}^{N-s} \beta_{s-s_1, \{1, \dots, N\}\setminus \{j_i\}}(\alpha_{s_1,j_i,i}a_s+\alpha_{s_2, j_i,i^*}a_s^*)
+\end{align}
+
+\end{document}
