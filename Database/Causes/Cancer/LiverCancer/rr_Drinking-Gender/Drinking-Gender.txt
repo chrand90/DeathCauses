@@ -1,9 +1,0 @@
-Drinking	Gender	RR
-0	Female	1.0
-0,18.75	Female	1.97
-18.75,37.5	Female	3.57
-37.5+	Female	9.15
-0	Male	1.0
-0,18.75	Male	1.28
-18.75,37.5	Male	1.51
-37.5+	Male	1.62

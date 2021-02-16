@@ -135,6 +135,7 @@
   color:#bfa50d;
   border: 1px solid #bfa50d;
   font-size: small;
+  max-width: 100%;
 }
 
 .validity-tooltip-warning > .arrow::before {

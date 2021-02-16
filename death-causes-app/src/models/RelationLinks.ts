@@ -4,7 +4,7 @@ export const CONDITION = "Condition";
 export const CAUSE_CATEGORY = "Death cause category";
 export const CAUSE = "Death cause";
 
-const NODE_ORDER = [INPUT, COMPUTED_FACTOR, CONDITION, CAUSE_CATEGORY, CAUSE];
+export const NODE_ORDER = [INPUT, COMPUTED_FACTOR, CONDITION, CAUSE_CATEGORY, CAUSE];
 
 interface ReverseNodeOrder {
   [key: string]: number;
@@ -76,14 +76,14 @@ export interface PlottingInfo extends AdjustXReturn {
 const INPUT_FACTORS_LENGTH = 1;
 const COMPUTED_FACTORS_LENGTH = 1;
 const CONDITIONS_LENGTH = 1;
-const DEATHCAUSE_CATEGORY_LENGH = 1;
+const DEATHCAUSE_CATEGORY_LENGTH = 1;
 const DEATHCAUSE_LENGTH = 1;
 const MARGIN = 0.3;
 const TOTAL_WIDTH =
   INPUT_FACTORS_LENGTH +
   COMPUTED_FACTORS_LENGTH +
   CONDITIONS_LENGTH +
-  DEATHCAUSE_CATEGORY_LENGH +
+  DEATHCAUSE_CATEGORY_LENGTH +
   DEATHCAUSE_LENGTH +
   4 * MARGIN;
 
@@ -303,6 +303,14 @@ export default class RelationLinks {
     return { transformedLabels: resDat, xDivisions: xDivisions };
   }
 
+  getAllPossibleNodes():string[]{
+    return Object.keys(this.nodeTypes).sort()
+  }
+
+  getSuperDescendantCount(node: string){
+    return this.superDescendantCount[node]
+  }
+
   compareChildNodesFunction(
     parentNode: string,
     superDestinations: NumberOfDestinations
@@ -394,6 +402,8 @@ export default class RelationLinks {
           );
         }
 
+        
+
         let directionInfo: DirectionInfo = this.makePlottingInNodeDicDirection(
           cnodeName,
           seenElements,
@@ -408,11 +418,13 @@ export default class RelationLinks {
         usedKeys = directionInfo.usedKeys;
         arrows = arrows.concat(directionInfo.arrows);
         res = res.concat(directionInfo.untransformedlabels);
+
         let key = cnodeName;
-        while (key in usedKeys) {
+        while (usedKeys.includes(key)) {
           key += "*";
         }
         usedKeys.push(key);
+        
         let arrowtype: string;
         if (xDirection(0.2) === 0.2) {
           arrowtype = parentNodeType === CAUSE_CATEGORY ? "no-arrow" : "arrow";
@@ -420,7 +432,7 @@ export default class RelationLinks {
           arrowtype = cat === CAUSE_CATEGORY ? "no-arrow" : "arrow";
         }
 
-        const froto: string[] = arrowDirection([nodeName, cnodeName]); //depending on the direction a different number is
+        const froto: string[] = arrowDirection([nodeName, key]); //depending on the direction a different number is
         arrows.push({ from: froto[0], to: froto[1], type: arrowtype });
         res.push({
           cat: cat,

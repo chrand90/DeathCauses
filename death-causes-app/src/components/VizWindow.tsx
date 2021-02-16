@@ -96,6 +96,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, any> {
           <option value="testdata2">TEST_DATA2</option>
           <option value="relationGraph">Relation graph</option>
         </select>
+        <hr></hr>
         {this.renderChosenGraph()}
       </div>
     );

@@ -2,6 +2,7 @@ import GeneralFactor, {DeriveMapping, DerivableOptions, FactorTypes, InputValidi
 import NumericFactorPermanent from "./FactorNumber";
 import StringFactorPermanent from "./FactorString";
 import InputJson from "./FactorJsonInput";
+import RelationLinks from './RelationLinks';
 
 export interface FactorAnswers {
   [id: string]: number | string | boolean;
@@ -32,6 +33,13 @@ export interface FactorMaskings {
   [maskedFactor: string]: FactorMasking;
 }
 
+interface DerivableParentsChain {
+  [factorname: string]: string[];
+}
+
+interface DescendantCountsInDeriveGroups {
+  [factorname: string]: number;
+}
 
 interface DerivableOptionsSet {
   [causedFactor: string]: DerivableOptions;
@@ -228,6 +236,60 @@ class Factors {
 
   getRandomFactorOrder() {
     return Object.keys(this.factorList);
+  }
+
+  makeParentList(){
+    let parentList: DerivableParentsChain={};
+    Object.entries(this.factorList).forEach(([factorname, factorobject]) => {
+      let causativeFactors= Object.keys(factorobject.derivableStates)
+      parentList[factorname]=[factorname]
+      while(causativeFactors.length>0){
+        let theOneCausativeFactor=causativeFactors[0]
+        parentList[factorname].unshift(theOneCausativeFactor);
+        causativeFactors=Object.keys(this.factorList[theOneCausativeFactor].derivableStates)
+      }
+    });
+    return parentList
+  }
+
+  findMaxDescendants(causativeFactor: string, rdat:RelationLinks):number{
+    if(!(causativeFactor in this.reverseDerivables)){
+      return rdat.getSuperDescendantCount(causativeFactor);
+    }
+    else{
+      let descendants= Object.keys(this.reverseDerivables[causativeFactor])
+      return Math.max(...descendants.map((d: string) => { return this.findMaxDescendants(d, rdat)}));
+    }
+  }
+
+  getMaxDescendants(rdat: RelationLinks){
+    let res: DescendantCountsInDeriveGroups= {}
+    Object.keys(this.factorList).forEach((causativeFactor) => {
+      res[causativeFactor]=this.findMaxDescendants(causativeFactor, rdat)
+    });
+    return res
+  }
+
+  getSortedOrder(rdat: RelationLinks): string[] {
+    const parentList= this.makeParentList()
+    const maxDescendants= this.getMaxDescendants(rdat);
+    const compare = (factorname1: string, factorname2: string) => {
+      let topParent1=parentList[factorname1][0]
+      let topParent2=parentList[factorname2][0]
+      let count=0
+      while(topParent1===topParent2){
+        count=count+1
+        topParent1=parentList[factorname1][count]
+        topParent2=parentList[factorname2][count]
+      }
+      if(maxDescendants[topParent1]===maxDescendants[topParent2]){
+        return topParent1.localeCompare(topParent2);
+      }
+      else{
+        return maxDescendants[topParent2]-maxDescendants[topParent1]
+      }
+    }
+    return Object.keys(this.factorList).sort(compare);
   }
 
   getHelpJson(factorname: string): string {

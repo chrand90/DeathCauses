@@ -5,6 +5,7 @@ import RelationLinks, {
   CAUSE,
   INPUT,
   CAUSE_CATEGORY,
+  NODE_ORDER,
   PlottingInfo,
   TransformedLabel,
 } from "../models/RelationLinks";
@@ -54,7 +55,7 @@ export default class RelationLinkViz {
       .select(canvas)
       .append("svg")
       .attr("width", Math.max(width - 10, 800))
-      .attr("height", 800);
+      .attr("height", 1000);
 
     const maxX = getMax(transformedLabels, "x");
     const maxY = getMax(transformedLabels, "y");
@@ -82,6 +83,8 @@ export default class RelationLinkViz {
       })
       .attr("opacity", 0.5);
 
+
+    const minmax=getLowestAndHighestCategory(transformedLabels);
     const stext = svg
       .selectAll("text")
       .data(transformedLabels, function (d: any) {
@@ -93,10 +96,10 @@ export default class RelationLinkViz {
       .attr("x", (d: any) => x(d.x) as number)
       .text((d: any) => d.nodeName)
       .attr("text-anchor", (d: any) => {
-        if (d.cat === INPUT) {
+        if (d.cat === minmax[0]) {
           return "start";
         }
-        if (d.cat === CAUSE) {
+        if (d.cat === minmax[1]) {
           return "end";
         } else {
           return "middle";
@@ -138,7 +141,7 @@ export default class RelationLinkViz {
     let adjustedArrows = arrows.map((a: Arrow) => {
       return {
         ...a,
-        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y),
+        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y, minmax),
       };
     });
     console.log(adjustedArrows);
@@ -158,7 +161,7 @@ export default class RelationLinkViz {
       .attr("d", "M 0 0 6 3 0 6 1.5 3")
       .style("fill", "black");
 
-    d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".arrowexplanation").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
     var tooltipdiv = d3.select('body')
       .append("div")
@@ -245,6 +248,21 @@ function insertBB(selection: d3.Selection<any, any, any, any>) {
   });
 }
 
+function getLowestAndHighestCategory(dataset: TransformedLabel[]): string[]{
+  let minindex=NODE_ORDER.length;
+  let maxindex=0
+  dataset.forEach( (transformedlabel: TransformedLabel ) => {
+    let i=NODE_ORDER.indexOf(transformedlabel.cat)
+    if(i>maxindex){
+      maxindex=i
+    }
+    if(i<minindex){
+      minindex=i
+    }
+  } )
+  return [NODE_ORDER[minindex],NODE_ORDER[maxindex]]
+}
+
 function getMax(dataset: TransformedLabel[], v: string): number {
   let a: number | undefined;
   if (v === "x") {
@@ -283,7 +301,8 @@ function computeArrowEndPoints(
   fromNode: PlottingNodeDicValue,
   toNode: PlottingNodeDicValue,
   xscale: d3.ScaleLinear<number, number, never>,
-  yscale: d3.ScaleLinear<number, number, never>
+  yscale: d3.ScaleLinear<number, number, never>,
+  minmaxCategory: string[]
 ) {
   const x1org = xscale(fromNode.x);
   const y1org = yscale(fromNode.y);
@@ -299,7 +318,7 @@ function computeArrowEndPoints(
   let wOrg1 = fromNode.bbox.width / 2;
   let R1 = h1 / (h1 + w1);
   let xAdd1 = 0;
-  if (fromNode.cat === INPUT) {
+  if (fromNode.cat === minmaxCategory[0]) {
     w1 = h1;
     xAdd1 = wOrg1;
   }
@@ -309,7 +328,7 @@ function computeArrowEndPoints(
   let wOrg2 = toNode.bbox.width / 2;
   let R2 = h2 / (h2 + w2);
   let xAdd2 = 0;
-  if (toNode.cat === CAUSE) {
+  if (toNode.cat === minmaxCategory[1]) {
     w2 = h2;
     xAdd2 = -wOrg2;
   }

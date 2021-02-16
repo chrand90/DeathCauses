@@ -12,6 +12,7 @@ import VizWindow from "./components/VizWindow";
 import Factors, { FactorAnswers } from "./models/Factors";
 import causesData from "./resources/Causes.json";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
+import Spinner from "react-bootstrap/Spinner";
 
 interface AppState {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -77,7 +78,7 @@ class App extends React.Component<any, AppState> {
 
   loadRelationLinks() {
     Promise.all([
-      json("AffectPointers.json")
+      json("Relations.json")
     ]).then((data) => {
 
       this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)});
@@ -94,7 +95,10 @@ class App extends React.Component<any, AppState> {
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
+      <QuestionMenu 
+        handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
+        relationLinkData={this.state.relationLinkData!}          
+    />
     );
   }
 
@@ -116,7 +120,7 @@ class App extends React.Component<any, AppState> {
         <Container fluid>
           <Row>
             <Col lg={5} xl={4} style={{ padding: "0px" }}>
-              {this.renderQuestionMenu()}
+              {this.state.relationLinkData!== null ? this.renderQuestionMenu() : <Spinner animation="grow" />}
             </Col>
             <Col lg={7} xl={8} style={{ padding: "0px" }}>
               {this.state.factorAnswersSubmitted &&

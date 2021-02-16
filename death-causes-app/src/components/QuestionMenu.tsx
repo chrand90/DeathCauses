@@ -16,9 +16,12 @@ import "./QuestionMenu.css";
 import SimpleNumericQuestion from "./QuestionNumber";
 import SimpleStringQuestion from "./QuestionString";
 import AskedQuestionFramed from "./AskedQuestionFrame";
+import RelationLinks from "../models/RelationLinks";
 
 interface QuestionMenuProps {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
+  relationLinkData: RelationLinks;
+
 }
 
 interface QuestionMenuStates {
@@ -104,7 +107,7 @@ class QuestionMenu extends React.Component<
       () =>
         Promise.all([json("FactorDatabase.json")]).then((data) => {
           this.factors = new Factors(data[0] as InputJson);
-          this.factorOrder = this.factors.getRandomFactorOrder();
+          this.factorOrder = this.factors.getSortedOrder(this.props.relationLinkData);
           this.setState(
             {
               factorAnswers: this.factors.getFactorsAsStateObject(),
@@ -191,6 +194,9 @@ class QuestionMenu extends React.Component<
               ...prevState.validities,
               ...missingWarnings,
             },
+            hasBeenAnswered: newHasBeenAnswered,
+            answeringProgress: newAnswerProgress,
+            currentFactor: newCurrentFactor,
           };
         },
         () => {
@@ -492,13 +498,13 @@ class QuestionMenu extends React.Component<
 
   renderQuestionList() {
     const submittable: boolean = this.isSubmittable();
-    const questionList = Object.entries(this.factors.factorList).map(
-      ([factorName, factor]) => {
+    const questionList = this.factorOrder.map(
+      (factorName) => {
         if (
           this.state.hasBeenAnswered.includes(factorName) &&
           !(factorName in this.state.factorMaskings)
         ) {
-          return this.getQuestion(factorName, factor);
+          return this.getQuestion(factorName, this.factors.factorList[factorName]);
         }
         return null 
       }

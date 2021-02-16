@@ -11,11 +11,27 @@ from age_numbers import get_age_distribution, get_age_totals # to adjust the ris
 
 DEATHCAUSE_CATEGORY="Death cause category"
 DEATHCAUSE="Death cause"
+FACTORQUESTIONS_FILE="../death-causes-app/public/FactorDatabase.json"
+COMPUTED_FACTORS_FILE="../death-causes-app/public/ComputedFactorsRelations.json"
+RELATIONFILE_DESTINATION="../death-causes-app/public/Relations.json"
 
 def remove_duplicates_and_Age(listi):
     if "Age" in listi:
         listi.remove("Age")
     return list(set(listi))
+
+
+def combine_relations(relations):
+    with open(FACTORQUESTIONS_FILE, "r") as f:
+        factors=json.load(f)
+    for factor in factors:
+        relations[factor]={"type":"Input factor", "ancestors":[]}
+    with open(COMPUTED_FACTORS_FILE, 'r') as f:
+        computed_factors=json.load(f)
+    relations.update(computed_factors)
+    return relations
+
+
 
 def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages):
     riskfactorgroup = {}
@@ -96,7 +112,7 @@ def run(age_intervals=None):
     if age_intervals is None:
         age_intervals= get_age_totals()[0]
     relations, death_causes, death_cause_categories=integrate_and_interpolate_all(age_intervals, "Causes")
-    transform_to_json(relations, "CauseRelations.json")
+    transform_to_json(combine_relations(relations), RELATIONFILE_DESTINATION)
     transform_to_json(death_causes, "Causes.json")
     transform_to_json(death_cause_categories, "CauseCategories.json")
     #transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")

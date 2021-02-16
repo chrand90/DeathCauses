@@ -1,3 +1,0 @@
-Gender	RR
-Female	0.0
-Male	1.0

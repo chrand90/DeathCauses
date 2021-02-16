@@ -1,7 +1,6 @@
 {
     "BMI":{
         "type":"number",
-<<<<<<< HEAD
         "placeholder":"kg/m^2",
         "recommendedDomain":{"min":18,"max":40},
         "requiredDomain": {"min":0},
@@ -63,68 +62,12 @@
     "HeadTrauma":{
         "type":"number",
         "longExplanation":"How many concussions have you had that caused hospitilization, memory loss or loss of conscience",
-=======
-        "phrasing":"BMI kg/m^2",
-        "placeholder":"BMI",
-        "recommendedDomain":{"min":18,"max":40},
-        "requiredDomain": {"min":0},
-        "helpJson": ["BMI is calculated as weight in kilograms divided by the square of height in meters. ",
-            "You can compute it on the [CDC website](https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html).\n",
-            "A healthy BMI is between 18.5 and 25."]
-    },
-    "Age":{
-        "type":"number",
-        "phrasing":"Age today",
-        "placeholder":"BMI",
-        "recommendedDomain":{"min":0,"max":100},
-        "requiredDomain": {"min":0}
-    },
-    "Waist":{
-        "type":"number",
-        "phrasing":"Waist circumference cm",
-        "placeholder":"Centimeters around waist",
-        "recommendedDomain":{"min":60,"max":170},
-        "requiredDomain": {"min":0}
-    },
-    "Caffeine":{
-        "type":"number",
-        "phrasing":"Coffees per day",
-        "placeholder":"Number of cups",
-        "recommendedDomain":{"min":0,"max":10},
-        "requiredDomain": {"min":0}
-    },
-    "Fish":{
-        "type":"number",
-        "phrasing":"Fish per week",
-        "placeholder":"Servings (of 100 grams)",
-        "recommendedDomain":{"min":0},
-        "requiredDomain": {"min":0}
-    },
-    "Vegetables":{
-        "type":"number",
-        "phrasing":"Vegetables per day",
-        "placeholder":"Servings (of 100 grams)",
-        "recommendedDomain":{"min":0},
-        "requiredDomain": {"min":0}
-    },
-    "Fluids":{
-        "type":"number",
-        "phrasing":"Fluids drunk per day",
-        "placeholder":"mililiters)",
-        "recommendedDomain":{"min":0},
-        "requiredDomain": {"min":0}
-    },
-    "HeadTrauma":{
-        "type":"number",
-        "phrasing":"Headtraumas in life",
->>>>>>> database_development
         "placeholder":"Number",
         "recommendedDomain":{"min":0},
         "requiredDomain": {"min":0}
     },
     "Drinking":{
         "type":"number",
-<<<<<<< HEAD
         "longExplanation":"How much alcohol do you drink in a normal week",
         "placeholder":"Drinks",
         "recommendedDomain":{"min":0,"max":40},
@@ -134,21 +77,10 @@
     "Sex":{
         "type":"string",
         "longExplanation":"What is your biological sex",
-=======
-        "phrasing":"Alcoholic drinks per week",
-        "placeholder":"Number",
-        "recommendedDomain":{"min":0,"max":40},
-        "requiredDomain": {"min":0}
-    },
-    "Sex":{
-        "type":"string",
-        "phrasing":"Biological sex",
->>>>>>> database_development
         "placeholder":"Choose sex",
         "initialValue":"Choose sex",
         "options":["Male","Female"]
     },
-<<<<<<< HEAD
     "OralContraceptiveStatus":{
         "type":"string",
         "longExplanation":"What is your history with oral contraceptives",
@@ -157,7 +89,7 @@
         "options":["Former user","Current user","Never used"],
         "derivables":{"Sex": {"Male":"Never used"}}
     },
-    "OralContraceptiveSinceStop":{
+    "OralContraceptiveStopped":{
         "type":"number",
         "longExplanation":"How much time has passed since you stopped taking oral contraceptives",
         "placeholder": "Years",
@@ -184,16 +116,10 @@
     "HCVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with Hepatitis C",
-=======
-    "OralContraceptiveTypicalAmmount":{
-        "type":"string",
-        "phrasing":"Ever taken oral contraceptives",
->>>>>>> database_development
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
         "options":["Yes","No"]
     },
-<<<<<<< HEAD
     "HIVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with HIV or AIDS",
@@ -201,7 +127,7 @@
         "initialValue":"Choose Yes/No",
         "options":["Yes","No"]
     },
-    "Diabetes":{
+    "DiabetesStatus":{
         "type":"string",
         "longExplanation":"Do you have diabetes",
         "placeholder":"Choose Yes/No",
@@ -217,19 +143,10 @@
     },
     "SmokingStopped":{
         "type":"number",
-        "longExplanation":"What is your history with smoking",
+        "longExplanation":"How much time hass passed since you stopped smoking",
         "placeholder":"Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
-        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}}
-    },
-    "SmokeTypicalAmount":{
-        "type":"number",
-        "longExplanation":"When you did smoke how much did you smoke in a normal day",
-        "placeholder":"Cigarettes",
-        "recommendedDomain":{"min":0, "max":40},
-        "requiredDomain":{"min":0},
-        "units":{"Cigarettes":1.0,"Packs":20.0},
         "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}}
     },
     "SmokeIntensity":{
@@ -240,24 +157,23 @@
         "requiredDomain":{"min":0},
         "units":{"Cigarettes":1.0,"Packs":20.0},
         "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
-
     },
     "SmokeDuration":{
         "type":"number",
-        "longExplanation":"How much time has passed since you started smoking",
+        "longExplanation":"For how long have you smoked",
         "placeholder":"Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
         "units":{"Years":1.0,"Months":0.083333333,"Days":0.00273785078},
-        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+        "derivables":{"Smoking": {"Never smoked":0}}
     },
     "SmokePastAmount":{
         "type":"number",
-        "longExplanation":"During all your years smoking, what has been the average amount smoked in a normal day",
+        "longExplanation":"During all the time smoking, what has been the average amount smoked in a normal day",
         "placeholder":"Cigarettes",
         "recommendedDomain":{"min":0, "max":40},
         "requiredDomain":{"min":0},
-        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+        "derivables":{"Smoking": {"Never smoked":0}}
     },
     "IndoorTanning":{
         "type":"number",
@@ -327,40 +243,12 @@
         "recommendedDomain":{"min":0 ,"max":1000},
         "requiredDomain":{"min":0},
         "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc."
+    },
+    "HPVVaccine":{
+        "type":"string",
+        "longExplanation":"Which HPV vaccine have you received, if any",
+        "placeholder":"None",
+        "initialValue":"None",
+        "options":["None", "9vHPV", "4vHPV"]
     }
-
-
-    
-    
-
-
 }
-=======
-    "OralContraceptiveSinceStop":{
-        "type":"number",
-        "phrasing":
-    }
-
-},number,BMI kg/m^2,,,18-40,0-,
-
-
-OralContraceptiveTypicalAmmount,string,Ever taken oral contraceptives,Choose Yes/No,Choose Yes/No,,,Yes_No
-OralContraceptiveSinceStop,number,Time since taking oral contraceptives,Years,,0-200,0-,,
-RedMeat,number,Red meat per day,grams,,0-
-HCVHistory,string,HCV infected,Status,Status,,,Yes_No
-HIVHistory,string,HIV infected,Status,Status,,,Yes_No
-Diabetes,string,Diabetes patient,Status,Status,,,Yes_No
-SmokeSinceStop,number,Time since stopped smoking,Years,,0-,0-,
-SmokeTypicalAmmount,number,Cigarettes per day when smoking,Cigarettes,,0-60,0-,
-SmokeIntensity,number,Cigarettes per day today,Cigarettes,,0-60,0-,
-SmokeCumulative,number,Cigarette-years smoked,Cig-years,,0-800,0-,
-IndoorTanning,number,Indoor tanning in life,Hours,,0-60,0-,
-Race,string,Race,Race,Race,,,White_Asian_Pacific_Black
-MaxDrinking,number,Peak drinking in week,Drinks,,0-15,0-,
-Greens,number,Greens per day,Greens,,0-,0-
-FamilyHistoryParkinson,string,Parkinsons in family,Status,Status,,,Yes_No
-PesticideExposureDays,number,Days with pesticides in life,Days,,0-600,0-,
-Depression,string,Depressed now,Status,Statues,,,Yes_No
-PhysicalActivityTotal,number
-PhysicalActivityHard,number}
->>>>>>> database_development

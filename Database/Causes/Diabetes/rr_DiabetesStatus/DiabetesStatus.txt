@@ -1,0 +1,3 @@
+DiabetesStatus	RR
+No	0.0
+Yes	1.0

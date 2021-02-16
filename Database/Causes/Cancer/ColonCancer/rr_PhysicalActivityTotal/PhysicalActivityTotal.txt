@@ -1,8 +1,0 @@
-# taken from Kyu, Hmwe H, Victoria F Bachman, Lily T Alexander, John Everett Mumford, Ashkan Afshin, Kara Estep, J Lennert Veerman, et al. 2016. "Physical Activity and Risk of Breast Cancer, Colon Cancer, Diabetes, Ischemic Heart Disease, and Ischemic Stroke Events: Systematic Review and Dose-Response Meta-Analysis for the Global Burden of Disease Study 2013." BMJ 354. https://doi.org/10.1136/bmj.i3857.
-#
-PhysicalActivityTotal	RR
-0,600	1.0(0)
-600,4000	0.903
-4000,8000	0.833
-8000,16000	0.789
-16000+	0.789

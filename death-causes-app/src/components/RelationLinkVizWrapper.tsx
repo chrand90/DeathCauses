@@ -2,12 +2,23 @@ import React, { useRef, useState, useEffect } from 'react';
 import RelationLinks, { RelationLinkJson } from '../models/RelationLinks';
 import RelationLinkViz from './RelationLinkViz';
 import './RelationLinkVizWrapper.css';
+import DropdownButton from "react-bootstrap/DropdownButton";
 
 interface RelationLinkWrapperProps {
 	rdat: RelationLinks;
 	elementInFocus: string;
 	changeElementInFocus: (d:string) => void,
 }
+
+function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
+	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value: string = event.currentTarget.value;
+		changeElementInFocus(value);
+	}
+	return handleChangeFunction
+}
+
+
 
 
 const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
@@ -19,7 +30,6 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 	const createNewChart = function () {
 		setChart(new RelationLinkViz(chartArea.current, props.rdat, props.elementInFocus, props.changeElementInFocus));
 	}
-
 
 	useEffect(() => {
 		console.log('width changed');
@@ -41,10 +51,13 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 		}
 	}, [elementInFocus]);
 
-	//container-fluid to fill the whole space, overflow hidden to prevent horizontal scrollbar.
 	return (
 		<div>
-			<p>Graph showing how we use <strong>{elementInFocus}</strong> in the model</p>
+			<p>Graph showing how we use <select value={elementInFocus} onChange={createHandleChangeFunction(props.changeElementInFocus)}>
+				{props.rdat.getAllPossibleNodes().map((d:string) => {
+					return <option value={d}>{d}</option>
+				})}
+				</select> in the model</p>
 		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
 		</div>
 	)
