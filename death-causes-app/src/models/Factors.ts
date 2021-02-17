@@ -5,7 +5,7 @@ import InputJson from "./FactorJsonInput";
 import RelationLinks from './RelationLinks';
 
 export interface FactorAnswers {
-  [id: string]: number | string | boolean;
+  [id: string]: string | number;
 }
 
 export interface FactorAnswerUnitScaling {
@@ -21,7 +21,7 @@ interface FactorMaskingsWithNulls {
 }
 
 export interface FactorList {
-  [key: string]: GeneralFactor<string | number | boolean>;
+  [key: string]: GeneralFactor;
 }
 
 interface FactorMasking {
@@ -98,7 +98,7 @@ class Factors {
             this.factorList[factorname] = new NumericFactorPermanent(
               factorname,
               factorobject.initialValue
-                ? parseFloat(factorobject.initialValue)
+                ? factorobject.initialValue
                 : "",
               factorobject.longExplanation,
               factorobject.placeholder,
@@ -289,7 +289,14 @@ class Factors {
         return maxDescendants[topParent2]-maxDescendants[topParent1]
       }
     }
-    return Object.keys(this.factorList).sort(compare);
+    let factornames=Object.keys(this.factorList)
+    const ageIndex= factornames.indexOf("Age")
+    if(ageIndex>-1){
+      factornames.splice(ageIndex, 1)
+      factornames.sort(compare).unshift("Age");
+      return factornames
+    }
+    return factornames.sort(compare) //not sure if ever needed
   }
 
   getHelpJson(factorname: string): string {

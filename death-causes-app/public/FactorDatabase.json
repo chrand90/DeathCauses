@@ -247,8 +247,8 @@
     "HPVVaccine":{
         "type":"string",
         "longExplanation":"Which HPV vaccine have you received, if any",
-        "placeholder":"None",
-        "initialValue":"None",
+        "placeholder":"Choose Vaccine",
+        "initialValue":"Choose Vaccine",
         "options":["None", "9vHPV", "4vHPV"]
     }
 }

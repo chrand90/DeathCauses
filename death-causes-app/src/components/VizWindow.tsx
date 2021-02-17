@@ -5,26 +5,28 @@ import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import { TEST_DATA, TEST_DATA2, DataSet } from "./PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
+import { Visualization } from "./Helpers";
 
 interface VizWindowProps {
   factorAnswersSubmitted: FactorAnswers | null;
   relationLinkData: RelationLinks;
   elementInFocus: string;
-  changeElementInFocus: (d: string) => void;
+  visualization: Visualization;
+  orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
 }
 
 interface VizWindowStates {
-  selected_visualization: "testdata" | "testdata2" | "relationGraph";
   database: DataSet;
+  chosenValue: string;
 }
 
-class VizWindow extends React.PureComponent<VizWindowProps, any> {
+class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   counter: number = 0;
   constructor(props: any) {
     super(props);
     this.state = {
-      selected_visualization: "testdata",
       database: TEST_DATA,
+      chosenValue: "testdata",
     };
   }
 
@@ -33,24 +35,26 @@ class VizWindow extends React.PureComponent<VizWindowProps, any> {
   }
 
   handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+
     const value: string = event.currentTarget.value;
     switch (value) {
       case "testdata": {
         this.setState({
           database: TEST_DATA,
-          selected_visualization: event.currentTarget.value,
-        });
+          chosenValue: value,
+        }, () => this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH));
         break;
       }
       case "testdata2": {
         this.setState({
           database: TEST_DATA2,
-          selected_visualization: event.currentTarget.value,
-        });
+          chosenValue: value,
+        }, () => this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH));
         break;
       }
       case "relationGraph": {
-        this.setState({ selected_visualization: event.currentTarget.value });
+        this.setState({chosenValue: value}, () => {
+        this.props.orderVisualization(this.props.elementInFocus, Visualization.RELATION_GRAPH)});
         break;
       }
       default:
@@ -59,19 +63,16 @@ class VizWindow extends React.PureComponent<VizWindowProps, any> {
   };
 
   renderChosenGraph() {
-    switch (this.state.selected_visualization) {
-      case "testdata": {
+    switch (this.props.visualization) {
+      case Visualization.BAR_GRAPH: {
         return <BarChartWrapper database={this.state.database} />;
       }
-      case "testdata2": {
-        return <BarChartWrapper database={this.state.database} />;
-      }
-      case "relationGraph": {
+      case Visualization.RELATION_GRAPH: {
         return (
           <RelationLinkVizWrapper
             rdat={this.props.relationLinkData}
             elementInFocus={this.props.elementInFocus}
-            changeElementInFocus={this.props.changeElementInFocus}
+            changeElementInFocus={(newFocus: string) => {this.props.orderVisualization(newFocus, Visualization.RELATION_GRAPH)}}
           />
         );
       }
@@ -90,7 +91,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, any> {
         <select
           id="visualizations"
           onChange={this.handleChange}
-          value={this.state.selected_visualization}
+          value={this.state.chosenValue}
         >
           <option value="testdata">TEST_DATA</option>
           <option value="testdata2">TEST_DATA2</option>

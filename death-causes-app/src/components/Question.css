@@ -142,3 +142,19 @@
   border-bottom-color: #bfa50d !important;
 }
 
+.inline-text-button {
+  margin: 0;
+  padding: 0;
+  height: 20px;
+  line-height:20px;
+  font-size: small;
+  display: inline-block;
+  vertical-align: baseline;
+}
+
+.text-with-button {
+  font-size: small;
+  line-height: 20px;
+  height: 20px;
+  vertical-align: baseline;
+}

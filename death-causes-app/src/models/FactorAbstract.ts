@@ -16,9 +16,9 @@ export enum FactorTypes {
   STRING = "string",
 }
 
-export default abstract class GeneralFactor<T> {
+export default abstract class GeneralFactor {
   factorName: string;
-  initialValue: T | "";
+  initialValue: string;
   phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
   placeholder: string;
   factorType: string = "abstract";
@@ -27,7 +27,7 @@ export default abstract class GeneralFactor<T> {
 
   constructor(
     factorName: string,
-    initialValue: T | "",
+    initialValue: string,
     phrasing: string,
     placeholder: string = "",
     derivableStates: DerivableOptions = {},
@@ -38,16 +38,29 @@ export default abstract class GeneralFactor<T> {
     this.phrasing = phrasing;
     this.placeholder = placeholder;
     this.helpJson = helpJson;
-    this.derivableStates = derivableStates;
+    this.derivableStates = this.replaceFloats(derivableStates);
   }
 
-  getInitialValue(): T | "" {
+  replaceFloats(derivableStates: DerivableOptions): DerivableOptions {
+    Object.entries(derivableStates).forEach(([factorname, mappings]) => {
+      Object.entries(mappings).forEach(([from,to]) => {
+        derivableStates[factorname][from]=to.toString()
+      })
+    })
+    return derivableStates
+  }
+
+  getInitialValue(): string {
     return this.initialValue;
+  }
+
+  insertActualValue(val: string): string | number{
+    return val;
   }
 
   abstract checkInput(input: string | boolean, unit?: string): InputValidity;
 
   abstract getScalingFactor(unitName: string): number;
 
-  abstract simulateValue(): string | number;
+  abstract simulateValue(): string ;
 }

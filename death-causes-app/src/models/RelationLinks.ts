@@ -106,6 +106,7 @@ export default class RelationLinks {
   superAncestorList: NodeDic = {};
   superDescendantList: NodeDic = {};
   nodeOrderReversed: ReverseNodeOrder = {};
+  deathCauseDescendants: NodeDic = {};
 
   constructor(jsonObject: RelationLinkJson) {
     NODE_ORDER.forEach((d: string, i: number) => {
@@ -136,7 +137,11 @@ export default class RelationLinks {
       this.superAncestorCount[nodeName] = this.superAncestorList[
         nodeName
       ].length;
+      this.deathCauseDescendants[nodeName]= this.findDeathCauseDescendants(nodeName);
     });
+    console.log("death cause descendants");
+    console.log(this.deathCauseDescendants
+      )
   }
 
   formulation(
@@ -174,6 +179,18 @@ export default class RelationLinks {
     } else {
       let tmp = this.descendantList[nodeName].map((d: string) => {
         return this.findDescendants(d);
+      });
+      let a: string[] = []; //This would ideally not be necessary but [].concat() is not allowed since [] is of type never[].
+      return a.concat(...tmp);
+    }
+  }
+
+  findDeathCauseDescendants(nodeName: string): string[] {
+    if (this.descendantList[nodeName].length === 0 || this.nodeTypes[nodeName]===CAUSE_CATEGORY || this.nodeTypes[nodeName]=== CAUSE) {
+      return [nodeName];
+    } else {
+      let tmp = this.descendantList[nodeName].map((d: string) => {
+        return this.findDeathCauseDescendants(d);
       });
       let a: string[] = []; //This would ideally not be necessary but [].concat() is not allowed since [] is of type never[].
       return a.concat(...tmp);
@@ -309,6 +326,10 @@ export default class RelationLinks {
 
   getSuperDescendantCount(node: string){
     return this.superDescendantCount[node]
+  }
+
+  getDeathCauseDescendants(node:string): string[] {
+    return this.deathCauseDescendants[node];
   }
 
   compareChildNodesFunction(

@@ -77,7 +77,7 @@ function extractLimsAndExplanation(
 }
 
 
-export default class NumericFactorPermanent extends GeneralFactor<number> {
+export default class NumericFactorPermanent extends GeneralFactor {
     lowerRecommended: number | null = null;
     upperRecommended: number | null = null;
     lowerRequired: number | null = null;
@@ -92,7 +92,7 @@ export default class NumericFactorPermanent extends GeneralFactor<number> {
   
     constructor(
       factorName: string,
-      initialValue: number | "",
+      initialValue: string,
       phrasing: string = "",
       placeholder: string = "",
       requiredDomain: Domain | null = null,
@@ -155,6 +155,13 @@ export default class NumericFactorPermanent extends GeneralFactor<number> {
   
     getScalingFactor(unitName: string) {
       return this.unitDic[unitName].scalingFactor;
+    }
+
+    insertActualValue(val: string): number | ""{
+      if(val===""){
+        return ""
+      }
+      return parseFloat(val)
     }
   
     checkInput(

@@ -13,12 +13,16 @@ import Factors, { FactorAnswers } from "./models/Factors";
 import causesData from "./resources/Causes.json";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
+import { Visualization } from "./components/Helpers";
+
+
 
 interface AppState {
   factorAnswersSubmitted: FactorAnswers | null;
   factorDatabase: any;
   elementInFocus: string;
   relationLinkData: RelationLinks | null;
+  visualization: Visualization;
 }
 
 class App extends React.Component<any, AppState> {
@@ -31,19 +35,18 @@ class App extends React.Component<any, AppState> {
       factorDatabase: null,
       elementInFocus: "BMI",
       relationLinkData: null,
+      visualization: Visualization.BAR_GRAPH
     };
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
-    this.changeFocus = this.changeFocus.bind(this);
-  }
-
-  changeFocus(newElementInFocus: string) {
-    this.setState<any>({ elementInFocus: newElementInFocus });
+    this.orderVisualization = this.orderVisualization.bind(this);
   }
 
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
+    console.log("submitted factoranswers")
+    console.log(factorAnswers);
     this.setState({
       factorAnswersSubmitted: Object.create(factorAnswers),
-    });
+    }, () => this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH));
   }
 
   // loadFactorAnswers() {
@@ -93,11 +96,16 @@ class App extends React.Component<any, AppState> {
     })
   }
 
+  orderVisualization(elementInFocus: string, visualizationType: Visualization): void {
+    this.setState({ visualization: visualizationType, elementInFocus: elementInFocus} );
+  }
+
   renderQuestionMenu() {
     return (
       <QuestionMenu 
         handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
-        relationLinkData={this.state.relationLinkData!}          
+        relationLinkData={this.state.relationLinkData!}
+        orderVisualization={this.orderVisualization}          
     />
     );
   }
@@ -108,7 +116,8 @@ class App extends React.Component<any, AppState> {
         factorAnswersSubmitted={this.state.factorAnswersSubmitted}
         relationLinkData={this.state.relationLinkData!}
         elementInFocus={this.state.elementInFocus}
-        changeElementInFocus={this.changeFocus}
+        visualization={this.state.visualization}
+        orderVisualization={this.orderVisualization}
       />
     );
   }

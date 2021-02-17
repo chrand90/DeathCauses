@@ -1,6 +1,6 @@
 import GeneralFactor, {DerivableOptions, InputValidity} from "./FactorAbstract";
 
-export default class StringFactorPermanent extends GeneralFactor<string> {
+export default class StringFactorPermanent extends GeneralFactor {
     options: string[] = [];
   
     constructor(
@@ -33,6 +33,13 @@ export default class StringFactorPermanent extends GeneralFactor<string> {
   
     getScalingFactor(unitName: string): number {
       return 1;
+    }
+
+    insertActualValue(val: string){
+      if(this.options.includes(val)){
+        return val
+      }
+      return ""
     }
   
     simulateValue(): string {

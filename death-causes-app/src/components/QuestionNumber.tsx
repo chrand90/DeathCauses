@@ -11,8 +11,9 @@ import { InputValidity } from "../models/FactorAbstract";
 import React from "react";
 import { Form } from "react-bootstrap";
 import UnitPicker from "./UnitPicker";
+import { OrderVisualization } from "./Helpers";
 
-interface NumericQuestionProps extends QuestionProps<number> {
+interface NumericQuestionProps extends QuestionProps<string> {
   placeholder: string;
   inputvalidity: InputValidity;
   unitOptions: string[];
@@ -93,6 +94,8 @@ export default class SimpleNumericQuestion extends React.PureComponent<
         validityStatus={this.props.inputvalidity.status}
         secondLine={showmessage ? this.props.inputvalidity.message : ""}
         windowWidth={this.props.windowWidth}
+        descendantDeathCauses={this.props.descendantDeathCauses}
+        orderVisualization={this.props.orderVisualization}
       >
         <Form.Control
           type="text"

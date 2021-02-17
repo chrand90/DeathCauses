@@ -2,6 +2,15 @@ import * as d3 from 'd3';
 
 export const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
 
+export enum Visualization {
+  RELATION_GRAPH="relation-graph",
+  BAR_GRAPH="bar-graph"
+}
+
+export interface OrderVisualization {
+  orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
+}
+
 
 export function getDivWidth(div: HTMLElement | null): number {
 	console.log(div);
