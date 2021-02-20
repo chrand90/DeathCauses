@@ -6,7 +6,7 @@ import { TEST_DATA, TEST_DATA2, DataSet } from "./PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
 import { Visualization } from "./Helpers";
-import { computeSomething} from "../models/ComputedFactors";
+import ComputeController from "../models/updateFormNodes/UpdateFormController";
 
 interface VizWindowProps {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -23,18 +23,13 @@ interface VizWindowStates {
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   counter: number = 0;
+  
   constructor(props: any) {
     super(props);
     this.state = {
       database: TEST_DATA,
       chosenValue: "testdata",
     };
-    console.log("now computing something:")
-    const res= computeSomething();
-    res.then((r) => {
-      console.log("printing value of r")
-      console.log(r);
-    })
   }
 
   renderVisualization() {

@@ -1,4 +1,4 @@
-OralContraceptiveUse	OralContraceptiveSinceStop	RR
+OralContraceptiveEver	OralContraceptiveSinceStop	RR
 No	0	0.88
 Yes	0	1.24
 No	0,5.0	0.88
