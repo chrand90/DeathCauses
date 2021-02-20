@@ -14,6 +14,7 @@ import causesData from "./resources/Causes.json";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
+import ComputeController from "./models/updateFormNodes/UpdateFormController";
 
 
 
@@ -26,7 +27,7 @@ interface AppState {
 }
 
 class App extends React.Component<any, AppState> {
-
+  computerController: ComputeController | null;
   constructor(props: any) {
     super(props);
 
@@ -37,16 +38,26 @@ class App extends React.Component<any, AppState> {
       relationLinkData: null,
       visualization: Visualization.BAR_GRAPH
     };
+    
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
     this.orderVisualization = this.orderVisualization.bind(this);
+    this.computerController=null;
   }
 
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
     console.log("submitted factoranswers")
     console.log(factorAnswers);
     this.setState({
-      factorAnswersSubmitted: Object.create(factorAnswers),
-    }, () => this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH));
+      factorAnswersSubmitted: factorAnswers,
+    }, 
+    () => {
+      if(this.state.relationLinkData!==null){ //securing that data can be read.
+        let r=this.computerController?.compute(this.state.factorAnswersSubmitted!)
+        console.log("computed")
+        console.log(r);
+      }
+      this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
+    });
   }
 
   // loadFactorAnswers() {
@@ -83,8 +94,8 @@ class App extends React.Component<any, AppState> {
     Promise.all([
       json("Relations.json")
     ]).then((data) => {
-
-      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)});
+      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)},
+      () => this.computerController=new ComputeController(this.state.relationLinkData!, null)); //relationlinkdata has just been set so it cant be null.
     });
   }
 

@@ -8,6 +8,7 @@ import RelationLinks, {
   NODE_ORDER,
   PlottingInfo,
   TransformedLabel,
+  NodeExtremas
 } from "../models/RelationLinks";
 import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
@@ -20,6 +21,7 @@ interface PlottingNodeDicValue {
   cat: string;
   nodeName: string;
 }
+
 
 interface PlottingNodeDic {
   [key: string]: PlottingNodeDicValue;
@@ -49,6 +51,15 @@ export default class RelationLinkViz {
     const pdat: PlottingInfo = rdat.makePlottingInstructions(elementInFocus);
     const transformedLabels = pdat.transformedLabels;
     const arrows = pdat.arrows;
+    let nodeExtremas= pdat.nodeExtremas
+    if(nodeExtremas.min===nodeExtremas.max){
+      nodeExtremas.min=NODE_ORDER[0]
+      nodeExtremas.max=NODE_ORDER[NODE_ORDER.length-1]
+    }
+
+    console.log("transformedlabels");
+    console.log(transformedLabels);
+    console.log(pdat.xDivisions);
 
     const xDivisions = pdat.xDivisions;
     const svg = d3
@@ -57,7 +68,7 @@ export default class RelationLinkViz {
       .attr("width", Math.max(width - 10, 800))
       .attr("height", 1000);
 
-    const maxX = getMax(transformedLabels, "x");
+    const maxX = Math.max(getMax(transformedLabels, "x"),0.01); //making sure that x is positive to handle the case where there are only one variable.
     const maxY = getMax(transformedLabels, "y");
 
     const x = d3
@@ -84,7 +95,7 @@ export default class RelationLinkViz {
       .attr("opacity", 0.5);
 
 
-    const minmax=getLowestAndHighestCategory(transformedLabels);
+
     const stext = svg
       .selectAll("text")
       .data(transformedLabels, function (d: any) {
@@ -96,10 +107,10 @@ export default class RelationLinkViz {
       .attr("x", (d: any) => x(d.x) as number)
       .text((d: any) => d.nodeName)
       .attr("text-anchor", (d: any) => {
-        if (d.cat === minmax[0]) {
+        if (d.cat === nodeExtremas.min) {
           return "start";
         }
-        if (d.cat === minmax[1]) {
+        if (d.cat === nodeExtremas.max) {
           return "end";
         } else {
           return "middle";
@@ -141,7 +152,7 @@ export default class RelationLinkViz {
     let adjustedArrows = arrows.map((a: Arrow) => {
       return {
         ...a,
-        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y, minmax),
+        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y, nodeExtremas),
       };
     });
     console.log(adjustedArrows);
@@ -248,35 +259,20 @@ function insertBB(selection: d3.Selection<any, any, any, any>) {
   });
 }
 
-function getLowestAndHighestCategory(dataset: TransformedLabel[]): string[]{
-  let minindex=NODE_ORDER.length;
-  let maxindex=0
-  dataset.forEach( (transformedlabel: TransformedLabel ) => {
-    let i=NODE_ORDER.indexOf(transformedlabel.cat)
-    if(i>maxindex){
-      maxindex=i
-    }
-    if(i<minindex){
-      minindex=i
-    }
-  } )
-  return [NODE_ORDER[minindex],NODE_ORDER[maxindex]]
-}
-
-function getMax(dataset: TransformedLabel[], v: string): number {
-  let a: number | undefined;
-  if (v === "x") {
-    a = d3.max(dataset, (d: TransformedLabel) => d.x);
-  } else if (v === "y") {
-    a = d3.max(dataset, (d: TransformedLabel) => d.y);
+function getMax(dataset: TransformedLabel[], coordinate: string): number {
+  let maxval: number | undefined;
+  if (coordinate === "x") {
+    maxval = d3.max(dataset, (d: TransformedLabel) => d.x);
+  } else if (coordinate === "y") {
+    maxval = d3.max(dataset, (d: TransformedLabel) => d.y);
   } else {
-    a = 1.0;
+    maxval = 1.0;
   }
 
-  if (a === undefined) {
-    a = 1.0;
+  if (maxval === undefined) {
+    maxval = 1.0;
   }
-  return a;
+  return maxval;
 }
 
 function shiftTarget(
@@ -302,7 +298,7 @@ function computeArrowEndPoints(
   toNode: PlottingNodeDicValue,
   xscale: d3.ScaleLinear<number, number, never>,
   yscale: d3.ScaleLinear<number, number, never>,
-  minmaxCategory: string[]
+  nodes: NodeExtremas
 ) {
   const x1org = xscale(fromNode.x);
   const y1org = yscale(fromNode.y);
@@ -318,7 +314,7 @@ function computeArrowEndPoints(
   let wOrg1 = fromNode.bbox.width / 2;
   let R1 = h1 / (h1 + w1);
   let xAdd1 = 0;
-  if (fromNode.cat === minmaxCategory[0]) {
+  if (fromNode.cat === nodes.min) {
     w1 = h1;
     xAdd1 = wOrg1;
   }
@@ -328,7 +324,7 @@ function computeArrowEndPoints(
   let wOrg2 = toNode.bbox.width / 2;
   let R2 = h2 / (h2 + w2);
   let xAdd2 = 0;
-  if (toNode.cat === minmaxCategory[1]) {
+  if (toNode.cat === nodes.max) {
     w2 = h2;
     xAdd2 = -wOrg2;
   }

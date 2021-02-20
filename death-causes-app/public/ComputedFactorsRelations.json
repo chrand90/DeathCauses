@@ -23,10 +23,11 @@
       "Smoking",
       "SmokePastAmount",
       "SmokeDuration",
-      "SmokeIntensity"
+      "SmokeIntensity",
+      "SmokingStopped"
     ]
   },
-  "OralContraceptiveUse": {
+  "OralContraceptiveEver": {
     "type":"Computed factor",
     "ancestors": [
       "OralContraceptiveStatus",
