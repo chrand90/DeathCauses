@@ -15,8 +15,10 @@ import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
 import ComputeController from "./models/updateFormNodes/UpdateFormController";
+import Worker from './models/worker';
 
 
+const computeRisks= new Worker();
 
 interface AppState {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -24,6 +26,7 @@ interface AppState {
   elementInFocus: string;
   relationLinkData: RelationLinks | null;
   visualization: Visualization;
+  computeChoice: "Webworker" | "Same thread";
 }
 
 class App extends React.Component<any, AppState> {
@@ -36,11 +39,13 @@ class App extends React.Component<any, AppState> {
       factorDatabase: null,
       elementInFocus: "BMI",
       relationLinkData: null,
-      visualization: Visualization.BAR_GRAPH
+      visualization: Visualization.BAR_GRAPH,
+      computeChoice: "Same thread"
     };
     
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
     this.orderVisualization = this.orderVisualization.bind(this);
+    this.handleChange = this.handleChange.bind(this);
     this.computerController=null;
   }
 
@@ -51,11 +56,18 @@ class App extends React.Component<any, AppState> {
       factorAnswersSubmitted: factorAnswers,
     }, 
     () => {
-      if(this.state.relationLinkData!==null){ //securing that data can be read.
-        let r=this.computerController?.compute(this.state.factorAnswersSubmitted!)
-        console.log("computed")
-        console.log(r);
+      if(this.state.computeChoice==="Webworker"){
+        let r=computeRisks.processData(this.state.factorAnswersSubmitted!);
+        r.then( (v) => {
+          console.log("computed factors by web worker");
+          console.log(v);
+        })
       }
+      else{
+        let r=this.computerController?.compute(this.state.factorAnswersSubmitted!);
+        console.log("computed factors in the same thread");
+        console.log(r);
+      }            
       this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
     });
   }
@@ -95,7 +107,9 @@ class App extends React.Component<any, AppState> {
       json("Relations.json")
     ]).then((data) => {
       this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)},
-      () => this.computerController=new ComputeController(this.state.relationLinkData!, null)); //relationlinkdata has just been set so it cant be null.
+      () => {computeRisks.initializeObject(data[0]); 
+        this.computerController=new ComputeController(this.state.relationLinkData!, null);
+      });
     });
   }
 
@@ -132,12 +146,33 @@ class App extends React.Component<any, AppState> {
       />
     );
   }
+
+  handleChange(event: React.ChangeEvent<HTMLSelectElement>){
+
+    const value: string = event.currentTarget.value;
+    if(value==="Webworker"){
+      this.setState({  computeChoice: "Webworker" })
+    }
+    else{
+      this.setState({  computeChoice: "Same thread" })
+    }
+
+  };
+
   render() {
     console.log('Renders App')
     return (
       <div className="App">
         <Header />
         <Container fluid>
+        <select
+          id="computeworker"
+          onChange={this.handleChange}
+          value={this.state.computeChoice}
+        >
+          <option value="Webworker">Web worker</option>
+          <option value="Same thread">Same thread</option>
+        </select>
           <Row>
             <Col lg={5} xl={4} style={{ padding: "0px" }}>
               {this.state.relationLinkData!== null ? this.renderQuestionMenu() : <Spinner animation="grow" />}

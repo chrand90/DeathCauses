@@ -31,7 +31,16 @@ export default class ComputeController {
         })
     }
 
+    longUselessComputation(){
+        let sum=0;
+        for(let i=0; i<(5*10**8); i++){
+            sum=sum+1/(1+i)
+        }
+        console.log("sum by updateController: " + sum.toString())
+    }
+
     compute(factorAnswers: FactorAnswers): UpdateDic{
+        this.longUselessComputation()
         let res:UpdateDic= this.inputFactorTreater.update(factorAnswers);
         this.formUpdaters.forEach((formUpdater,i) => {
             res[this.formUpdaterNames[i]]=formUpdater.update(res);

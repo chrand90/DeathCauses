@@ -1,36 +1,32 @@
 
+import { FactorAnswers } from "../Factors";
 import RelationLinks, {RelationLinkJson} from "../RelationLinks";
+import ComputeController from "../updateFormNodes/UpdateFormController";
 
 class computations {
-    value: number;
-    rlinks: RelationLinks | null;
+    computer: ComputeController | null;
+
     constructor(){
-        this.value=0;
-        this.rlinks=null;
+        this.computer=null;
     }
 
-    initialize(value: number, json:RelationLinkJson){
-        this.value=value;
-        this.rlinks=new RelationLinks(json);
+    initialize(json:RelationLinkJson){
+        const rlinks=new RelationLinks(json);
+        this.computer=new ComputeController(rlinks, null);
     }
 
-    processData(data: number){
-        let res=0
-        let coefficient=this.value
-        for(let i=0; i<data; i++){
-            res=res+1/((1+i)**coefficient)
-        }
-        return (res+this.rlinks!.superDescendantCount["BMI"]).toString();
+    processData(data: FactorAnswers){
+        return this.computer?.compute(data)
     }
 
 }
 
 let c= new computations();
 
-export function processData(data:number){
+export function processData(data:FactorAnswers){
     return c.processData(data)
 }
 
-export function initializeObject(value: number, json: RelationLinkJson){
-    c.initialize(value, json);
+export function initializeObject(json: RelationLinkJson){
+    c.initialize(json);
 }
