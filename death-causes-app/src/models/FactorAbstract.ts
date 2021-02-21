@@ -38,17 +38,17 @@ export default abstract class GeneralFactor {
     this.phrasing = phrasing;
     this.placeholder = placeholder;
     this.helpJson = helpJson;
-    this.derivableStates = this.replaceFloats(derivableStates);
+    this.derivableStates = derivableStates;
   }
 
-  replaceFloats(derivableStates: DerivableOptions): DerivableOptions {
-    Object.entries(derivableStates).forEach(([factorname, mappings]) => {
-      Object.entries(mappings).forEach(([from,to]) => {
-        derivableStates[factorname][from]=to.toString()
-      })
-    })
-    return derivableStates
-  }
+  // replaceFloats(derivableStates: DerivableOptions): DerivableOptions {
+  //   Object.entries(derivableStates).forEach(([factorname, mappings]) => {
+  //     Object.entries(mappings).forEach(([from,to]) => {
+  //       derivableStates[factorname][from]=to.toString()
+  //     })
+  //   })
+  //   return derivableStates
+  // }
 
   getInitialValue(): string {
     return this.initialValue;

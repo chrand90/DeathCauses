@@ -2,9 +2,7 @@ import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import RelationLinks, {
   Arrow,
-  CAUSE,
-  INPUT,
-  CAUSE_CATEGORY,
+  NodeType,
   NODE_ORDER,
   PlottingInfo,
   TransformedLabel,
@@ -117,20 +115,20 @@ export default class RelationLinkViz {
         }
       })
       .style("fill", function (d: any) {
-        return d.cat === CAUSE_CATEGORY
+        return d.cat === NodeType.CAUSE_CATEGORY
           ? null
           : d.nodeName === elementInFocus
           ? "#551A8B"
           : "#0000EE";
       })
       .style("text-decoration", function (d: any) {
-        return d.cat === CAUSE_CATEGORY ? null : "underline";
+        return d.cat === NodeType.CAUSE_CATEGORY ? null : "underline";
       })
       .style("font-weight", function (d: any) {
         return d.nodeName === elementInFocus ? 700 : null;
       })
       .style("cursor", function (d: any) {
-        return d.cat === CAUSE_CATEGORY ? null : "pointer";
+        return d.cat === NodeType.CAUSE_CATEGORY ? null : "pointer";
       })
       .attr("alignment-baseline", "central")
       .on("click", function (e: Event, d: TransformedLabel) {
@@ -238,7 +236,7 @@ export default class RelationLinkViz {
         var y = e.pageY;  //y position within the element.
         tooltipdiv
           .style("opacity", 1)
-          .html(`<small>${rdat.formulation(d.from, d.to)}</small>`)
+          .html(`<small>${rdat.arrowInterpretation(d.from, d.to)}</small>`)
           .style("left", x + "px")
           .style("top", y + "px");
         e.stopPropagation();
@@ -279,12 +277,12 @@ function shiftTarget(
   node: PlottingNodeDicValue,
   scale: d3.ScaleLinear<number, number, never>
 ): PlottingNodeDicValue {
-  if (node.cat === INPUT) {
+  if (node.cat === NodeType.INPUT) {
     return {
       ...node,
       x: node.x + scale.invert(node.bbox.width) - scale.invert(0),
     };
-  } else if (node.cat === CAUSE) {
+  } else if (node.cat === NodeType.CAUSE) {
     return {
       ...node,
       x: node.x - scale.invert(node.bbox.width) + scale.invert(0),

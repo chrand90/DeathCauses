@@ -1,5 +1,5 @@
 import { FactorAnswers } from "../Factors";
-import RelationLinks, {COMPUTED_FACTOR} from "../RelationLinks";
+import RelationLinks, {NodeType} from "../RelationLinks";
 import {ComputedFactorClasses} from "./ComputedFactors";
 import { FormUpdater, InputFactorToUpdateForm, UpdateDic } from "./UpdateFormInitialize";
 
@@ -21,10 +21,10 @@ export default class ComputeController {
     }
 
     initialize(rdat: RelationLinks){
-        rdat.sortedNodes[COMPUTED_FACTOR].forEach((computedFactorName) => {
+        rdat.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((computedFactorName) => {
             let ancestors= rdat.getAncestors(computedFactorName)
             if(!(computedFactorName in ComputedFactorClasses)){
-                throw computedFactorName+" was not defined as a computed factor";
+                throw computedFactorName.toString()+" was not defined as a computed factor";
             }
             this.formUpdaters.push(ComputedFactorClasses[computedFactorName](ancestors, this.ageFrom, this.ageTo))
             this.formUpdaterNames.push(computedFactorName);
