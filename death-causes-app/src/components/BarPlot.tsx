@@ -1,5 +1,4 @@
 import * as d3 from 'd3';
-
 import React from "react";
 
 export interface data {
@@ -8,7 +7,7 @@ export interface data {
 }
 
 interface BarPlotProps {
-    data: data[]
+    data: data[];
 }
 
 export class BarPlot extends React.Component<BarPlotProps, BarPlotProps> {

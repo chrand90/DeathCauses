@@ -2,13 +2,10 @@
 import React from 'react';
 import { Col, Container, Row } from 'reactstrap';
 import './App.css';
-import Deathcause from './components/database/Deathcause';
-import { RiskRatioCalculationService } from './components/Calculations/RiskRatioCalculationService';
 import Header from './components/Header';
 import QuestionMenu from './components/QuestionMenu';
 import VizWindow from './components/VizWindow';
 import Factors, { FactorAnswers } from './models/Factors';
-import causesData from './resources/Causes.json';
 
 
 interface AppState {
@@ -25,12 +22,9 @@ class App extends React.Component<any, AppState> {
     this.state = {
       factorAnswersSubmitted: new Factors(null).getFactorsAsStateObject(),
     }
-    //this.handleChange = this.handleChange.bind(this)
-    this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this)
-    //this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this)
   };
 
-  handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
+  handleSuccessfulSubmit = (factorAnswers: FactorAnswers): void => {
     this.setState({
       factorAnswersSubmitted: factorAnswers
     }, () => { })
@@ -70,7 +64,6 @@ class App extends React.Component<any, AppState> {
   }
 
   render() {
-    console.log('Renders App')
     return (
       <div className="App">
         <Header />

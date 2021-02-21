@@ -1,18 +1,18 @@
-import FrequencyTable, { FrequencyInput } from "./Age";
-import { RiskFactorGroup, RiskFactorGroupInput } from "./RickFactorGroup";
+import FrequencyTable, { FrequencyJson } from "./FrequencyTable";
+import { RiskFactorGroup, RiskFactorGroupJson } from "./RickFactorGroup";
 
-interface DeathcauseInput {
-    Age: FrequencyInput;
-    RiskFactorGroups: RiskFactorGroupInput[];
+interface DeathCauseJson {
+    Age: FrequencyJson;
+    RiskFactorGroups: RiskFactorGroupJson[];
 }
 
-export class Deathcause {
-    age: FrequencyTable;
+export class DeathCause {
+    ages: FrequencyTable;
     riskFactorGroups: RiskFactorGroup[];
     deathCauseName: string;
 
-    constructor(json: DeathcauseInput, name: string) {
-        this.age = new FrequencyTable(json.Age);
+    constructor(json: DeathCauseJson, name: string) {
+        this.ages = new FrequencyTable(json.Age);
         this.riskFactorGroups = json.RiskFactorGroups.map(element => {
             return new RiskFactorGroup(element)
         });
@@ -20,4 +20,4 @@ export class Deathcause {
     }
 }
 
-export default Deathcause;
+export default DeathCause;

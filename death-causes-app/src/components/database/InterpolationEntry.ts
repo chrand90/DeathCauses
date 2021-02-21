@@ -1,21 +1,29 @@
 import { FactorAnswers } from "../../models/Factors";
-import { RiskRatioTableCellData } from "./DataTypes";
-import { ParsingFunctions } from "./ParsingFunctions";
+import { parseStringToInputType, parseStringToPolynomial } from "./ParsingFunctions";
 import { Polynomial } from "./Polynomial";
+import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
+
+export interface InterpolationTableJson {
+    domain: string[];
+    factors: string[];
+    interpolationPolynomial: string;
+    minValue: number;
+    maxValue: number;
+}
 
 export class InterpolationEntry {
-    domain: RiskRatioTableCellData[] = [];
+    domain: RiskRatioTableCellInterface[] = [];
     factors: string[]
     minValue: number;
     maxValue: number
     polynomial: Polynomial;
 
-    constructor(domainString: string[], factors: string[], polynomialString: string, minValue: number, maxValue: number) {
-        domainString.forEach(element => this.domain.push(ParsingFunctions.parseStringToInputType(element)))
-        this.minValue = minValue;
-        this.maxValue = maxValue;
-        this.factors = factors;
-        this.polynomial = ParsingFunctions.parseStringToPolynomial(polynomialString);
+    constructor(inputJson: InterpolationTableJson) {
+        inputJson.domain.forEach(element => this.domain.push(parseStringToInputType(element)))
+        this.minValue = inputJson.minValue;
+        this.maxValue = inputJson.maxValue;
+        this.factors = inputJson.factors;
+        this.polynomial = parseStringToPolynomial(inputJson.interpolationPolynomial);
     }
 
     getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string | boolean | number)[] => {
@@ -40,5 +48,4 @@ export class InterpolationEntry {
         if (res > this.maxValue) return this.maxValue; 
         return res;
     }
-
 }

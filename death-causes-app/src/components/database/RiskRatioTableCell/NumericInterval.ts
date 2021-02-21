@@ -1,4 +1,6 @@
-export class NumericInterval implements RiskRatioTableCellData {
+import { RiskRatioTableCellInterface } from "./RiskRatioTableCellInterface";
+
+export class NumericInterval implements RiskRatioTableCellInterface {
     endPointFrom: number;
     endPointTo: number;
     constructor(endPointFrom: string, endPointTo: string) {
@@ -31,41 +33,4 @@ export class NumericInterval implements RiskRatioTableCellData {
     isInputWithinCell(input: number): boolean {
         return this.endPointFrom < input && input <= this.endPointTo;
     }
-
-}
-
-export class NumericValue implements RiskRatioTableCellData {
-    value: number;
-
-    constructor(number: string) {
-        this.value = +number;
-    }
-    getValueInCell(): number {
-        return this.value
-    }
-
-    isInputWithinCell(input: string | number | boolean): boolean {
-        return +input === this.value;
-    }
-}
-
-export class EnumeratedValue implements RiskRatioTableCellData {
-    value: string;
-
-    constructor(value: string) {
-        this.value = value.toLowerCase();
-    }
-
-    getValueInCell(): string {
-        return this.value
-    }
-
-    isInputWithinCell(input: string): boolean {
-        return input.toLowerCase() === this.value;
-    }
-}
-
-export interface RiskRatioTableCellData {
-    isInputWithinCell(input: number | string | boolean): boolean
-    getValueInCell(): number | string | boolean
 }

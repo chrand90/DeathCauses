@@ -151,7 +151,7 @@ export default class BarChart {
 
 		vis.svg.attr("height", designConstants.totalheightWithXBar)
 		const dataSortedName= copyOfSortedDataset(vis.data, 'name');
-		const dataSortedTotal= copyOfSortedDataset(vis.data, 'total_prob');
+		const dataSortedTotal= copyOfSortedDataset(vis.data, 'totalProb');
 
 		const augmented_data: AugmentedDataSet=dataSortedTotal.map((d: DataRow, index: number): AugmentedDataRow=> {
 			let res: any= d;
@@ -174,12 +174,6 @@ export default class BarChart {
 			.domain(dataSortedTotal.map((d:any) => d.name))
 			.align(designConstants.yListAlign)
 			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
-
-
-
-
-
-
 		
 		//DATA JOIN
 		const diseases = vis.svg.selectAll("rect.shell").data(augmented_data, function(d: any){ return d.name })
@@ -189,7 +183,6 @@ export default class BarChart {
 
 		// ENTER
 		const g_components= diseases.enter().append('g').attr('class','rect.shell')
-
 
 		/*  One disadvantage of this structure is that it is important that the text is never inserted before the 
 			rectangle. Therefore it is important that they are inserted in the same order. 
@@ -225,9 +218,6 @@ export default class BarChart {
 							.offset([10,0])
 						
 		vis.svg.call(vis.stip);
-		
-
-
 		
 		gs.exit().remove()
 
@@ -285,7 +275,7 @@ export default class BarChart {
 
 		const vis = this;
 		
-		const dataSortedTotal = copyOfSortedDataset(dataset, "total_prob"); 
+		const dataSortedTotal = copyOfSortedDataset(dataset, "totalProb"); 
 		const dataSortedName = copyOfSortedDataset(dataset, 'name'); 
 
 		//dataset that connects the original disease order (drect_order) with the new label.
@@ -332,7 +322,7 @@ export default class BarChart {
 	};
 }
 
-function copyOfSortedDataset(dataset: DataSet, sorter: 'total_prob' | 'name' ='total_prob'): DataSet{
+function copyOfSortedDataset(dataset: DataSet, sorter: 'totalProb' | 'name' ='totalProb'): DataSet{
 	return dataset.slice().sort(function(a: DataRow, b: DataRow) { return d3.descending(a[sorter], b[sorter]) });
 }
 
