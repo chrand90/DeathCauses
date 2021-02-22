@@ -1,8 +1,7 @@
-import { propTypes } from "react-bootstrap/esm/Image";
 import { FactorAnswers } from "../../models/Factors";
 import { ProbabilityKeyValue } from "../../models/ProbabilityKeyValue";
 import DeathCause from "../database/Deathcause";
-import { ProbabilityOfDeathCause, ProbabilitiesOfAllDeathCauses } from "../database/ProbabilityResult";
+import { ProbabilitiesOfAllDeathCauses, ProbabilityOfDeathCause } from "../database/ProbabilityResult";
 import { RiskFactorGroup } from "../database/RickFactorGroup";
 import { MinimumRiskRatios } from "../database/RiskRatioTable";
 import { RiskRatioTableCellInterface } from "../database/RiskRatioTableCell/RiskRatioTableCellInterface";
@@ -35,7 +34,7 @@ export class RiskRatioCalculationService {
         let survivalCurve = Array.from({ length: totalProbabilityOfNotDying.length - 1 }, () => 1)
         for (let i = 1; i < totalProbabilityOfNotDying.length; i++) {
             survivalCurve[i] = survivalCurve[i - 1] * totalProbabilityOfNotDying[i]
-            res.push({age: probabilitiesPerDeathCause.ages[i], prob: survivalCurve[i]})
+            res.push({ age: probabilitiesPerDeathCause.ages[i], prob: survivalCurve[i] })
         }
 
         return res
@@ -47,7 +46,7 @@ export class RiskRatioCalculationService {
 
         let probabilityOfDeathcause: ProbabilityOfDeathCause[] = []
         for (var deathcause of deathcauses) {
-            let probabilties = this.calculateProbForSingleCauseAndAllAges(submittedFactorAnswers, ageRange, deathcause)
+            let probabilties = this.calculateProbForSingleCauseAndAllAges(submittedFactorAnswers, ageRange, deathcause);
             probabilityOfDeathcause.push(this.createProbabilityOfDeathCauseObject(deathcause.deathCauseName, probabilties));
         }
 
@@ -109,12 +108,14 @@ export class RiskRatioCalculationService {
                 factorAnswersSubmittedUpdated['Age'] = age
                 innerCausesForAges.push(this.calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
             })
+            //todo: byt rundt på rækkefølge af loops (age før deathcauses), og opdater total prob med sandsynligheden for at være i live. 
             res.push(this.combineMultipleInnerCauses(innerCausesForAges))
         })
         return res;
     }
 
     private combineMultipleInnerCauses(innerCauses: DataRow[]): DataRow {
+        //todo: totalProb i hver innerCause objekt skal ganges med sandsynligheden for at være i live i det år.
         let sum = innerCauses.map(innerCause => innerCause.totalProb).reduce((first, second) => first + second, 0)
         let deathCauseName = innerCauses[0].name
 
@@ -126,15 +127,16 @@ export class RiskRatioCalculationService {
         let factors = Object.keys(innerCauses[0].innerCauses)
 
         for (let factor of factors) {
-            let combinedInnerProb = 0
-            innerCauses.forEach(
-                innerCause => {
-                    combinedInnerProb += innerCause.totalProb * innerCause.innerCauses[factor] / sum
-                })
-            combinedInnerCause[factor] = combinedInnerProb
+            combinedInnerCause[factor] = 0
+            innerCauses.forEach(innerCause => {
+                combinedInnerCause[factor] += innerCause.totalProb * innerCause.innerCauses[factor] / sum
+            })
         }
+
         return { name: deathCauseName, totalProb: sum, innerCauses: combinedInnerCause }
     }
+
+
 
     calculateInnerProbabilities(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): DataRow {
         let uStar = this.calculateUStar(factorAnswersSubmitted, deathcause);
@@ -201,6 +203,7 @@ export class RiskRatioCalculationService {
         return res;
     }
 
+    //todo: returner objekter med de optimale faktorværdier og om det submitted faktor værdi er for lidt / for meget ift. den minimale.
     private calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted: FactorAnswers, riskFactorGroup: RiskFactorGroup) {
         let res: MinimumRiskRatios = {}
         let factors = riskFactorGroup.getAllFactorsInGroup()
