@@ -31,11 +31,11 @@ export default class ComputeController {
         })
     }
 
-    compute(factorAnswers: FactorAnswers): UpdateDic{
+    compute(factorAnswers: FactorAnswers): Promise<UpdateDic>{
         let res:UpdateDic= this.inputFactorTreater.update(factorAnswers);
         this.formUpdaters.forEach((formUpdater,i) => {
             res[this.formUpdaterNames[i]]=formUpdater.update(res);
         })
-        return res;
+        return new Promise((resolve) => { resolve(res)});
     }
 } 

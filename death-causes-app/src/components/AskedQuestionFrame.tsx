@@ -54,9 +54,9 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
                 title="Options"
                 size="sm"
               >
-                <Dropdown.Item href="#/action-1" onClick={this.props.onStartOver}>Start over</Dropdown.Item>
-                <Dropdown.Item href="#/action-2" onClick={this.props.onFinishNow}>Go to end</Dropdown.Item>
-                <Dropdown.Item href="#/action-3" onClick={this.props.onFinishRandomly}>Random</Dropdown.Item>
+                <Dropdown.Item onClick={this.props.onStartOver}>Start over</Dropdown.Item>
+                <Dropdown.Item onClick={this.props.onFinishNow}>Go to end</Dropdown.Item>
+                <Dropdown.Item onClick={this.props.onFinishRandomly}>Random</Dropdown.Item>
               </DropdownButton>
             </ButtonGroup>
             <ButtonGroup>

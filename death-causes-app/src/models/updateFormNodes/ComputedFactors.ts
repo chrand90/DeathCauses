@@ -128,16 +128,15 @@ class OralContraceptiveSinceStop extends FormUpdater{
                 value: 0
             }
         }
+        let newValue: number[]=[];
         if(oralStatus==="Current user"){
             const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
-            let newValue: number[]=[];
             for(let i=0; i<ageTo-ageFrom+1; i++){
                 newValue.push(Math.max(0, ageFrom+i-age-oralTillStop))
             }
         }
         if(oralStatus === "Former user"){
             const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
-            let newValue: number[]=[];
             for(let i=0; i<ageTo-ageFrom+1; i++){
                 newValue.push(Math.max(0, ageFrom+i-age+oralStopped))
             }
@@ -147,7 +146,7 @@ class OralContraceptiveSinceStop extends FormUpdater{
             type: TypeStatus.NUMERIC,
             dimension: DimensionStatus.YEARLY,
             random: StochasticStatus.DETERMINISTIC,
-            value: 0
+            value: newValue
         }
     }
 }

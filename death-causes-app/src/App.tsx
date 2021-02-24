@@ -14,7 +14,7 @@ import causesData from "./resources/Causes.json";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
-import ComputeController from "./models/updateFormNodes/UpdateFormController";
+
 
 
 
@@ -27,7 +27,6 @@ interface AppState {
 }
 
 class App extends React.Component<any, AppState> {
-  computerController: ComputeController | null;
   constructor(props: any) {
     super(props);
 
@@ -36,12 +35,11 @@ class App extends React.Component<any, AppState> {
       factorDatabase: null,
       elementInFocus: "BMI",
       relationLinkData: null,
-      visualization: Visualization.BAR_GRAPH
+      visualization: Visualization.NO_GRAPH
     };
     
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
     this.orderVisualization = this.orderVisualization.bind(this);
-    this.computerController=null;
   }
 
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
@@ -49,14 +47,6 @@ class App extends React.Component<any, AppState> {
     console.log(factorAnswers);
     this.setState({
       factorAnswersSubmitted: factorAnswers,
-    }, 
-    () => {
-      if(this.state.relationLinkData!==null){ //securing that data can be read.
-        let r=this.computerController?.compute(this.state.factorAnswersSubmitted!)
-        console.log("computed")
-        console.log(r);
-      }
-      this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
     });
   }
 
@@ -94,9 +84,8 @@ class App extends React.Component<any, AppState> {
     Promise.all([
       json("Relations.json")
     ]).then((data) => {
-      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)},
-      () => this.computerController=new ComputeController(this.state.relationLinkData!, null)); //relationlinkdata has just been set so it cant be null.
-    });
+      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)
+    })});
   }
 
   componentDidMount() {
@@ -132,6 +121,7 @@ class App extends React.Component<any, AppState> {
       />
     );
   }
+
   render() {
     console.log('Renders App')
     return (
@@ -143,10 +133,9 @@ class App extends React.Component<any, AppState> {
               {this.state.relationLinkData!== null ? this.renderQuestionMenu() : <Spinner animation="grow" />}
             </Col>
             <Col lg={7} xl={8} style={{ padding: "0px" }}>
-              {this.state.factorAnswersSubmitted &&
-              this.state.relationLinkData !== null
+              { this.state.relationLinkData !== null
                 ? this.renderVizWindow()
-                : "yolo"}
+                : <Spinner animation="grow" />}
             </Col>
           </Row>
         </Container>

@@ -131,7 +131,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
   validityBoxStyling() {
     let style: FormControlStyle = {};
     let boxContent: string = "";
-    style["background-color"] = this.props.ignore
+    style["backgroundColor"] = this.props.ignore
       ? BACKGROUNDCOLOR_DISABLED
       : "white";
     switch (this.props.validityStatus) {
@@ -142,7 +142,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
       }
       case "Warning": {
         style["color"] = WARNING_COLOR;
-        style["border-color"] = WARNING_COLOR;
+        style["borderColor"] = WARNING_COLOR;
         boxContent = "\u25B2";
         break;
       }
@@ -152,7 +152,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
       }
       case "Error": {
         style["color"] = ERROR_COLOR;
-        style["border-color"] = ERROR_COLOR;
+        style["borderColor"] = ERROR_COLOR;
         boxContent = "\u2716";
         break;
       }

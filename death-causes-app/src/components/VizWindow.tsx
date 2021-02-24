@@ -22,7 +22,7 @@ interface VizWindowStates {
 }
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
-  counter: number = 0;
+  computerController: ComputeController;
   
   constructor(props: any) {
     super(props);
@@ -30,10 +30,25 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       database: TEST_DATA,
       chosenValue: "testdata",
     };
+    this.computerController=new ComputeController(this.props.relationLinkData, null);
   }
 
-  renderVisualization() {
-    //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
+  componentDidUpdate(prevProps: VizWindowProps) {
+    if(prevProps.factorAnswersSubmitted!== this.props.factorAnswersSubmitted && this.props.factorAnswersSubmitted){
+      console.log("initiating update computercontroller")
+      this.updateComputerController()
+    }
+  }
+
+  updateComputerController(){
+    this.computerController.compute(this.props.factorAnswersSubmitted!).then((res) => {
+      console.log("computed factors:");
+      console.log(res);
+      if(this.props.visualization!==Visualization.BAR_GRAPH){
+        this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH);
+      }
+    }
+    )
   }
 
   handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -77,6 +92,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
             changeElementInFocus={(newFocus: string) => {this.props.orderVisualization(newFocus, Visualization.RELATION_GRAPH)}}
           />
         );
+      }
+      case Visualization.NO_GRAPH: {
+        return "Input an age to get started"
       }
       default: {
         return <p>'No visualizations'</p>;

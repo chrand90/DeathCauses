@@ -179,14 +179,14 @@ export abstract class FormUpdater {
     }
 
     handleMissing(){
-        this.lastOutput={
-            change: ChangeStatus.CHANGED,
-            missing: MissingStatus.MISSING,
-            type: TypeStatus.STRING,
-            dimension: DimensionStatus.SINGLE,
-            random: StochasticStatus.DETERMINISTIC,
-            value: ""
-        }
+      this.lastOutput={
+          change: ChangeStatus.CHANGED,
+          missing: MissingStatus.MISSING,
+          type: TypeStatus.STRING,
+          dimension: DimensionStatus.SINGLE,
+          random: StochasticStatus.DETERMINISTIC,
+          value: ""
+      }
     }
 
     ChangedAndMissing(){
