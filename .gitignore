@@ -31,6 +31,7 @@
 #vs code folders
 /my-app/.vscode
 /.vscode
+/death-causes-app/.vscode
 
 #eclipse folders
 .project
@@ -41,6 +42,7 @@ npm-debug.log
 
 # intellij ide
 /.idea
+*/.idea
 
 # log files
 **/*.log

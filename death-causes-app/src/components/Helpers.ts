@@ -5,7 +5,8 @@ export const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
 export enum Visualization {
   RELATION_GRAPH="relation-graph",
   BAR_GRAPH="bar-graph",
-  NO_GRAPH="no-graph"
+  NO_GRAPH="no-graph",
+  SURVIVAL_GRAPH="survival-graph"
 }
 
 export interface OrderVisualization {

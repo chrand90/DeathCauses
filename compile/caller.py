@@ -52,7 +52,7 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
         if interpolated_RR_or_empty is None:  # checking if there was something to interpolate
             interpolated_RR = []
         else:
-            interpolated_RR = interpolated_RR_or_empty.get_as_list_of_lists()
+            interpolated_RR = interpolated_RR_or_empty.get_interpolation_as_object()
         riskratiotable = {'riskRatioTable': RRlist,
                           'riskFactorNames': factor_names,
                           'interpolationTable': interpolated_RR}
@@ -103,6 +103,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
                 death_cause_categories[disease]['RiskFactorGroups'].append(rr_norm)
 
     return relations, death_causes, death_cause_categories
+
             
 def extract_cause_name(ICD_dir):
     return ICD_dir.split(os.sep)[-2]

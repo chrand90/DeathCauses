@@ -2,7 +2,6 @@ import {json} from "d3";
 import React, { MouseEvent } from "react";
 import { Col, Container, Row } from "reactstrap";
 import "./App.css";
-import FrequencyTable from "./components/database/Age";
 import Deathcause from "./components/database/Deathcause";
 import { RiskFactorGroup } from "./components/database/RickFactorGroup";
 import { RiskRatioTable } from "./components/database/RiskRatioTable";
@@ -10,7 +9,6 @@ import Header from "./components/Header";
 import QuestionMenu from "./components/QuestionMenu";
 import VizWindow from "./components/VizWindow";
 import Factors, { FactorAnswers } from "./models/Factors";
-import causesData from "./resources/Causes.json";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
@@ -64,21 +62,6 @@ class App extends React.Component<any, AppState> {
   //   // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
   // }
 
-  loadFactorDatabase() {
-    let res: Deathcause[] = [];
-    let database = causesData;
-    // console.log(database.BreastCancer.RiskFactorGroups[0])
-
-    // for (var key in database) {
-    //   if (database.hasOwnProperty(key)) {
-    //     console.log(database[key as keyof typeof database])
-    //     res.push(new Deathcause(database[key as keyof typeof database], key))
-    //   }
-    // }
-
-    // console.log(res)
-    // console.log(age)
-  }
 
   loadRelationLinks() {
     Promise.all([
@@ -89,11 +72,7 @@ class App extends React.Component<any, AppState> {
   }
 
   componentDidMount() {
-    this.loadFactorDatabase();
     this.loadRelationLinks()
-    this.setState({
-      factorDatabase: causesData
-    })
   }
 
   orderVisualization(elementInFocus: string, visualizationType: Visualization): void {
@@ -123,7 +102,6 @@ class App extends React.Component<any, AppState> {
   }
 
   render() {
-    console.log('Renders App')
     return (
       <div className="App">
         <Header />
