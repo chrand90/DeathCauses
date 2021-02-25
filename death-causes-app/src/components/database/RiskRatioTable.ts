@@ -61,6 +61,7 @@ class RiskRatioTable {
                 return this.riskRatioTable[i].riskRatioValue;
             }
         }
+        return this.riskRatioTable[this.riskRatioTable.length-1].riskRatioValue; // tmp to make it run
 
         throw new Error("Found no risk ratio entry where " + submittedFactorAnswers + " is within domain")
     }

@@ -12,6 +12,7 @@ import causesData from '../resources/Causes.json';
 import  BarPlotWrapper  from './BarPlotWrapper';
 import { Form } from "react-bootstrap";
 import { SurvivalCurveData } from './Calculations/SurvivalCurveData';
+import { CalculationFacade } from "./Calculations/CalculationsFacade";
 
 interface VizWindowProps {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -24,6 +25,7 @@ interface VizWindowProps {
 interface VizWindowStates {
   database: DataSet;
   chosenValue: string;
+  survivalData: SurvivalCurveData[];
 }
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
@@ -35,6 +37,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     this.state = {
       database: TEST_DATA,
       chosenValue: "Risk factor contributions 1",
+      survivalData: [],
     };
     this.computerController=null; //new ComputeController(this.props.relationLinkData, null);
   }
@@ -47,13 +50,23 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   updateComputerController(){
-    this.computerController?.compute(this.props.factorAnswersSubmitted!).then((res) => {
-      console.log("computed factors:");
-      console.log(res);
-      if(this.props.visualization!==Visualization.BAR_GRAPH){
-        this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH);
-      }
-    })
+    const a= this.computerController?.computeInnerProbabilities(this.props.factorAnswersSubmitted!)
+    console.log("new inner causes");
+    console.log(a);
+    this.setState({database: a!}, () => {
+      const b= this.computerController?.computeSurvivalData(this.props.factorAnswersSubmitted!)
+      this.setState({survivalData: b!})
+    }); 
+    // this.computerController?.computeInnerProbabilities(this.props.factorAnswersSubmitted!).then((res) => {
+    //   this.setState({database: res},
+    //     () => this.computerController?.computeSurvivalData(this.props.factorAnswersSubmitted!).then((res) => {
+    //       this.setState({survivalData: res}, () => {
+    //         if(  !(this.props.visualization===Visualization.BAR_GRAPH || this.props.visualization=== Visualization.SURVIVAL_GRAPH)){
+    //           this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH);
+    //         }
+    //       })
+    //     }))
+    // })
   }
     // calculateProbabilies() {
     //     if (!this.props.factorAnswersSubmitted) {
@@ -68,23 +81,26 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     //     })
     // }
 
-    loadFactorDatabase() {
-      let database: Deathcause[] = [];
-      for (var key in causesData) {
-          if (causesData.hasOwnProperty(key)) {
-              database.push(new Deathcause(causesData[key as keyof typeof causesData], key))
-          }
-      }
-      this.factorDatabase = database
+  loadFactorDatabase() {
+    let database: Deathcause[] = [];
+    for (var key in causesData) {
+        if (causesData.hasOwnProperty(key)) {
+            database.push(new Deathcause(causesData[key as keyof typeof causesData], key))
+        }
     }
+    const c=new CalculationFacade(database)
+    console.log("calculation facade")
+    console.log(c);
+    this.computerController=new ComputeController(this.props.relationLinkData, null, 120, c);
+  }
 
-    componentDidMount() {
-        this.loadFactorDatabase()
-    }
+  componentDidMount() {
+      this.loadFactorDatabase()
+  }
 
-    renderVisualization() {
-        //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
-    }
+  renderVisualization() {
+      //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
+  }
 
   handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
 
@@ -92,7 +108,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     switch (value) {
       case "Risk factor contributions 1": {
         this.setState({
-          database: TEST_DATA,
           chosenValue: value,
         }, () => this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH));
         break;
@@ -133,8 +148,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         );
       }
       case Visualization.SURVIVAL_GRAPH:
-        return null
-   //              return <BarPlotWrapper data={this.state.survivalCurve}/>
+        return <BarPlotWrapper data={this.state.survivalData}/>
       case Visualization.NO_GRAPH: {
         return "Input an age to get started"
       }

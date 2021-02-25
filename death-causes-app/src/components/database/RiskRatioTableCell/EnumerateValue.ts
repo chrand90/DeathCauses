@@ -4,7 +4,7 @@ export class EnumeratedValue implements RiskRatioTableCellInterface {
     value: string;
 
     constructor(value: string) {
-        this.value = value.toLowerCase();
+        this.value = value;
     }
 
     getValueInCell(): string {
@@ -12,6 +12,7 @@ export class EnumeratedValue implements RiskRatioTableCellInterface {
     }
 
     isInputWithinCell(input: string): boolean {
-        return input.toLowerCase() === this.value;
+        //console.log("input="+ input.toString()+ "("+ (typeof input).toString() +")");
+        return (input as string)=== this.value;
     }
 }
