@@ -47,7 +47,7 @@ export default class SimpleStringQuestion extends React.PureComponent<
     let showmessage: boolean = false;
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
-      formControlStyle["border-color"] = WARNING_COLOR;
+      formControlStyle["borderColor"] = WARNING_COLOR;
     }
     return { formControlStyle, showmessage };
   }

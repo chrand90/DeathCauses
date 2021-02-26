@@ -68,18 +68,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     //     }))
     // })
   }
-    // calculateProbabilies() {
-    //     if (!this.props.factorAnswersSubmitted) {
-    //         return;
-    //     }
-
-    //     let res = this.calculationFacade?.calculateInnerProbabilities(this.props.factorAnswersSubmitted, this.factorDatabase)
-    //     let surv = this.calculationFacade!.calculateSurvivalCurve(this.props.factorAnswersSubmitted, this.factorDatabase)
-    //     this.setState({
-    //         probabilities: res,
-    //         survivalCurve: surv 
-    //     })
-    // }
 
   loadFactorDatabase() {
     let database: Deathcause[] = [];
@@ -163,7 +151,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         <Form>
             <Form.Group className='visualisation' >
                 <Form.Row>
-                    <Form.Control className='visualisation' as="select" defaultValue="Choose..." onChange={this.handleChange}>
+                    <Form.Control className='visualisation' as="select" defaultValue="Choose..." onChange={this.handleChange} style={{height:"40px"}}>
                         <option>Survival curve</option>
                         <option>Risk factor contributions 1</option>
                         <option>Risk factor contributions 2</option>

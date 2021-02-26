@@ -6,7 +6,7 @@ import { NumericValue } from "./RiskRatioTableCell/NumericValue";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
 
 export const parseStringToInputType = (input: string): RiskRatioTableCellInterface => {
-    const intervalRegex = new RegExp('^([0-9.]*)[+-]([0-9.]*)$');
+    const intervalRegex = new RegExp('^([0-9.]*)[,+]([0-9.]*)$');
     const singleNumericRegex = new RegExp('^([0-9.]*)$');
     let intervalResult = intervalRegex.exec(input);
     if (intervalResult) {

@@ -35,6 +35,9 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 
 	useEffect(() => {
 		createNewChart();
+		return () => {
+			chart?.clear();
+		}
 	}, []);
 
 	return <div className="container" ref={chartArea} id="barchartcontainer" />

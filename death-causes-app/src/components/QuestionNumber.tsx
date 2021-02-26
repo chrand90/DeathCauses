@@ -40,14 +40,14 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     let showmessage: boolean = false;
     if (this.props.inputvalidity.status === "Error") {
       showmessage = true;
-      formControlStyle["border-color"] = ERROR_COLOR;
+      formControlStyle["borderColor"] = ERROR_COLOR;
       formControlStyle["color"] = ERROR_COLOR;
     }
     console.log("this.state.ignore");
     console.log(this.props.ignore);
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
-      formControlStyle["border-color"] = WARNING_COLOR;
+      formControlStyle["borderColor"] = WARNING_COLOR;
     }
     return { formControlStyle, showmessage };
   }

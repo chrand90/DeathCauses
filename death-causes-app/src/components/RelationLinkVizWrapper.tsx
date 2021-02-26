@@ -41,6 +41,11 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 
 	useEffect(() => {
 		createNewChart();
+		return () => {
+			console.log("indside unmounter hook");
+			console.log(chart);
+			chart?.clear();
+		}
 	}, []);
 
 	useEffect(() => {
