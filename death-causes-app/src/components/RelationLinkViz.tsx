@@ -236,7 +236,7 @@ export default class RelationLinkViz {
         var y = e.pageY;  //y position within the element.
         tooltipdiv
           .style("opacity", 1)
-          .html(`<small>${rdat.arrowInterpretation(d.from, d.to)}</small>`)
+          .html(`${rdat.arrowInterpretation(d.from, d.to)}`)
           .style("left", x + "px")
           .style("top", y + "px");
         e.stopPropagation();
@@ -244,9 +244,18 @@ export default class RelationLinkViz {
     svg.on("click", () => {
       tooltipdiv.style("opacity", 0);
     });
+    svg.on("mouseleave", () => {
+      tooltipdiv.style("opacity", 0);
+    });
   }
 
   clear() {
+    console.log("inside clear");
+    d3.select(".arrowexplanation").remove();
+    d3.select('body')
+      .append("div")
+      .attr("class", "arrowexplanation")
+      .style("opacity", 0);
     d3.select("svg").remove();
   }
 }
