@@ -115,6 +115,7 @@ def run(age_intervals=None):
     relations, death_causes, death_cause_categories=integrate_and_interpolate_all(age_intervals, "Causes")
     transform_to_json(combine_relations(relations), RELATIONFILE_DESTINATION)
     transform_to_json(death_causes, "Causes.json")
+    transform_to_json(death_causes, "../death-causes-app/src/resources/Causes.json")
     transform_to_json(death_cause_categories, "CauseCategories.json")
     #transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
