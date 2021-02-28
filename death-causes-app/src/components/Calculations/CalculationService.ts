@@ -8,6 +8,10 @@ import { RiskRatioTableCellInterface } from "../database/RiskRatioTableCell/Risk
 import { DataRow } from "../PlottingData";
 import { SurvivalCurveData } from "./SurvivalCurveData";
 
+interface InnerCausesForAllAges {
+    [key: string]: DataRow[]
+}
+
 interface MinimumFactorInputs {
     [key: string]: RiskRatioTableCellInterface
 }
@@ -98,24 +102,42 @@ export class RiskRatioCalculationService {
     }
 
     calculateInnerProbabilitiesForAllCausesAndAges(factorAnswersSubmitted: FactorAnswers, deathCauses: DeathCause[]): DataRow[] {
-        let res: DataRow[] = []
+        let innerCausesForAllAges: InnerCausesForAllAges = {}
         let currentAge = +factorAnswersSubmitted['Age'] as number
         let ageRange = this.getAgeRange(currentAge)
-        deathCauses.forEach(deathCause => {
+        let currentProbOfBeingAlive = 1;
+        let totalProbOfDying = 0;
+
+        deathCauses.forEach(d => innerCausesForAllAges[d.deathCauseName] = [])
+
+        ageRange.forEach(age => {
+            let factorAnswersSubmittedUpdated = { ...factorAnswersSubmitted }
+            factorAnswersSubmittedUpdated['Age'] = age
             let innerCausesForAges: DataRow[] = []
-            ageRange.forEach(age => {
-                let factorAnswersSubmittedUpdated = { ...factorAnswersSubmitted }
-                factorAnswersSubmittedUpdated['Age'] = age
+
+            deathCauses.forEach(deathCause => {
                 innerCausesForAges.push(this.calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
             })
-            //todo: byt rundt på rækkefølge af loops (age før deathcauses), og opdater total prob med sandsynligheden for at være i live. 
-            res.push(this.combineMultipleInnerCauses(innerCausesForAges))
+
+            innerCausesForAges.forEach(innerCause => innerCause.totalProb *= currentProbOfBeingAlive)
+
+            totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)
+            currentProbOfBeingAlive *= 1 - totalProbOfDying
+
+            innerCausesForAges.forEach(innerCause => {
+                innerCausesForAllAges[innerCause.name].push(innerCause)
+            })
+
         })
+
+        let res: DataRow[] = []
+        for (let key of Object.keys(innerCausesForAllAges)) {
+            res.push(this.combineMultipleInnerCauses(innerCausesForAllAges[key]))
+        }
         return res;
     }
 
     private combineMultipleInnerCauses(innerCauses: DataRow[]): DataRow {
-        //todo: totalProb i hver innerCause objekt skal ganges med sandsynligheden for at være i live i det år.
         let sum = innerCauses.map(innerCause => innerCause.totalProb).reduce((first, second) => first + second, 0)
         let deathCauseName = innerCauses[0].name
 
