@@ -1,44 +1,115 @@
 import React from 'react';
-import './VizWindow.css';
+import { Form } from "react-bootstrap";
+import { FactorAnswers } from '../models/Factors';
+import causesData from '../ressources/Causes.json';
 import BarChartWrapper from './BarChartWrapper';
-import { TEST_DATA, TEST_DATA2 } from './PlottingData';
+import { SurvivalCurveData } from './Calculations/SurvivalCurveData';
+import { CalculationFacade } from './Calculations/CalculationsFacade';
+import Deathcause from './database/Deathcause';
+import './VizWindow.css';
+import BarPlotWrapper from './BarPlotWrapper';
 
-class VizWindow extends React.PureComponent<any, any> {
+interface VizWindowProps {
+    factorAnswersSubmitted: FactorAnswers | null
+}
+
+interface VizWindowState {
+    selectedVisualization: any
+    selectedVisualisation: string
+    probabilities: any
+    survivalCurve: SurvivalCurveData[]
+}
+
+class VizWindow extends React.PureComponent<VizWindowProps, VizWindowState> {
+    calculationFacade: CalculationFacade | undefined;
     counter: number = 0;
+    factorDatabase: Deathcause[] = [];
+
     constructor(props: any) {
         super(props);
         this.state = {
-            selected_visualization: "allcauses",
-            database: TEST_DATA
+            selectedVisualization: "allcauses",
+            selectedVisualisation: "Survival curve",
+            probabilities: null,
+            survivalCurve: []
         };
+    }
+
+    calculateProbabilies() {
+        if (!this.props.factorAnswersSubmitted) {
+            return;
+        }
+
+        let res = this.calculationFacade?.calculateInnerProbabilities(this.props.factorAnswersSubmitted, this.factorDatabase)
+        let surv = this.calculationFacade!.calculateSurvivalCurve(this.props.factorAnswersSubmitted, this.factorDatabase)
+        this.setState({
+            probabilities: res,
+            survivalCurve: surv 
+        })
+    }
+
+    loadFactorDatabase() {
+        let database: Deathcause[] = [];
+        for (var key in causesData) {
+            if (causesData.hasOwnProperty(key)) {
+                database.push(new Deathcause(causesData[key as keyof typeof causesData], key))
+            }
+        }
+        this.factorDatabase = database
+        this.calculationFacade = new CalculationFacade(database);
+    }
+
+    componentDidMount() {
+        this.loadFactorDatabase()
+    }
+
+    componentDidUpdate(prevProps: VizWindowProps) {
+        if (prevProps.factorAnswersSubmitted !== this.props.factorAnswersSubmitted) {
+            this.calculateProbabilies()
+        }
     }
 
     renderVisualization() {
         //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
     }
 
-    handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        //this.setState({ });
-        if (this.counter % 2 === 0) {
-            this.counter++;
-            this.setState({ database: TEST_DATA2, selected_visualization: event.currentTarget.value });
+    handleSelectedVisualisationChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+        this.setState({
+            selectedVisualisation: event.currentTarget.value
+        })
+    }
+
+    renderSelectOption() {
+        return (
+            <Form>
+                <Form.Group className='visualisation' >
+                    <Form.Row>
+                        <Form.Control className='visualisation' as="select" defaultValue="Choose..." onChange={this.handleSelectedVisualisationChange}>
+                            <option>Survival curve</option>
+                            <option>Risk factor contributions</option>
+                        </Form.Control>
+                    </Form.Row>
+                </Form.Group>
+            </Form >
+        )
+    }
+
+    renderGraph() {
+        const visualisation = this.state.selectedVisualisation
+        switch(visualisation) {
+            case "Survival curve":
+                 return <BarPlotWrapper data={this.state.survivalCurve}/>
+            case "Risk factor contributions":
+                return <BarChartWrapper database={this.state.probabilities}/>
         }
-        else {
-            this.counter++;
-            this.setState({ database: TEST_DATA, selected_visualization: event.currentTarget.value });
-        }
-    };
+    }
 
     render(): React.ReactNode {
         console.log(this.props)
         return (<div className='vizwindow'>
             <h4> Visualization Menu </h4>
-
-            <select id="visualizations" onChange={this.handleChange} value={this.state.selected_visualization}>
-                <option value="allcauses">TEST_DATA</option>
-                <option value="allages">TEST_DATA2</option>
-            </select>
-            <BarChartWrapper database={this.state.database} />
+            {this.renderSelectOption()}
+            {this.state.probabilities && this.renderGraph()}
         </div>);
     };
 }

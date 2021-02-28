@@ -14,7 +14,19 @@ class data_frame:  # svend
         self.reverse_factornames = {factor:index for index, factor in enumerate(factornames)}
         self.credibility = credibility
         self.listOfRowsInTheDataFrame = []
-        
+
+    def get_interpolation_as_object(self):
+        interpolationTablesList =[]
+        for r in self.listOfRowsInTheDataFrame:
+            interpolationTable = {}
+            interpolationTable['domain'] = r[:-1]
+            interpolationTable['factors'] = r[-1][0]
+            interpolationTable['interpolationPolynomial'] = r[-1][1]
+            interpolationTable['minValue'] = r[-1][2]
+            interpolationTable['maxValue'] = r[-1][3]
+            interpolationTablesList.append(interpolationTable)
+        return interpolationTablesList
+
     def get_as_list_of_lists(self):
         res=[]
         for r in self.listOfRowsInTheDataFrame:

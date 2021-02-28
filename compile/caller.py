@@ -42,7 +42,7 @@ def integrate_all_in_folder(age_intervals, folder):
                 if interpolated_RR_or_empty is None: #checking if there was something to interpolate
                     interpolated_RR=[]
                 else:
-                    interpolated_RR=interpolated_RR_or_empty.get_as_list_of_lists()
+                    interpolated_RR=interpolated_RR_or_empty.get_interpolation_as_object()
                 riskratiotable={'riskRatioTable':RRlist,
                                 'riskFactorNames':factor_names,
                                 'interpolationTable':interpolated_RR}
