@@ -1,13 +1,16 @@
-import { propTypes } from "react-bootstrap/esm/Image";
 import { FactorAnswers } from "../../models/Factors";
 import { ProbabilityKeyValue } from "../../models/ProbabilityKeyValue";
 import DeathCause from "../database/Deathcause";
-import { ProbabilityOfDeathCause, ProbabilitiesOfAllDeathCauses } from "../database/ProbabilityResult";
+import { ProbabilitiesOfAllDeathCauses, ProbabilityOfDeathCause } from "../database/ProbabilityResult";
 import { RiskFactorGroup } from "../database/RickFactorGroup";
 import { MinimumRiskRatios } from "../database/RiskRatioTable";
 import { RiskRatioTableCellInterface } from "../database/RiskRatioTableCell/RiskRatioTableCellInterface";
 import { DataRow } from "../PlottingData";
 import { SurvivalCurveData } from "./SurvivalCurveData";
+
+interface InnerCausesForAllAges {
+    [key: string]: DataRow[]
+}
 
 interface MinimumFactorInputs {
     [key: string]: RiskRatioTableCellInterface
@@ -35,7 +38,7 @@ export class RiskRatioCalculationService {
         let survivalCurve = Array.from({ length: totalProbabilityOfNotDying.length - 1 }, () => 1)
         for (let i = 1; i < totalProbabilityOfNotDying.length; i++) {
             survivalCurve[i] = survivalCurve[i - 1] * totalProbabilityOfNotDying[i]
-            res.push({age: probabilitiesPerDeathCause.ages[i], prob: survivalCurve[i]})
+            res.push({ age: probabilitiesPerDeathCause.ages[i], prob: survivalCurve[i] })
         }
 
         return res
@@ -47,7 +50,7 @@ export class RiskRatioCalculationService {
 
         let probabilityOfDeathcause: ProbabilityOfDeathCause[] = []
         for (var deathcause of deathcauses) {
-            let probabilties = this.calculateProbForSingleCauseAndAllAges(submittedFactorAnswers, ageRange, deathcause)
+            let probabilties = this.calculateProbForSingleCauseAndAllAges(submittedFactorAnswers, ageRange, deathcause);
             probabilityOfDeathcause.push(this.createProbabilityOfDeathCauseObject(deathcause.deathCauseName, probabilties));
         }
 
@@ -99,18 +102,38 @@ export class RiskRatioCalculationService {
     }
 
     calculateInnerProbabilitiesForAllCausesAndAges(factorAnswersSubmitted: FactorAnswers, deathCauses: DeathCause[]): DataRow[] {
-        let res: DataRow[] = []
+        let innerCausesForAllAges: InnerCausesForAllAges = {}
         let currentAge = +factorAnswersSubmitted['Age'] as number
         let ageRange = this.getAgeRange(currentAge)
-        deathCauses.forEach(deathCause => {
+        let currentProbOfBeingAlive = 1;
+        let totalProbOfDying = 0;
+
+        deathCauses.forEach(d => innerCausesForAllAges[d.deathCauseName] = [])
+
+        ageRange.forEach(age => {
+            let factorAnswersSubmittedUpdated = { ...factorAnswersSubmitted }
+            factorAnswersSubmittedUpdated['Age'] = age
             let innerCausesForAges: DataRow[] = []
-            ageRange.forEach(age => {
-                let factorAnswersSubmittedUpdated = { ...factorAnswersSubmitted }
-                factorAnswersSubmittedUpdated['Age'] = age
+
+            deathCauses.forEach(deathCause => {
                 innerCausesForAges.push(this.calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
             })
-            res.push(this.combineMultipleInnerCauses(innerCausesForAges))
+
+            innerCausesForAges.forEach(innerCause => innerCause.totalProb *= currentProbOfBeingAlive)
+
+            totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)
+            currentProbOfBeingAlive *= 1 - totalProbOfDying
+
+            innerCausesForAges.forEach(innerCause => {
+                innerCausesForAllAges[innerCause.name].push(innerCause)
+            })
+
         })
+
+        let res: DataRow[] = []
+        for (let key of Object.keys(innerCausesForAllAges)) {
+            res.push(this.combineMultipleInnerCauses(innerCausesForAllAges[key]))
+        }
         return res;
     }
 
@@ -126,15 +149,16 @@ export class RiskRatioCalculationService {
         let factors = Object.keys(innerCauses[0].innerCauses)
 
         for (let factor of factors) {
-            let combinedInnerProb = 0
-            innerCauses.forEach(
-                innerCause => {
-                    combinedInnerProb += innerCause.totalProb * innerCause.innerCauses[factor] / sum
-                })
-            combinedInnerCause[factor] = combinedInnerProb
+            combinedInnerCause[factor] = 0
+            innerCauses.forEach(innerCause => {
+                combinedInnerCause[factor] += innerCause.totalProb * innerCause.innerCauses[factor] / sum
+            })
         }
+
         return { name: deathCauseName, totalProb: sum, innerCauses: combinedInnerCause }
     }
+
+
 
     calculateInnerProbabilities(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): DataRow {
         let uStar = this.calculateUStar(factorAnswersSubmitted, deathcause);
@@ -201,6 +225,7 @@ export class RiskRatioCalculationService {
         return res;
     }
 
+    //todo: returner objekter med de optimale faktorværdier og om det submitted faktor værdi er for lidt / for meget ift. den minimale.
     private calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted: FactorAnswers, riskFactorGroup: RiskFactorGroup) {
         let res: MinimumRiskRatios = {}
         let factors = riskFactorGroup.getAllFactorsInGroup()
