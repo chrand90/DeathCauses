@@ -16,7 +16,9 @@ export const TEXTCOLOR_DISABLED = "#999";
 export const BACKGROUNDCOLOR_CHOICE = "#cef1f5";
 export const ERROR_COLOR = "#fc0303";
 export const WARNING_COLOR = "#bfa50d";
+export const WARNING_COLOR_STRONGER = "#806e09";
 export const SUCCESS_COLOR = "#3E713F";
+export const CHANGED_COLOR= "#630396";
 
 export interface QuestionProps<T> extends OrderVisualization {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -221,8 +223,8 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     } else if (widthOfArea >= 992) {
       widthOfArea = (widthOfArea * 5) / 12;
     }
-    widthOfArea = (widthOfArea * 1) / 3;
-    return widthOfArea;
+    widthOfArea = Math.min(600,(widthOfArea * 1) / 3);
+    return widthOfArea-20; //20 is to account for the extra padding
   }
 
   fontSizeForFactorNameHeader() {
@@ -338,12 +340,12 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
 
   render() {
     return (
-      <Form.Row>
+      <Form.Row className={"formrow-narrow-"+(!this.props.featured).toString()}>
         <Col xs={this.props.featured ? 12 : 4}>
           {this.props.featured ? (
             this.questionPhrasing()
           ) : (
-            <div style={{ height: "34px", lineHeight: "34px" }}>
+            <div style={{ height: "34px", lineHeight: "34px", overflow:"hidden" }}>
               {this.inLineFactorNameHeader()}
             </div>
           )}

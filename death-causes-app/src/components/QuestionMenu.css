@@ -1,10 +1,33 @@
+:root {
+  --background: #72bde9;
+}
+
+.questionlist-div{
+  background: var(--background);
+}
+
 .questionmenu{
     min-height: 600px;
-    background: #c2d365;
-    padding: 8px;
+    background: var(--background);
+    padding: 18px;
 }
   
 .errorLabel{
   font-size: small;
   color: red;
+}
+
+.collapse {
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+.collapse.show {
+  -webkit-transition: 1s;
+  transition: 1s;
+}
+
+.collapsing {
+  -webkit-transition: 1s;
+  transition: 1s;
 }

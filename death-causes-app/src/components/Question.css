@@ -18,7 +18,12 @@
 }
 
 .form-group {
-  height: 36px;
+  height: 34px;
+}
+
+.formrow-narrow-true {
+  height: 38px;
+  padding: 2px;
 }
 
 /*  Indeholder css for help button. -webkit-box-shadow og box-shadow er kopieret fra definitionen af .form-control(https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.css) for at de får samme udseende.  */
@@ -132,7 +137,7 @@
 
 .validity-tooltip-warning > .tooltip-inner {
   background-color: white;
-  color:#bfa50d;
+  color:#806e09;
   border: 1px solid #bfa50d;
   font-size: small;
   max-width: 100%;

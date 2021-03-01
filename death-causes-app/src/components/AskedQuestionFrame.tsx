@@ -6,6 +6,7 @@ import { ButtonToolbar } from "reactstrap";
 import { InputValidity } from "../models/FactorAbstract";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
+import { FormControlStyle, CHANGED_COLOR } from "./Question";
 
 interface AskedQuestionProps {
   factorName: string | undefined;
@@ -17,13 +18,45 @@ interface AskedQuestionProps {
   onFinishNow: () => void;
   onFinishRandomly: () => void;
   leftCornerCounter: string;
+  onSwitchView: () => void;
+  finished: boolean;
+  isChanged: boolean;
 }
 
 class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
 
+  getMovingOnButton(){
+    const disabled=(this.props.validity !== undefined  && this.props.validity.status === "Error")
+    let buttonStyle: FormControlStyle={};
+    let onClick: (ev: React.FormEvent) => void;
+    let buttonText: string;
+    if(this.props.finished){
+      onClick= (ev: React.FormEvent) => {
+        ev.preventDefault()
+        this.props.onSwitchView()
+       }
+       buttonText="Overview"
+    }
+    else{
+      onClick=this.props.onSubmit
+      buttonText="Next"
+    }
+    if(this.props.isChanged && !this.props.finished){
+      buttonStyle["backgroundColor"]=CHANGED_COLOR
+    }
+    return (
+      <Button disabled={disabled} 
+      onClick={onClick} 
+      aria-contols="collapse-asked-question-frame"
+      style={buttonStyle}>
+        {buttonText}
+      </Button>
+    )
+  }
+
   render() {
     return (
-      <Card style={{ marginBottom: "20px", height: "90%" }}>
+      <Card style={{ marginBottom: "20px", minHeight: "300px", maxHeight:"300px",maxWidth:"500px",marginRight:"auto", marginLeft:"auto" }}>
         <Card.Header>
         <div className="d-flex justify-content-between">
           <div>
@@ -60,15 +93,7 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
               </DropdownButton>
             </ButtonGroup>
             <ButtonGroup>
-              <Button
-                disabled={
-                  this.props.validity === undefined ||
-                  this.props.validity.status === "Error"
-                }
-                onClick={this.props.onSubmit}
-              >
-                Next
-              </Button>
+              {this.getMovingOnButton()}
             </ButtonGroup>
           </ButtonToolbar>
         </Card.Footer>

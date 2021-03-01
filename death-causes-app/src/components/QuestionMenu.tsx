@@ -2,6 +2,7 @@ import { json } from "d3";
 import React, { ChangeEvent } from "react";
 import Button from "react-bootstrap/Button";
 import { Label, Spinner } from "reactstrap";
+import Collapse from "react-bootstrap/Collapse";
 import StringFactorPermanent from "../models/FactorString";
 import NumericFactorPermanent from "../models/FactorNumber";
 import GeneralFactor, { InputValidity } from "../models/FactorAbstract";
@@ -18,6 +19,8 @@ import SimpleStringQuestion from "./QuestionString";
 import AskedQuestionFramed from "./AskedQuestionFrame";
 import RelationLinks from "../models/RelationLinks";
 import { OrderVisualization } from "./Helpers";
+import { Card } from "react-bootstrap";
+import QuestionListFrame from "./QuestionListFrame";
 
 interface QuestionMenuProps extends OrderVisualization {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
@@ -27,6 +30,12 @@ interface QuestionMenuProps extends OrderVisualization {
 enum AnswerProgress {
   ANSWERING = "answering",
   FINISHED = "finished",
+}
+
+enum QuestionView {
+  QUESTION_MANAGER = "question-manager",
+  NOTHING="no-questions",
+  QUESTION_LIST = "question-list",
 }
 
 interface QuestionMenuStates {
@@ -39,6 +48,8 @@ interface QuestionMenuStates {
   currentFactor: string;
   windowWidth: number;
   factorMaskings: FactorMaskings;
+  view: QuestionView;
+  changedSinceLastCommit: boolean;
 }
 
 interface InputValidities {
@@ -78,6 +89,8 @@ class QuestionMenu extends React.Component<
       activelyIgnored: {},
       windowWidth: getViewport(),
       factorMaskings: {},
+      view: QuestionView.QUESTION_MANAGER,
+      changedSinceLastCommit: false
     };
     this.factors = new Factors(null);
     this.helpjsons = {};
@@ -90,10 +103,15 @@ class QuestionMenu extends React.Component<
     this.updateWidth = this.updateWidth.bind(this);
     this.finishQuestionnaire = this.finishQuestionnaire.bind(this);
     this.insertRandom = this.insertRandom.bind(this);
+    this.switchView = this.switchView.bind(this);
   }
 
   updateWidth() {
     this.setState({ windowWidth: getViewport() });
+  }
+
+  switchView() {
+    this.setState({ view: QuestionView.NOTHING });
   }
 
   componentDidMount() {
@@ -186,12 +204,19 @@ class QuestionMenu extends React.Component<
             (newCurrentFactor in prevState.factorMaskings ||
               newCurrentFactor === prevState.currentFactor)
           ) {
-            newHasBeenAnswered.push(newCurrentFactor);
-            if (newHasBeenAnswered.length === this.factorOrder.length) {
+            if (!newHasBeenAnswered.includes(newCurrentFactor)) {
+              newHasBeenAnswered.push(newCurrentFactor);
+            }
+            if (
+              this.factorOrder.indexOf(newCurrentFactor) + 1 ===
+              this.factorOrder.length
+            ) {
               newAnswerProgress = AnswerProgress.FINISHED;
               newCurrentFactor = "";
             } else {
-              newCurrentFactor = this.factorOrder[newHasBeenAnswered.length];
+              newCurrentFactor = this.factorOrder[
+                this.factorOrder.indexOf(newCurrentFactor) + 1
+              ];
             }
           }
           return {
@@ -202,6 +227,7 @@ class QuestionMenu extends React.Component<
             hasBeenAnswered: newHasBeenAnswered,
             answeringProgress: newAnswerProgress,
             currentFactor: newCurrentFactor,
+            changedSinceLastCommit: false,
           };
         },
         () => {
@@ -272,7 +298,11 @@ class QuestionMenu extends React.Component<
 
     this.setState((prevState: QuestionMenuStates) => {
       const newFactorAnswers = { ...prevState.factorAnswers, [name]: value };
-      const newMasks =this.makeNewMasksUpdateObject(newFactorAnswers, name, prevState.factorMaskings)
+      const newMasks = this.makeNewMasksUpdateObject(
+        newFactorAnswers,
+        name,
+        prevState.factorMaskings
+      );
       return {
         validities: {
           ...prevState.validities,
@@ -284,8 +314,9 @@ class QuestionMenu extends React.Component<
               : undefined
           ),
         },
+        changedSinceLastCommit: true,
         factorAnswers: newFactorAnswers,
-        ...newMasks,
+        ...newMasks
       };
     });
   }
@@ -296,7 +327,11 @@ class QuestionMenu extends React.Component<
     const value = e.currentTarget.checked;
     this.setState((prevState: QuestionMenuStates) => {
       const newFactorAnswers = { ...prevState.factorAnswers, [name]: "" };
-      const newMasks =this.makeNewMasksUpdateObject(newFactorAnswers, name, prevState.factorMaskings)
+      const newMasks = this.makeNewMasksUpdateObject(
+        newFactorAnswers,
+        name,
+        prevState.factorMaskings
+      );
       return {
         validities: {
           ...prevState.validities,
@@ -310,7 +345,8 @@ class QuestionMenu extends React.Component<
           ...prevState.activelyIgnored,
           [factorname]: value,
         },
-        ...newMasks
+        changedSinceLastCommit: true,
+        ...newMasks,
       };
     });
   }
@@ -333,6 +369,7 @@ class QuestionMenu extends React.Component<
             newUnitName
           ),
         },
+        changedSinceLastCommit: true
       };
     });
   }
@@ -350,7 +387,7 @@ class QuestionMenu extends React.Component<
       case "number": {
         return (
           <SimpleNumericQuestion
-            key={factorName}
+            key={factorName + featured}
             name={factorName}
             factorAnswer={this.state.factorAnswers[factorName] as string}
             phrasing={factor.phrasing}
@@ -382,7 +419,7 @@ class QuestionMenu extends React.Component<
       case "string": {
         return (
           <SimpleStringQuestion
-            key={factorName}
+            key={factorName + featured}
             name={factorName}
             placeholder={factor.placeholder}
             factorAnswer={this.state.factorAnswers[factorName] as string}
@@ -425,7 +462,14 @@ class QuestionMenu extends React.Component<
 
   previousQuestion() {
     this.setState((previousState: QuestionMenuStates) => {
-      let i = previousState.hasBeenAnswered.length - 1;
+      let i = 0;
+      if (previousState.hasBeenAnswered.includes(previousState.currentFactor)) {
+        i =
+          previousState.hasBeenAnswered.indexOf(previousState.currentFactor) -
+          1;
+      } else {
+        i = previousState.hasBeenAnswered.length - 1;
+      }
       while (
         previousState.hasBeenAnswered[i] in this.state.factorMaskings &&
         i > 0
@@ -435,7 +479,6 @@ class QuestionMenu extends React.Component<
       const newCurrentFactor = previousState.hasBeenAnswered[i];
       return {
         currentFactor: newCurrentFactor,
-        hasBeenAnswered: previousState.hasBeenAnswered.slice(0, i),
         answeringProgress: AnswerProgress.ANSWERING,
         validities: {
           ...previousState.validities,
@@ -480,11 +523,15 @@ class QuestionMenu extends React.Component<
     let denominator =
       this.factorOrder.length - Object.keys(this.state.factorMaskings).length;
     let numerator =
-      this.state.hasBeenAnswered.length -
-      this.state.hasBeenAnswered.filter((factorAnswer) => {
-        return factorAnswer in this.state.factorMaskings;
-      }).length +
-      1;
+      this.factorOrder
+        .filter((factorAnswer) => {
+          return !(factorAnswer in this.state.factorMaskings);
+        })
+        .indexOf(this.state.currentFactor) + 1;
+    if (numerator === 0) {
+      //at the time of implementation it could happen if a property is changed in questionlist
+      return "-/" + denominator;
+    }
     if (numerator > denominator) {
       return denominator + "/" + denominator;
     }
@@ -510,6 +557,9 @@ class QuestionMenu extends React.Component<
           onFinishNow={this.finishQuestionnaire}
           onFinishRandomly={this.insertRandom}
           leftCornerCounter={this.getCounter()}
+          onSwitchView={this.switchView}
+          finished={true}
+          isChanged={this.state.changedSinceLastCommit}
         />
       );
     }
@@ -525,6 +575,9 @@ class QuestionMenu extends React.Component<
           onFinishNow={this.finishQuestionnaire}
           onFinishRandomly={this.insertRandom}
           leftCornerCounter={this.getCounter()}
+          onSwitchView={this.switchView}
+          finished={false}
+          isChanged={this.state.changedSinceLastCommit}
         >
           {this.getQuestion(
             this.state.currentFactor,
@@ -558,28 +611,24 @@ class QuestionMenu extends React.Component<
           and expected lifespan
         </p>
         <form noValidate onSubmit={this.handleSubmit}>
-          <div>
-            <Button variant="primary" type="submit" disabled={!submittable}>
-              Compute
-            </Button>
-            {submittable ? (
-              ""
-            ) : (
-              <Label className="errorLabel">*Fix inputs</Label>
-            )}
-          </div>
-
-          <div
-            style={
-              this.state.answeringProgress === "finished"
-                ? {}
-                : { height: "330px" }
-            }
-          >
-            {this.getQuestionToAnswer()}
-          </div>
-
-          {questionList}
+          <Collapse in={this.state.view === QuestionView.QUESTION_MANAGER} 
+          onExited={()=>{setTimeout(() => this.setState({view: QuestionView.QUESTION_LIST}),250)}} 
+          timeout={500} >
+            <div id="collapse-asked-question-frame" style={{justifyContent:"center"}}>{this.getQuestionToAnswer()}</div>
+          </Collapse>
+          <Collapse in={this.state.view === QuestionView.QUESTION_LIST} onExited={()=>{this.setState({view: QuestionView.QUESTION_MANAGER})}} timeout={500}>
+            <div id="collapse-question-list">
+              <QuestionListFrame
+                onSubmit={this.handleSubmit}
+                onSwitchView={this.switchView}
+                onFinishRandomly={this.insertRandom}
+                hasError={!submittable}
+                isChanged={this.state.changedSinceLastCommit}
+                >
+                {questionList}
+              </QuestionListFrame>
+            </div>
+          </Collapse>
         </form>
       </div>
     );
