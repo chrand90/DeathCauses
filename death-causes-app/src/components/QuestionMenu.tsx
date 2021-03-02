@@ -551,7 +551,7 @@ class QuestionMenu extends React.Component<
           factorName={undefined}
           validity={undefined}
           onSubmit={this.handleSubmit}
-          previousPossible={this.state.hasBeenAnswered.length > 0}
+          previousPossible={this.factorOrder.indexOf(this.state.currentFactor) > 0}
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
           onFinishNow={this.finishQuestionnaire}
@@ -569,7 +569,7 @@ class QuestionMenu extends React.Component<
           factorName={this.state.currentFactor}
           validity={this.state.validities[this.state.currentFactor]}
           onSubmit={this.handleSubmit}
-          previousPossible={this.state.hasBeenAnswered.length > 0}
+          previousPossible={this.factorOrder.indexOf(this.state.currentFactor) > 0}
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
           onFinishNow={this.finishQuestionnaire}

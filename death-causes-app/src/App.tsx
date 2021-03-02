@@ -1,14 +1,11 @@
 import {json} from "d3";
-import React, { MouseEvent } from "react";
+import React from "react";
 import { Col, Container, Row } from "reactstrap";
 import "./App.css";
-import Deathcause from "./components/database/Deathcause";
-import { RiskFactorGroup } from "./components/database/RickFactorGroup";
-import { RiskRatioTable } from "./components/database/RiskRatioTable";
 import Header from "./components/Header";
 import QuestionMenu from "./components/QuestionMenu";
 import VizWindow from "./components/VizWindow";
-import Factors, { FactorAnswers } from "./models/Factors";
+import  { FactorAnswers } from "./models/Factors";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
@@ -18,7 +15,6 @@ import { Visualization } from "./components/Helpers";
 
 interface AppState {
   factorAnswersSubmitted: FactorAnswers | null;
-  factorDatabase: any;
   elementInFocus: string;
   relationLinkData: RelationLinks | null;
   visualization: Visualization;
@@ -30,7 +26,6 @@ class App extends React.Component<any, AppState> {
 
     this.state = {
       factorAnswersSubmitted: null,
-      factorDatabase: null,
       elementInFocus: "BMI",
       relationLinkData: null,
       visualization: Visualization.NO_GRAPH
