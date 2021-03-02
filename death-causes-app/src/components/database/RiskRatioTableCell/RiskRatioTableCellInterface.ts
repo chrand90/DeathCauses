@@ -1,4 +1,4 @@
 export interface RiskRatioTableCellInterface {
-    isInputWithinCell(input: number | string | boolean): boolean
-    getValueInCell(): number | string | boolean
+    isInputWithinCell(input: number | string): boolean
+    getValueInCell(): number | string
 }

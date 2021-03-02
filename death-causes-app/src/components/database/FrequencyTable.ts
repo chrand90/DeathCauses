@@ -1,5 +1,5 @@
 export interface FrequencyJson {
-    age_classification: number[];
+    age_classification: number[] | never[];
     age_prevalences: number[];
 }
 

@@ -1,3 +1,0 @@
-Diabetes	RR
-No	1.0
-Yes	2.11

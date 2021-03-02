@@ -10,7 +10,7 @@ export class RiskRatioTableEntry {
         this.factorValues = factorValues.map(element => parseStringToInputType(element))
     }
 
-    isFactorAnswersInDomain(relevantFactorAnswers: (string | boolean | number)[]) {
+    isFactorAnswersInDomain(relevantFactorAnswers: (string | number)[]) {
         for (let i = 0; i < this.factorValues.length; i++) {
             let isSubmittedFactorAnswerWithinCell = this.factorValues[i].isInputWithinCell(relevantFactorAnswers[i])
             if (!isSubmittedFactorAnswerWithinCell) {
@@ -20,7 +20,7 @@ export class RiskRatioTableEntry {
         return true;
     }
 
-    isFactorAnswersInDomainExceptOneFactor(factorToMinimize: number, relevantFactorAnswers: (string | boolean | number)[]) {
+    isFactorAnswersInDomainExceptOneFactor(factorToMinimize: number, relevantFactorAnswers: (string | number)[]) {
         for (let i = 0; i < this.factorValues.length; i++) {
             if (i === factorToMinimize) {
                 continue;
@@ -33,7 +33,7 @@ export class RiskRatioTableEntry {
         return true;
     }
 
-    isSingleFactorInDomain(factorIndexToFind: number, factorAnswer: (string | boolean | number)) {
+    isSingleFactorInDomain(factorIndexToFind: number, factorAnswer: (string | number)) {
         if (this.factorValues[factorIndexToFind].isInputWithinCell(factorAnswer)) {
             return true;
         }

@@ -718,11 +718,28 @@ class spline_system(object):
         for t in itertools.product(*per_variable_lims):
             print(t)
 
-def get_maximum_likelihood_estimate(W,X, yvals, lambdaval=1.0):
+def get_maximum_likelihood_estimate(W,X, yvals, lambdaval=1.0, scales=None,
+                                                Xfixed=[],
+                                                yfixed=[]):
+
     X=np.array(X)
-    W=np.array(W)
-    y=np.array(yvals)
-    return np.linalg.inv(X.T.dot(X)+lambdaval*W).dot(X.T).dot(y)
+    W = np.array(W)
+    y = np.array(yvals)
+
+    if scales is None:
+        scales=np.diag([1.0]*X.shape[0])
+    else:
+        scales=np.diag(scales)
+    big_inverse = np.linalg.inv(X.T.dot(scales).dot(X) + lambdaval * W)
+    if len(Xfixed)==0:
+        return big_inverse.dot(X.T).dot(scales).dot(y)
+    else:
+        beta_original=big_inverse.dot(X.T).dot(scales).dot(y)
+        Xfixed=np.array(Xfixed)
+        yfixed=np.array(yfixed)
+        lagrange_multiplier=2*np.linalg.inv(Xfixed.dot(big_inverse).dot(Xfixed.T)).dot(yfixed-Xfixed.dot(beta_original))
+        return beta_original+0.5*big_inverse.dot(Xfixed.T).dot(lagrange_multiplier)
+
 
 def distribute_to_coef_pair_to_formula_dic(formula_dic, coefs1, coefs2, i, j, C=1):
     for c1,power1 in zip(coefs1,range(4)):

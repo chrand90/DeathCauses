@@ -61,12 +61,13 @@ class RiskRatioTable {
                 return this.riskRatioTable[i].riskRatioValue;
             }
         }
+        return this.riskRatioTable[this.riskRatioTable.length-1].riskRatioValue; // tmp to make it run
 
         throw new Error("Found no risk ratio entry where " + submittedFactorAnswers + " is within domain")
     }
 
-    private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string | boolean | number)[] => {
-        let res: (string | boolean | number)[] = []
+    private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string  | number)[] => {
+        let res: (string  | number)[] = []
         this.factorNames.forEach(factor => res.push(sumbittedFactorAnswers[factor]))
         return res;
     }

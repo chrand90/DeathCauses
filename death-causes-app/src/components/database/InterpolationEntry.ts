@@ -7,15 +7,15 @@ export interface InterpolationTableJson {
     domain: string[];
     factors: string[];
     interpolationPolynomial: string;
-    minValue: number;
-    maxValue: number;
+    minValue: number | null;
+    maxValue: number | null;
 }
 
 export class InterpolationEntry {
     domain: RiskRatioTableCellInterface[] = [];
     factors: string[]
-    minValue: number;
-    maxValue: number
+    minValue: number| null;
+    maxValue: number | null;
     polynomial: Polynomial;
 
     constructor(inputJson: InterpolationTableJson) {
@@ -26,13 +26,13 @@ export class InterpolationEntry {
         this.polynomial = parseStringToPolynomial(inputJson.interpolationPolynomial);
     }
 
-    getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string | boolean | number)[] => {
-        let res: (string | boolean | number)[] = []
+    getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string | number)[] => {
+        let res: (string | number)[] = []
         this.factors.forEach(factor => res.push(sumbittedFactorAnswers[factor]))
         return res;
     }
 
-    isFactorAnswersInDomain(relevantFactorAnswers: (string | boolean | number)[]) {
+    isFactorAnswersInDomain(relevantFactorAnswers: (string  | number)[]) {
         for (let i = 0; i < this.factors.length; i++) {
             let isSubmittedFactorAnswerWithinCell = this.domain[i].isInputWithinCell(relevantFactorAnswers[i])
             if (!isSubmittedFactorAnswerWithinCell) {
@@ -44,8 +44,8 @@ export class InterpolationEntry {
 
     interpolateRR(submittedFactorAnswers: number[]) {
         let res = this.polynomial.evaluate(submittedFactorAnswers)
-        if (res < this.minValue) return this.minValue;
-        if (res > this.maxValue) return this.maxValue; 
+        if (this.minValue && res < this.minValue) return this.minValue;
+        if (this.maxValue && res > this.maxValue) return this.maxValue; 
         return res;
     }
 }

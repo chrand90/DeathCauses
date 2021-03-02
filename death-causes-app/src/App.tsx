@@ -1,37 +1,47 @@
+import {json} from "d3";
+import React from "react";
+import { Col, Container, Row } from "reactstrap";
+import "./App.css";
+import Header from "./components/Header";
+import QuestionMenu from "./components/QuestionMenu";
+import VizWindow from "./components/VizWindow";
+import  { FactorAnswers } from "./models/Factors";
+import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
+import Spinner from "react-bootstrap/Spinner";
+import { Visualization } from "./components/Helpers";
 
-import React from 'react';
-import { Col, Container, Row } from 'reactstrap';
-import './App.css';
-import Header from './components/Header';
-import QuestionMenu from './components/QuestionMenu';
-import VizWindow from './components/VizWindow';
-import Factors, { FactorAnswers } from './models/Factors';
+
 
 
 interface AppState {
-  factorAnswersSubmitted: FactorAnswers,
+  factorAnswersSubmitted: FactorAnswers | null;
+  elementInFocus: string;
+  relationLinkData: RelationLinks | null;
+  visualization: Visualization;
 }
 
 class App extends React.Component<any, AppState> {
-
-
-
   constructor(props: any) {
     super(props);
 
     this.state = {
-      factorAnswersSubmitted: new Factors(null).getFactorsAsStateObject(),
-    }
-  };
-
-  handleSuccessfulSubmit = (factorAnswers: FactorAnswers): void => {
-    this.setState({
-      factorAnswersSubmitted: factorAnswers
-    }, () => { })
+      factorAnswersSubmitted: null,
+      elementInFocus: "BMI",
+      relationLinkData: null,
+      visualization: Visualization.NO_GRAPH
+    };
+    
+    this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
+    this.orderVisualization = this.orderVisualization.bind(this);
   }
 
-
-
+  handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
+    console.log("submitted factoranswers")
+    console.log(factorAnswers);
+    this.setState({
+      factorAnswersSubmitted: factorAnswers,
+    });
+  }
 
   // loadFactorAnswers() {
   //   this.setState({
@@ -48,18 +58,41 @@ class App extends React.Component<any, AppState> {
   // }
 
 
+  loadRelationLinks() {
+    Promise.all([
+      json("Relations.json")
+    ]).then((data) => {
+      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)
+    })});
+  }
 
+  componentDidMount() {
+    this.loadRelationLinks()
+  }
+
+  orderVisualization(elementInFocus: string, visualizationType: Visualization): void {
+    this.setState({ visualization: visualizationType, elementInFocus: elementInFocus} );
+  }
 
   renderQuestionMenu() {
     return (
-      <QuestionMenu
-        handleSuccessfulSubmit={this.handleSuccessfulSubmit} />
+      <QuestionMenu 
+        handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
+        relationLinkData={this.state.relationLinkData!}
+        orderVisualization={this.orderVisualization}          
+    />
     );
   }
 
   renderVizWindow() {
     return (
-      <VizWindow factorAnswersSubmitted={this.state.factorAnswersSubmitted} />
+      <VizWindow
+        factorAnswersSubmitted={this.state.factorAnswersSubmitted}
+        relationLinkData={this.state.relationLinkData!}
+        elementInFocus={this.state.elementInFocus}
+        visualization={this.state.visualization}
+        orderVisualization={this.orderVisualization}
+      />
     );
   }
 
@@ -69,11 +102,13 @@ class App extends React.Component<any, AppState> {
         <Header />
         <Container fluid>
           <Row>
-            <Col lg={4} xl={3} style={{ padding: '0px' }}>
-              {this.renderQuestionMenu()}
+            <Col lg={5} xl={4} style={{ padding: "0px" }}>
+              {this.state.relationLinkData!== null ? this.renderQuestionMenu() : <Spinner animation="grow" />}
             </Col>
-            <Col lg={8} xl={9} style={{ padding: '0px' }}>
-              {this.state.factorAnswersSubmitted ? this.renderVizWindow() : "yolo"}
+            <Col lg={7} xl={8} style={{ padding: "0px" }}>
+              { this.state.relationLinkData !== null
+                ? this.renderVizWindow()
+                : <Spinner animation="grow" />}
             </Col>
           </Row>
         </Container>

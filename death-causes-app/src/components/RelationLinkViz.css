@@ -1,0 +1,19 @@
+.arrow{
+    stroke-width:5;
+    stroke:#000;
+    stroke-dasharray:5, 5;
+}
+
+div.arrowexplanation {	
+    position: absolute;			
+    text-align: left;
+    min-width:50px;			
+    max-width: 240px;					
+    height: auto;					
+    padding: 2px;				
+    font-size: 14px;		
+    background: white;	
+    border: 2px solid rgb(43, 78, 151);		
+    border-radius: 2px;			
+    pointer-events: none;			
+}

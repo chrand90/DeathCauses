@@ -4,20 +4,22 @@ import { RiskRatioCalculationService } from "./CalculationService";
 
 export class CalculationFacade {
     private readonly probabilityOfDeathCauseCalculation: RiskRatioCalculationService
+    private readonly deathCauses: DeathCause[];
 
     constructor(deathcauses: DeathCause[]) {
+        this.deathCauses=deathcauses
         this.probabilityOfDeathCauseCalculation = new RiskRatioCalculationService()
     }
     
-    calculateProbabilitiesForDeathcauses = (submittedFactorAnswers: FactorAnswers, deathCauses: DeathCause[]) => {
-        return this.probabilityOfDeathCauseCalculation.calculateProbabilitiesOfDeathCauses(submittedFactorAnswers, deathCauses)
+    calculateProbabilitiesForDeathcauses = (submittedFactorAnswers: FactorAnswers) => {
+        return this.probabilityOfDeathCauseCalculation.calculateProbabilitiesOfDeathCauses(submittedFactorAnswers, this.deathCauses)
     }
 
-    calculateInnerProbabilities(submittedFactorAnswers: FactorAnswers, deathCauses: DeathCause[]) {
-        return this.probabilityOfDeathCauseCalculation.calculateInnerProbabilitiesForAllCausesAndAges(submittedFactorAnswers, deathCauses);
+    calculateInnerProbabilities = (submittedFactorAnswers: FactorAnswers) => {
+        return this.probabilityOfDeathCauseCalculation.calculateInnerProbabilitiesForAllCausesAndAges(submittedFactorAnswers, this.deathCauses);
     }
 
-    calculateSurvivalCurve(submittedFactorAnswers: FactorAnswers, deathCauses: DeathCause[]) {
-        return this.probabilityOfDeathCauseCalculation.calculateSurvivalCurve(submittedFactorAnswers, deathCauses)
+    calculateSurvivalCurve = (submittedFactorAnswers: FactorAnswers) => {
+        return this.probabilityOfDeathCauseCalculation.calculateSurvivalCurve(submittedFactorAnswers, this.deathCauses)
     }
 }

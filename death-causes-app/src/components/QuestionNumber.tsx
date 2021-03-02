@@ -1,46 +1,36 @@
 import {
-    QuestionProps,
-    QuestionStates,
-    FormControlStyle,
-    BACKGROUNDCOLOR_DISABLED,
-    ERROR_COLOR,
-    WARNING_COLOR,
-    QuestionContext
-  } from "./Question";
-  import React from "react";
-  import {Form } from "react-bootstrap";
-  
+  QuestionProps,
+  QuestionStates,
+  FormControlStyle,
+  BACKGROUNDCOLOR_DISABLED,
+  ERROR_COLOR,
+  WARNING_COLOR,
+  QuestionContext,
+} from "./Question";
+import { InputValidity } from "../models/FactorAbstract";
+import React from "react";
+import { Form } from "react-bootstrap";
+import UnitPicker from "./UnitPicker";
+import { OrderVisualization } from "./Helpers";
 
+interface NumericQuestionProps extends QuestionProps<string> {
+  placeholder: string;
+  inputvalidity: InputValidity;
+  unitOptions: string[];
+  handleUnitChange: (fname: string, newUnitName: string) => void;
+}
 
-  interface NumericQuestionProps extends QuestionProps<number> {};
-  
-  export default class SimpleNumericQuestion extends React.PureComponent<
+export default class SimpleNumericQuestion extends React.PureComponent<
   NumericQuestionProps,
   QuestionStates
 > {
 
-  constructor(props: NumericQuestionProps) {
-    super(props);
-    this.state = {
-      ignore: false,
-    };
-    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
-  }
-
   TextInputBackgroundColor() {
-    if (this.state.ignore) {
+    if (this.props.ignore) {
       return BACKGROUNDCOLOR_DISABLED;
     } else {
       return "";
     }
-  }
-
-  handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ ignore: event.currentTarget.checked }, (): void => {
-      if (this.state.ignore) {
-        this.props.handleIgnoreFactor(this.props.name);
-      }
-    });
   }
 
   getErrorStyles() {
@@ -48,24 +38,40 @@ import {
       background: this.TextInputBackgroundColor(),
     };
     let showmessage: boolean = false;
-    let errorMessageStyle: FormControlStyle = {};
     if (this.props.inputvalidity.status === "Error") {
       showmessage = true;
-      //formControlStyle["border-width"]="4px";
-      formControlStyle["border-color"] = ERROR_COLOR;
-      formControlStyle["color"] =ERROR_COLOR;
-      errorMessageStyle["color"] = ERROR_COLOR;
+      formControlStyle["borderColor"] = ERROR_COLOR;
+      formControlStyle["color"] = ERROR_COLOR;
     }
     console.log("this.state.ignore");
-    console.log(this.state.ignore);
-    if (
-      this.props.inputvalidity.status === "Warning" 
-    ) {
+    console.log(this.props.ignore);
+    if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
-      formControlStyle["border-color"] = WARNING_COLOR;
-      errorMessageStyle["color"] = WARNING_COLOR;
+      formControlStyle["borderColor"] = WARNING_COLOR;
     }
-    return { formControlStyle, showmessage, errorMessageStyle };
+    return { formControlStyle, showmessage };
+  }
+
+  compare(a:any,b:any){
+    return String(a)+'==='+String(b)+': '+String(a===b)
+  }
+
+  unitButtonOrText() {
+    if (this.props.unitOptions.length > 0) {
+      return (
+        <UnitPicker
+          onChoice={(newUnit: string) =>
+            this.props.handleUnitChange(this.props.name, newUnit)
+          }
+          options={this.props.unitOptions}
+          size={""}
+        >
+          {this.props.placeholder}
+        </UnitPicker>
+      );
+    } else {
+      return ` (${this.props.placeholder})`;
+    }
   }
 
   render() {
@@ -74,25 +80,22 @@ import {
     const {
       formControlStyle,
       showmessage,
-      errorMessageStyle,
     } = this.getErrorStyles();
 
     return (
       <QuestionContext
         name={this.props.name}
         phrasing={this.props.phrasing}
-        handleIgnoreFactor={this.handleIgnoreFactor}
-        ignore={this.state.ignore}
+        handleIgnoreFactor={this.props.handleIgnoreFactor}
+        ignore={this.props.ignore}
         helpText={this.props.helpText}
-        secondLine={
-          showmessage ? (
-            <Form.Label className="ErrorLabel" style={errorMessageStyle}>
-              {this.props.inputvalidity.message}
-            </Form.Label>
-          ) : (
-            ""
-          )
-        }
+        unitText={this.unitButtonOrText()}
+        featured={this.props.featured}
+        validityStatus={this.props.inputvalidity.status}
+        secondLine={showmessage ? this.props.inputvalidity.message : ""}
+        windowWidth={this.props.windowWidth}
+        descendantDeathCauses={this.props.descendantDeathCauses}
+        orderVisualization={this.props.orderVisualization}
       >
         <Form.Control
           type="text"
@@ -101,7 +104,8 @@ import {
           value={this.props.factorAnswer}
           style={formControlStyle}
           onChange={this.props.handleChange}
-          disabled={this.state.ignore}
+          disabled={this.props.ignore}
+          autoFocus={this.props.featured}
         />
       </QuestionContext>
     );

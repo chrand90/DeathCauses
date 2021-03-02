@@ -19,7 +19,7 @@ export class NumericInterval implements RiskRatioTableCellInterface {
         }
     }
 
-    getValueInCell(): string | number | boolean {
+    getValueInCell(): string | number {
         if(this.endPointFrom === -Infinity) {
             return this.endPointTo - 0.1
         }

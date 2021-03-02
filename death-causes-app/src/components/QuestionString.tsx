@@ -8,35 +8,23 @@ import {
   WARNING_COLOR,
   QuestionContext
 } from "./Question";
+import { InputValidity } from '../models/FactorAbstract';
 import React from "react";
 import {Form} from "react-bootstrap";
+import { OrderVisualization } from "./Helpers";
 
 interface StringQuestionProps extends QuestionProps<string> {
+  placeholder: string;
+  inputvalidity: InputValidity;
   options: string[];
 }
-
 export default class SimpleStringQuestion extends React.PureComponent<
   StringQuestionProps,
   QuestionStates
 > {
-  constructor(props: StringQuestionProps) {
-    super(props);
-    this.state = {
-      ignore: false,
-    };
-    this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
-  }
-
-  handleIgnoreFactor(event: React.ChangeEvent<HTMLInputElement>) {
-    this.setState({ ignore: event.currentTarget.checked }, (): void => {
-      if (this.state.ignore) {
-        this.props.handleIgnoreFactor(this.props.name);
-      }
-    });
-  }
 
   getBackgroundColor() {
-    if (this.state.ignore) {
+    if (this.props.ignore) {
       return BACKGROUNDCOLOR_DISABLED;
     } else {
       return BACKGROUNDCOLOR_CHOICE;
@@ -44,7 +32,7 @@ export default class SimpleStringQuestion extends React.PureComponent<
   }
 
   getTextColor() {
-    if (this.state.ignore) {
+    if (this.props.ignore) {
       return TEXTCOLOR_DISABLED;
     } else {
       return "";
@@ -57,13 +45,11 @@ export default class SimpleStringQuestion extends React.PureComponent<
       color: this.getTextColor(),
     };
     let showmessage: boolean = false;
-    let errorMessageStyle: FormControlStyle = {};
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
-      formControlStyle["border-color"] = WARNING_COLOR;
-      errorMessageStyle["color"] = WARNING_COLOR;
+      formControlStyle["borderColor"] = WARNING_COLOR;
     }
-    return { formControlStyle, showmessage, errorMessageStyle };
+    return { formControlStyle, showmessage };
   }
 
   render() {
@@ -71,33 +57,31 @@ export default class SimpleStringQuestion extends React.PureComponent<
     const {
       formControlStyle,
       showmessage,
-      errorMessageStyle,
     } = this.getErrorStyles();
 
     return (
       <QuestionContext
         name={this.props.name}
         phrasing={this.props.phrasing}
-        handleIgnoreFactor={this.handleIgnoreFactor}
-        ignore={this.state.ignore}
+        handleIgnoreFactor={this.props.handleIgnoreFactor}
+        featured={this.props.featured}
+        unitText={null}
+        ignore={this.props.ignore}
         helpText={this.props.helpText}
-        secondLine={
-          showmessage ? (
-            <Form.Label className="ErrorLabel" style={errorMessageStyle}>
-              {this.props.inputvalidity.message}
-            </Form.Label>
-          ) : (
-            ""
-          )
-        }
+        validityStatus={this.props.inputvalidity.status}
+        secondLine={showmessage ? this.props.inputvalidity.message : ""}
+        windowWidth={this.props.windowWidth}
+        descendantDeathCauses={this.props.descendantDeathCauses}
+        orderVisualization={this.props.orderVisualization}
       >
         <Form.Control
           as="select"
           name={this.props.name}
           value={this.props.factorAnswer}
           onChange={this.props.handleChange}
-          disabled={this.state.ignore}
+          disabled={this.props.ignore}
           style={formControlStyle}
+          autoFocus={this.props.featured}
         >
           <option value={this.props.placeholder} hidden>
             {this.props.placeholder}
