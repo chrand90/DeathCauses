@@ -87,8 +87,8 @@ def category_size(f1):  # svend
     '''
     ans = 1
     for factor in f1:
-        if "-" in factor:
-            numbers = factor.split("-")
+        if "," in factor:
+            numbers = factor.split(",")
             if not numbers[0]:  # if numbers[0] is empty, it means that the factor category is of the form "-x", where x is a number
                 ans *= float(numbers[1])
             else:

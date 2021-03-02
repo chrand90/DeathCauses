@@ -28,6 +28,7 @@ interface ReverseNodeOrder {
 
 interface NodeValue {
   type: NodeType;
+  color: string;
   ancestors: string[];
 }
 
@@ -45,6 +46,10 @@ interface NodeDic {
 
 interface NodeToType {
   [nodeName: string]: NodeType;
+}
+
+export interface NodeToColor{
+  [nodeName: string]: string;
 }
 
 interface UntransformedLabel {
@@ -135,10 +140,11 @@ export default class RelationLinks {
   nodeOrderReversed: ReverseNodeOrder = {};
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
+  colorDic: NodeToColor = {};
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
-    this.initializeInheritanceListsAndNodeType(jsonObject);
+    this.initializeInheritanceListsAndTypeAndColor(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
   }
@@ -149,12 +155,13 @@ export default class RelationLinks {
     });
   }
 
-  initializeInheritanceListsAndNodeType(jsonObject: RelationLinkJson) {
+  initializeInheritanceListsAndTypeAndColor(jsonObject: RelationLinkJson) {
     //initializing  NodeType, ancestorList
     Object.keys(jsonObject).forEach((nodeName: string) => {
       this.descendantList[nodeName] = [];
     });
     Object.entries(jsonObject).forEach(([nodeName, node]) => {
+      this.colorDic[nodeName] = node.color;
       this.NodeType[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
 
@@ -705,5 +712,9 @@ export default class RelationLinks {
       nodeCategories: visitedNodesInOrder,
     };
     return res;
+  }
+
+  getColorDic(){
+    return this.colorDic;
   }
 }

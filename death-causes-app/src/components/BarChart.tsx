@@ -5,6 +5,7 @@ import { DataRow, DataSet, AugmentedDataSet, AugmentedDataRow } from './Plotting
 import  make_squares, {SquareSection}  from './ComptutationEngine';
 import { ScaleBand } from 'd3';
 import {ALTERNATING_COLORS} from './Helpers';
+import { NodeToColor } from '../models/RelationLinks';
 
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
@@ -15,11 +16,7 @@ const XBARHEIGHT= 50;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE=100;
 
-interface ColorDic {
-	[key: string]: string
-}
-
-const CAUSE_COLORS: ColorDic={'Unexplained':"#FFFFFF",
+const BASE_COLORS: NodeToColor={'Unexplained':"#FFFFFF",
 'partying':'#FF6C00'};
 
 function getDivWidth(div: HTMLElement | null): number {
@@ -96,13 +93,15 @@ export default class BarChart {
 	stip: any;
 	drect_order: string[];
 	yBars: ScaleBand<string>;
+	colorDic: NodeToColor;
 
-	constructor(element: HTMLElement | null, database: DataSet) {
+	constructor(element: HTMLElement | null, database: DataSet, colorDic: NodeToColor) {
 		console.log(database);
 
 		//Initializers
 		this.drect_order=[];
 		this.yBars=d3.scaleBand();
+		this.colorDic=Object.assign({}, colorDic, BASE_COLORS);
 
 
 		this.data=database;
@@ -227,10 +226,10 @@ export default class BarChart {
 			.attr("x", d => xscale(d.x0))
 			.attr('height', this.yBars.bandwidth)
 			.attr("width", d => xscale(d.x)-xscale(d.x0))
-			.attr("fill", d => CAUSE_COLORS[d.cause])
+			.attr("fill", d => this.colorDic[d.cause])
 			.attr('stroke', '#2378ae' )
 			.on("mouseenter", function(e: Event, d: SquareSection){
-				d3.selectAll(".d3-tip").style("background-color", CAUSE_COLORS[d.cause])
+				d3.selectAll(".d3-tip").style("background-color", vis.colorDic[d.cause])
 				vis.stip.show(d,this);
 				d3.select(this)
 					.raise()

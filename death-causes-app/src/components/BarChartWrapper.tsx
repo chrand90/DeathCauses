@@ -1,9 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { NodeToColor } from '../models/RelationLinks';
 import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 
 interface BarChartWrapperProps {
-	database: DataSet
+	database: DataSet;
+	colorDic: NodeToColor;
 }
 
 const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
@@ -14,7 +16,7 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	const { width } = useWindowSize();
 
 	const createNewChart = function () {
-		setChart(new BarChart(chartArea.current, database));
+		setChart(new BarChart(chartArea.current, database, props.colorDic));
 	}
 
 

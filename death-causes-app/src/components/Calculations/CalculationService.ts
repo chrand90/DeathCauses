@@ -119,10 +119,11 @@ export class RiskRatioCalculationService {
                 innerCausesForAges.push(this.calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
             })
 
+            totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)
+
             innerCausesForAges.forEach(innerCause => innerCause.totalProb *= currentProbOfBeingAlive)
 
-            totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)
-            currentProbOfBeingAlive *= 1 - totalProbOfDying
+            currentProbOfBeingAlive *= 1 - Math.min(1,totalProbOfDying)
 
             innerCausesForAges.forEach(innerCause => {
                 innerCausesForAllAges[innerCause.name].push(innerCause)
@@ -165,10 +166,10 @@ export class RiskRatioCalculationService {
         let firstOrderDecomposition = this.calculateFirstOrderDecomposition(factorAnswersSubmitted, deathcause);
 
         let ratio
-        if (uStar.propForDeathcause === 0) {
+        if (uStar.propForDeathcause < 1e-12) {
             ratio = 0
         } else {
-            ratio = (uStar.propForDeathcause - uStar.minProbForDeathcause) / uStar.propForDeathcause
+            ratio = Math.max(0,uStar.propForDeathcause - uStar.minProbForDeathcause) / uStar.propForDeathcause
         }
         let innerCauses: ProbabilityKeyValue = {}
         for (let key of Object.keys(firstOrderDecomposition)) {
@@ -242,7 +243,7 @@ export class RiskRatioCalculationService {
                 if (minRR === 0) {
                     ratio = 0
                 } else {
-                    ratio = ratio * (minRRexceptForOne - minRR) / minRR
+                    ratio = ratio * Math.max(0,minRRexceptForOne - minRR) / minRR
                 }
                 res[factor] *= ratio;
             })
