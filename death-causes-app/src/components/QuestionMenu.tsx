@@ -1,7 +1,6 @@
 import { json } from "d3";
 import React, { ChangeEvent } from "react";
-import Button from "react-bootstrap/Button";
-import { Label, Spinner } from "reactstrap";
+import Spinner from "react-bootstrap/Spinner";
 import Collapse from "react-bootstrap/Collapse";
 import StringFactorPermanent from "../models/FactorString";
 import NumericFactorPermanent from "../models/FactorNumber";
@@ -19,8 +18,8 @@ import SimpleStringQuestion from "./QuestionString";
 import AskedQuestionFramed from "./AskedQuestionFrame";
 import RelationLinks from "../models/RelationLinks";
 import { OrderVisualization } from "./Helpers";
-import { Card } from "react-bootstrap";
 import QuestionListFrame from "./QuestionListFrame";
+import factorDatabase from "../resources/FactorDatabase.json";
 
 interface QuestionMenuProps extends OrderVisualization {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
@@ -34,7 +33,7 @@ enum AnswerProgress {
 
 enum QuestionView {
   QUESTION_MANAGER = "question-manager",
-  NOTHING="no-questions",
+  NOTHING = "no-questions",
   QUESTION_LIST = "question-list",
 }
 
@@ -90,7 +89,7 @@ class QuestionMenu extends React.Component<
       windowWidth: getViewport(),
       factorMaskings: {},
       view: QuestionView.QUESTION_MANAGER,
-      changedSinceLastCommit: false
+      changedSinceLastCommit: false,
     };
     this.factors = new Factors(null);
     this.helpjsons = {};
@@ -124,23 +123,19 @@ class QuestionMenu extends React.Component<
   }
 
   loadFactorNames() {
-    setTimeout(
-      () =>
-        Promise.all([json("FactorDatabase.json")]).then((data) => {
-          this.factors = new Factors(data[0] as InputJson);
-          this.factorOrder = this.factors.getSortedOrder(
-            this.props.relationLinkData
-          );
-          this.setState(
-            {
-              factorAnswers: this.factors.getFactorsAsStateObject(),
-              currentFactor: this.factorOrder[0],
-            },
-            () => this.initializeValidities()
-          );
-        }),
-      500
-    );
+    setTimeout(() => {
+      this.factors = new Factors(factorDatabase as InputJson);
+      this.factorOrder = this.factors.getSortedOrder(
+        this.props.relationLinkData
+      );
+      this.setState(
+        {
+          factorAnswers: this.factors.getFactorsAsStateObject(),
+          currentFactor: this.factorOrder[0],
+        },
+        () => this.initializeValidities()
+      );
+    }, 500);
   }
 
   initializeValidities() {
@@ -232,19 +227,25 @@ class QuestionMenu extends React.Component<
         },
         () => {
           let submittedAnswers = { ...this.state.factorAnswers };
-          Object.keys(submittedAnswers).forEach((d: string) => {
-            if (d in this.state.factorMaskings) {
-              submittedAnswers[d] = this.state.factorMaskings[d].effectiveValue;
-            } else if (d in this.state.factorAnswerScales) {
-              submittedAnswers[d] = (
-                parseFloat(submittedAnswers[d] as string) *
-                this.state.factorAnswerScales[d].scale
-              ).toString();
+          Object.entries(submittedAnswers).forEach(
+            ([factorname, submittedValue]) => {
+              if (submittedValue === "") {
+                return; // skipping because it already has the correct value
+              }
+              if (factorname in this.state.factorMaskings) {
+                submittedValue = this.state.factorMaskings[factorname]
+                  .effectiveValue;
+              } else if (factorname in this.state.factorAnswerScales) {
+                submittedValue = (
+                  parseFloat(submittedAnswers[factorname] as string) *
+                  this.state.factorAnswerScales[factorname].scale
+                ).toString();
+              }
+              submittedAnswers[factorname] = this.factors.factorList[
+                factorname
+              ].insertActualValue(submittedValue as string);
             }
-            submittedAnswers[d] = this.factors.factorList[d].insertActualValue(
-              submittedAnswers[d] as string
-            );
-          });
+          );
           this.props.handleSuccessfulSubmit(submittedAnswers);
         }
       );
@@ -316,7 +317,7 @@ class QuestionMenu extends React.Component<
         },
         changedSinceLastCommit: true,
         factorAnswers: newFactorAnswers,
-        ...newMasks
+        ...newMasks,
       };
     });
   }
@@ -369,7 +370,7 @@ class QuestionMenu extends React.Component<
             newUnitName
           ),
         },
-        changedSinceLastCommit: true
+        changedSinceLastCommit: true,
       };
     });
   }
@@ -551,7 +552,9 @@ class QuestionMenu extends React.Component<
           factorName={undefined}
           validity={undefined}
           onSubmit={this.handleSubmit}
-          previousPossible={this.factorOrder.indexOf(this.state.currentFactor) > 0}
+          previousPossible={
+            this.factorOrder.indexOf(this.state.currentFactor) > 0
+          }
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
           onFinishNow={this.finishQuestionnaire}
@@ -569,7 +572,9 @@ class QuestionMenu extends React.Component<
           factorName={this.state.currentFactor}
           validity={this.state.validities[this.state.currentFactor]}
           onSubmit={this.handleSubmit}
-          previousPossible={this.factorOrder.indexOf(this.state.currentFactor) > 0}
+          previousPossible={
+            this.factorOrder.indexOf(this.state.currentFactor) > 0
+          }
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
           onFinishNow={this.finishQuestionnaire}
@@ -611,12 +616,30 @@ class QuestionMenu extends React.Component<
           and expected lifespan
         </p>
         <form noValidate onSubmit={this.handleSubmit}>
-          <Collapse in={this.state.view === QuestionView.QUESTION_MANAGER} 
-          onExited={()=>{setTimeout(() => this.setState({view: QuestionView.QUESTION_LIST}),250)}} 
-          timeout={500} >
-            <div id="collapse-asked-question-frame" style={{justifyContent:"center"}}>{this.getQuestionToAnswer()}</div>
+          <Collapse
+            in={this.state.view === QuestionView.QUESTION_MANAGER}
+            onExited={() => {
+              setTimeout(
+                () => this.setState({ view: QuestionView.QUESTION_LIST }),
+                250
+              );
+            }}
+            timeout={500}
+          >
+            <div
+              id="collapse-asked-question-frame"
+              style={{ justifyContent: "center" }}
+            >
+              {this.getQuestionToAnswer()}
+            </div>
           </Collapse>
-          <Collapse in={this.state.view === QuestionView.QUESTION_LIST} onExited={()=>{this.setState({view: QuestionView.QUESTION_MANAGER})}} timeout={500}>
+          <Collapse
+            in={this.state.view === QuestionView.QUESTION_LIST}
+            onExited={() => {
+              this.setState({ view: QuestionView.QUESTION_MANAGER });
+            }}
+            timeout={500}
+          >
             <div id="collapse-question-list">
               <QuestionListFrame
                 onSubmit={this.handleSubmit}
@@ -624,7 +647,7 @@ class QuestionMenu extends React.Component<
                 onFinishRandomly={this.insertRandom}
                 hasError={!submittable}
                 isChanged={this.state.changedSinceLastCommit}
-                >
+              >
                 {questionList}
               </QuestionListFrame>
             </div>
@@ -636,7 +659,7 @@ class QuestionMenu extends React.Component<
 
   render() {
     if (Object.keys(this.state.validities).length === 0) {
-      return <Spinner></Spinner>;
+      return <Spinner animation="border"></Spinner>;
     }
     return (
       <div className="questionmenu">

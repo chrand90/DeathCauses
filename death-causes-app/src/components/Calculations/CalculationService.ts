@@ -142,12 +142,17 @@ export class RiskRatioCalculationService {
         let sum = innerCauses.map(innerCause => innerCause.totalProb).reduce((first, second) => first + second, 0)
         let deathCauseName = innerCauses[0].name
 
+        let factors = Object.keys(innerCauses[0].innerCauses)
+
         if (sum === 0) {
-            return { name: deathCauseName, totalProb: 0, innerCauses: {} }
+            let emptyInnerCause: ProbabilityKeyValue = {}
+            for (let factor of factors) {
+                emptyInnerCause[factor]=0
+            }
+            return { name: deathCauseName, totalProb: 0, innerCauses: emptyInnerCause }
         }
 
         let combinedInnerCause: ProbabilityKeyValue = {}
-        let factors = Object.keys(innerCauses[0].innerCauses)
 
         for (let factor of factors) {
             combinedInnerCause[factor] = 0
@@ -196,7 +201,12 @@ export class RiskRatioCalculationService {
 
         let minimumFactorInputs: FactorAnswers = {}
         for (var key in minimumFactorIntervals) {
-            minimumFactorInputs[key] = minimumFactorIntervals[key].getValueInCell()
+            if(factorAnswersSubmitted[key]===""){
+                minimumFactorInputs[key]=""
+            }
+            else{
+                minimumFactorInputs[key] = minimumFactorIntervals[key].getValueInCell()
+            }
         }
 
         let minProbForDeathcause = this.calculateProbabilityForSingleCauseAndAge(minimumFactorInputs, factorAnswersSubmitted['Age'] as number, deathcause)
@@ -237,16 +247,24 @@ export class RiskRatioCalculationService {
 
         riskFactorGroup.riskRatioTables.forEach(rrt => {
             let ratio = 1;
-            rrt.factorNames.forEach(factor => {
-                let minRR = rrt.getMinimumRR() //todo: return factor values/factor intervals for minRR and minRRexceptForOne
-                let minRRexceptForOne = rrt.getMinimumRRForSingleFactor(factorAnswersSubmitted, factor)
-                if (minRR === 0) {
-                    ratio = 0
-                } else {
-                    ratio = ratio * Math.max(0,minRRexceptForOne - minRR) / minRR
-                }
-                res[factor] *= ratio;
-            })
+            if(rrt.factorNames.every( (fname:string) => factorAnswersSubmitted[fname]!=="")){ //checking if there are no missing variables.
+                rrt.factorNames.forEach(factor => {
+                    let minRR = rrt.getMinimumRR() //todo: return factor values/factor intervals for minRR and minRRexceptForOne
+                    let minRRexceptForOne = rrt.getMinimumRRForSingleFactor(factorAnswersSubmitted, factor)
+                    if (minRR === 0) {
+                        ratio = 0
+                    } else {
+                        ratio = ratio * Math.max(0,minRRexceptForOne - minRR) / minRR
+                    }
+                    res[factor] *= ratio;
+                })
+            }
+            else{
+                rrt.factorNames.forEach(factor => {
+                    res[factor]=0
+                });
+            }
+            
         })
         return res;
     }
