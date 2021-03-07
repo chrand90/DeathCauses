@@ -2,6 +2,7 @@ import { json } from "d3";
 import React, { ChangeEvent } from "react";
 import Spinner from "react-bootstrap/Spinner";
 import Collapse from "react-bootstrap/Collapse";
+import Form from "react-bootstrap/Form";
 import StringFactorPermanent from "../models/FactorString";
 import NumericFactorPermanent from "../models/FactorNumber";
 import GeneralFactor, { InputValidity } from "../models/FactorAbstract";
@@ -615,7 +616,6 @@ class QuestionMenu extends React.Component<
           Input risk factors to calculate probability of dying of most diseases
           and expected lifespan
         </p>
-        <form noValidate onSubmit={this.handleSubmit}>
           <Collapse
             in={this.state.view === QuestionView.QUESTION_MANAGER}
             onExited={() => {
@@ -626,12 +626,14 @@ class QuestionMenu extends React.Component<
             }}
             timeout={500}
           >
+            <Form onSubmit={this.handleSubmit}>
             <div
               id="collapse-asked-question-frame"
               style={{ justifyContent: "center" }}
             >
               {this.getQuestionToAnswer()}
             </div>
+            </Form>
           </Collapse>
           <Collapse
             in={this.state.view === QuestionView.QUESTION_LIST}
@@ -640,7 +642,11 @@ class QuestionMenu extends React.Component<
             }}
             timeout={500}
           >
-            <div id="collapse-question-list">
+            <Form onSubmit={this.handleSubmit}>
+            <div
+              id="collapse-question-list"
+              style={{ justifyContent: "center" }}
+            >
               <QuestionListFrame
                 onSubmit={this.handleSubmit}
                 onSwitchView={this.switchView}
@@ -651,8 +657,8 @@ class QuestionMenu extends React.Component<
                 {questionList}
               </QuestionListFrame>
             </div>
+            </Form>
           </Collapse>
-        </form>
       </div>
     );
   }

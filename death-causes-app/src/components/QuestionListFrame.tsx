@@ -59,7 +59,7 @@ class QuestionListFrame extends React.Component<QuestionListFrameProps, any> {
 
   render() {
     return (
-      <Card style={{ marginBottom: "20px", maxWidth:"600px" }}>
+      <Card style={{ marginBottom: "20px", maxWidth:"600px", marginRight:"auto", marginLeft:"auto"  }}>
         <Card.Header>
           <div className="d-flex justify-content-between">
             <div>
