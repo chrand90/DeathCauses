@@ -1,10 +1,13 @@
 .d3-tip {
   line-height: 1;
   padding: 6px;
-  background: rgba(0, 0, 0, 0.8);
-  color: #fff;
+  background: rgba(255, 255, 255, 0.75);
+  color: rgb(0, 0, 0);
   border-radius: 4px;
-  font-size: 12px;
+  border-color: rgb(119, 119, 119);
+  border-width: 2px;
+  font-size: 14px;
+  font-weight: 500;
   }
   
   /* Creates a small triangle extender for the tooltip 
@@ -15,7 +18,7 @@
     font-size: 12px;
     width: 100%;
     line-height: 1;
-    color: rgba(0, 0, 0, 0.8);
+    color: rgb(119, 119, 119);
     content: "\25BC";
     position: absolute;
     text-align: center
