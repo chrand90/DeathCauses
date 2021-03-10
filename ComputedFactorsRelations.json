@@ -1,0 +1,46 @@
+{
+  "SmokeSinceStop": {
+    "type": "Computed factor",
+    "ancestors": ["SmokingStopped"]
+  },
+  "PhysicalTotal": {
+    "type": "Computed factor",
+    "ancestors": ["PhysicalMedium", "PhysicalHard"]
+  },
+  "SmokeCumulative": {
+    "type": "Computed factor",
+    "ancestors": [
+      "Smoking",
+      "SmokingStopped",
+      "SmokePastAmount",
+      "SmokeIntensity",
+      "SmokeDuration"
+    ]
+  },
+  "SmokeTypicalAmount": {
+    "type":"Computed factor",
+    "ancestors": [
+      "Smoking",
+      "SmokePastAmount",
+      "SmokeDuration",
+      "SmokeIntensity",
+      "SmokingStopped"
+    ]
+  },
+  "OralContraceptiveEver": {
+    "type":"Computed factor",
+    "ancestors": [
+      "OralContraceptiveStatus",
+      "OralContraceptiveStopped",
+      "OralContraceptiveTillStop"
+    ]
+  },
+  "OralContraceptiveSinceStop": {
+    "type":"Computed factor",
+    "ancestors": [
+      "OralContraceptiveStatus",
+      "OralContraceptiveStopped",
+      "OralContraceptiveTillStop"
+    ]
+  }
+}
