@@ -61,7 +61,7 @@ export class InputFactorToUpdateForm {
     factorname: string,
     factorval: string | number
   ): UpdateForm {
-    if (typeof factorval === "number") {
+    if (typeof factorval === "number" && !isNaN(factorval) && isFinite(factorval)) {
       return {
         change: ChangeStatus.CHANGED,
         type: TypeStatus.NUMERIC,
@@ -103,12 +103,16 @@ export class InputFactorToUpdateForm {
   }
 
   update(newFactorAnswers: FactorAnswers) {
+    let defaultChangeStatus= ChangeStatus.UNCHANGED
+    if(!("Age" in this.lastInputFactorAnswers) ||  newFactorAnswers["Age"]!==this.lastInputFactorAnswers["Age"]){
+      defaultChangeStatus=ChangeStatus.CHANGED
+    }
     Object.entries(newFactorAnswers).forEach(([factorname, factorval]) => {
       if (
         factorname in this.lastInputFactorAnswers &&
         this.lastInputFactorAnswers[factorname] === factorval
       ) {
-        this.lastOutputNodeValues[factorname].change = ChangeStatus.UNCHANGED;
+        this.lastOutputNodeValues[factorname].change = defaultChangeStatus;
       } else {
         this.lastOutputNodeValues[factorname] = this.createNewFactorVal(
           factorname,

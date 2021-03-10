@@ -25,9 +25,9 @@ export interface FactorList {
 }
 
 interface FactorMasking {
-  effectiveValue: string;
+  effectiveValue: string | number;
   maskedByFactor: string;
-  maskedByValue: string;
+  maskedByValue: string | number;
 }
 export interface FactorMaskings {
   [maskedFactor: string]: FactorMasking;
@@ -147,7 +147,7 @@ class Factors {
   ): string[] {
     if (factorToCheck in this.reverseDerivables) {
       //this means that the factor can force changes to other factoranswers.
-      let factorValue = factorAnswers[factorToCheck] as string; //by design of factordatabase.json, this is a string
+      let factorValue = factorAnswers[factorToCheck];
       const maskedFactors = this.reverseDerivables[factorToCheck];
       if (
         factorToCheck in factorMaskingChanges &&

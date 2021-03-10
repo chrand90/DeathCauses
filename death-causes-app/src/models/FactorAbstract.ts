@@ -4,7 +4,7 @@ export interface InputValidity {
 }
 
 export interface DeriveMapping {
-  [factorValue: string]: string;
+  [factorValue: string]: string | number;
 }
 
 export interface DerivableOptions {

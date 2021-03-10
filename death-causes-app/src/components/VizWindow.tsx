@@ -23,9 +23,9 @@ interface VizWindowProps {
 }
 
 interface VizWindowStates {
-  database: DataSet;
-  chosenValue: string;
+  database: DataSet | null;
   survivalData: SurvivalCurveData[];
+  initializedDatabase: boolean;
 }
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
@@ -35,9 +35,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   constructor(props: any) {
     super(props);
     this.state = {
-      database: TEST_DATA,
-      chosenValue: "Risk factor contributions 1",
+      database: null,
       survivalData: [],
+      initializedDatabase: false,
     };
     this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
   }
@@ -56,44 +56,33 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     const a = this.computerController?.computeInnerProbabilities(
       this.props.factorAnswersSubmitted!
     );
-    console.log("new inner causes");
-    console.log(a);
     this.setState({ database: a! }, () => {
       const b = this.computerController?.computeSurvivalData(
         this.props.factorAnswersSubmitted!
       );
       this.setState({ survivalData: b! });
     });
-    // this.computerController?.computeInnerProbabilities(this.props.factorAnswersSubmitted!).then((res) => {
-    //   this.setState({database: res},
-    //     () => this.computerController?.computeSurvivalData(this.props.factorAnswersSubmitted!).then((res) => {
-    //       this.setState({survivalData: res}, () => {
-    //         if(  !(this.props.visualization===Visualization.BAR_GRAPH || this.props.visualization=== Visualization.SURVIVAL_GRAPH)){
-    //           this.props.orderVisualization(this.props.elementInFocus, Visualization.BAR_GRAPH);
-    //         }
-    //       })
-    //     }))
-    // })
   }
 
   loadFactorDatabase() {
-    let database: Deathcause[] = [];
-    for (var key in causesData) {
-      if (causesData.hasOwnProperty(key)) {
-        database.push(
-          new Deathcause(causesData[key as keyof typeof causesData], key)
-        );
+    setTimeout(() => {
+      let database: Deathcause[] = [];
+      for (var key in causesData) {
+        if (causesData.hasOwnProperty(key)) {
+          database.push(
+            new Deathcause(causesData[key as keyof typeof causesData], key)
+          );
+        }
       }
-    }
-    const c = new CalculationFacade(database);
-    console.log("calculation facade");
-    console.log(c);
-    this.computerController = new ComputeController(
-      this.props.relationLinkData,
-      null,
-      120,
-      c
-    );
+      const c = new CalculationFacade(database);
+      this.computerController = new ComputeController(
+        this.props.relationLinkData,
+        null,
+        120,
+        c
+      );
+      this.setState({initializedDatabase: true});
+    }, 500);
   }
 
   componentDidMount() {
@@ -107,43 +96,21 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value: string = event.currentTarget.value;
     switch (value) {
-      case "Risk factor contributions 1": {
-        this.setState(
-          {
-            chosenValue: value,
-          },
-          () =>
-            this.props.orderVisualization(
-              this.props.elementInFocus,
-              Visualization.BAR_GRAPH
-            )
+      case Visualization.BAR_GRAPH: {
+        this.props.orderVisualization(
+          this.props.elementInFocus,
+          Visualization.BAR_GRAPH
         );
         break;
       }
-      case "Risk factor contributions 2": {
-        this.setState(
-          {
-            database: TEST_DATA2,
-            chosenValue: value,
-          },
-          () =>
-            this.props.orderVisualization(
-              this.props.elementInFocus,
-              Visualization.BAR_GRAPH
-            )
+      case Visualization.RELATION_GRAPH: {
+        this.props.orderVisualization(
+          this.props.elementInFocus,
+          Visualization.RELATION_GRAPH
         );
         break;
       }
-      case "Relation graph": {
-        this.setState({ chosenValue: value }, () => {
-          this.props.orderVisualization(
-            this.props.elementInFocus,
-            Visualization.RELATION_GRAPH
-          );
-        });
-        break;
-      }
-      case "Survival curve": {
+      case Visualization.SURVIVAL_GRAPH: {
         this.props.orderVisualization(
           this.props.elementInFocus,
           Visualization.SURVIVAL_GRAPH
@@ -156,13 +123,22 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   };
 
   renderChosenGraph() {
+    if(!this.state.initializedDatabase){
+      return "Loading database..."
+    }
     switch (this.props.visualization) {
       case Visualization.BAR_GRAPH: {
         return (
-          <BarChartWrapper
-            database={this.state.database}
-            colorDic={this.props.relationLinkData.getColorDic()}
-          />
+          <div>
+            {this.state.database ? (
+              <BarChartWrapper
+                database={this.state.database}
+                colorDic={this.props.relationLinkData.getColorDic()}
+              />
+            ) : (
+              "Input age to get started"
+            )}
+          </div>
         );
       }
       case Visualization.RELATION_GRAPH: {
@@ -191,22 +167,29 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   renderSelectOption() {
+    const orgval = this.props.visualization;
     return (
       <Form>
         <Form.Group className="visualisation">
           <Form.Row>
-            <Form.Control
-              className="visualisation"
-              as="select"
-              defaultValue="Choose..."
-              onChange={this.handleChange}
-              style={{ height: "40px" }}
+            <select
+              value={orgval}
+              onChange={(ev) => {
+                const val = ev.currentTarget.value;
+                this.props.orderVisualization(
+                  this.props.elementInFocus,
+                  val as Visualization
+                );
+              }}
             >
-              <option>Survival curve</option>
-              <option>Risk factor contributions 1</option>
-              <option>Risk factor contributions 2</option>
-              <option>Relation graph</option>
-            </Form.Control>
+              {[
+                Visualization.SURVIVAL_GRAPH,
+                Visualization.RELATION_GRAPH,
+                Visualization.BAR_GRAPH,
+              ].map((d: string) => {
+                return <option value={d}>{d}</option>;
+              })}
+            </select>
           </Form.Row>
         </Form.Group>
       </Form>

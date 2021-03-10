@@ -297,13 +297,15 @@ export default class BarChart {
 		//Updating the disease-to-y mapping (this.yBars)
 		this.recalibrate_ybars(dataSortedTotal, designConstants); 
 
-		const gs= vis.svg.selectAll(".causebar")
+		const gs= vis.svg.selectAll<SVGRectElement, SquareSection[]>(".causebar")
 			.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
 
 		const duration_per_transition=500;
 
+		gs.exit().remove()
+
 		gs.transition()
-			 .duration(duration_per_transition)
+			.duration(duration_per_transition)
 			.attr("x", d => xscale(d.x0))
 			.attr("width", d => xscale(d.x)-xscale(d.x0))
 		gs.transition()
@@ -312,11 +314,10 @@ export default class BarChart {
 			.attr("y", d => (this.yBars(d.name) as number))
 
 		vis.svg.selectAll('.dtext')
-			.data(rename_object, function(d:any){ return d.name})
+		.data(rename_object, function(d:any){ return d.name})
 			.transition()
 			.delay(duration_per_transition*2)
 			.text( (d:any) => d.new_name)
-
 
 	};
 }

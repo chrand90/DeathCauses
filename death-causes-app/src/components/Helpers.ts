@@ -3,16 +3,15 @@ import * as d3 from 'd3';
 export const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
 
 export enum Visualization {
-  RELATION_GRAPH="relation-graph",
-  BAR_GRAPH="bar-graph",
-  NO_GRAPH="no-graph",
-  SURVIVAL_GRAPH="survival-graph"
+  RELATION_GRAPH="Relation graph",
+  BAR_GRAPH="Risk factor contributions",
+  NO_GRAPH="Nothing",
+  SURVIVAL_GRAPH="Survival curve"
 }
 
 export interface OrderVisualization {
   orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
 }
-
 
 export function getDivWidth(div: HTMLElement | null): number {
 	console.log(div);

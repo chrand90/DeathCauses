@@ -31,6 +31,6 @@ export class NumericInterval implements RiskRatioTableCellInterface {
     }
 
     isInputWithinCell(input: number): boolean {
-        return this.endPointFrom < input && input <= this.endPointTo;
+        return this.endPointFrom <= input && input <= this.endPointTo;
     }
 }
