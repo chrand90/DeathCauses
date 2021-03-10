@@ -68,7 +68,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
 
     var u = svg
       .selectAll<SVGRectElement, SurvivalCurveData[]>("rect")
-      .data(props.data);
+      .data(props.data, function(survivalcurvedat: any) { return survivalcurvedat.age.toPrecision()});
 
     u.enter()
       .append("rect")
@@ -104,7 +104,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
 
     var u = svg
       .selectAll<SVGRectElement, SurvivalCurveData[]>("rect")
-      .data(props.data);
+      .data(props.data, function(survivalcurvedat: any) { return survivalcurvedat.age.toPrecision()});
 
     var x = d3
       .scaleBand()
