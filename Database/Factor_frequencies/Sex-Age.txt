@@ -4,7 +4,7 @@
 #It is processed further in the file "Gender-Age and Population numbers.R"
 #
 #
-Age	Gender	freq
+Age	Sex	freq
 0,1	Female	0.488936644421087
 1,5	Female	0.489101036485909
 5,10	Female	0.489344511477484

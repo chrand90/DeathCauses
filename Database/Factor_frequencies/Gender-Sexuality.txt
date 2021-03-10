@@ -5,7 +5,7 @@
 #"How many people are lesbian, gay, bisexual, and transgender?"
 #
 #
-Gender	Sexuality	freq
+Sex	Sexuality	freq
 Male	Male	0.010828059
 Male	Both	0.006890583
 Male 	Female	0.474465858

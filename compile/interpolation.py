@@ -5,6 +5,7 @@ from itertools import product
 from data_frame import data_frame
 from spline import make_spline_system, get_maximum_likelihood_estimate
 from interpolation_tails import insert_bounds
+from interpolation_table import InterpolationTable, InterpolationTableCell, interpolation_table_from_riskratio
 
 
 
@@ -382,23 +383,24 @@ def interpolate_one_spline(RR):
         finite_interpolation_levels= [filter(lambda flevel: flevel.isFinite(), interpolation_levels_d) for interpolation_levels_d in interpolation_levels]
         ss=make_spline_system(finite_interpolation_levels)
         ss.create_W_matrix()
-        res=collect_interpolated_data_frame_spline(non_interpolatable_factors=non_interpolatable_factors,
-                                                   interpolated_factors=interpolatable_factors,
-                                                   grouped_risk_ratios=RRs,
-                                                   level_dics=level_dics,
-                                                   spline_system=ss)
-        insert_bounds(RR, RRs,res,level_dics,non_interpolatable_factors,interpolatable_factors)
-        res.order_columns(factor_names)
+        res = collect_interpolated_data_frame_spline(non_interpolatable_factors=non_interpolatable_factors,
+                                                     interpolated_factors=interpolatable_factors,
+                                                     grouped_risk_ratios=RRs,
+                                                     level_dics=level_dics,
+                                                     spline_system=ss)
+        #insert_bounds(RR, RRs, res, level_dics, non_interpolatable_factors, interpolatable_factors)
+        #res.order_columns(factor_names)
         return res
     else:
-        return None
+        return interpolation_table_from_riskratio(RR)
+
 
 def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                            interpolated_factors,
                                            grouped_risk_ratios,
                                            level_dics,
                                            spline_system):
-    grouped_risk_ratio=next(iter(grouped_risk_ratios.values()))
+    grouped_risk_ratio = next(iter(grouped_risk_ratios.values()))
     lambd = grouped_risk_ratio.get_lambd()
     new_data_frame = grouped_risk_ratio.subcopy(non_interpolatable_factors + interpolated_factors)
     for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
@@ -420,7 +422,7 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                     if var is None:
                         invertedVariances.append(1.0)
                     else:
-                        invertedVariances.append(1.0/var)
+                        invertedVariances.append(1.0 / var)
 
         betas = get_maximum_likelihood_estimate(W=spline_system.W,
                                                 X=X,
@@ -430,13 +432,18 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                                 Xfixed=Xfixed,
                                                 yfixed=yfixed
                                                 )
+        interpolation = InterpolationTable(truncation=RR.get_bounding,
+                                           interpolation_variables=interpolated_factors,
+                                           non_interpolation_variables=non_interpolatable_factors)
         for facts, y in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             print("int_levels_for_row", int_levels_for_row)
             form = spline_system.formula(int_levels_for_row, betas)
-            row = list(non_interpolated_factor_values)+list(facts)+[[interpolated_factors, form, None, None]]
-            new_data_frame.addRow(row)
-    return new_data_frame
+            interpolation_cell=InterpolationTableCell(interpolation_polynomial=form,
+                                                      interpolation_domains=facts,
+                                                      non_interpolation_domains=non_interpolated_factor_values)
+            interpolation.add_cell(interpolation_cell)
+    return interpolation
 
 def interpolate_one(RR):
     factor_names=RR.get_FactorNames()

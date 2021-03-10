@@ -51,11 +51,7 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
     for RR in RRs:
         RRlist = RR.get_as_list_of_lists()
         factor_names = RR.get_FactorNames()
-        interpolated_RR_or_empty = interpolate_one_spline(RR)
-        if interpolated_RR_or_empty is None:  # checking if there was something to interpolate
-            interpolated_RR = []
-        else:
-            interpolated_RR = interpolated_RR_or_empty.get_interpolation_as_object()
+        interpolated_RR = interpolate_one_spline(RR).as_json()
         riskratiotable = {'riskRatioTable': RRlist,
                           'riskFactorNames': factor_names,
                           'interpolationTable': interpolated_RR}
