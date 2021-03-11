@@ -10,6 +10,7 @@
 
 # testing
 /my-app/coverage
+/death-causes-app/build
 
 # production
 /my-app/build
