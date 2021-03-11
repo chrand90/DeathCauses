@@ -205,7 +205,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
       .append("text")
       .attr("x", width / 2)
       .attr("y", -margin.top / 2)
-      .text("Probability of surviving each year")
+      .text("Probability of being alive")
       .style("font-size", "20px")
       .attr("font-weight", 700)
       .attr("text-anchor", "middle");
