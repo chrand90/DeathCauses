@@ -1,4 +1,3 @@
-import { sum } from "d3";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -19,14 +18,14 @@ function make_squares(res_dat: DataSet){
             name: p_object.name,
             cause: 'Unexplained',
             x0:0,
-            x: explained*p_object.totalProb
+            x: Math.max(0,explained*p_object.totalProb)
         });
         for (let [key, value] of Object.entries(p_object.innerCauses)) {
             new_res.push({
                 name: p_object.name,
                 cause: key,
-                x0: explained*p_object.totalProb,
-                x: (explained+value)*p_object.totalProb
+                x0: Math.max(explained*p_object.totalProb),
+                x: Math.max((explained+value)*p_object.totalProb,0)
             });
             explained+=value;
         };

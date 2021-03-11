@@ -9,6 +9,7 @@ import  { FactorAnswers } from "./models/Factors";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
+import relationLinkFile from "./resources/Relations.json";
 
 
 
@@ -40,6 +41,10 @@ class App extends React.Component<any, AppState> {
     console.log(factorAnswers);
     this.setState({
       factorAnswersSubmitted: factorAnswers,
+    }, () => {
+      if((this.state.visualization!==Visualization.SURVIVAL_GRAPH && this.state.visualization!==Visualization.BAR_GRAPH)){
+        this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
+      }
     });
   }
 
@@ -59,11 +64,12 @@ class App extends React.Component<any, AppState> {
 
 
   loadRelationLinks() {
-    Promise.all([
-      json("Relations.json")
-    ]).then((data) => {
-      this.setState({ relationLinkData: new RelationLinks(data[0] as RelationLinkJson)
-    })});
+    setTimeout(
+      () => {
+        this.setState({ relationLinkData: new RelationLinks(relationLinkFile as RelationLinkJson)})
+      },
+      300
+    )
   }
 
   componentDidMount() {

@@ -13,7 +13,8 @@
         "placeholder":"Years",
         "recommendedDomain":{"min":0,"max":110},
         "requiredDomain": {"min":0},
-        "units":{"Years":1.0, "Days":0.00273785078}
+        "units":{"Years":1.0, "Days":0.00273785078},
+        "helpJson":"Input you age rounded down to the nearest whole number. "
     },
     "Waist":{
         "type":"number",
@@ -21,7 +22,8 @@
         "placeholder":"cm",
         "recommendedDomain":{"min":60,"max":170},
         "requiredDomain": {"min":0},
-        "units":{"cm":1.0, "Inches": 2.54}
+        "units":{"cm":1.0, "Inches": 2.54},
+        "helpJson":"The waist circumference is measured above the belly button and around your body. If you are slim, it is the narrowest part."
     },
     "Caffeine":{
         "type":"number",
@@ -29,8 +31,8 @@
         "placeholder":"Cups",
         "recommendedDomain":{"min":0,"max":10},
         "requiredDomain": {"min":0},
-        "helpJson":"A standard cup is around 150 ml (=5 ounces) of coffee made of 7 grams of coffee beans. Espressos are normally made with around 7 grams of coffee beans as well, so they should also be considered full cups.",
-        "units":{"Cups":1.0, "Liters": 0.15, "Ounces":5.072108}
+        "helpJson":"A standard cup is arond 150 ml (=5 ounces) of coffee made of 7 grams of coffee beans. Espressos are normally made with around 7 grams of coffee beans as well, so they should also be considered full cups.",
+        "units":{"Cups":1.0, "Liters": 6.6666, "Ounces":0.197157}
     },
     "Fish":{
         "type":"number",
@@ -87,7 +89,8 @@
         "placeholder":"Status",
         "initialValue":"Status",
         "options":["Former user","Current user","Never used"],
-        "derivables":{"Sex": {"Male":"Never used"}}
+        "derivables":{"Sex": {"Male":"Never used"}},
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
     },
     "OralContraceptiveStopped":{
         "type":"number",
@@ -95,7 +98,8 @@
         "placeholder": "Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain": {"min":0},
-        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Current user":0}}
+        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Current user":0}},
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
     },
     "OralContraceptiveTillStop":{
         "type":"number",
@@ -103,7 +107,8 @@
         "placeholder": "Years",
         "recommendedDomain":{"min":0,"max":110},
         "requiredDomain": {"min":0},
-        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Former user":0}}
+        "derivables":{"OralContraceptiveStatus": {"Never used":0, "Former user":0}},
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
     },
     "RedMeat":{
         "type":"number",
@@ -111,7 +116,8 @@
         "placeholder":"Grams",
         "recommendedDomain":{"min":0, "max":500},
         "requiredDomain":{"min":0},
-        "units":{"Grams":1.0,"Ounces":28.3495}
+        "units":{"Grams":1.0,"Ounces":28.3495},
+        "helpJson":"Red meat includes beef, pork, lamb, meat from goat, rabbit and similarly colored meat. It does not include chicken, birds and fish. Cooked red meat is still red meat."
     },
     "HCVStatus":{
         "type":"string",
@@ -136,14 +142,14 @@
     },
     "Smoking":{
         "type":"string",
-        "longExplanation":"What is your history with smoking",
+        "longExplanation":"What is your history with smoking tobacco",
         "placeholder":"Status",
         "initialValue":"Status",
         "options":["Never smoked","Former smoker", "Current smoker"]
     },
     "SmokingStopped":{
         "type":"number",
-        "longExplanation":"How much time hass passed since you stopped smoking",
+        "longExplanation":"How much time has passed since you stopped smoking tobacco",
         "placeholder":"Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
@@ -151,16 +157,17 @@
     },
     "SmokeIntensity":{
         "type":"number",
-        "longExplanation":"How much do you smoke in a normal day",
+        "longExplanation":"How much tobacco do you smoke in a normal day",
         "placeholder":"Cigarettes",
         "recommendedDomain":{"min":0, "max":40},
         "requiredDomain":{"min":0},
         "units":{"Cigarettes":1.0,"Packs":20.0},
-        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}}
+        "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}},
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) "
     },
     "SmokeDuration":{
         "type":"number",
-        "longExplanation":"For how long have you smoked",
+        "longExplanation":"For how long have you smoked tobacco",
         "placeholder":"Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
@@ -169,11 +176,12 @@
     },
     "SmokePastAmount":{
         "type":"number",
-        "longExplanation":"During all the time smoking, what has been the average amount smoked in a normal day",
+        "longExplanation":"During all the time smoking tobacco, what has been the average amount smoked in a normal day",
         "placeholder":"Cigarettes",
         "recommendedDomain":{"min":0, "max":40},
         "requiredDomain":{"min":0},
-        "derivables":{"Smoking": {"Never smoked":0}}
+        "derivables":{"Smoking": {"Never smoked":0}},
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) "
     },
     "IndoorTanning":{
         "type":"number",
@@ -230,18 +238,20 @@
     },
     "PhysicalMedium":{
         "type":"number",
-        "longExplanation":"How much time do you spend making medium intensity physical activity",
-        "placeholder":"Number",
+        "longExplanation":"How much time do you spend making medium intensity physical activity in a normal week",
+        "placeholder":"Minutes",
         "recommendedDomain":{"min":0 ,"max":1000},
         "requiredDomain":{"min":0},
-        "helpJson":"Medium physical activity includes brisk walking, gardening, tennis doubles etc."
+        "units":{"Minutes":1.0, "Hours":60},
+        "helpJson":"Medium physical activity includes brisk walking, gardening, golf etc."
     },
     "PhysicalHard":{
         "type":"number",
-        "longExplanation":"How much time do you spend making high intensity physical activity",
-        "placeholder":"Number",
+        "longExplanation":"How much time do you spend making high intensity physical activity in a normal week",
+        "placeholder":"Minutes",
         "recommendedDomain":{"min":0 ,"max":1000},
         "requiredDomain":{"min":0},
+        "units":{"Minutes":1.0, "Hours":60},
         "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc."
     },
     "HPVVaccine":{
