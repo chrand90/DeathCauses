@@ -62,8 +62,6 @@ class RiskRatioTable {
             }
         }
         return this.riskRatioTable[this.riskRatioTable.length-1].riskRatioValue; // tmp to make it run
-
-        throw new Error("Found no risk ratio entry where " + submittedFactorAnswers + " is within domain")
     }
 
     private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string  | number)[] => {
