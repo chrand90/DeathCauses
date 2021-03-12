@@ -392,7 +392,9 @@ def interpolate_one_spline(RR):
         #res.order_columns(factor_names)
         return res
     else:
-        return interpolation_table_from_riskratio(RR)
+        interpolation=interpolation_table_from_riskratio(RR)
+        interpolation.compute_global_min()
+        return interpolation
 
 
 def collect_interpolated_data_frame_spline(non_interpolatable_factors,
@@ -403,6 +405,9 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
     grouped_risk_ratio = next(iter(grouped_risk_ratios.values()))
     lambd = grouped_risk_ratio.get_lambd()
     new_data_frame = grouped_risk_ratio.subcopy(non_interpolatable_factors + interpolated_factors)
+    interpolation = InterpolationTable(truncation=grouped_risk_ratio.get_bounding(),
+                                       interpolation_variables=interpolated_factors,
+                                       non_interpolation_variables=non_interpolatable_factors)
     for non_interpolated_factor_values, RR in grouped_risk_ratios.items():
         yvals=[]
         X=[]
@@ -432,9 +437,7 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                                 Xfixed=Xfixed,
                                                 yfixed=yfixed
                                                 )
-        interpolation = InterpolationTable(truncation=RR.get_bounding,
-                                           interpolation_variables=interpolated_factors,
-                                           non_interpolation_variables=non_interpolatable_factors)
+
         for facts, y in RR.get_as_list_of_lists():
             int_levels_for_row = [level_dics[n][fact].asFiniteInterval() for n, fact in enumerate(facts)]
             print("int_levels_for_row", int_levels_for_row)
@@ -443,6 +446,8 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                                       interpolation_domains=facts,
                                                       non_interpolation_domains=non_interpolated_factor_values)
             interpolation.add_cell(interpolation_cell)
+    interpolation.find_all_mins()
+    interpolation.compute_global_min()
     return interpolation
 
 def interpolate_one(RR):

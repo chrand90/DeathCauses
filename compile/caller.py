@@ -123,7 +123,7 @@ def run(age_intervals=None):
 def transform_to_json(inp, filename):
     # print inp
     with open(filename, 'w') as f:
-        f.write(json.dumps(inp, default=lambda df: df.getDataframeAsList()))
+        f.write(json.dumps(inp, default=lambda formula: str(formula)))
 
 
 def integrate_one(writtenF_dir, age_intervals, age_distribution):
