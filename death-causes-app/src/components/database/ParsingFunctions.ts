@@ -1,3 +1,5 @@
+import { stratify } from "d3-hierarchy";
+import { parse } from "path";
 import { Monomial } from "./Monomial";
 import { Polynomial } from "./Polynomial";
 import { EnumeratedValue } from "./RiskRatioTableCell/EnumerateValue";
@@ -34,6 +36,20 @@ export const parseStringToPolynomial = (input: string): Polynomial => {
     }
 
     return new Polynomial(monomials);
+}
+
+export const parseVariableNumber = (input: string): number => {
+    let numberRegex=new RegExp('[0-9]+','g')
+    let numberAsString =input.match(numberRegex)
+    if(!numberAsString || numberAsString.length===0){
+        throw Error("The variable "+input+" could not be parsed");
+    }
+    return parseInt(numberAsString[0]);
+}
+
+export const isXVariableName = (input: string): boolean => {
+    const numberRegex= new RegExp('^x[0-9]+$')
+    return numberRegex.test(input)
 }
 
 const parseExponents = (input: string, numberOfVariables: number): number[] => {

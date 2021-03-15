@@ -446,6 +446,8 @@ def collect_interpolated_data_frame_spline(non_interpolatable_factors,
                                                       interpolation_domains=facts,
                                                       non_interpolation_domains=non_interpolated_factor_values)
             interpolation.add_cell(interpolation_cell)
+    if len(interpolated_factors)>1:
+        print("debug locaiton")
     interpolation.find_all_mins()
     interpolation.compute_global_min()
     return interpolation
