@@ -95,6 +95,10 @@ export class RiskRatioCalculationService {
 
         let res = 1;
         riskFactorGroup.riskRatioTables.forEach(riskRatioTable => {
+            let factor=riskRatioTable.getRiskRatio(factorAnswers)
+            if(factor<0){
+                console.log("factor: "+factor.toString())
+            }
             res = res * riskRatioTable.getRiskRatio(factorAnswers)
         });
         return res / riskFactorGroup.normalisationFactors.getPrevalence(age)

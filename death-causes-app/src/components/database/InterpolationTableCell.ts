@@ -7,19 +7,24 @@ import {
 } from "./ParsingFunctions";
 import { NumericInterval } from "./RiskRatioTableCell/NumericInterval";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
-import FixedMin, {
-  FixedMinObjectJson,
-} from "./InterpolationFixedMin";
+import FixedMin, { FixedMinObjectJson } from "./InterpolationFixedMin";
 import { Polynomial } from "./Polynomial";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
-import Location, { LocationAndValue, InterpolationKeys, NonInterpolationKeys, addValueToLocation, locationAndValueSorter, VarNameToCoordinate } from "./InterpolationLocation";
+import Location, {
+  LocationAndValue,
+  InterpolationKeys,
+  NonInterpolationKeys,
+  addValueToLocation,
+  locationAndValueSorter,
+  VarNameToCoordinate,
+} from "./InterpolationLocation";
 
 enum ReasonsForNoMin {
   INFINITE_INTERVAL = "Infinite interval",
 }
 
 interface VarToVal {
-  [key:string]: number | string | undefined;
+  [key: string]: number | string | undefined;
 }
 
 export interface MinObject {
@@ -67,18 +72,21 @@ export default class InterpolationTableCell {
     interpolationVariables: InterpolationVariableMapping,
     nonInterpolationVariables: string[]
   ) {
+    console.log("initializing the cell with json");
+    console.log(cell);
     this.interpolationVariables = interpolationVariables;
     this.nonInterpolationVariables = nonInterpolationVariables;
-    this.infiniteInterpolationVariables = [];
     this.interpolationDomains = cell.interpolation_domains
       ? this.initDomains(cell.interpolation_domains)
       : [];
+
+    this.infiniteInterpolationVariables = this.getFactorsWithInfiniteDomain();
 
     this.nonInterpolationDomains = cell.non_interpolation_domains
       ? this.initDomains(cell.non_interpolation_domains)
       : [];
 
-    this.value = cell.value ? cell.value : undefined;
+    this.value = cell.value;
 
     this.interpolationPolynomial = cell.interpolation_polynomial
       ? parseStringToPolynomial(cell.interpolation_polynomial)
@@ -96,6 +104,20 @@ export default class InterpolationTableCell {
     this.upperTruncation = cell.upper_truncation ? cell.upper_truncation : null;
   }
 
+  getFactorsWithInfiniteDomain(): string[] {
+    let factorsWithInfiniteDomain: string[]=[]
+    this.interpolationDomains
+      .forEach((domain: RiskRatioTableCellInterface, index: number) => {
+        let intervalFrom = (domain as NumericInterval).endPointFrom;
+        let intervalTo = (domain as NumericInterval).endPointTo;
+        if(!isFinite(intervalFrom) || !isFinite(intervalTo)){
+          let varname=this.interpolationVariables.getRealNameFromIndex(index)
+          factorsWithInfiniteDomain.push(varname)
+        }
+      })
+    return factorsWithInfiniteDomain;
+  }
+
   evaluate(location: Location): number {
     if (this.interpolationPolynomial) {
       return this.interpolationPolynomial.evaluate(location);
@@ -107,20 +129,27 @@ export default class InterpolationTableCell {
     oldMinObject: MinObject | undefined
   ): LocationAndValue | ReasonsForNoMin {
     if (oldMinObject) {
-      let min=new LocationAndValue(this.interpolationVariables, this.nonInterpolationVariables, oldMinObject.minValue);
-      min.setWithVarNameButInterpolationX(oldMinObject.minLocation)
-
-    }
-    if (this.interpolationPolynomial) {
+      let min = new LocationAndValue(
+        this.interpolationVariables,
+        this.nonInterpolationVariables,
+        oldMinObject.minValue
+      );
+      min.setWithVarNameButInterpolationX(oldMinObject.minLocation);
+      min.setAllNonInterpolationsWithDomains(this.nonInterpolationDomains);
+      return min;
+    } else if (this.interpolationPolynomial) {
       //the only reason for no min object to exist here is if a domain is infinite
       return ReasonsForNoMin.INFINITE_INTERVAL;
-    }
-    if (!this.value) {
+    } else if (this.value === undefined) {
       throw Error("A cell is missing both value and interpolation polynomial.");
     }
-    let min=new LocationAndValue(this.interpolationVariables, this.nonInterpolationVariables, this.value);
+    let min = new LocationAndValue(
+      this.interpolationVariables,
+      this.nonInterpolationVariables,
+      this.value
+    );
     min.setAllNonInterpolationsWithDomains(this.nonInterpolationDomains);
-    return min
+    return min;
   }
 
   initializeCellFixedMin(
@@ -142,7 +171,12 @@ export default class InterpolationTableCell {
       return {
         fixed: fixed,
         mins: mins.map((f: FixedMinObjectJson) => {
-          return new FixedMin(f, this.interpolationVariables, this.nonInterpolationVariables, fixed);
+          return new FixedMin(
+            f,
+            this.interpolationVariables,
+            this.nonInterpolationVariables,
+            fixed
+          );
         }),
       };
     });
@@ -153,27 +187,33 @@ export default class InterpolationTableCell {
     1. if all the factoranswers specified in nonInterpolationFactorAnswers and interpolationFactorAnswers lie in their respective domain
     2. if all infinite intervals has a fixed factor.
    */
-  inCellAndSufficientlyInternal(
-    location: Location
-  ) {
-    let inAllDomains= location.getNonInterpolationValues(NonInterpolationKeys.INDEX).every(
-      ({ value, key }) => {
-        return this.nonInterpolationDomains[(key as number)].isInputWithinCell(value);
-      }
-    );
+  inCellAndSufficientlyInternal(location: Location) {
+    let inAllDomains = location
+      .getNonInterpolationValues(NonInterpolationKeys.INDEX)
+      .every(({ value, key }) => {
+        return this.nonInterpolationDomains[key as number].isInputWithinCell(
+          value
+        );
+      });
     if (!inAllDomains) {
       return false;
     }
-    inAllDomains = location.getInterpolationValues(InterpolationKeys.INDEX).every(({ value, key }) => {
-      return this.interpolationDomains[(key as number)].isInputWithinCell(value);
-    });
+    inAllDomains = location
+      .getInterpolationValues(InterpolationKeys.INDEX)
+      .every(({ value, key }) => {
+        return this.interpolationDomains[key as number].isInputWithinCell(
+          value
+        );
+      });
     if (!inAllDomains) {
       return false;
     }
-    let fixedFactors: string[]=location.getFixedInterpolationVariables() as string[];
-    return this.infiniteInterpolationVariables.every((varname: string) => {
+    let fixedFactors: string[] = location.getFixedInterpolationVariables() as string[];
+    const allOkay=this.infiniteInterpolationVariables.every((varname: string) => {
       return fixedFactors.includes(varname);
     });
+    return allOkay
+  
   }
 
   initDomains(stringlist: string[]) {
@@ -216,21 +256,18 @@ export default class InterpolationTableCell {
   computeDiscriminantCandidates(
     fixedMinPairs: FixedMin[],
     fixedInterpolationFactorAnswers: Location
-  ) {
+  ):LocationAndValue[] {
     const candidates = fixedMinPairs.map((fixedMinObject: FixedMin) => {
       return fixedMinObject.getDiscriminantCandidates(
         fixedInterpolationFactorAnswers,
         this.interpolationDomains
       );
     });
-    const candidatesUnpacked = ([] as Location[]).concat.apply(
-      [],
-      candidates
-    );
+    const candidatesUnpacked = ([] as Location[]).concat.apply([], candidates);
     const computedVals: LocationAndValue[] = candidatesUnpacked.map(
       (location: Location) => {
-        const minValue = this.evaluate(location)
-        return addValueToLocation(location,minValue)
+        const minValue = this.evaluate(location);
+        return addValueToLocation(location, minValue);
       }
     );
     return computedVals;
@@ -240,17 +277,22 @@ export default class InterpolationTableCell {
     fixedMinPairs: FixedMin[],
     fixedInterpolationFactorAnswers: Location
   ) {
-    let candidates = fixedMinPairs.map((fixedMinObject: FixedMin) => {
+    let candidates: LocationAndValue[] = fixedMinPairs.filter((fixedMinObject: FixedMin) => {
+      return fixedMinObject.hasBoundaryCandidates()
+    }).map((fixedMinObject: FixedMin) => {
       return fixedMinObject.getBoundaryMin(fixedInterpolationFactorAnswers);
-    });
-    const computedVals = ([] as LocationAndValue[]).concat.apply([], candidates);
+    }).filter((f) => { return f!==undefined});
+    const computedVals = ([] as LocationAndValue[]).concat.apply(
+      [],
+      candidates
+    );
     return computedVals;
   }
 
   getMin(fixedInterpolationFactorAnswers: Location): LocationAndValue {
-    const numberOfFixed=fixedInterpolationFactorAnswers.getNumberOfFixedInterpolationVariables()
-    const numberOfInterpolationVariables=this.interpolationVariables.getLength()
-    if ( numberOfFixed === 0) {
+    const numberOfFixed = fixedInterpolationFactorAnswers.getNumberOfFixedInterpolationVariables();
+    const numberOfInterpolationVariables = this.interpolationVariables.getLength();
+    if (numberOfFixed === 0) {
       if (this.min === ReasonsForNoMin.INFINITE_INTERVAL) {
         throw Error(
           "A cell has been asked to compute a minimum which it can't provide"
@@ -259,15 +301,15 @@ export default class InterpolationTableCell {
         return this.min;
       }
     }
-    if (
-      numberOfFixed === numberOfInterpolationVariables
-    ) {
-      let value=this.evaluate(fixedInterpolationFactorAnswers);
-      let min=fixedInterpolationFactorAnswers.makeChildWithValue(value);
-      return min
+    if (numberOfFixed === numberOfInterpolationVariables) {
+      let value = this.evaluate(fixedInterpolationFactorAnswers);
+      let min = fixedInterpolationFactorAnswers.makeChildWithValue(value);
+      return min;
     }
     //In this case it means that we need to look at fixedmins.
-    let fixedVariableSet = fixedInterpolationFactorAnswers.getFixedInterpolationVariables(InterpolationKeys.XVAR);
+    let fixedVariableSet = fixedInterpolationFactorAnswers.getFixedInterpolationVariables(
+      InterpolationKeys.XVAR
+    );
     const fixedMinObjects: FixedMin[] = this.extractFixedMinObject(
       fixedVariableSet as string[]
     );
@@ -275,11 +317,13 @@ export default class InterpolationTableCell {
       fixedMinObjects,
       fixedInterpolationFactorAnswers
     );
-    candidates.concat(this.computeBoundaryCandidates(
-      fixedMinObjects,
-      fixedInterpolationFactorAnswers
-    ));
-    candidates.sort(locationAndValueSorter)
+    candidates= candidates.concat(
+      this.computeBoundaryCandidates(
+        fixedMinObjects,
+        fixedInterpolationFactorAnswers
+      )
+    );
+    candidates.sort(locationAndValueSorter);
     return candidates[0];
   }
 }

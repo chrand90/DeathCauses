@@ -37,7 +37,7 @@ export default class InterpolationVariableMapping {
     }
 
     getXvarFromName(varname: string){
-        return 'x'+this.nameToIndex[varname],toString();
+        return 'x'+this.nameToIndex[varname].toString();
     }
 
     includesVarName(varName:string):boolean {

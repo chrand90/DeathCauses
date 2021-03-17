@@ -7,7 +7,7 @@ import InterpolationVariableMapping from "./InterpolationVariableMapping";
 export interface FixedMinObjectJson {
     values: LocationJson;
     discriminant?: string[][];
-    candidates?: string[];
+    candidate?: string[];
 }
 
 export interface LocationJson {
@@ -30,7 +30,7 @@ export default class FixedMin{
         this.location.setWithVarNameButInterpolationX(fixedMinJson.values)
         this.freeVariableIndex=this.initializeFreeVariable(fixedXVariables);
         this.discriminants= fixedMinJson.discriminant ? this.initializeDiscriminants(fixedMinJson.discriminant) : []
-        this.boundaryCandidates=fixedMinJson.candidates ? this.initializeCandidates(fixedMinJson.candidates) : []
+        this.boundaryCandidates=fixedMinJson.candidate ? this.initializeCandidates(fixedMinJson.candidate) : []
     }
 
     initializeFreeVariable(fixedXVariables: string[]){
@@ -49,6 +49,10 @@ export default class FixedMin{
         return candidateStrings.map((l:string) =>{
                 return parseStringToPolynomial(l);
         })
+    }
+
+    hasBoundaryCandidates(){
+        return this.boundaryCandidates.length>0;
     }
 
     makeCandidate(fixedLocation:  Location, insertedIntoFreeVariable?: number): Location{
@@ -92,7 +96,10 @@ export default class FixedMin{
         return res;
     }
 
-    getBoundaryMin(factorAnswers: Location):LocationAndValue {
+    getBoundaryMin(factorAnswers: Location):LocationAndValue{
+        if(this.boundaryCandidates.length===0){
+            throw Error("A fixedMin was demanded its boundary candidates but it should be asked first with hasBoundaryCandidates")
+        }
         let candidates: LocationAndValue[]= this.boundaryCandidates.map( (polCandidate: Polynomial) => {
             let value=polCandidate.evaluate(factorAnswers);
             let locationChild= this.makeCandidate(factorAnswers);

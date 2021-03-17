@@ -25,21 +25,19 @@ class RiskRatioTable {
     }
 
     getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
-        let fixedFactors=this.factorNames.filter((d) => { 
-            return d!==factorToMinimize
-        });
+        let fixedFactors=[factorToMinimize]
         const noMissing=fixedFactors.every((factorName) => {
             return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
         })
         if(noMissing){
-            return this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue();
+            return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
         }
         return 1.0
     }
 
     getMinimumRR() {
         let fixedFactors:string[]=[]
-        return this.interpolation.getMinimumRR({}, fixedFactors).getValue();
+        return Math.max(0,this.interpolation.getMinimumRR({}, fixedFactors).getValue());
     }
 
     getMinimumRRFactors() {
@@ -53,7 +51,7 @@ class RiskRatioTable {
             return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
         })
         if(noMissing){
-            return this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue();
+            return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
         }
         return 1.0
     }

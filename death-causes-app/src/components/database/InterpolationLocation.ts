@@ -122,7 +122,8 @@ export default class Location {
       //there are both free and set variables. This function returns what is neither (and in the current implementation there should be only one)
     let resIndex=-1
     this.interpolationVariables.indexToName.forEach((varname:string, index: number) => {
-        if(!this.setInterpolationVariables.includes(varname) && !fixed.includes(varname)){
+        const xvarname=this.interpolationVariables.getXvarFromName(varname)
+        if(!this.setInterpolationVariables.includes(varname) && !fixed.includes(xvarname)){
             if(resIndex!==-1){
                 throw Error("It seems there are more than one free unset variable")
             }
