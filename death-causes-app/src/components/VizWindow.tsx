@@ -7,7 +7,7 @@ import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
 import { Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
-import Deathcause from "./database/Deathcause";
+import Deathcause, {DeathCauseJson} from "./database/Deathcause";
 import causesData from "../resources/Causes.json";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
@@ -20,6 +20,10 @@ interface VizWindowProps {
   elementInFocus: string;
   visualization: Visualization;
   orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
+}
+
+interface RawDataJson {
+  [deathCauseName: string]:DeathCauseJson;
 }
 
 interface VizWindowStates {
@@ -39,6 +43,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       survivalData: [],
       initializedDatabase: false,
     };
+    
     this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
   }
 
@@ -67,13 +72,12 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   loadFactorDatabase() {
     setTimeout(() => {
       let database: Deathcause[] = [];
-      for (var key in causesData) {
-        if (causesData.hasOwnProperty(key)) {
-          database.push(
-            new Deathcause(causesData[key as keyof typeof causesData], key)
-          );
-        }
-      }
+      const rawData:RawDataJson=(causesData as RawDataJson);
+      Object.entries(rawData).forEach( ([key, deathcause]) => {
+        database.push(
+          new Deathcause(deathcause, key)
+        );
+      } )
       const c = new CalculationFacade(database);
       this.computerController = new ComputeController(
         this.props.relationLinkData,
@@ -184,10 +188,10 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
             >
               {[
                 Visualization.SURVIVAL_GRAPH,
-                Visualization.RELATION_GRAPH,
+                Visualization.RELATION_GRAPH, 
                 Visualization.BAR_GRAPH,
               ].map((d: string) => {
-                return <option value={d}>{d}</option>;
+                return <option value={d} key={d}>{d}</option>;
               })}
             </select>
           </Form.Row>

@@ -1,7 +1,7 @@
 import { Polynomial } from "./Polynomial";
 import { parseStringToPolynomial, parseVariableNumber } from "./ParsingFunctions";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
-import Location from "./InterpolationLocation";
+import Location, { addValueToLocation, LocationAndValue, locationAndValueSorter } from "./InterpolationLocation";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
 
 export interface FixedMinObjectJson {
@@ -51,29 +51,26 @@ export default class FixedMin{
         })
     }
 
-    makeLookUpObject(xval?:number):LookUpValue[]{
-        let point:LookUpValue[]=[];
-        Object.entries(this.values).forEach(([xVariable,value]) => {
-            let i=parseVariableNumber(xVariable);
-            point.push({index: i, value: value});
-        })
-        if(xval){
-            point.push({index: this.freeVariableIndex, value: xval});
+    makeCandidate(fixedLocation:  Location, insertedIntoFreeVariable?: number): Location{
+        let fixedLocationChild= fixedLocation.makeChild()
+        fixedLocationChild.setWithVarNames(this.location.getVariableToCoordinate())
+        if(insertedIntoFreeVariable){
+            fixedLocationChild.setWithInterpolationIndex(this.freeVariableIndex, insertedIntoFreeVariable);
         }
-        return point;
+        return fixedLocationChild;
     }
 
     getDiscriminantCandidates(factorAnswers: Location, interpolationDomains: RiskRatioTableCellInterface[]):Location[] {
         let res: Location[]=[];
         this.discriminants.forEach((abcTriple: Polynomial[]) => {
-            const a=abcTriple[0].evaluateByLookUp(factorAnswers.getValueFromIndex());
-            const b=abcTriple[1].evaluateByLookUp(factorAnswers);
-            const c=abcTriple[2].evaluateByLookUp(factorAnswers);
+            const a=abcTriple[0].evaluate(factorAnswers);
+            const b=abcTriple[1].evaluate(factorAnswers);
+            const c=abcTriple[2].evaluate(factorAnswers);
             if(a<1e-8){
                 if(b>1e-8){
                     let candidate=-c/b
                     if(interpolationDomains[this.freeVariableIndex].isInputWithinCell(candidate)){
-                        res.push(this.makeLookUpObject(candidate))
+                        res.push(this.makeCandidate(factorAnswers, candidate))
                     }
                 }
             }
@@ -86,7 +83,7 @@ export default class FixedMin{
                     ]
                     candidates.forEach((candidate:number) => {
                         if(interpolationDomains[this.freeVariableIndex].isInputWithinCell(candidate)){
-                            res.push(this.makeLookUpObject(candidate))
+                            res.push(this.makeCandidate(factorAnswers, candidate))
                         }
                     })
                 }
@@ -95,10 +92,14 @@ export default class FixedMin{
         return res;
     }
 
-    getBoundaryMin(factorAnswers: LookUpValue[]):MinObject[] {
-        return this.boundaryCandidates.map( (p:Polynomial) => {
-            return { minValue: p.evaluateByLookUp(factorAnswers), minLocation: {...this.values}}
+    getBoundaryMin(factorAnswers: Location):LocationAndValue {
+        let candidates: LocationAndValue[]= this.boundaryCandidates.map( (polCandidate: Polynomial) => {
+            let value=polCandidate.evaluate(factorAnswers);
+            let locationChild= this.makeCandidate(factorAnswers);
+            return addValueToLocation(locationChild, value)
         })
+        candidates.sort(locationAndValueSorter)
+        return candidates[0];
     }
 
 }

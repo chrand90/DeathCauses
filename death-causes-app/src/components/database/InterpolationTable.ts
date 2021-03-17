@@ -1,16 +1,10 @@
 import { FactorAnswers } from "../../models/Factors";
-import {
-  parseStringToInputType,
-  parseStringToPolynomial,
-} from "./ParsingFunctions";
-import { Polynomial } from "./Polynomial";
-import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
 import InterpolationTableCell, {
   MinObject,
   InterpolationTableCellJson,
 } from "./InterpolationTableCell";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
-import Location, { LocationAndValue } from "./InterpolationLocation";
+import Location, { LocationAndValue, locationAndValueSorter } from "./InterpolationLocation";
 
 interface VariableToIndex {
   [key: string]: number;
@@ -25,7 +19,7 @@ export interface InterpolationTableJson {
   non_interpolation_variables?: string[];
 }
 
-export class InterpolationEntry {
+export class InterpolationTable {
   cells: InterpolationTableCell[] = [];
   nonInterpolationVariables: string[];
   interpolationVariables: InterpolationVariableMapping;
@@ -80,81 +74,16 @@ export class InterpolationEntry {
         );
       })
       .map((cell: InterpolationTableCell) => {
-        return cell.getMin(fixedInterpolationFactors);
+        return cell.getMin(fixedLocation);
       });
-    mins.sort(function (a, b) {
-      return a.minValue - b.minValue;
-    });
+    mins.sort(locationAndValueSorter);
+    if(mins.length===0){
+      console.log("examination point");
+      throw Error("The mins list was unexpectedly empty meaning no minRR was computed for "+fixedFactors.toString());
+    }
+    console.log("mins")
+    console.log(mins)
     return mins[0];
   }
 
-  getMinimumRRFactors() {
-    let riskRatioValues = this.riskRatioTable.map(
-      (rrte) => rrte.riskRatioValue
-    );
-    let minimumIndex = riskRatioValues.indexOf(Math.min(...riskRatioValues));
-    let minRrte = this.riskRatioTable[minimumIndex];
-    let res: any = {};
-    this.factorNames.forEach(
-      (value, index) => (res[value] = minRrte.factorValues[index])
-    );
-    return res;
-  }
-
-  getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
-    let relevantFactorAnswers = this.getRelevantFactorAnswers(
-      submittedFactorAnswers
-    );
-    for (let i = 0; i < this.riskRatioTable.length; i++) {
-      if (
-        this.riskRatioTable[i].isFactorAnswersInDomain(relevantFactorAnswers)
-      ) {
-        return this.riskRatioTable[i].riskRatioValue;
-      }
-    }
-    return this.riskRatioTable[this.riskRatioTable.length - 1].riskRatioValue; // tmp to make it run
-
-    throw new Error(
-      "Found no risk ratio entry where " +
-        submittedFactorAnswers +
-        " is within domain"
-    );
-  }
-
-  private getRelevantFactorAnswers = (
-    sumbittedFactorAnswers: FactorAnswers
-  ): (string | number)[] => {
-    let res: (string | number)[] = [];
-    this.factorNames.forEach((factor) =>
-      res.push(sumbittedFactorAnswers[factor])
-    );
-    return res;
-  };
-
-  getRelevantFactorAnswers = (
-    sumbittedFactorAnswers: FactorAnswers
-  ): (string | number)[] => {
-    let res: (string | number)[] = [];
-    this.factors.forEach((factor) => res.push(sumbittedFactorAnswers[factor]));
-    return res;
-  };
-
-  isFactorAnswersInDomain(relevantFactorAnswers: (string | number)[]) {
-    for (let i = 0; i < this.factors.length; i++) {
-      let isSubmittedFactorAnswerWithinCell = this.domain[i].isInputWithinCell(
-        relevantFactorAnswers[i]
-      );
-      if (!isSubmittedFactorAnswerWithinCell) {
-        return false;
-      }
-    }
-    return true;
-  }
-
-  interpolateRR(submittedFactorAnswers: number[]) {
-    let res = this.polynomial.evaluate(submittedFactorAnswers);
-    if (this.minValue && res < this.minValue) return this.minValue;
-    if (this.maxValue && res > this.maxValue) return this.maxValue;
-    return res;
-  }
 }

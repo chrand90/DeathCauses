@@ -11,15 +11,19 @@ interface LocationAsKeyValuePairs {
     value: string | number;
 }
 
-export enum KeyOptionsInterpolationVariables {
+export enum InterpolationKeys {
   INDEX = "index",
   VAR_NAME = "varName",
   XVAR = "xvar",
 }
 
-export enum KeyOptionsNonInterpolationVariables {
+export enum NonInterpolationKeys {
   INDEX = "index",
   VAR_NAME = "varName",
+}
+
+interface VarNameToCoordinateWithUndefined {
+  [key:string]: number | string | undefined;
 }
 
 export default class Location {
@@ -41,9 +45,9 @@ export default class Location {
   }
 
   getNonInterpolationValues(
-    key: KeyOptionsNonInterpolationVariables = KeyOptionsNonInterpolationVariables.VAR_NAME
+    key: NonInterpolationKeys = NonInterpolationKeys.VAR_NAME
   ): LocationAsKeyValuePairs[] {
-    if (key === KeyOptionsNonInterpolationVariables.VAR_NAME) {
+    if (key === NonInterpolationKeys.VAR_NAME) {
       return this.setNonInterpolationVariables.map((varName: string) => {
         return {
           key: varName,
@@ -51,7 +55,7 @@ export default class Location {
         };
       });
     } else {
-      if (key !== KeyOptionsNonInterpolationVariables.INDEX) {
+      if (key !== NonInterpolationKeys.INDEX) {
         throw Error("Illegal input to function");
       }
       return this.setNonInterpolationVariables.map((varName: string) => {
@@ -64,16 +68,16 @@ export default class Location {
   }
 
   getInterpolationValues(
-    key: KeyOptionsInterpolationVariables = KeyOptionsInterpolationVariables.VAR_NAME
+    key: InterpolationKeys = InterpolationKeys.VAR_NAME
   ):LocationAsKeyValuePairs[] {
-    if (key === KeyOptionsInterpolationVariables.VAR_NAME) {
+    if (key === InterpolationKeys.VAR_NAME) {
       return this.setInterpolationVariables.map((varName: string) => {
         return {
           key: varName,
           value: this.variableToCoordinate[varName],
         };
       });
-    } else if (key === KeyOptionsInterpolationVariables.INDEX) {
+    } else if (key === InterpolationKeys.INDEX) {
       return this.setInterpolationVariables.map((varName: string) => {
         return {
           key: this.interpolationVariables.getIndexFromName(varName),
@@ -81,7 +85,7 @@ export default class Location {
         };
       });
     } else {
-      if (key !== KeyOptionsInterpolationVariables.XVAR) {
+      if (key !== InterpolationKeys.XVAR) {
         throw Error("illegal input to function");
       }
       return this.setInterpolationVariables.map((varName: string) => {
@@ -93,8 +97,25 @@ export default class Location {
     }
   }
 
-  getFixedInterpolationVariables(){
+  getVariableToCoordinate(){
+    return this.variableToCoordinate
+  }
+  
+
+  getFixedInterpolationVariables(key: InterpolationKeys=InterpolationKeys.VAR_NAME){
+    if(key===InterpolationKeys.VAR_NAME){
       return this.setInterpolationVariables;
+    }
+    else if(key===InterpolationKeys.XVAR){
+      return this.setInterpolationVariables.map((varname: string) => {
+        return this.interpolationVariables.getXvarFromName(varname);
+      })
+    }
+    else if(key===InterpolationKeys.INDEX){
+      return this.setInterpolationVariables.map((varname: string) => {
+        return this.interpolationVariables.getIndexFromName(varname);
+      })
+    }  
   }
 
   getFreeUnsetVariableIndex(fixed: string[]){
@@ -111,9 +132,30 @@ export default class Location {
     return resIndex;
   }
 
+  getNumberOfFixedInterpolationVariables(){
+    return this.setInterpolationVariables.length;
+  }
+
   getValueFromIndex(index:number){
       const varname=this.interpolationVariables.getRealNameFromIndex(index)
       return this.variableToCoordinate[varname]
+  }
+
+  getValueFromXvar(xvar:string){
+    const varname=this.interpolationVariables.getRealNameFromXVarName(xvar)
+    return this.variableToCoordinate[varname]
+  }
+
+  makeChild(){
+    let child= new Location(this.interpolationVariables, this.nonInterpolationVariables)
+    child.setWithVarNames(this.variableToCoordinate)
+    return child
+  }
+
+  makeChildWithValue(value: number): LocationAndValue{
+    let child= new LocationAndValue(this.interpolationVariables, this.nonInterpolationVariables, value)
+    child.setWithVarNames(this.variableToCoordinate)
+    return child;
   }
 
   setWithVarNames(dict: VarNameToCoordinate) {
@@ -142,21 +184,27 @@ export default class Location {
     });
   }
 
-  setWithVarNameButInterpolationX(dict: VarNameToCoordinate) {
+  setWithVarNameButInterpolationX(dict: VarNameToCoordinateWithUndefined) {
     Object.entries(dict).forEach(([key, value]) => {
-      if (isXVariableName(key)) {
+      if (isXVariableName(key) && value) {
         let realVarName = this.interpolationVariables.getRealNameFromXVarName(
           key
         );
         this.setInterpolationVariables.push(realVarName);
         this.variableToCoordinate[realVarName] = value;
-      } else if (this.nonInterpolationVariables.includes(key)) {
+      } else if (this.nonInterpolationVariables.includes(key) && value) {
         this.variableToCoordinate[key] = value;
         this.setNonInterpolationVariables.push(key);
-      } else {
+      } else if(value){
         throw Error("An unrecognized key was unexpectedly tried initialized");
       }
     });
+  }
+
+  setWithInterpolationIndex(index: number, value: number){
+    const varname=this.interpolationVariables.getRealNameFromIndex(index)
+    this.setInterpolationVariables.push(varname)
+    this.variableToCoordinate[varname]=value;
   }
 
   setAllNonInterpolationsWithDomains(listOfDomains: RiskRatioTableCellInterface[]){
@@ -178,11 +226,21 @@ export class LocationAndValue extends Location {
     super(interpolationVariables, nonInterpolationVariables);
     this.value = value;
   }
+
+  getValue(){
+    return this.value;
+  }
 }
 
-export function LocationAndValueSorter(
+export function locationAndValueSorter(
   locAndVal1: LocationAndValue,
   locAndVal2: LocationAndValue
 ) {
   return locAndVal1.value - locAndVal2.value;
+}
+
+export function addValueToLocation(location: Location, value: number): LocationAndValue{
+  let res = new LocationAndValue(location.interpolationVariables, location.nonInterpolationVariables, value);
+  res.variableToCoordinate= location.variableToCoordinate; //make it point to the same object. 
+  return res;
 }

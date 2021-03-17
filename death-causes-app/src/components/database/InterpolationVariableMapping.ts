@@ -4,16 +4,23 @@ interface ReverseMapping {
     [key:string]: number
 }
 
+interface StringToStringMapping {
+    [key:string]: string
+}
+
 export default class InterpolationVariableMapping {
 
     nameToIndex: ReverseMapping;
-    indexToName;
+    indexToName: string[];
+    xvarToVarName: StringToStringMapping;
 
     constructor(interpolationVariables: string[]){
         this.indexToName=interpolationVariables;
         this.nameToIndex={};
+        this.xvarToVarName={};
         this.indexToName.forEach((varname:string, index:number) => {
             this.nameToIndex[varname]=index;
+            this.xvarToVarName['x'+index]=varname;
         })
     }
 
@@ -22,8 +29,7 @@ export default class InterpolationVariableMapping {
     }
 
     getRealNameFromXVarName(xvar: string){
-        const index=parseVariableNumber(xvar);
-        return this.getRealNameFromIndex(index);
+        return this.xvarToVarName[xvar];
     }
 
     getIndexFromName(varname: string){
@@ -36,6 +42,10 @@ export default class InterpolationVariableMapping {
 
     includesVarName(varName:string):boolean {
         return this.indexToName.includes(varName);
+    }
+
+    getLength(){
+        return this.indexToName.length;
     }
     
 }

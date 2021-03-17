@@ -19,7 +19,6 @@ interface MinimumFactorInputs {
 interface UStar {
     propForDeathcause: number,
     minProbForDeathcause: number,
-    minFactorIntervals: MinimumFactorInputs,
     minFactorValues: FactorAnswers;
 }
 
@@ -192,26 +191,16 @@ export class RiskRatioCalculationService {
 
     private calculateUStar(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): UStar {
         let probForDeathcause = this.calculateProbabilityForSingleCauseAndAge(factorAnswersSubmitted, factorAnswersSubmitted['Age'] as number, deathcause)
-        let minimumFactorIntervals: MinimumFactorInputs = {}
+        let minimumFactorInputs: FactorAnswers = {}
         deathcause.riskFactorGroups.forEach(rfg => {
             rfg.riskRatioTables.forEach(rrt => {
-                minimumFactorIntervals = { ...minimumFactorIntervals, ...rrt.getMinimumRRFactors() }
+                minimumFactorInputs = { ...minimumFactorInputs, ...rrt.getMinimumRRFactors() }
             })
         })
 
-        let minimumFactorInputs: FactorAnswers = {}
-        for (var key in minimumFactorIntervals) {
-            if(factorAnswersSubmitted[key]===""){
-                minimumFactorInputs[key]=""
-            }
-            else{
-                minimumFactorInputs[key] = minimumFactorIntervals[key].getValueInCell()
-            }
-        }
-
         let minProbForDeathcause = this.calculateProbabilityForSingleCauseAndAge(minimumFactorInputs, factorAnswersSubmitted['Age'] as number, deathcause)
 
-        return { propForDeathcause: probForDeathcause, minProbForDeathcause: minProbForDeathcause, minFactorIntervals: minimumFactorIntervals, minFactorValues: minimumFactorInputs }
+        return { propForDeathcause: probForDeathcause, minProbForDeathcause: minProbForDeathcause, minFactorValues: minimumFactorInputs }
     }
 
     private calculateFirstOrderDecomposition(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): ProbabilityKeyValue {

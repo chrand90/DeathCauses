@@ -1,7 +1,7 @@
 import FrequencyTable, { FrequencyJson } from "./FrequencyTable";
 import { RiskFactorGroup, RiskFactorGroupJson } from "./RickFactorGroup";
 
-interface DeathCauseJson {
+export interface DeathCauseJson {
     Age: FrequencyJson;
     RiskFactorGroups: RiskFactorGroupJson[];
 }
