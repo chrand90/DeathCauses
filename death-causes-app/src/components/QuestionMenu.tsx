@@ -233,7 +233,6 @@ class QuestionMenu extends React.Component<
               if (factorname in this.state.factorMaskings) {
                 submittedValue = this.state.factorMaskings[factorname]
                   .effectiveValue;
-                  console.log("wants to substitute with "+submittedValue+" in "+ factorname)
               } 
               else if (submittedValue === "") {
                 return; // skipping because it already has the correct value
@@ -666,8 +665,6 @@ class QuestionMenu extends React.Component<
   }
 
   render() {
-    console.log("Factormaskings")
-    console.log(this.state.factorMaskings);
     if (Object.keys(this.state.validities).length === 0) {
       return <Spinner animation="border"></Spinner>;
     }
