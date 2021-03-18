@@ -1,3 +1,4 @@
+import { getEffectiveTypeRoots } from "typescript";
 import { FactorAnswers } from "../../models/Factors";
 import { ProbabilityKeyValue } from "../../models/ProbabilityKeyValue";
 import DeathCause from "../database/Deathcause";
@@ -198,7 +199,18 @@ export class RiskRatioCalculationService {
         let minimumFactorInputs: FactorAnswers = {}
         deathcause.riskFactorGroups.forEach(rfg => {
             rfg.riskRatioTables.forEach(rrt => {
-                minimumFactorInputs = { ...minimumFactorInputs, ...rrt.getMinimumRRFactors() }
+                //checking for missing:
+                const noMissing=rrt.getFactorNames().every( (factorName:string) => {
+                    return factorAnswersSubmitted[factorName]!==""
+                })
+                if(noMissing){
+                    minimumFactorInputs = { ...minimumFactorInputs, ...rrt.getMinimumRRFactors() }
+                }
+                else{
+                    rrt.getFactorNames().forEach( (factorName:string) => {
+                        minimumFactorInputs[factorName]=""
+                    })
+                }
             })
         })
 

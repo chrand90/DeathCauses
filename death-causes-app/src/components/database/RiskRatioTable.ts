@@ -56,26 +56,16 @@ class RiskRatioTable {
         return 1.0
     }
 
+    getFactorNames(){
+        return this.factorNames;
+    }
+
     private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string  | number)[] => {
         let res: (string  | number)[] = []
         this.factorNames.forEach(factor => res.push(sumbittedFactorAnswers[factor]))
         return res;
     }
 
-    // getInterpolatedRiskRatio(submittedFactorAnswers: FactorAnswers): number {
-    //     let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-
-    //     for (let index = 0; index < this.interpolation.length; index++) {
-    //         let interpolationEntry = this.interpolation[index];
-    //         let relevantInterpolationFactorAnswers = interpolationEntry.getRelevantFactorAnswers(submittedFactorAnswers) as number[];
-    //         if (interpolationEntry.isFactorAnswersInDomain(relevantFactorAnswers)) {
-    //             return interpolationEntry.interpolateRR(relevantInterpolationFactorAnswers);
-    //         }
-
-    //     }
-
-    //     return 1;
-    // }
 }
 
 export { RiskRatioTable };

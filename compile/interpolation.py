@@ -388,6 +388,7 @@ def interpolate_one_spline(RR):
                                                      grouped_risk_ratios=RRs,
                                                      level_dics=level_dics,
                                                      spline_system=ss)
+        res.enforce_truncation(RR)
         #insert_bounds(RR, RRs, res, level_dics, non_interpolatable_factors, interpolatable_factors)
         #res.order_columns(factor_names)
         return res
