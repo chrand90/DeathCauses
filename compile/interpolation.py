@@ -395,6 +395,7 @@ def interpolate_one_spline(RR):
     else:
         interpolation=interpolation_table_from_riskratio(RR)
         interpolation.compute_global_min()
+        interpolation.enforce_truncation(RR)
         return interpolation
 
 

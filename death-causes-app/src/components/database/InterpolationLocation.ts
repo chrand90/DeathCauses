@@ -231,6 +231,15 @@ export class LocationAndValue extends Location {
   getValue(){
     return this.value;
   }
+
+  truncateValue(lowerTruncation: number | null, upperTruncation: number | null){
+    if(lowerTruncation){
+      this.value=Math.max(lowerTruncation, this.value);
+    }
+    if(upperTruncation){
+      this.value=Math.min(upperTruncation, this.value);
+    }
+  }
 }
 
 export function locationAndValueSorter(

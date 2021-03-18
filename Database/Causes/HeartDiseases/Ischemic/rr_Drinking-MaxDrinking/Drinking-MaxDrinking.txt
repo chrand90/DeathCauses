@@ -1,3 +1,4 @@
+#tails=min_bounded,max_bounded
 Drinking	MaxDrinking	RR
 0	0	1.0
 0,10.5	0	0.64

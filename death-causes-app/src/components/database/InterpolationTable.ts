@@ -66,11 +66,7 @@ export class InterpolationTable {
     if (fixedFactors.length === 0) {
       return this.globalMin;
     }
-    if(fixedFactors[0]==="SmokeSinceStop" && fixedFactors.length===1) {
-      console.log("debug location")
-    }
     let fixedLocation=new Location(this.interpolationVariables, this.nonInterpolationVariables);
-    //extracts the fixed factors from submittedFactorAnswers.
     fixedLocation.setWithVarNamesWhenMatch(submittedFactorAnswers, fixedFactors)
     let filteredCells= this.cells
       .filter((cell: InterpolationTableCell) => {
@@ -85,10 +81,7 @@ export class InterpolationTable {
     if(mins.length===0 || mins[0]===undefined){
       throw Error("The mins list was unexpectedly empty meaning no minRR was computed for "+fixedFactors.toString());
     }
-    if(this.interpolationVariables.indexToName.includes("MaxDrinking")){
-      console.log(this.interpolationVariables.indexToName.toString()+ this.nonInterpolationVariables.toString()+':');
-      console.log(JSON.stringify(mins[0].getVariableToCoordinate()) +"=" + mins[0].getValue());
-    }
+    mins[0].truncateValue(this.lowerTruncation, this.upperTruncation);
     return mins[0];
   }
 
