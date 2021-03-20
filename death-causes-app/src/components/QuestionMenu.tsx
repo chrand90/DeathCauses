@@ -230,13 +230,14 @@ class QuestionMenu extends React.Component<
           let submittedAnswers = { ...this.state.factorAnswers };
           Object.entries(submittedAnswers).forEach(
             ([factorname, submittedValue]) => {
-              if (submittedValue === "") {
-                return; // skipping because it already has the correct value
-              }
               if (factorname in this.state.factorMaskings) {
                 submittedValue = this.state.factorMaskings[factorname]
                   .effectiveValue;
-              } else if (factorname in this.state.factorAnswerScales) {
+              } 
+              else if (submittedValue === "") {
+                return; // skipping because it already has the correct value
+              }
+              else if (factorname in this.state.factorAnswerScales) {
                 submittedValue = (
                   parseFloat(submittedAnswers[factorname] as string) *
                   this.state.factorAnswerScales[factorname].scale
