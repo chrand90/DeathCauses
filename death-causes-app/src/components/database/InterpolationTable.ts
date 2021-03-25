@@ -28,8 +28,6 @@ export class InterpolationTable {
   upperTruncation: number | null;
 
   constructor(inputJson: InterpolationTableJson) {
-    console.log("initializing the following interpolation table json:")
-    console.log(inputJson);
     this.nonInterpolationVariables = inputJson.non_interpolation_variables
       ? inputJson.non_interpolation_variables
       : [];
@@ -48,12 +46,15 @@ export class InterpolationTable {
     this.upperTruncation = inputJson.upper_truncation
       ? inputJson.upper_truncation
       : null;
+    this.globalMin.truncateValue(this.lowerTruncation, this.upperTruncation);
     inputJson.cells.forEach((element) =>
       this.cells.push(
         new InterpolationTableCell(
           element,
           this.interpolationVariables,
-          this.nonInterpolationVariables
+          this.nonInterpolationVariables,
+          this.lowerTruncation,
+          this.upperTruncation
         )
       )
     );

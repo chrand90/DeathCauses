@@ -34,7 +34,7 @@ class InterpolationTable(object):
                                                                self.non_interpolation_variables))
                     value_dic.update(cell.min['minLocation'])
                     candidates.append((cell.min['minValue'], value_dic))
-        candidates.sort()
+        candidates.sort(key=lambda tup: tup[0])
         self.global_min = {'minValue': candidates[0][0], 'minLocation': candidates[0][1]}
 
     def enforce_truncation(self, RR):
@@ -43,6 +43,15 @@ class InterpolationTable(object):
             self.lower_truncation=minimum
         if 'max_bounded' in RR.get_bounding():
             self.upper_truncation=maximum
+
+    def enforce_truncation_and_compute_global_min(self,RR):
+        self.enforce_truncation(RR)
+        self.compute_global_min()
+
+    def enforce_truncation_and_compute_global_min_and_fixed_mins(self,RR):
+        self.enforce_truncation(RR)
+        self.find_all_mins()
+        self.compute_global_min()
 
     def as_json(self):
         res = {}
@@ -62,7 +71,7 @@ class InterpolationTable(object):
 
     def find_all_mins(self):
         for cell in self.cells:
-            cell.find_mins()
+            cell.find_mins(self.lower_truncation)
 
 
 class InterpolationTableCell(object):
@@ -91,7 +100,7 @@ class InterpolationTableCell(object):
                     return False
         return True
 
-    def find_mins(self):
+    def find_mins(self, lower_truncation):
         bounds = []
         all_bounds_set = True
         all_bounds_finite = True
@@ -109,12 +118,11 @@ class InterpolationTableCell(object):
                     all_bounds_finite = False
             else:
                 lower = domain.split('+')[0]
-                bounds.append((lower, None))
+                bounds.append((float(lower), None))
                 all_bounds_finite = False
         if all_bounds_set:
-            interpolation_object = get_interpolation_object(self.interpolation_polynomial, bounds)
+            interpolation_object = get_interpolation_object(self.interpolation_polynomial, bounds, lower_truncation)
             if 'min' in interpolation_object:  # there will not be a min if any of the bounds are infinite
-                assert all_bounds_finite, "No min object was created even though all bounds were finite."
                 self.min = interpolation_object['min']
             if 'fixed_mins' in interpolation_object:
                 self.fixed_mins = interpolation_object['fixed_mins']

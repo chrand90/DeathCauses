@@ -8,29 +8,37 @@ export interface FixedMinObjectJson {
     values: LocationJson;
     discriminant?: string[][];
     candidate?: string[];
+    infinity?: string[][];
 }
 
 export interface LocationJson {
     [key: string]: number | string;
 }
+
+const DEFAULT_LOWER_TRUNCATION=0;
   
 export default class FixedMin{
     discriminants:Polynomial[][];
     boundaryCandidates: Polynomial[];
     location: Location;
     freeVariableIndex: number;
+    infinityCandidates: Polynomial[][];
+    lowerTruncation: number;
 
 
     constructor(
         fixedMinJson: FixedMinObjectJson, 
         interpolationVariables: InterpolationVariableMapping, 
         nonInterpolationVariables: string[],
-        fixedXVariables: string[]){
+        fixedXVariables: string[],
+        lowerTruncation: number | null){
         this.location=new Location(interpolationVariables, nonInterpolationVariables)
         this.location.setWithVarNameButInterpolationX(fixedMinJson.values)
         this.freeVariableIndex=this.initializeFreeVariable(fixedXVariables);
         this.discriminants= fixedMinJson.discriminant ? this.initializeDiscriminants(fixedMinJson.discriminant) : []
         this.boundaryCandidates=fixedMinJson.candidate ? this.initializeCandidates(fixedMinJson.candidate) : []
+        this.infinityCandidates=fixedMinJson.infinity ? this.initializeInfinities(fixedMinJson.infinity) : []
+        this.lowerTruncation= lowerTruncation ? lowerTruncation : DEFAULT_LOWER_TRUNCATION;
     }
 
     initializeFreeVariable(fixedXVariables: string[]){
@@ -40,6 +48,14 @@ export default class FixedMin{
     initializeDiscriminants(discriminantStrings: string[][]): Polynomial[][]{
         return discriminantStrings.map((l:string[]) =>{
             return l.map((polString: string) => {
+                return parseStringToPolynomial(polString);
+            })
+        })
+    }
+
+    initializeInfinities(infinitySlopes: string[][]): Polynomial[][]{
+        return infinitySlopes.map( (slopeIntercept: string[]) => {
+            return slopeIntercept.map((polString:string) => {
                 return parseStringToPolynomial(polString);
             })
         })
@@ -107,6 +123,27 @@ export default class FixedMin{
         })
         candidates.sort(locationAndValueSorter)
         return candidates[0];
+    }
+
+    getInfinityCandidates(factorAnswers: Location, interpolationDomains: RiskRatioTableCellInterface[]): Location[]{
+        let candidates: Location[]=[]
+        this.infinityCandidates.forEach( (slopeInterceptPols: Polynomial[]) => {
+            let intercept=slopeInterceptPols[1].evaluate(factorAnswers)
+            let slope=slopeInterceptPols[0].evaluate(factorAnswers)
+            if(Math.abs(slope)>1e-10){
+                let candidate= (this.lowerTruncation-intercept)/slope;
+                if(interpolationDomains[this.freeVariableIndex].isInputWithinCell(candidate)){
+                    candidates.push(
+                        this.makeCandidate(
+                            factorAnswers, 
+                            candidate
+                        )
+                    )
+                }
+                
+            }
+        })
+        return candidates
     }
 
 }

@@ -119,6 +119,23 @@ def extract_term_for_fixed(termkey, coefficient, fixed_variables):
         return new_termkey, new_coefficient
 
 
+class TrickOptimizerTowardsPoint:
+
+    def __init__(self, fun, point_as_list, target):
+        self.fun = fun
+        self.point = point_as_list
+        self.counter = 1
+        self.target = target
+
+    def penalizer(self, xval_as_list):
+        return 1 / self.counter ** 2 * sum(((x - p) ** 2 for x, p in zip(xval_as_list, self.point)))
+
+    def __call__(self, xval_as_list):
+        self.fun(xval_as_list)
+        self.counter += 1
+        return abs(self.fun(xval_as_list) - self.target) + self.penalizer(xval_as_list)
+
+
 class Formula:
 
     def __init__(self, form="", terms={}, xvars=[], bounds=[]):
@@ -187,7 +204,7 @@ class Formula:
         return derived_formula
 
     def get_finite_bounded_vars(self):
-        return [xvar for xvar,b in zip(self.xvars, self.bounds) if (b[0] is not None and b[1] is not None)]
+        return [xvar for xvar, b in zip(self.xvars, self.bounds) if (b[0] is not None and b[1] is not None)]
 
     def __mul__(self, other):
         assert not isinstance(other, Formula), "we can't multiply formulas at the moment and it shouldnt be necessary"
@@ -212,6 +229,15 @@ class Formula:
                 res += coefficient * xvals[key[0]] ** key[2] * xvals[key[1]] ** key[3]
         return res
 
+    def degree(self):
+        max_exponent = 0
+        for term_key, coefficient in self.terms.items():
+            if len(term_key) == 2 and abs(coefficient) > 1e-10:
+                max_exponent = max(term_key[1], max_exponent)
+            if len(term_key) == 4 and abs(coefficient) > 1e-10:
+                max_exponent = max(term_key[1], term_key[3], max_exponent)
+        return max_exponent
+
     def set_bounds(self, bounds):
         assert len(bounds) == len(self.xvars), "tried to add " + str(
             bounds) + " as bounds to a formula with variables " + str(self.xvars)
@@ -220,6 +246,15 @@ class Formula:
     def packaged_call(self, xval_as_list):
         xvals = {xvar: xval for xvar, xval in zip(self.xvars, xval_as_list)}
         return self.__call__(xvals)
+
+    def packaged_caller_with_exception(self, lower_bound):
+        def packaged_call(xval_as_list):
+            xvals = {xvar: xval for xvar, xval in zip(self.xvars, xval_as_list)}
+            res = self.__call__(xvals)
+            assert res > lower_bound - 1e-8, "The lower bound was breached"
+            return res
+
+        return packaged_call
 
     def evaluate_in_dicted_values(self, xvalue_dic):
         return self.__call__([xvalue_dic[x] for x in self.xvars])
@@ -265,7 +300,7 @@ class Formula:
         b = self[(xvar, 1)]
         c = self[tuple()]
         assert self[(xvar, 3)] == 0, "The root of a third degree polynomium was requested and it should never be"
-        return a,b,c
+        return a, b, c
 
     def find_roots(self):
         a, b, c = self.extract_a_b_c()
@@ -287,7 +322,7 @@ class Formula:
             self.bounds) + " does not have the same length as the point " + str(point)
         for n, (lower, upper) in enumerate(self.bounds):
 
-            if point[n] < lower or point[n] > upper:
+            if (lower is not None and point[n] < lower) or (upper is not None and point[n] > upper):
                 return False
         return True
 
@@ -304,12 +339,14 @@ class Formula:
         assert len(self.xvars) == 1, "this function cant be called unless there is only one dimension"
         x0 = self.xvars[0]
         first_bound_vals = []
-        lower_bound_argument = {x0: self.bounds[0][0]}
-        lower_bound_value = self.__call__(lower_bound_argument)
-        first_bound_vals.append((lower_bound_value, lower_bound_argument))
-        upper_bound_argument = {x0: self.bounds[0][1]}
-        upper_bound_value = self.__call__(upper_bound_argument)
-        first_bound_vals.append((upper_bound_value, upper_bound_argument))
+        if self.bounds[0][0] is not None:
+            lower_bound_argument = {x0: float(self.bounds[0][0])}
+            lower_bound_value = self.__call__(lower_bound_argument)
+            first_bound_vals.append((lower_bound_value, lower_bound_argument))
+        if self.bounds[0][1] is not None:
+            upper_bound_argument = {x0: float(self.bounds[0][1])}
+            upper_bound_value = self.__call__(upper_bound_argument)
+            first_bound_vals.append((upper_bound_value, upper_bound_argument))
         return first_bound_vals
 
     def candidate_points_from_all_one_dimensional_edges(self):
@@ -337,16 +374,31 @@ class Formula:
                 if all(bound is not None for bound in chosen_bounds):
                     value_dic = {var: bound for var, bound in zip(non_fixed_variables, chosen_bounds)}
                     new_f = self.insertValues(value_dic)
-                    discriminant = new_f.diff(fixed_variable).find_discriminant()
-                    assert 'discriminant' in discriminant, "Somehow the differentiated roots of "+str(new_f)+" did not produce discriminants but instead "+str(discriminant)
-                    candidates.append({"values": value_dic, "discriminant": discriminant['discriminant']})
+                    lower, upper = self.bounds[index_of_not_fixed]
+
+                    if lower is not None and upper is not None:
+                        discriminant = new_f.diff(fixed_variable).find_discriminant()
+                        assert 'discriminant' in discriminant, "Somehow the differentiated roots of " + str(
+                            new_f) + " did not produce discriminants but instead " + str(discriminant)
+                        candidates.append({"values": value_dic, "discriminant": discriminant['discriminant']})
 
                     # insert not_fixed_variable's boundary values
-                    lower, upper = self.bounds[index_of_not_fixed]
-                    candidates.append(new_f.get_candidate_object(fixed_variable, lower, value_dic))
-                    candidates.append(new_f.get_candidate_object(fixed_variable, upper, value_dic))
-
+                    if lower is None:
+                        candidates.append(new_f.get_infinite_candidate_object(fixed_variable, value_dic))
+                    else:
+                        candidates.append(new_f.get_candidate_object(fixed_variable, lower, value_dic))
+                    if upper is None:
+                        candidates.append(new_f.get_infinite_candidate_object(fixed_variable, value_dic))
+                    else:
+                        candidates.append(new_f.get_candidate_object(fixed_variable, upper, value_dic))
         return candidates
+
+
+    def get_infinite_candidate_object(self, variable_free, value_dic):
+        a, b, c = self.extract_a_b_c()
+        assert abs(
+            a) < 1e-10, "A higher-degree term was found in what was supposed to be one-dimensional towards infinity"
+        return {"values": value_dic, "infinity": [[b, c]]}
 
     def get_candidate_object(self, variable_free, val, other_values):
         value_dic = deepcopy(other_values)
@@ -395,7 +447,7 @@ class Formula:
         formula_with_fixed = self.fix(fixed_variables)
         return formula_with_fixed.discriminant_points_from_all_one_dimensional_edges()
 
-    def get_mins_for_all_fixed_others(self, fixed_vars=None):
+    def get_mins_for_all_fixed_others(self, infinite_vars=None):
         """
         :param fixed_vars: the variables that will always be fixed in the computations. Useful
         :return: a fixed_mins object
@@ -407,20 +459,51 @@ class Formula:
 
             fixed_variables = [xvar for fstatus, xvar in zip(fixed_frees, self.xvars) if fstatus == 'Fixed']
             free_variables = [xvar for fstatus, xvar in zip(fixed_frees, self.xvars) if fstatus == 'Free']
-            if (not (fixed_variables and free_variables)) or set(free_variables).intersection(set(fixed_vars)):
+            if not (fixed_variables and free_variables):
                 continue
             min_objects.append({"mins": self.get_mins_for_fixed_edges(fixed_variables, free_variables),
                                 "fixed": fixed_variables})
         return min_objects
 
-    def find_min(self):
+    def has_upper_bound(self):
+        assert len(self.xvars) == 1, "this function should only be called on dimensional functions"
+        return self.bounds[0][1] is not None
+
+    def has_lower_bound(self):
+        assert len(self.xvars) == 1, "this function should only be called on dimensional functions"
+        return self.bounds[0][0] is not None
+
+    def get_one_dimensional_infinite_min(self, truncation_point=None):
+        assert len(self.xvars) == 1, "this function should only be called on dimensional functions"
+        if truncation_point is not None:
+            target = truncation_point
+        else:
+            target = 0
+        a, b, c = self.extract_a_b_c()
+        assert abs(a) < 1e-10, "the one dimensional infinite min of high degree polynomial was requested"
+        candidates = self.evaluate_first_bounds()
+        if (b >= 0 and self.has_lower_bound()) or (b <= 0 and self.has_upper_bound()):
+            return candidates
+        else:
+            if abs(b) < 1e-10:
+                return candidates
+            x = (target - c) / b
+            if self.point_within_bounds([x]):
+                return [(target, {'x0': x})]
+            else:
+                return candidates
+
+    def find_min(self, truncation_point=None, infinite_vars=[]):
         if len(self.xvars) == 1:
             x0 = self.xvars[0]
-            df = self.diff(x0)
-            roots = df.find_roots()
-            assert 'critical_points' in roots, "there were not critical points in " + str(roots)
-            candidates = self.evaluate_candidate_points(roots['critical_points'])
-            candidates.extend(self.evaluate_first_bounds())
+            if x0 in infinite_vars:
+                candidates = self.get_one_dimensional_infinite_min(truncation_point)
+            else:
+                df = self.diff(x0)
+                roots = df.find_roots()
+                assert 'critical_points' in roots, "there were not critical points in " + str(roots)
+                candidates = self.evaluate_candidate_points(roots['critical_points'])
+                candidates.extend(self.evaluate_first_bounds())
             candidates.sort(key=lambda tup: tup[0])
             return candidates[0]
 
@@ -429,7 +512,8 @@ class Formula:
         candidates = self.candidate_points_from_all_one_dimensional_edges()
 
         # numerical optimization
-        numerical_optimization_result = self.numerical_solve_for_minimum()
+        numerical_optimization_result = self.numerical_solve_for_minimum(infinite_vars=infinite_vars,
+                                                                         lower_bound=truncation_point)
         if numerical_optimization_result['success']:
             xpoint = {xvar: xval for xvar, xval in zip(self.xvars, numerical_optimization_result['x'])}
             candidates.append((numerical_optimization_result['fun'], xpoint))
@@ -437,13 +521,13 @@ class Formula:
         return candidates[0]
 
     def create_minus_formula(self):
-        res_terms={}
-        res_bounds=deepcopy(self.bounds)
-        res_xvars=deepcopy(self.xvars)
+        res_terms = {}
+        res_bounds = deepcopy(self.bounds)
+        res_xvars = deepcopy(self.xvars)
         for termkey, coefficient in self.terms.items():
             assert not isinstance(coefficient, Formula), "cant reverse a function with formula coefficients yet"
-            res_terms[termkey]=-coefficient
-        new_formula=Formula(xvars=res_xvars, bounds=res_bounds, terms=res_terms)
+            res_terms[termkey] = -coefficient
+        new_formula = Formula(xvars=res_xvars, bounds=res_bounds, terms=res_terms)
         return new_formula
 
     def get_jacobian(self):
@@ -456,8 +540,28 @@ class Formula:
 
         return jacobian
 
-    def numerical_solve_for_minimum(self):
-        return minimize(fun=self.packaged_call, x0=self.midpoint(), method="L-BFGS-B", bounds=self.bounds,
+    def numerical_solve_for_minimum(self, infinite_vars=[], lower_bound=None):
+        if len(infinite_vars) > 0:
+            function_to_minimize = self.packaged_caller_with_exception(lower_bound)
+            try:
+                a = minimize(fun=function_to_minimize,
+                             x0=self.midpoint(),
+                             method="L-BFGS-B",
+                             bounds=self.bounds,
+                             jac=self.get_jacobian())
+                return a
+            except AssertionError as error:
+                tricky_function = TrickOptimizerTowardsPoint(self.packaged_call, self.midpoint(), lower_bound)
+                return minimize(fun=tricky_function,
+                                x0=self.midpoint(),
+                                method="L-BFGS-B",
+                                bounds=self.bounds,
+                                jac=self.get_jacobian())
+
+        return minimize(fun=self.packaged_call,
+                        x0=self.midpoint(),
+                        method="L-BFGS-B",
+                        bounds=self.bounds,
                         jac=self.get_jacobian())
 
     def midpoint(self):
@@ -474,23 +578,21 @@ class Formula:
         return res
 
 
-def get_interpolation_object(formula, bounds):
-    res={}
-    f=Formula(formula, bounds=bounds)
-    finite_vars=f.get_finite_bounded_vars()
-    infinite_vars=list(set(f.xvars)-set(finite_vars))
-    if len(finite_vars) == len(bounds):
-        min_object=f.find_min()
-        res["min"]={"minValue": min_object[0], "minLocation":min_object[1]}
+def get_interpolation_object(formula, bounds, lower_truncation=None):
+    res = {}
+    f = Formula(formula, bounds=bounds)
+    finite_vars = f.get_finite_bounded_vars()
+    infinite_vars = list(set(f.xvars) - set(finite_vars))
+    min_object = f.find_min(lower_truncation, infinite_vars)
+    res["min"] = {"minValue": min_object[0], "minLocation": min_object[1]}
 
-    #If the maximum is ever needed:
+    # If the maximum is ever needed:
     # minus_f=f.create_minus_formula()
     # max_object = minus_f.find_min()
     # res["max"]={"max_value": -max_object[0], "max_location":max_object[1]}
 
-    if len(f.xvars)>1:
-
-        res['fixed_mins']=f.get_mins_for_all_fixed_others(infinite_vars)
+    if len(f.xvars) > 1:
+        res['fixed_mins'] = f.get_mins_for_all_fixed_others(infinite_vars)
 
     return res
 
@@ -512,14 +614,14 @@ if __name__ == '__main__':
     print(str(f))
     print(f.diff('x0'))
     print(f.diff('x1'))
-    print("fmin",f.find_min())
+    print("fmin", f.find_min())
 
     fx1 = f.fix("x0")
     print(f)
     print(fx1)
     print(fx1.diff('x1'))
     print(fx1.insertValues({'x1': 2.0}))
-    res_object=f.get_mins_for_all_fixed_others()
+    res_object = f.get_mins_for_all_fixed_others()
     for min_object in res_object:
         print('fixed=', min_object['fixed'])
         for element in min_object['mins']:
@@ -529,4 +631,4 @@ if __name__ == '__main__':
                     print('\t\t disk=', str(d))
             if 'candidate' in element:
                 for c in element['candidate']:
-                    print('\t\t cand=',str(c))
+                    print('\t\t cand=', str(c))

@@ -70,10 +70,10 @@ export default class InterpolationTableCell {
   constructor(
     cell: InterpolationTableCellJson,
     interpolationVariables: InterpolationVariableMapping,
-    nonInterpolationVariables: string[]
+    nonInterpolationVariables: string[],
+    lowerTruncationFromTable: number | null=null,
+    upperTruncationFromTable: number | null=null
   ) {
-    console.log("initializing the cell with json");
-    console.log(cell);
     this.interpolationVariables = interpolationVariables;
     this.nonInterpolationVariables = nonInterpolationVariables;
     this.interpolationDomains = cell.interpolation_domains
@@ -94,14 +94,23 @@ export default class InterpolationTableCell {
 
     this.min = this.initializeCellMin(cell.min);
 
-    this.fixedMins = this.initializeCellFixedMin(cell.fixed_mins);
-
     this.truncate =
-      cell.lower_truncation || cell.upper_truncation ? true : false;
+      (cell.lower_truncation || cell.upper_truncation || lowerTruncationFromTable || upperTruncationFromTable) ? true : false;
 
-    this.lowerTruncation = cell.lower_truncation ? cell.lower_truncation : null;
+    this.lowerTruncation = this.initializeTruncation(cell.lower_truncation, lowerTruncationFromTable)
+    this.upperTruncation = this.initializeTruncation(cell.upper_truncation, upperTruncationFromTable)
 
-    this.upperTruncation = cell.upper_truncation ? cell.upper_truncation : null;
+    this.fixedMins = this.initializeCellFixedMin(cell.fixed_mins);
+  }
+
+  initializeTruncation(truncationFromCell: number | null | undefined, truncationFromTable: number | null){
+    if(truncationFromCell){
+      return truncationFromCell
+    }
+    if(truncationFromTable){
+      return truncationFromTable
+    }
+    return null
   }
 
   getFactorsWithInfiniteDomain(): string[] {
@@ -175,7 +184,8 @@ export default class InterpolationTableCell {
             f,
             this.interpolationVariables,
             this.nonInterpolationVariables,
-            fixed
+            fixed,
+            this.lowerTruncation
           );
         }),
       };
@@ -205,14 +215,15 @@ export default class InterpolationTableCell {
           value
         );
       });
-    if (!inAllDomains) {
-      return false;
-    }
-    let fixedFactors: string[] = location.getFixedInterpolationVariables() as string[];
-    const allOkay=this.infiniteInterpolationVariables.every((varname: string) => {
-      return fixedFactors.includes(varname);
-    });
-    return allOkay
+    return inAllDomains
+    // if (!inAllDomains) {
+    //   return false;
+    // }
+    // let fixedFactors: string[] = location.getFixedInterpolationVariables() as string[];
+    // const allOkay=this.infiniteInterpolationVariables.every((varname: string) => {
+    //   return fixedFactors.includes(varname);
+    // });
+    // return allOkay
   
   }
 
@@ -289,6 +300,29 @@ export default class InterpolationTableCell {
     return computedVals;
   }
 
+  computeInfinityCandidates(
+    fixedMinPairs: FixedMin[],
+    fixedInterpolationFactorAnswers: Location
+  ){
+    const candidates = fixedMinPairs.map((fixedMinObject: FixedMin) => {
+      return fixedMinObject.getInfinityCandidates(
+        fixedInterpolationFactorAnswers,
+        this.interpolationDomains
+      );
+    });
+    const candidatesUnpacked = ([] as Location[]).concat.apply([], candidates);
+    const computedVals: LocationAndValue[] = candidatesUnpacked.map(
+      (location: Location) => {
+        const minValue = this.evaluate(location);
+        if(this.lowerTruncation && Math.abs(minValue-this.lowerTruncation)>1e-8){
+          throw Error("The lower truncation was not hit by the infinity candidate")
+        }
+        return addValueToLocation(location, minValue);
+      }
+    );
+    return computedVals;
+  }
+
   getMin(fixedInterpolationFactorAnswers: Location): LocationAndValue {
     const numberOfFixed = fixedInterpolationFactorAnswers.getNumberOfFixedInterpolationVariables();
     const numberOfInterpolationVariables = this.interpolationVariables.getLength();
@@ -319,6 +353,11 @@ export default class InterpolationTableCell {
     );
     candidates= candidates.concat(
       this.computeBoundaryCandidates(
+        fixedMinObjects,
+        fixedInterpolationFactorAnswers
+      )
+    ).concat(
+      this.computeInfinityCandidates(
         fixedMinObjects,
         fixedInterpolationFactorAnswers
       )

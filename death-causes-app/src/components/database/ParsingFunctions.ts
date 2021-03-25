@@ -1,5 +1,3 @@
-import { stratify } from "d3-hierarchy";
-import { parse } from "path";
 import { Monomial } from "./Monomial";
 import { Polynomial } from "./Polynomial";
 import { EnumeratedValue } from "./RiskRatioTableCell/EnumerateValue";
