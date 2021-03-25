@@ -205,14 +205,14 @@
         "requiredDomain":{"min":0},
         "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol."
     },
-    "Greens":{
+    "Fruits":{
         "type":"number",
-        "longExplanation":"How much vegetables and fruit do you eat in a normal day",
+        "longExplanation":"How much fruit do you eat in a normal day",
         "placeholder":"Number",
         "recommendedDomain":{"min":0 },
         "requiredDomain":{"min":0},
         "units":{"Number":1.0,"Grams":0.01},
-        "helpJson":"Greens consist of both vegetables and fruits. A standard green weighs 100 grams."
+        "helpJson":"A standard fruit weighs 100 grams. An average apple is almost 200 grams."
     },
     "FamilyHistoryParkinson":{
         "type":"string",

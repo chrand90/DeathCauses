@@ -33,6 +33,21 @@ class PhysicalTotal extends FormUpdater{
     }
 }
 
+class Greens extends FormUpdater{
+
+    compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
+        const vegetables=this.getNode(allPreviousUpdateForms, "Vegetables").value as number;
+        const fruits=this.getNode(allPreviousUpdateForms, "Fruits").value as number;
+        const newValue= vegetables+fruits;
+        return {...this.ChangedAndMissing(),
+            type: TypeStatus.NUMERIC,
+            dimension: DimensionStatus.SINGLE,
+            random: StochasticStatus.DETERMINISTIC,
+            value: newValue
+        }
+    }
+}
+
 class SmokeCumulative extends FormUpdater {
 
     compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
@@ -166,5 +181,6 @@ export const ComputedFactorClasses: FormUpdaterInitializers={
     "SmokeTypicalAmount": packConstructor(SmokeTypicalAmount),
     "OralContraceptiveEver": packConstructor(OralContraceptiveEver),
     "OralContraceptiveSinceStop": packConstructor(OralContraceptiveSinceStop),
+    "Greens": packConstructor(Greens),
 }
 

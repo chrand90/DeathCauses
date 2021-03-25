@@ -7,6 +7,10 @@
     "type": "Computed factor",
     "ancestors": ["PhysicalMedium", "PhysicalHard"]
   },
+  "Greens": {
+    "type": "Computed factor",
+    "ancestors": ["Fruits", "Vegetables"]
+  },
   "SmokeCumulative": {
     "type": "Computed factor",
     "ancestors": [
