@@ -62,13 +62,7 @@ function computeUsAndSs(
   riskRatioTable: RiskRatioTable,
   factorAnswersSubmitted: FactorAnswers
 ) {
-  const factorNames= riskRatioTable.getFactorNames()
-  const noMissing= factorNames.every((factorName: string) => {
-    return factorAnswersSubmitted[factorName]!==""
-  });
-  if(!noMissing){
-    return trivialUsAndSs(factorNames)
-  }
+  const factorNames= riskRatioTable.getFactorNamesWithoutAge()
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
   let sortedSubsets = getSortedSubsets(factorNames);
@@ -108,9 +102,9 @@ function naiveDebtComputation(
     let Ss = keySetsToCombine.map((key: string, index: number) => {
       key.split(",").forEach((factorName: string) => {
         if(factorName===""){
-            return;
+
         }
-        if (multiplicities[factorName]) {
+        else if (multiplicities[factorName]) {
           multiplicities[factorName] += 1;
         } else {
           multiplicities[factorName] = 1;
@@ -141,12 +135,19 @@ function naiveDebtComputation(
         innerCauses[factorName]=0
       }
       else{
-        throw Error("An inner cause was given a negative value. Inner causes:"+(innerCauses).toString())
+        throw Error("An inner cause was given a negative value. Inner cause:"+factorName+"="+(contrib).toString())
       }
     }
     
   })
   return innerCauses;
+}
+
+function isAnyMissing(factorNames: string[], factorAnswers: FactorAnswers):boolean{
+  const noMissing= factorNames.every((factorName: string) => {
+    return factorAnswers[factorName]!==""
+  });
+  return !noMissing
 }
 
 export default function calculateInnerProbabilities(
@@ -155,7 +156,6 @@ export default function calculateInnerProbabilities(
 ): DataRow {
   const age: number = factorAnswersSubmitted["Age"] as number;
   let marginalContributions: SetToNumber[] = [];
-  let allFactorNames: string[][] = [];
   let totalRR: number = 1;
   let normalizingFactors: number = 1;
   const agePrevalence = deathcause.ages.getPrevalence(age);
@@ -167,17 +167,27 @@ export default function calculateInnerProbabilities(
     };
   }
   deathcause.riskFactorGroups.forEach((rfg) => {
-    rfg.riskRatioTables.forEach((rrt) => {
-      let factorNames = rrt.getFactorNames();
-      const { UDic, SDic, RRmax } = computeUsAndSs(
-        rrt,
-        factorAnswersSubmitted
-      );
-      totalRR *= RRmax;
-      allFactorNames.push(factorNames);
-      marginalContributions.push(SDic);
-    });
-    normalizingFactors /= rfg.normalisationFactors.getPrevalence(age);
+    let factorNamesOfThisGroup:string[]= Array.from(rfg.getAllFactorsInGroup())
+    let anyMissing=isAnyMissing(factorNamesOfThisGroup, factorAnswersSubmitted)
+    if(!anyMissing){
+      rfg.riskRatioTables.forEach((rrt) => {
+        const { UDic, SDic, RRmax } = computeUsAndSs(
+          rrt,
+          factorAnswersSubmitted
+        );
+        totalRR *= RRmax;
+        marginalContributions.push(SDic);
+      });
+      normalizingFactors /= rfg.normalisationFactors.getPrevalence(age);
+    }
+    else{
+      rfg.riskRatioTables.forEach((rrt) => {
+        const { UDic, SDic, RRmax } = trivialUsAndSs(
+          rrt.getFactorNamesWithoutAge()
+        );
+        marginalContributions.push(SDic);
+      });
+    }
   });
   const innerCauses = naiveDebtComputation(marginalContributions, totalRR);
   return {

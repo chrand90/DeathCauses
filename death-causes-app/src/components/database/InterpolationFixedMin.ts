@@ -86,8 +86,8 @@ export default class FixedMin{
             const a=abcTriple[0].evaluate(factorAnswers);
             const b=abcTriple[1].evaluate(factorAnswers);
             const c=abcTriple[2].evaluate(factorAnswers);
-            if(a<1e-8){
-                if(b>1e-8){
+            if(Math.abs(a)<1e-8){
+                if(Math.abs(b)>1e-8){
                     let candidate=-c/b
                     if(interpolationDomains[this.freeVariableIndex].isInputWithinCell(candidate)){
                         res.push(this.makeCandidate(factorAnswers, candidate))

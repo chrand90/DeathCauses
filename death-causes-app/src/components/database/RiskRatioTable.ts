@@ -20,7 +20,6 @@ class RiskRatioTable {
     constructor(json: RiskRatioTableJson) {
         this.factorNames = json.riskFactorNames;
         this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number))
-        console.log(json.interpolationTable)
         this.interpolation=new InterpolationTable(json.interpolationTable)
     }
 
@@ -58,6 +57,12 @@ class RiskRatioTable {
 
     getFactorNames(){
         return this.factorNames;
+    }
+
+    getFactorNamesWithoutAge(){
+        return this.factorNames.filter((d:string) => {
+            return d!=="Age";
+        });
     }
 
     private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string  | number)[] => {
