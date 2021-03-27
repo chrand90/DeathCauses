@@ -38,6 +38,13 @@ class InterpolationTable(object):
         self.global_min = {'minValue': candidates[0][0], 'minLocation': candidates[0][1]}
 
     def enforce_truncation(self, RR):
+        """"
+        possible values of truncation
+        min_bounded,max_bounded
+        min_bounded,unbounded
+        unbounded,max_bounded,
+        min_bounded,max_bounded
+        """
         minimum, maximum = RR.getMinAndMax()
         if 'min_bounded' in RR.get_bounding():
             self.lower_truncation=minimum

@@ -5,7 +5,8 @@
         "recommendedDomain":{"min":18,"max":40},
         "requiredDomain": {"min":0},
         "longExplanation": "What is your BMI",
-        "helpJson": "BMI is calculated as weight in kilograms divided by the square of height in meters. You can compute it on the [CDC website](https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html).\n A healthy BMI is between 18.5 and 25."
+        "helpJson": "BMI is calculated as weight in kilograms divided by the square of height in meters. You can compute it on the [CDC website](https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html).\n A healthy BMI is between 18.5 and 25.",
+        "optimizability":80
     },
     "Age":{
         "type":"number",
@@ -14,7 +15,8 @@
         "recommendedDomain":{"min":0,"max":110},
         "requiredDomain": {"min":0},
         "units":{"Years":1.0, "Days":0.00273785078},
-        "helpJson":"Input you age rounded down to the nearest whole number. "
+        "helpJson":"Input you age rounded down to the nearest whole number. ",
+        "optimizability":10
     },
     "Waist":{
         "type":"number",
@@ -23,7 +25,8 @@
         "recommendedDomain":{"min":60,"max":170},
         "requiredDomain": {"min":0},
         "units":{"cm":1.0, "Inches": 2.54},
-        "helpJson":"The waist circumference is measured above the belly button and around your body. If you are slim, it is the narrowest part."
+        "helpJson":"The waist circumference is measured above the belly button and around your body. If you are slim, it is the narrowest part.",
+        "optimizability":80
     },
     "Caffeine":{
         "type":"number",
@@ -32,7 +35,8 @@
         "recommendedDomain":{"min":0,"max":10},
         "requiredDomain": {"min":0},
         "helpJson":"A standard cup is arond 150 ml (=5 ounces) of coffee made of 7 grams of coffee beans. Espressos are normally made with around 7 grams of coffee beans as well, so they should also be considered full cups.",
-        "units":{"Cups":1.0, "Liters": 6.6666, "Ounces":0.197157}
+        "units":{"Cups":1.0, "Liters": 6.6666, "Ounces":0.197157},
+        "optimizability":90
     },
     "Fish":{
         "type":"number",
@@ -41,7 +45,8 @@
         "recommendedDomain":{"min":0},
         "requiredDomain": {"min":0},
         "helpJson":"A serving is 100 grams (=0.22 pounds) of fish or shellfish.",
-        "units":{"Servings":1.0, "Grams": 0.01}
+        "units":{"Servings":1.0, "Grams": 0.01},
+        "optimizability":90
     },
     "Vegetables":{
         "type":"number",
@@ -50,7 +55,8 @@
         "recommendedDomain":{"min":0},
         "requiredDomain": {"min":0},
         "helpJson":"A serving is 100 grams (=0.22 pounds) of culinary vegetables. Even though tomatoes and pumpkins are botanically speaking berry and fruits, they are still culinary vegetables because they are used as such.",
-        "units":{"Servings":1.0, "Grams": 0.01}
+        "units":{"Servings":1.0, "Grams": 0.01},
+        "optimizability":90
     },
     "Fluids":{
         "type":"number",
@@ -59,14 +65,16 @@
         "recommendedDomain":{"min":0},
         "requiredDomain": {"min":0},
         "helpJson":"Anything that is drunk counts as liquid, including alcoholic beverages.",
-        "units":{"Liters":1.0, "US Cups":4.22675}
+        "units":{"Liters":1.0, "US Cups":4.22675},
+        "optimizability":90
     },
     "HeadTrauma":{
         "type":"number",
         "longExplanation":"How many concussions have you had that caused hospitilization, memory loss or loss of conscience",
         "placeholder":"Number",
         "recommendedDomain":{"min":0},
-        "requiredDomain": {"min":0}
+        "requiredDomain": {"min":0},
+        "optimizability":20
     },
     "Drinking":{
         "type":"number",
@@ -74,14 +82,16 @@
         "placeholder":"Drinks",
         "recommendedDomain":{"min":0,"max":40},
         "requiredDomain": {"min":0},
-        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol."
+        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol.",
+        "optimizability":90
     },
     "Sex":{
         "type":"string",
         "longExplanation":"What is your biological sex",
         "placeholder":"Choose sex",
         "initialValue":"Choose sex",
-        "options":["Male","Female"]
+        "options":["Male","Female"],
+        "optimizability":10
     },
     "OralContraceptiveStatus":{
         "type":"string",
@@ -90,7 +100,8 @@
         "initialValue":"Status",
         "options":["Former user","Current user","Never used"],
         "derivables":{"Sex": {"Male":"Never used"}},
-        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies.",
+        "optimizability":30
     },
     "OralContraceptiveStopped":{
         "type":"number",
@@ -99,7 +110,8 @@
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain": {"min":0},
         "derivables":{"OralContraceptiveStatus": {"Never used":0, "Current user":0}},
-        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies.",
+        "optimizability":30
     },
     "OralContraceptiveTillStop":{
         "type":"number",
@@ -108,7 +120,8 @@
         "recommendedDomain":{"min":0,"max":110},
         "requiredDomain": {"min":0},
         "derivables":{"OralContraceptiveStatus": {"Never used":0, "Former user":0}},
-        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies."
+        "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies.",
+        "optimizability":90
     },
     "RedMeat":{
         "type":"number",
@@ -117,35 +130,40 @@
         "recommendedDomain":{"min":0, "max":500},
         "requiredDomain":{"min":0},
         "units":{"Grams":1.0,"Ounces":28.3495},
-        "helpJson":"Red meat includes beef, pork, lamb, meat from goat, rabbit and similarly colored meat. It does not include chicken, birds and fish. Cooked red meat is still red meat."
+        "helpJson":"Red meat includes beef, pork, lamb, meat from goat, rabbit and similarly colored meat. It does not include chicken, birds and fish. Cooked red meat is still red meat.",
+        "optimizability":90
     },
     "HCVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with Hepatitis C",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
-        "options":["Yes","No"]
+        "options":["Yes","No"],
+        "optimizability":20
     },
     "HIVStatus":{
         "type":"string",
         "longExplanation":"Are you infected with HIV or AIDS",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
-        "options":["Yes","No"]
+        "options":["Yes","No"],
+        "optimizability":20
     },
     "DiabetesStatus":{
         "type":"string",
         "longExplanation":"Do you have diabetes",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
-        "options":["Yes","No"]
+        "options":["Yes","No"],
+        "optimizability":20
     },
     "Smoking":{
         "type":"string",
         "longExplanation":"What is your history with smoking tobacco",
         "placeholder":"Status",
         "initialValue":"Status",
-        "options":["Never smoked","Former smoker", "Current smoker"]
+        "options":["Never smoked","Former smoker", "Current smoker"],
+        "optimizability":30
     },
     "SmokingStopped":{
         "type":"number",
@@ -153,7 +171,8 @@
         "placeholder":"Years",
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
-        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}}
+        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}},
+        "optimizability":30
     },
     "SmokeIntensity":{
         "type":"number",
@@ -163,7 +182,8 @@
         "requiredDomain":{"min":0},
         "units":{"Cigarettes":1.0,"Packs":20.0},
         "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}},
-        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) "
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
+        "optimizability":90
     },
     "SmokeDuration":{
         "type":"number",
@@ -172,7 +192,8 @@
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
         "units":{"Years":1.0,"Months":0.083333333,"Days":0.00273785078},
-        "derivables":{"Smoking": {"Never smoked":0}}
+        "derivables":{"Smoking": {"Never smoked":0}},
+        "optimizability":30
     },
     "SmokePastAmount":{
         "type":"number",
@@ -181,21 +202,24 @@
         "recommendedDomain":{"min":0, "max":40},
         "requiredDomain":{"min":0},
         "derivables":{"Smoking": {"Never smoked":0}},
-        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) "
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
+        "optimizability":30
     },
     "IndoorTanning":{
         "type":"number",
         "longExplanation":"How much time have you spent in indoor tanning beds in your life",
         "placeholder":"Hours",
         "recommendedDomain":{"min":0, "max":60},
-        "requiredDomain":{"min":0}
+        "requiredDomain":{"min":0},
+        "optimizability":30
     },
     "Race":{
         "type":"string",
         "longExplanation":"What race best describes your skin",
         "placeholder":"Choose Race",
         "initialValue":"Choose Race",
-        "options":["White","Black", "Asian","Pacific"]
+        "options":["White","Black", "Asian","Pacific"],
+        "optimizability":10
     },
     "MaxDrinking":{
         "type":"number",
@@ -203,7 +227,8 @@
         "placeholder":"Drinks",
         "recommendedDomain":{"min":0, "max":30},
         "requiredDomain":{"min":0},
-        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol."
+        "helpJson":"A drink is defined as a US standard drink containing 14 grams of pure alcohol.",
+        "optimizability":90
     },
     "Greens":{
         "type":"number",
@@ -212,14 +237,16 @@
         "recommendedDomain":{"min":0 },
         "requiredDomain":{"min":0},
         "units":{"Number":1.0,"Grams":0.01},
-        "helpJson":"Greens consist of both vegetables and fruits. A standard green weighs 100 grams."
+        "helpJson":"Greens consist of both vegetables and fruits. A standard green weighs 100 grams.",
+        "optimizability":90
     },
     "FamilyHistoryParkinson":{
         "type":"string",
         "longExplanation":"Does any person in your genetic family have or have had Parkinsons",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
-        "options":["Yes","No"]
+        "options":["Yes","No"],
+        "optimizability":10
     },
     "PesticideExposure":{
         "type":"number",
@@ -227,14 +254,16 @@
         "placeholder":"Number",
         "recommendedDomain":{"min":0 ,"max":300},
         "requiredDomain":{"min":0},
-        "helpJson":"Your are exposed to pesticides primarily when you apply it either in your garden or in a field."
+        "helpJson":"Your are exposed to pesticides primarily when you apply it either in your garden or in a field.",
+        "optimizability":30
     },
     "Depression":{
         "type":"string",
         "longExplanation":"Are your depressed now",
         "placeholder":"Choose Yes/No",
         "initialValue":"Choose Yes/No",
-        "options":["Yes","No"]
+        "options":["Yes","No"],
+        "optimizability":20
     },
     "PhysicalMedium":{
         "type":"number",
@@ -243,7 +272,8 @@
         "recommendedDomain":{"min":0 ,"max":1000},
         "requiredDomain":{"min":0},
         "units":{"Minutes":1.0, "Hours":60},
-        "helpJson":"Medium physical activity includes brisk walking, gardening, golf etc."
+        "helpJson":"Medium physical activity includes brisk walking, gardening, golf etc.",
+        "optimizability":90
     },
     "PhysicalHard":{
         "type":"number",
@@ -252,13 +282,15 @@
         "recommendedDomain":{"min":0 ,"max":1000},
         "requiredDomain":{"min":0},
         "units":{"Minutes":1.0, "Hours":60},
-        "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc."
+        "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc.",
+        "optimizability":90
     },
     "HPVVaccine":{
         "type":"string",
         "longExplanation":"Which HPV vaccine have you received, if any",
         "placeholder":"Choose Vaccine",
         "initialValue":"Choose Vaccine",
-        "options":["None", "9vHPV", "4vHPV"]
+        "options":["None", "9vHPV", "4vHPV"],
+        "optimizability":30
     }
 }
