@@ -15,6 +15,7 @@ const BARHEIGHT = 50;
 const XBARHEIGHT= 50;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE=100;
+const TEXT_GRAY="#7d7d7d"
 
 const BASE_COLORS: NodeToColor={'Unexplained':"#FFFFFF",
 'partying':'#FF6C00'};
@@ -174,32 +175,44 @@ export default class BarChart {
 			.align(designConstants.yListAlign)
 			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
 		
-		//DATA JOIN
-		const diseases = vis.svg.selectAll("rect.shell").data(augmented_data, function(d: any){ return d.name })
+		const diseases = vis.svg.selectAll("rect.shell").data(dataSortedTotal)
 
-		// EXIT
-		diseases.exit().remove()
-
-		// ENTER
-		const g_components= diseases.enter().append('g').attr('class','rect.shell')
-
-		/*  One disadvantage of this structure is that it is important that the text is never inserted before the 
-			rectangle. Therefore it is important that they are inserted in the same order. 
-		*/
-		g_components.append('rect').attr('class','drect')
+		diseases.enter()
+				.append('rect')
+				.attr('class','drect')
 				.attr("y", (d:any,i:number) => (yRects(d.name) as number))
 				.attr("x", xscale(0))
 				.attr("width", designConstants.width)
 				.attr("height", designConstants.barheight)
-				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[d.id%2]})
+				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 				.style("opacity", 0.5)
 
-		g_components.insert('text').attr('class','dtext')
+		vis.svg.selectAll("dtext")
+				.data(dataSortedTotal, function(d: any) {return d.name})
+				.enter()
+				.append('text')
+				.attr('class','dtext')
 				.attr("y", (d:any) => (this.yBars(d.name) as number))
 				.attr("x", xscale(0))
-				.text( (d:any) => d.name)
+				.text( function(d:any) {
+					return d.name
+					})
 				.style('text-anchor',designConstants.textAnchor)
 				.attr("transform",designConstants.textTranslation)
+
+		vis.svg.selectAll("ptext")
+				.data(dataSortedTotal, function(d: any) {return d.name})
+				.enter()
+				.append('text')
+				.attr('class','ptext')
+				.attr("y", (d:any) => (this.yBars(d.name) as number))
+				.attr("x", (d:any) => xscale(d.totalProb))
+				.text( function(d:any) {
+					return (d.totalProb*100).toPrecision(3)+"%"
+					})
+				.style('text-anchor',"start")
+				.attr("transform","translate(" + 5 + "," + BARHEIGHT/2 + ")")
+				.style('fill', TEXT_GRAY)
 
 		
 		//The causes themselves are plotted by this.
@@ -304,21 +317,40 @@ export default class BarChart {
 
 		gs.exit().remove()
 
-		gs.transition()
+		gs.transition("bars_x_change")
 			.duration(duration_per_transition)
 			.attr("x", d => xscale(d.x0))
 			.attr("width", d => xscale(d.x)-xscale(d.x0))
-		gs.transition()
+
+		vis.svg.selectAll<any,any>(".ptext")
+			.data(dataSortedTotal, function(d: any) {return d.name})
+			.transition("percentage_x_change_and_move")
+			.duration(duration_per_transition)
+			.attr("x", (d:any) => (xscale(d.totalProb) as number))
+			.text( function(d:any) {
+				return (d.totalProb*100).toPrecision(3)+"%"
+			})
+
+		gs.transition("bars_y_move")
 			.delay(duration_per_transition)
 			.duration(duration_per_transition)
-			.attr("y", d => (this.yBars(d.name) as number))
+			.attr("y", (d:any) => (this.yBars(d.name) as number))
+		
 
-		vis.svg.selectAll('.dtext')
-		.data(rename_object, function(d:any){ return d.name})
-			.transition()
-			.delay(duration_per_transition*2)
-			.text( (d:any) => d.new_name)
+		vis.svg.selectAll<any,any>(".dtext")
+			.data(dataSortedTotal, function(d: any) {return d.name})
+			.transition("labels_move")
+			.delay(duration_per_transition)
+			.duration(duration_per_transition)
+			.attr("y", (d:any) => (this.yBars(d.name) as number))
 
+		vis.svg.selectAll<any,any>(".ptext")
+			.data(dataSortedTotal, function(d: any) {return d.name})
+			.transition("percentage_y_change")
+			.delay(duration_per_transition)
+			.duration(duration_per_transition)
+			.attr("y", (d:any) => (this.yBars(d.name) as number))
+			
 	};
 }
 
