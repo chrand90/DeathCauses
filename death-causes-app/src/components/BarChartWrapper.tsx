@@ -14,9 +14,10 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	const chartArea = useRef(null);
 	const [chart, setChart] = useState<BarChart | null>(null);
 	const { width } = useWindowSize();
+	const [diseaseToWidth, setDiseaseToWidth] = useState<string | null>(null);
 
 	const createNewChart = function () {
-		setChart(new BarChart(chartArea.current, database, props.colorDic));
+		setChart(new BarChart(chartArea.current, database, props.colorDic, diseaseToWidth, setDiseaseToWidth));
 	}
 
 
@@ -29,11 +30,10 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	}, [width])
 
 	useEffect(() => {
-		console.log('dataset changed');
 		if (chart) {
-			chart.update(database);
+			chart.update(database, diseaseToWidth);
 		}
-	}, [database]);
+	}, [database, diseaseToWidth]);
 
 	useEffect(() => {
 		createNewChart();

@@ -1,10 +1,10 @@
 import * as d3 from 'd3';
 import d3Tip from "d3-tip";
 import './BarChart.css';
-import { DataRow, DataSet, AugmentedDataSet, AugmentedDataRow } from './PlottingData';
+import { DataRow, DataSet } from './PlottingData';
 import  make_squares, {SquareSection}  from './ComptutationEngine';
 import { ScaleBand } from 'd3';
-import {ALTERNATING_COLORS} from './Helpers';
+import {ALTERNATING_COLORS, LINK_COLOR } from './Helpers';
 import { NodeToColor } from '../models/RelationLinks';
 
 
@@ -95,14 +95,22 @@ export default class BarChart {
 	drect_order: string[];
 	yBars: ScaleBand<string>;
 	colorDic: NodeToColor;
+	setDiseaseToWidth: (newDiseaseToWidth: string | null)=> void;
 
-	constructor(element: HTMLElement | null, database: DataSet, colorDic: NodeToColor) {
+	constructor(
+		element: HTMLElement | null, 
+		database: DataSet, 
+		colorDic: NodeToColor, 
+		diseaseToWidth:string | null, 
+		setDiseaseToWidth: (newDiseaseToWidth: string | null)=> void
+		) {
 		console.log(database);
 
 		//Initializers
 		this.drect_order=[];
 		this.yBars=d3.scaleBand();
 		this.colorDic=Object.assign({}, colorDic, BASE_COLORS);
+		this.setDiseaseToWidth=setDiseaseToWidth
 
 
 		this.data=database;
@@ -128,7 +136,7 @@ export default class BarChart {
 			.attr("text-anchor", "middle")
 			.text("Probability of dying of cause")
 		
-		vis.make();
+		vis.make(diseaseToWidth);
 	}
 
 	clear(){
@@ -144,7 +152,7 @@ export default class BarChart {
 		.align(designConstants.yListAlign)
 	}
 
-	make() {
+	make(diseaseToWidth:string | null) {
 		const vis = this;
 		const n=vis.data.length;
 		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
@@ -152,15 +160,12 @@ export default class BarChart {
 		vis.svg.attr("height", designConstants.totalheightWithXBar)
 		const dataSortedName= copyOfSortedDataset(vis.data, 'name');
 		const dataSortedTotal= copyOfSortedDataset(vis.data, 'totalProb');
-
-		const augmented_data: AugmentedDataSet=dataSortedTotal.map((d: DataRow, index: number): AugmentedDataRow=> {
-			let res: any= d;
-			res["id"]=index;
-			return res;
-		})
+		const dataIds= dataSortedTotal.map((v:any, index:number) => {
+			return index
+		});
 
 		this.drect_order=dataSortedTotal.map((d) => d.name);
-		const dataSquares=make_squares(dataSortedName);
+		const dataSquares=make_squares(dataSortedName, diseaseToWidth);
 
 		//Setting X-axis
 		const newMaxX=getMaxX(dataSquares);
@@ -187,6 +192,7 @@ export default class BarChart {
 				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 				.style("opacity", 0.5)
 
+
 		vis.svg.selectAll("dtext")
 				.data(dataSortedTotal, function(d: any) {return d.name})
 				.enter()
@@ -199,21 +205,71 @@ export default class BarChart {
 					})
 				.style('text-anchor',designConstants.textAnchor)
 				.attr("transform",designConstants.textTranslation)
+				.call(insertBB)
 
 		vis.svg.selectAll("ptext")
-				.data(dataSortedTotal, function(d: any) {return d.name})
+				.data(dataSortedTotal, function(d:any) {return d.name})
 				.enter()
 				.append('text')
 				.attr('class','ptext')
 				.attr("y", (d:any) => (this.yBars(d.name) as number))
-				.attr("x", (d:any) => xscale(d.totalProb))
+				.attr("x", (d:any) => xscale(Math.min(newMaxX, d.totalProb)))
 				.text( function(d:any) {
 					return (d.totalProb*100).toPrecision(3)+"%"
 					})
 				.style('text-anchor',"start")
 				.attr("transform","translate(" + 5 + "," + BARHEIGHT/2 + ")")
 				.style('fill', TEXT_GRAY)
+				
 
+		const rectButtons= vis.svg.selectAll("fitscreenButtons")
+				.data(dataIds, function(i:any) {return i})
+				.enter()
+				.append('g')
+				.attr('class','fitscreenButtons')
+				.attr("transform", (i:any) => {
+					return (
+						"translate(" + 
+						(designConstants.width-30).toString() + 
+						"," + 
+						((this.yBars(dataSortedTotal[i].name) as number)).toString() + 
+						")"
+					)
+				})
+				.style('cursor', 'pointer')
+				.on("click", (e: Event, i:number) => {
+					const clickedDisease=dataSortedTotal[i].name
+					if(clickedDisease===diseaseToWidth){
+						this.setDiseaseToWidth(null);
+					}
+					else{
+						this.setDiseaseToWidth(clickedDisease)
+					}
+					
+				})
+		
+		rectButtons.append("rect")
+				.attr("width", 25)
+				.attr("height",this.yBars.bandwidth()/2)
+				.style("opacity", 0)
+		
+		rectButtons.append("text")
+				.style("font-size", "20px")
+				.attr("x",(d:any) => 0)
+				.attr("y",(d:any) => BARHEIGHT/2)
+				.attr("text-anchor","central")
+				.style('fill', TEXT_GRAY)
+				.text(function(d:any, index: number) {
+					return "\u27F7"
+				})
+				.on("mouseenter", function(d){
+					d3.select(this)
+						.style("fill",LINK_COLOR)
+				})
+				.on("mouseleave", function(d){
+					d3.select(this)
+						.style("fill", TEXT_GRAY)
+				})
 		
 		//The causes themselves are plotted by this.
         const gs= vis.svg.selectAll(".causebar")
@@ -262,13 +318,6 @@ export default class BarChart {
 					.style("stroke-width",1)
 					.style('stroke','#2378ae')
 				})
-
-			
-			//
-			//});
-			//.transition().duration(500)
-				//.attr("height", d => HEIGHT - y(d.total_prob))
-				//.attr("y", d => y(d.height)) */	
 			
 	}
 
@@ -283,21 +332,17 @@ export default class BarChart {
 		return {xAxisCall: d3.axisTop(x), xscale:x}
 	}
 
-	update(dataset: DataSet){
+	update(dataset: DataSet, diseaseToWidth: string | null){
 
 		const vis = this;
 		
 		const dataSortedTotal = copyOfSortedDataset(dataset, "totalProb"); 
 		const dataSortedName = copyOfSortedDataset(dataset, 'name'); 
+		const dataIds= dataSortedTotal.map((v:any, index:number) => {
+			return index
+		});
 
-		//dataset that connects the original disease order (drect_order) with the new label.
-		//In theory, it would be possible to rearrange the labels, but some of them will almost always end up
-		//"below" a drect-object. Therefore it is easier to rename them.
-		const rename_object= this.drect_order.map((d,i) => {
-			return {new_name: dataSortedTotal[i].name, name: d}
-		})
-
-		const dataSquares=make_squares(dataSortedName);
+		const dataSquares=make_squares(dataSortedName, diseaseToWidth);
 
 		const n=dataSortedName.length;
 		const designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
@@ -313,44 +358,54 @@ export default class BarChart {
 		const gs= vis.svg.selectAll<SVGRectElement, SquareSection[]>(".causebar")
 			.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
 
-		const duration_per_transition=500;
+		const durationPerTransition=500;
 
 		gs.exit().remove()
 
 		gs.transition("bars_x_change")
-			.duration(duration_per_transition)
+			.duration(durationPerTransition)
 			.attr("x", d => xscale(d.x0))
 			.attr("width", d => xscale(d.x)-xscale(d.x0))
 
 		vis.svg.selectAll<any,any>(".ptext")
 			.data(dataSortedTotal, function(d: any) {return d.name})
 			.transition("percentage_x_change_and_move")
-			.duration(duration_per_transition)
-			.attr("x", (d:any) => (xscale(d.totalProb) as number))
+			.duration(durationPerTransition)
+			.attr("x", (d:any) => (xscale(Math.min(d.totalProb, newMaxX)) as number))
 			.text( function(d:any) {
 				return (d.totalProb*100).toPrecision(3)+"%"
 			})
 
 		gs.transition("bars_y_move")
-			.delay(duration_per_transition)
-			.duration(duration_per_transition)
+			.delay(durationPerTransition)
+			.duration(durationPerTransition)
 			.attr("y", (d:any) => (this.yBars(d.name) as number))
 		
-
 		vis.svg.selectAll<any,any>(".dtext")
 			.data(dataSortedTotal, function(d: any) {return d.name})
 			.transition("labels_move")
-			.delay(duration_per_transition)
-			.duration(duration_per_transition)
+			.delay(durationPerTransition)
+			.duration(durationPerTransition)
 			.attr("y", (d:any) => (this.yBars(d.name) as number))
 
 		vis.svg.selectAll<any,any>(".ptext")
 			.data(dataSortedTotal, function(d: any) {return d.name})
 			.transition("percentage_y_change")
-			.delay(duration_per_transition)
-			.duration(duration_per_transition)
+			.delay(durationPerTransition)
+			.duration(durationPerTransition)
 			.attr("y", (d:any) => (this.yBars(d.name) as number))
-			
+		
+		vis.svg.selectAll<any,any>(".fitscreenButtons")
+			.data(dataIds, function(i:any) {return i})
+			.on("click", (e:Event, i:number) => {
+				const clickedDisease=dataSortedTotal[i].name
+				if(clickedDisease===diseaseToWidth){
+					this.setDiseaseToWidth(null);
+				}
+				else{
+					this.setDiseaseToWidth(clickedDisease)
+				}
+			})
 	};
 }
 
@@ -365,3 +420,9 @@ function getMaxX(dataset: SquareSection[]):number{
 	}
 	return a;
 }
+
+function insertBB(selection: d3.Selection<any, any, any, any>) {
+	selection.each(function (d: any) {
+	  d.bbox = this.getBBox();
+	});
+  }
