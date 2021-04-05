@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { NodeToColor } from '../models/RelationLinks';
+import RelationLinks, { NodeToColor } from '../models/RelationLinks';
 import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 
 interface BarChartWrapperProps {
 	database: DataSet;
 	colorDic: NodeToColor;
+	rdat: RelationLinks;
 }
 
 const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
@@ -15,10 +16,61 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	const [chart, setChart] = useState<BarChart | null>(null);
 	const { width } = useWindowSize();
 	const [diseaseToWidth, setDiseaseToWidth] = useState<string | null>(null);
+	const [collectedCategories, setCollectedCategories] = useState<string[]>([]);
+
+	const expandCategory= (category: string) => {
+		console.log("expands "+ category)
+		let newCats=[...collectedCategories]
+		if(newCats.includes(category)){
+			newCats=newCats.filter(d => d!==category)
+		}
+		else{
+			throw Error("Tried to remove a category that wasnt collapsed")
+		}
+		setCollectedCategories(newCats);
+	}
+
+	const collectParentCategory= (category: string) => {
+		console.log("collects "+category)
+		const parent=props.rdat.getParentCategory(category)
+		let noLongerNeedsToBeCollapsed: string[];
+		let newCats:string[]=[...collectedCategories]
+		if(parent){
+			noLongerNeedsToBeCollapsed=props.rdat.findCauseCategoryDescendants(category)
+			newCats.push(parent)
+		}
+		else{
+			noLongerNeedsToBeCollapsed=[]; 
+		}
+		setCollectedCategories(newCats.filter(d=>!noLongerNeedsToBeCollapsed.includes(d)));
+	}
+
 
 	const createNewChart = function () {
-		setChart(new BarChart(chartArea.current, database, props.colorDic, diseaseToWidth, setDiseaseToWidth));
+		setChart(new BarChart(
+			chartArea.current, 
+			database, 
+			props.colorDic, 
+			diseaseToWidth, 
+			setDiseaseToWidth, 
+			props.rdat.makeCollectedGroups(collectedCategories), 
+			expandCategory, 
+			collectParentCategory
+		));
 	}
+
+	useEffect(() => {
+		console.log("new expanded categories "+collectedCategories)
+		if (chart) {
+			chart.clear();
+			createNewChart();
+			// chart.expandCats(
+			// 	database,  
+			// 	diseaseToWidth,
+			// 	props.rdat.makeCollectedGroups(collectedCategories)
+			// )
+		}
+	}, [collectedCategories])
 
 
 	useEffect(() => {

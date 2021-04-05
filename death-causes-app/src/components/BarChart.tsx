@@ -5,7 +5,7 @@ import { DataRow, DataSet } from './PlottingData';
 import  make_squares, {SquareSection}  from './ComptutationEngine';
 import { ScaleBand } from 'd3';
 import {ALTERNATING_COLORS, LINK_COLOR } from './Helpers';
-import { NodeToColor } from '../models/RelationLinks';
+import { CauseGrouping, NodeToColor } from '../models/RelationLinks';
 
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
@@ -15,13 +15,13 @@ const BARHEIGHT = 50;
 const XBARHEIGHT= 50;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE=100;
-const TEXT_GRAY="#7d7d7d"
+const TEXT_GRAY="#666666"
+const NOT_CLICKABLE_GRAY="#b8b8b8"
 
 const BASE_COLORS: NodeToColor={'Unexplained':"#FFFFFF",
 'partying':'#FF6C00'};
 
 function getDivWidth(div: HTMLElement | null): number {
-	console.log(div);
 	if(div === null){
 		return 0;
 	}
@@ -46,11 +46,24 @@ interface DesignConstants {
 	middleOfChart: number,
 	width: number,
 	textTranslation: string,
-	textAnchor: 'start' | 'middle' | 'end'
+	collectButtonTranslation: string,
+	textAnchor: 'start' | 'middle' | 'end',
+	expandButtonTranslation: string,
+	collapseButtonsWidth: number,
+	collapseButtonsHeight: number,
+}
+
+const buttonSize=18
+const sameConstants={
+	collectButtonTranslation: "translate(" + 10 + "," + (-BARHEIGHT/16-buttonSize) + ")",
+	expandButtonTranslation: "translate(" + 10 + "," + (-BARHEIGHT/16-buttonSize) + ")",
+	collapseButtonsWidth: buttonSize,
+	collapseButtonsHeight: buttonSize,
 }
 
 function longDesignConstants(n: number, width:number): DesignConstants{
 	return {
+		...sameConstants,
 		barheight: 1.5*BARHEIGHT,
 		totalheight: n*1.5*BARHEIGHT,
 		totalheightWithXBar: n*1.5*BARHEIGHT+XBARHEIGHT,
@@ -69,6 +82,7 @@ function longDesignConstants(n: number, width:number): DesignConstants{
 
 function wideDesignConstants(n: number, width: number): DesignConstants{
 	return {
+		...sameConstants,
 		barheight: BARHEIGHT,
 		totalheight: n*BARHEIGHT,
 		totalheightWithXBar: n*BARHEIGHT+XBARHEIGHT,
@@ -96,13 +110,19 @@ export default class BarChart {
 	yBars: ScaleBand<string>;
 	colorDic: NodeToColor;
 	setDiseaseToWidth: (newDiseaseToWidth: string | null)=> void;
+	expandCollectedGroup: (causecategory:string) => void;
+	collectGroup: (causecategory: string) => void;
+	grouping: CauseGrouping;
 
 	constructor(
 		element: HTMLElement | null, 
 		database: DataSet, 
 		colorDic: NodeToColor, 
 		diseaseToWidth:string | null, 
-		setDiseaseToWidth: (newDiseaseToWidth: string | null)=> void
+		setDiseaseToWidth: (newDiseaseToWidth: string | null)=> void,
+		collectedGroups: CauseGrouping,
+		expandCollectedGroup: (causecategory:string) => void,
+		collectGroup: (causecategory: string) => void,
 		) {
 		console.log(database);
 
@@ -111,13 +131,16 @@ export default class BarChart {
 		this.yBars=d3.scaleBand();
 		this.colorDic=Object.assign({}, colorDic, BASE_COLORS);
 		this.setDiseaseToWidth=setDiseaseToWidth
+		this.expandCollectedGroup=expandCollectedGroup
+		this.collectGroup=collectGroup
+		this.grouping=collectedGroups;
 
 
 		this.data=database;
 		const vis = this
 		vis.element=element;
 		vis.width=getDivWidth(element)*0.9;  //getDivWidth(element)*0.9;
-		console.log("vis width " + vis.width);
+
 		//width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
 		vis.svg = d3.select(element)
 			.append("svg")
@@ -154,18 +177,12 @@ export default class BarChart {
 
 	make(diseaseToWidth:string | null) {
 		const vis = this;
-		const n=vis.data.length;
+
+		const {dataSortedTotal, dataSquares, dataIds} = this.computeRankAndSquares(vis.data, diseaseToWidth)
+
+		const n=dataSortedTotal.length;
 		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
-
 		vis.svg.attr("height", designConstants.totalheightWithXBar)
-		const dataSortedName= copyOfSortedDataset(vis.data, 'name');
-		const dataSortedTotal= copyOfSortedDataset(vis.data, 'totalProb');
-		const dataIds= dataSortedTotal.map((v:any, index:number) => {
-			return index
-		});
-
-		this.drect_order=dataSortedTotal.map((d) => d.name);
-		const dataSquares=make_squares(dataSortedName, diseaseToWidth);
 
 		//Setting X-axis
 		const newMaxX=getMaxX(dataSquares);
@@ -192,20 +209,101 @@ export default class BarChart {
 				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[i%2]})
 				.style("opacity", 0.5)
 
-
-		vis.svg.selectAll("dtext")
+		const dtextGroups=vis.svg.selectAll("dtextGroups")
 				.data(dataSortedTotal, function(d: any) {return d.name})
 				.enter()
-				.append('text')
+				.append('g')
+				.attr('class','dtextGroups')
+				.attr("transform", (d:any) => {
+					return (
+						"translate(" + 
+						xscale(0) +
+						"," + 
+						((this.yBars(d.name) as number)).toString() + 
+						")"
+					)
+				})
+
+		dtextGroups.append('text')
 				.attr('class','dtext')
-				.attr("y", (d:any) => (this.yBars(d.name) as number))
-				.attr("x", xscale(0))
+				.attr("y", 0)
+				.attr("x", 0)
 				.text( function(d:any) {
 					return d.name
 					})
 				.style('text-anchor',designConstants.textAnchor)
 				.attr("transform",designConstants.textTranslation)
 				.call(insertBB)
+
+		const collectButtons=dtextGroups.append('g')
+				.attr('class', 'dtextGroupCollect')
+				.attr("transform", (d: any) => {
+					return "translate("+(d.bbox.width+designConstants.collapseButtonsWidth*2.25)+", "+(-5)+")"
+				})
+				.style('cursor', 'pointer')
+
+		collectButtons.append('text')
+				.attr('class',"ctext")
+				.text("-")
+				.style("font-weight",800)
+				.style("font-size","24px")
+				.style('fill', TEXT_GRAY)
+				.on("mouseenter", function(d){
+					d3.select(this)
+						.style("fill",LINK_COLOR)
+				})
+				.on("mouseleave", function(d){
+					d3.select(this)
+						.style("fill", TEXT_GRAY)
+				})
+				.on("click", (e:Event, d:DataRow)=>{
+					this.collectGroup(d.name);
+				})
+
+		const expandButtons=dtextGroups.append('g')
+				.attr('class', 'dtextGroupCollect')
+				.attr("transform", (d: any) => {
+					return "translate("+(d.bbox.width+designConstants.collapseButtonsWidth*1)+", "+(-5)+")"
+				})
+				.style('cursor', function(d){
+					if(vis.grouping.parentToCauses[d.name].length>1){
+						return 'pointer'
+					}
+					return ''
+				} )
+
+		expandButtons.append('text')
+				.attr('class',"ctext")
+				.text("+")
+				.style("font-weight",800)
+				.style("font-size","24px")
+				.style('fill', function(d){
+					if(vis.grouping.parentToCauses[d.name].length>1){
+						return TEXT_GRAY
+					}
+					else{
+						return NOT_CLICKABLE_GRAY
+					}
+				})
+				.on("mouseenter", function(e: Event, d:DataRow){
+					if(vis.grouping.parentToCauses[d.name].length>1){
+						d3.select(this).style("fill",LINK_COLOR)
+					}
+				})
+				.on("mouseleave", function(e:Event, d:DataRow){
+					if(vis.grouping.parentToCauses[d.name].length>1){
+						d3.select(this).style("fill", TEXT_GRAY)
+					}
+				})
+				.on("click", (e:Event, d:DataRow)=>{
+					if(vis.grouping.parentToCauses[d.name].length>1){
+						this.expandCollectedGroup(d.name);
+					}
+				})
+
+		
+
+		
 
 		vis.svg.selectAll("ptext")
 				.data(dataSortedTotal, function(d:any) {return d.name})
@@ -219,7 +317,7 @@ export default class BarChart {
 					})
 				.style('text-anchor',"start")
 				.attr("transform","translate(" + 5 + "," + BARHEIGHT/2 + ")")
-				.style('fill', TEXT_GRAY)
+				.style('fill', NOT_CLICKABLE_GRAY)
 				
 
 		const rectButtons= vis.svg.selectAll("fitscreenButtons")
@@ -312,7 +410,6 @@ export default class BarChart {
 					.style('stroke','#2378ae')
 				})
 			.on("resize",  function(e: Event, d: SquareSection){
-				console.log('fullscreenchange');
 				vis.stip.hide(d,this);
 				d3.select(this)
 					.style("stroke-width",1)
@@ -332,19 +429,31 @@ export default class BarChart {
 		return {xAxisCall: d3.axisTop(x), xscale:x}
 	}
 
+	expandCats(dataset: DataSet, diseaseToWidth: string | null,  newCollectedGroups: CauseGrouping){
+		this.grouping=newCollectedGroups
+	}
+
+	computeRankAndSquares(data: DataRow[], diseaseToWidth:string| null): {dataSortedTotal: DataRow[], dataSquares: SquareSection[], dataIds:number[]}{
+		const {allSquares: dataSquares, totalProbs}=make_squares(data, diseaseToWidth, this.grouping);
+		const dataSortedTotal= copyOfSortedDataset(totalProbs, 'totalProb');
+		const dataIds= dataSortedTotal.map((v:any, index:number) => {
+			return index
+		});
+		return {dataSortedTotal, dataSquares, dataIds}
+	}
+
 	update(dataset: DataSet, diseaseToWidth: string | null){
 
 		const vis = this;
 		
-		const dataSortedTotal = copyOfSortedDataset(dataset, "totalProb"); 
-		const dataSortedName = copyOfSortedDataset(dataset, 'name'); 
-		const dataIds= dataSortedTotal.map((v:any, index:number) => {
-			return index
-		});
+		const {dataSortedTotal, dataSquares, dataIds} = this.computeRankAndSquares(dataset, diseaseToWidth)
 
-		const dataSquares=make_squares(dataSortedName, diseaseToWidth);
+		console.log("dataSortedTotal")
+		console.log(dataSortedTotal);
+		console.log("dataSquares")
+		console.log(dataSquares)
 
-		const n=dataSortedName.length;
+		const n=dataSortedTotal.length;
 		const designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
 
 		//Updating X-axis
@@ -381,12 +490,14 @@ export default class BarChart {
 			.duration(durationPerTransition)
 			.attr("y", (d:any) => (this.yBars(d.name) as number))
 		
-		vis.svg.selectAll<any,any>(".dtext")
+		vis.svg.selectAll<any,any>(".dtextGroups")
 			.data(dataSortedTotal, function(d: any) {return d.name})
 			.transition("labels_move")
 			.delay(durationPerTransition)
 			.duration(durationPerTransition)
-			.attr("y", (d:any) => (this.yBars(d.name) as number))
+			.attr("transform", (d)=>{
+				return "translate("+10+", "+ this.yBars(d.name) + ")"
+			})
 
 		vis.svg.selectAll<any,any>(".ptext")
 			.data(dataSortedTotal, function(d: any) {return d.name})
