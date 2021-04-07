@@ -325,6 +325,8 @@ export default class RelationLinks {
       parentToCauses[d]=[d]
       causeToParent[d]=d
     });
+    console.log("groupcats")
+    console.log(groupCats)
     return {causeToParent, parentToCauses}
   }
 

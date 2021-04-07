@@ -44,7 +44,8 @@ function makeTruncater(maxval: number| null){
 function makeRowSquare(
     datRows: DataRow[], 
     parent:string, 
-    max: number | null
+    max: number | null,
+    mergeAcross: boolean
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -60,23 +61,54 @@ function makeRowSquare(
         return Object.values(datRow.innerCauses).reduce((a, b) => a + b,0)*datRow.totalProb
     }).reduce((a,b)=>a+b,0)/normalizer;
     const unexplained=1.0-total_explained
-    squares.push({
-        name: parent,
-        cause: 'Unexplained',
-        x0:0,
-        x: zeroTruncater(unexplained*totalProb)*rescaler
-    });
-    let explainedSoFar=unexplained*totalProb;
-    let widthOfEachInnerCause=getOccurences(datRows);
-    Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
+    let explainedSoFar=0;
+    if(mergeAcross){
         squares.push({
             name: parent,
-            cause: innerCause,
-            x0: zeroTruncater(explainedSoFar)*rescaler,
-            x: zeroTruncater(explainedSoFar+width)*rescaler
+            cause: 'Unexplained',
+            x0:zeroTruncater(explainedSoFar)*rescaler,
+            x: zeroTruncater(unexplained*totalProb)*rescaler
         });
-        explainedSoFar+=width;
-    })
+        explainedSoFar=unexplained*totalProb;
+        let widthOfEachInnerCause=getOccurences(datRows);
+        Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
+            squares.push({
+                name: parent,
+                cause: innerCause,
+                x0: zeroTruncater(explainedSoFar)*rescaler,
+                x: zeroTruncater(explainedSoFar+width)*rescaler
+            });
+            explainedSoFar+=width;
+        })
+    }
+    else{
+        datRows.forEach( datRow => {
+            const unexplainedByThisRow= (1.0-Object.values(datRow.innerCauses).reduce( (a,b) => a+b,0))*datRow.totalProb
+            squares.push({
+                name: datRow.name,
+                cause: "Unexplained",
+                x0: zeroTruncater(explainedSoFar)*rescaler,
+                x: zeroTruncater((explainedSoFar+unexplainedByThisRow))*rescaler
+            })
+            explainedSoFar+=unexplainedByThisRow
+        })
+        let widthOfEachInnerCause=getOccurences(datRows);
+        Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
+            datRows.forEach( (datRow) => {
+                if(innerCause in datRow.innerCauses){
+                    const width= datRow.innerCauses[innerCause]*datRow.totalProb
+                    squares.push({
+                        name: datRow.name,
+                        cause: innerCause,
+                        x0: zeroTruncater(explainedSoFar)*rescaler,
+                        x: zeroTruncater(explainedSoFar+width)*rescaler
+                    });
+                    explainedSoFar+=width;
+                }
+            }) 
+        })   
+    }
+    
     return {squares, totalProb};
 }
 
@@ -84,8 +116,9 @@ function makeRowSquare(
 function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
-    grouping: CauseGrouping
-    ):{allSquares: SquareSection[], totalProbs: DataRow[]}
+    grouping: CauseGrouping,
+    mergeAcross: boolean=true
+):{allSquares: SquareSection[], totalProbs: DataRow[]}
 
 {
     let parentToRows: ParentToDataRows={}
@@ -107,7 +140,7 @@ function make_squares(
     let squareSections: SquareSection[][]=[];
     let totalProbs:DataRow[]=[]
     Object.entries(parentToRows).forEach(([parent, datRows])=> {
-        const {squares,totalProb}= makeRowSquare(datRows, parent, max)
+        const {squares,totalProb}= makeRowSquare(datRows, parent, max, mergeAcross)
         squareSections.push(squares)
         totalProbs.push({
             name:parent,

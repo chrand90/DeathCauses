@@ -17,10 +17,13 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	const { width } = useWindowSize();
 	const [diseaseToWidth, setDiseaseToWidth] = useState<string | null>(null);
 	const [collectedCategories, setCollectedCategories] = useState<string[]>([]);
+	const collectedCategoriesRef=useRef([] as string[]);
+	collectedCategoriesRef.current=collectedCategories;
 
 	const expandCategory= (category: string) => {
 		console.log("expands "+ category)
-		let newCats=[...collectedCategories]
+		console.log("from"+collectedCategoriesRef.current.toString())
+		let newCats=[...collectedCategoriesRef.current]
 		if(newCats.includes(category)){
 			newCats=newCats.filter(d => d!==category)
 		}
@@ -34,15 +37,17 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 		console.log("collects "+category)
 		const parent=props.rdat.getParentCategory(category)
 		let noLongerNeedsToBeCollapsed: string[];
-		let newCats:string[]=[...collectedCategories]
+		let newCats:string[]=[...collectedCategoriesRef.current]
 		if(parent){
-			noLongerNeedsToBeCollapsed=props.rdat.findCauseCategoryDescendants(category)
+			noLongerNeedsToBeCollapsed=props.rdat.findCauseCategoryDescendants(parent)
+			noLongerNeedsToBeCollapsed=noLongerNeedsToBeCollapsed.filter(item => item !== parent);
 			newCats.push(parent)
 		}
 		else{
 			noLongerNeedsToBeCollapsed=[]; 
 		}
-		setCollectedCategories(newCats.filter(d=>!noLongerNeedsToBeCollapsed.includes(d)));
+		const newCollectedGroups=newCats.filter(d=>!noLongerNeedsToBeCollapsed.includes(d))
+		setCollectedCategories(newCollectedGroups);
 	}
 
 
@@ -62,13 +67,14 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	useEffect(() => {
 		console.log("new expanded categories "+collectedCategories)
 		if (chart) {
-			chart.clear();
-			createNewChart();
-			// chart.expandCats(
-			// 	database,  
-			// 	diseaseToWidth,
-			// 	props.rdat.makeCollectedGroups(collectedCategories)
-			// )
+			chart.changeCats(database, diseaseToWidth, props.rdat.makeCollectedGroups(collectedCategories))
+			setTimeout(
+				() => {
+					chart.clear()
+					createNewChart();
+				},
+				400*4
+			)
 		}
 	}, [collectedCategories])
 
