@@ -306,6 +306,16 @@ export default class RelationLinks {
     return this.descendantList[nodeName].filter(d=> this.nodeType[d]===NodeType.CAUSE_CATEGORY)
   }
 
+  getPossibleExpansions(){
+    let collapsables: string[]=[];
+    this.sortedNodes[NodeType.CAUSE].forEach((nodeName: string )=> {
+      if(this.ancestorList[nodeName].some(ancestorName => this.nodeType[ancestorName]===NodeType.CAUSE_CATEGORY)){
+        collapsables.push(nodeName)
+      }
+    })
+    return {collapsables: new Set(collapsables), expandables: new Set(this.sortedNodes[NodeType.CAUSE_CATEGORY])}//this.sortedNodes[NodeType.CAUSE_CATEGORY]}
+  }
+
   makeCollectedGroups(groupCats: string[]): CauseGrouping  {
     let causeToParent: CauseToParentMapping={}
     let parentToCauses: ParentToCausesMapping={}

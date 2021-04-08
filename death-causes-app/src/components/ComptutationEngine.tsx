@@ -117,7 +117,7 @@ function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
     grouping: CauseGrouping,
-    mergeAcross: boolean=true
+    noMergeAcross: {[key:string]: boolean}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
 
 {
@@ -140,7 +140,12 @@ function make_squares(
     let squareSections: SquareSection[][]=[];
     let totalProbs:DataRow[]=[]
     Object.entries(parentToRows).forEach(([parent, datRows])=> {
-        const {squares,totalProb}= makeRowSquare(datRows, parent, max, mergeAcross)
+        const {squares,totalProb}= makeRowSquare(
+            datRows, 
+            parent, 
+            max, 
+            !(parent in noMergeAcross)
+        )
         squareSections.push(squares)
         totalProbs.push({
             name:parent,

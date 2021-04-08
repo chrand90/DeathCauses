@@ -60,7 +60,8 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 			setDiseaseToWidth, 
 			props.rdat.makeCollectedGroups(collectedCategories), 
 			expandCategory, 
-			collectParentCategory
+			collectParentCategory,
+			props.rdat.getPossibleExpansions()
 		));
 	}
 
@@ -68,13 +69,6 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 		console.log("new expanded categories "+collectedCategories)
 		if (chart) {
 			chart.changeCats(database, diseaseToWidth, props.rdat.makeCollectedGroups(collectedCategories))
-			setTimeout(
-				() => {
-					chart.clear()
-					createNewChart();
-				},
-				400*4
-			)
 		}
 	}, [collectedCategories])
 
