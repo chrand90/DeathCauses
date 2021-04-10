@@ -138,7 +138,6 @@ export default class BarChart {
     },
 	
   ) {
-    console.log(database);
 
     //Initializers
     this.yBars = d3.scaleBand();
@@ -201,7 +200,6 @@ export default class BarChart {
 			}
 			else{
 				counter+=1;
-				console.log("checked"+counter)
 				setTimeout(checkerFunction,100)
 			}
 		}
@@ -488,17 +486,6 @@ export default class BarChart {
     this.addAttributesToCauseBars(addedBars);
   }
 
-  reset(dataset: DataSet, diseaseToWidth: string | null, grouping: CauseGrouping | null=null){
-	if(grouping !== null){
-		this.grouping=grouping
-	};
-	this.svg.selectAll('.dtextGroups').remove()
-	this.svg.selectAll('.causebar').remove()
-	this.svg.selectAll('.ptext').remove()
-	this.svg.selectAll('.fitscreenButtons').remove()
-	this.make(dataset, diseaseToWidth);
-  }
-
   addAttributesToCauseBars(
     causeBars: d3.Selection<any, any, any, any>,
     yReMapper: (node: string) => string = (x) => x
@@ -508,7 +495,7 @@ export default class BarChart {
       .attr("y", (d) => this.yBars(yReMapper(d.name)) as number)
       .attr("x", (d) => this.xscale(d.x0))
       .attr("height", this.yBars.bandwidth)
-      .attr("width", (d) => this.xscale(d.x) - this.xscale(d.x0))
+      .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
       .attr("fill", (d) => this.colorDic[d.cause])
       .attr("stroke", "#2378ae")
       .on("mouseenter", function (e: Event, d: SquareSection) {
@@ -572,11 +559,6 @@ export default class BarChart {
       .lower();
   }
 
-  interruptedChangeCats(sortedTotals: DataRow[], dataSquares: SquareSection[], diseaseToWidth: string | null){
-	this.setHeightAndGetDesignConstants(sortedTotals)
-	this.reMapFitScreenButtons(sortedTotals, sortedTotals.map((d,i)=>i), diseaseToWidth)
-  }
-
   collapseCats(
     dataset: DataSet,
     diseaseToWidth: string | null,
@@ -635,7 +617,7 @@ export default class BarChart {
           .transition("bars_x_change")
           .duration(durationPerTransition)
           .attr("x", (d) => this.xscale(d.x0))
-          .attr("width", (d) => this.xscale(d.x) - this.xscale(d.x0))
+          .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
 		  .end()
           .then(() => {
             gsWitExpandedData
@@ -898,7 +880,7 @@ export default class BarChart {
               .transition("bars_x_move")
               .duration(durationPerTransition)
               .attr("x", (d: any) => vis.xscale(d.x0))
-              .attr("width", (d: any) => vis.xscale(d.x) - vis.xscale(d.x0))
+              .attr("width", (d: any) => Math.max(0,vis.xscale(d.x) - vis.xscale(d.x0)))
               .end()
               .then(() => {
                 designConstants = this.setHeightAndGetDesignConstants(
@@ -927,23 +909,6 @@ export default class BarChart {
     );
   }
 
-  resetIfRunning(dataset:DataSet, diseaseToWidth: string| null){
-	if(this.chainedTransitionInProgress){
-		console.log("interrupting!")
-		const selector= d3.selectAll('*')
-		console.log("interruptsize"+selector.size().toString())
-		selector.interrupt('bars_y_move')
-		selector.interrupt("bars_x_move")
-		selector.interrupt("bars_move2")
-		selector.interrupt('percentage_x_change_and_move')
-		selector.interrupt('x_axis_change')
-		selector.interrupt('labels_move')
-		selector.interrupt('percentage_y_change')
-		this.chainedTransitionInProgress=false;
-		this.reset(dataset, diseaseToWidth, this.grouping);
-	}
-  }
-
   async changeCats(
     dataset: DataSet,
     diseaseToWidth: string | null,
@@ -952,7 +917,6 @@ export default class BarChart {
   ) {
 	this.transitionsOrdered+=1;
 	const duration=Math.max(await this.waitForTransitionsToBeFree(durationIfNoWait),10)
-	console.log("about to make a new transition");
     const { removed, added } = getBooleanSet(this.grouping, newCollectedGroups);
 	const oldCollectedGroups=this.grouping;
 	this.grouping=newCollectedGroups
@@ -976,7 +940,6 @@ export default class BarChart {
       );
     }
   }
-
 
 
   computeRankAndSquares(
@@ -1050,7 +1013,7 @@ export default class BarChart {
 	 gs.transition("bars_x_change")
       .duration(durationPerTransition)
       .attr("x", (d) => this.xscale(d.x0))
-      .attr("width", (d) => this.xscale(d.x) - this.xscale(d.x0))
+      .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
 	this.reArrangeBars(dataSortedTotal, durationPerTransition, designConstants,diseaseToWidth,
 		() =>{
 			this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);

@@ -21,7 +21,6 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 
 	const expandCategory= (category: string) => {
 		console.log("expands "+ category)
-		console.log("from"+collectedCategoriesRef.current.toString())
 		let newCats=[...collectedCategoriesRef.current]
 		if(newCats.includes(category)){
 			newCats=newCats.filter(d => d!==category)
