@@ -11,7 +11,6 @@ interface BarChartWrapperProps {
 
 const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
 	const database = props.database;
-	console.log(database);
 	const chartArea = useRef(null);
 	const [chart, setChart] = useState<BarChart | null>(null);
 	const { width } = useWindowSize();
@@ -26,11 +25,13 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 		let newCats=[...collectedCategoriesRef.current]
 		if(newCats.includes(category)){
 			newCats=newCats.filter(d => d!==category)
+			newCats=newCats.concat(props.rdat.getImmediateCauseCategoryDescendants(category))
+			setCollectedCategories(newCats);
 		}
 		else{
-			throw Error("Tried to remove a category that wasnt collapsed")
+			console.log("Tried to remove a category that wasnt collapsed... Ignored.")
 		}
-		setCollectedCategories(newCats);
+
 	}
 
 	const collectParentCategory= (category: string) => {

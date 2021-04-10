@@ -17,7 +17,7 @@ export default function kahnSort(nodesToBeSorted: string[], backwardEdges: NodeD
     let count=0
     while(nonRemovableNodes.length>0 && count<1000){
         let candidate=nonRemovableNodes.shift()
-        let candidateAncestors=backwardEdges[candidate!]
+        let candidateAncestors=backwardEdges[candidate!].filter(d => nodesToBeSorted.includes(d))
         let accept= candidateAncestors.every((d:string) => {
             return removableNodes.includes(d)
         });

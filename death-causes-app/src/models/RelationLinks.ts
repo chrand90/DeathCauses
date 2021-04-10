@@ -8,11 +8,11 @@ import kahnSort from "./KahnSort";
 // export const CAUSE = "Death cause";
 
 export enum NodeType {
-  INPUT="Input factor",
-  COMPUTED_FACTOR="Computed factor",
-  CONDITION="Condition",
-  CAUSE_CATEGORY= "Death cause category",
-  CAUSE= "Death cause"
+  INPUT = "Input factor",
+  COMPUTED_FACTOR = "Computed factor",
+  CONDITION = "Condition",
+  CAUSE_CATEGORY = "Death cause category",
+  CAUSE = "Death cause",
 }
 
 export const NODE_ORDER = [
@@ -55,10 +55,10 @@ interface NodeToOptimizability {
 }
 
 interface OptimizabilityToNodes {
-  [optim: number]: string[]
+  [optim: number]: string[];
 }
 
-export interface NodeToColor{
+export interface NodeToColor {
   [nodeName: string]: string;
 }
 
@@ -108,16 +108,16 @@ export interface NodeExtremas {
 }
 
 export interface CauseToParentMapping {
-  [childCause: string]: string
+  [childCause: string]: string;
 }
 
 export interface ParentToCausesMapping {
-  [parentCause: string]: string[]
+  [parentCause: string]: string[];
 }
 
 export interface CauseGrouping {
-  causeToParent: CauseToParentMapping,
-  parentToCauses: ParentToCausesMapping
+  causeToParent: CauseToParentMapping;
+  parentToCauses: ParentToCausesMapping;
 }
 
 interface StratifiedTopologicalSorting {
@@ -164,7 +164,7 @@ export default class RelationLinks {
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
   colorDic: NodeToColor = {};
-  optimizabilities: NodeToOptimizability = {}
+  optimizabilities: NodeToOptimizability = {};
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
@@ -189,8 +189,8 @@ export default class RelationLinks {
       this.colorDic[nodeName] = node.color;
       this.nodeType[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
-      if(node.optimizability){
-        this.optimizabilities[nodeName]=node.optimizability;
+      if (node.optimizability) {
+        this.optimizabilities[nodeName] = node.optimizability;
       }
 
       this.ancestorList[nodeName].forEach((ancestor: string) => {
@@ -233,60 +233,65 @@ export default class RelationLinks {
     });
   }
 
-  initializeOptimizabilities(){
-    this.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((nodeName:string) => {
+  initializeOptimizabilities() {
+    this.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((nodeName: string) => {
       this.optimizabilities[nodeName] = this.followMaximumOfSummary(
-        nodeName, 
-        this.ancestorList, 
+        nodeName,
+        this.ancestorList,
         () => true,
-        (nodename: string) => { 
-          if(this.optimizabilities[nodename]){
-            return this.optimizabilities[nodename]
+        (nodename: string) => {
+          if (this.optimizabilities[nodename]) {
+            return this.optimizabilities[nodename];
           }
-          return 0
+          return 0;
         },
         (previous: number[], thisNodeContribution: number) => {
           return Math.max(...previous, thisNodeContribution);
-        })
-    })
+        }
+      );
+    });
   }
 
-  getOptimizabilityClasses(nodeNames: string[]){
-    let valueToNodeName: OptimizabilityToNodes={}
-    nodeNames.forEach((nodeName:string) => {
-      let optimValue=this.optimizabilities[nodeName];
-      if(!(optimValue in valueToNodeName)){
-        let emptyStrings: string[]=[]
-        valueToNodeName[optimValue]=emptyStrings
+  getOptimizabilityClasses(nodeNames: string[]) {
+    let valueToNodeName: OptimizabilityToNodes = {};
+    nodeNames.forEach((nodeName: string) => {
+      let optimValue = this.optimizabilities[nodeName];
+      if (!(optimValue in valueToNodeName)) {
+        let emptyStrings: string[] = [];
+        valueToNodeName[optimValue] = emptyStrings;
       }
-      valueToNodeName[optimValue].push(nodeName)
-    })
-    let optims=Object.keys(valueToNodeName).map((optimAsString:string) => {
-      return parseInt(optimAsString)
-    })
-    optims.sort()
-    return optims.map((optimValue:number) => {
-      return valueToNodeName[optimValue]
-    })
+      valueToNodeName[optimValue].push(nodeName);
+    });
+    let optims = Object.keys(valueToNodeName).map((optimAsString: string) => {
+      return parseInt(optimAsString);
+    });
+    optims.sort();
+    return optims.map((optimValue: number) => {
+      return valueToNodeName[optimValue];
+    });
   }
 
-  getParentCategory(nodeName: string){
-    let candidates=this.ancestorList[nodeName].filter((candidateNode: string) => {
-      if(this.nodeType[candidateNode]===NodeType.CAUSE_CATEGORY){
-        return true;
+  getParentCategory(nodeName: string) {
+    let candidates = this.ancestorList[nodeName].filter(
+      (candidateNode: string) => {
+        if (this.nodeType[candidateNode] === NodeType.CAUSE_CATEGORY) {
+          return true;
+        }
+        return false;
       }
-      return false;
-    })
-    if(candidates.length===0){
-      return null
+    );
+    if (candidates.length === 0) {
+      return null;
     }
-    if(candidates.length>1){
-      throw Error("A node had two category parent categories, which should not be possible")
+    if (candidates.length > 1) {
+      throw Error(
+        "A node had two category parent categories, which should not be possible"
+      );
     }
-    return candidates[0]
+    return candidates[0];
   }
 
-  findCauseCategoryDescendants(nodeName:string):string[]{
+  findCauseCategoryDescendants(nodeName: string): string[] {
     if (this.nodeType[nodeName] === NodeType.CAUSE) {
       return [];
     } else {
@@ -295,49 +300,63 @@ export default class RelationLinks {
           return this.findCauseCategoryDescendants(d);
         }
       );
-      if(this.nodeType[nodeName]=== NodeType.CAUSE_CATEGORY){
-        return ([nodeName]).concat(...categoryDescendants);
+      if (this.nodeType[nodeName] === NodeType.CAUSE_CATEGORY) {
+        return [nodeName].concat(...categoryDescendants);
       }
       return ([] as string[]).concat(...categoryDescendants);
     }
   }
 
-  findImmediateCauseCategoryDescendants(nodeName:string): string[]{
-    return this.descendantList[nodeName].filter(d=> this.nodeType[d]===NodeType.CAUSE_CATEGORY)
+  findImmediateCauseCategoryDescendants(nodeName: string): string[] {
+    return this.descendantList[nodeName].filter(
+      (d) => this.nodeType[d] === NodeType.CAUSE_CATEGORY
+    );
   }
 
-  getPossibleExpansions(){
-    let collapsables: string[]=[];
-    this.sortedNodes[NodeType.CAUSE].forEach((nodeName: string )=> {
-      if(this.ancestorList[nodeName].some(ancestorName => this.nodeType[ancestorName]===NodeType.CAUSE_CATEGORY)){
-        collapsables.push(nodeName)
-      }
-    })
-    return {collapsables: new Set(collapsables), expandables: new Set(this.sortedNodes[NodeType.CAUSE_CATEGORY])}//this.sortedNodes[NodeType.CAUSE_CATEGORY]}
+  getPossibleExpansions() {
+    let collapsables: string[] = [];
+    this.sortedNodes[NodeType.CAUSE]
+      .concat(this.sortedNodes[NodeType.CAUSE_CATEGORY])
+      .forEach((nodeName: string) => {
+        if (
+          this.ancestorList[nodeName].some(
+            (ancestorName) =>
+              this.nodeType[ancestorName] === NodeType.CAUSE_CATEGORY
+          )
+        ) {
+          collapsables.push(nodeName);
+        }
+      });
+    return {
+      collapsables: new Set(collapsables),
+      expandables: new Set(this.sortedNodes[NodeType.CAUSE_CATEGORY]),
+    }; //this.sortedNodes[NodeType.CAUSE_CATEGORY]}
   }
 
-  makeCollectedGroups(groupCats: string[]): CauseGrouping  {
-    let causeToParent: CauseToParentMapping={}
-    let parentToCauses: ParentToCausesMapping={}
+  makeCollectedGroups(groupCats: string[]): CauseGrouping {
+    let causeToParent: CauseToParentMapping = {};
+    let parentToCauses: ParentToCausesMapping = {};
     //initialize
     this.sortedNodes[NodeType.CAUSE].forEach((d) => {
-      causeToParent[d]=d
-    })
-    let notOrphans:string[]=[];
-    groupCats.forEach((parentNode) => {
-      parentToCauses[parentNode]=this.superDescendantList[parentNode]
-      this.superDescendantList[parentNode].forEach((childNode)=>{
-        causeToParent[childNode]=parentNode
-        notOrphans.push(childNode)
-      });
-    })
-    this.sortedNodes[NodeType.CAUSE].filter((d)=> !notOrphans.includes(d)).forEach((d)=>{
-      parentToCauses[d]=[d]
-      causeToParent[d]=d
+      causeToParent[d] = d;
     });
-    console.log("groupcats")
-    console.log(groupCats)
-    return {causeToParent, parentToCauses}
+    let notOrphans: string[] = [];
+    groupCats.forEach((parentNode) => {
+      parentToCauses[parentNode] = this.superDescendantList[parentNode];
+      this.superDescendantList[parentNode].forEach((childNode) => {
+        causeToParent[childNode] = parentNode;
+        notOrphans.push(childNode);
+      });
+    });
+    this.sortedNodes[NodeType.CAUSE]
+      .filter((d) => !notOrphans.includes(d))
+      .forEach((d) => {
+        parentToCauses[d] = [d];
+        causeToParent[d] = d;
+      });
+    console.log("groupcats");
+    console.log(groupCats);
+    return { causeToParent, parentToCauses };
   }
 
   arrowInterpretation(
@@ -360,7 +379,10 @@ export default class RelationLinks {
       res += "to compute " + toNode;
     } else if (toType === NodeType.CONDITION) {
       res += "to estimate the status of " + toNode;
-    } else if (toType === NodeType.CAUSE_CATEGORY && fromType === NodeType.CAUSE_CATEGORY) {
+    } else if (
+      toType === NodeType.CAUSE_CATEGORY &&
+      fromType === NodeType.CAUSE_CATEGORY
+    ) {
       res += "as risk factors for all types of " + toNode;
     } else if (toType === NodeType.CAUSE_CATEGORY) {
       res += "as a risk factor for all types of " + toNode;
@@ -429,6 +451,12 @@ export default class RelationLinks {
       upstreamElements: upstreamElements,
       downStreamElements: downStreamElements,
     };
+  }
+
+  getImmediateCauseCategoryDescendants(nodeName:string): string[]{
+    return this.descendantList[nodeName].filter((candidateNode: string) => {
+      return this.nodeType[candidateNode]===NodeType.CAUSE_CATEGORY;
+    })
   }
 
   computeXValueOfInitialNode(
@@ -512,14 +540,14 @@ export default class RelationLinks {
     return { ...adjXReturn, arrows: arrows, nodeExtremas: nodeExtremas };
   }
 
-  computeCumulativeWeights(weights: number[]){
+  computeCumulativeWeights(weights: number[]) {
     const cumWeights: number[] = [];
     weights.reduce(function (a, b, i) {
       cumWeights.push(a + b);
       return a + b;
     }, 0);
     cumWeights.unshift(0); //inserting a 0, because the visualization should start at 0.
-    return cumWeights
+    return cumWeights;
   }
 
   adjustXCoordinates(dat: UntransformedLabel[]): AdjustXReturn {
@@ -528,7 +556,7 @@ export default class RelationLinks {
       const xvals = dat
         .filter((ut: UntransformedLabel) => ut.cat === cat)
         .map((ut: UntransformedLabel) => {
-          //this computes an estimated length of the labels connected to ut in the same category as ut. 
+          //this computes an estimated length of the labels connected to ut in the same category as ut.
           //It adds 10 for each label to account for space between labels.
           return this.followMaximumOfSummary(
             ut.nodeName,
@@ -542,7 +570,7 @@ export default class RelationLinks {
       }
       return Math.max(...xvals);
     });
-    const cumWeights= this.computeCumulativeWeights(weights)
+    const cumWeights = this.computeCumulativeWeights(weights);
 
     const resDat = dat.map((d: UntransformedLabel) => {
       const catOrder = NODE_ORDER.indexOf(d.cat);
@@ -788,7 +816,10 @@ export default class RelationLinks {
     nodeDic: NodeDic,
     continueTest: (name: string) => boolean,
     summary: (name: string) => number,
-    combineContributions: (fromFurtherDown: number[], thisNodeContribution: number) => number = (nums:number[],num:number) => Math.max(...nums)+num,
+    combineContributions: (
+      fromFurtherDown: number[],
+      thisNodeContribution: number
+    ) => number = (nums: number[], num: number) => Math.max(...nums) + num
   ): number {
     if (!continueTest(nodeName)) {
       return 0;
@@ -797,7 +828,13 @@ export default class RelationLinks {
       return summary(nodeName);
     }
     let tmp = nodeDic[nodeName].map((d: string) => {
-      return this.followMaximumOfSummary(d, nodeDic, continueTest, summary, combineContributions);
+      return this.followMaximumOfSummary(
+        d,
+        nodeDic,
+        continueTest,
+        summary,
+        combineContributions
+      );
     });
     return combineContributions(tmp, summary(nodeName));
   }
@@ -850,7 +887,7 @@ export default class RelationLinks {
     return res;
   }
 
-  getColorDic(){
+  getColorDic() {
     return this.colorDic;
   }
 }

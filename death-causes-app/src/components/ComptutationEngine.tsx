@@ -1,3 +1,4 @@
+import { truncate } from "fs";
 import { CauseGrouping } from "../models/RelationLinks";
 import { DataRow, DataSet } from "./PlottingData";
 
@@ -45,7 +46,8 @@ function makeRowSquare(
     datRows: DataRow[], 
     parent:string, 
     max: number | null,
-    mergeAcross: boolean
+    mergeAcross: boolean,
+    structureIfNotMerged: CauseGrouping,
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -82,45 +84,52 @@ function makeRowSquare(
         })
     }
     else{
-        datRows.forEach( datRow => {
-            const unexplainedByThisRow= (1.0-Object.values(datRow.innerCauses).reduce( (a,b) => a+b,0))*datRow.totalProb
-            squares.push({
-                name: datRow.name,
-                cause: "Unexplained",
-                x0: zeroTruncater(explainedSoFar)*rescaler,
-                x: zeroTruncater((explainedSoFar+unexplainedByThisRow))*rescaler
-            })
-            explainedSoFar+=unexplainedByThisRow
+        let subParentsToRows: ParentToDataRows= computeParentToRows(datRows, structureIfNotMerged);
+        let explainedSoFar=0;
+        Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) => {
+            const unexplainedByGroup=subDatRows.map((subDatRow: DataRow) =>{
+                return (1-Object.values(subDatRow.innerCauses).reduce((a,b) => a+b,0))*subDatRow.totalProb
+            }).reduce((a,b)=>a+b,0)
+            squares.push(
+                {
+                    name: subParent,
+                    cause: "Unexplained",
+                    x0: zeroTruncater(explainedSoFar)*rescaler,
+                    x: zeroTruncater(explainedSoFar+unexplainedByGroup)*rescaler
+                }
+            )
+            explainedSoFar+=unexplainedByGroup
         })
         let widthOfEachInnerCause=getOccurences(datRows);
         Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
-            datRows.forEach( (datRow) => {
-                if(innerCause in datRow.innerCauses){
-                    const width= datRow.innerCauses[innerCause]*datRow.totalProb
-                    squares.push({
-                        name: datRow.name,
-                        cause: innerCause,
-                        x0: zeroTruncater(explainedSoFar)*rescaler,
-                        x: zeroTruncater(explainedSoFar+width)*rescaler
-                    });
-                    explainedSoFar+=width;
+            Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) =>{
+                let contrib=0;
+                let innerCauseInGroup=false;
+                subDatRows.forEach((subDatRow: DataRow) =>{
+                    if(innerCause in subDatRow.innerCauses){
+                        innerCauseInGroup=true;
+                        contrib+=subDatRow.innerCauses[innerCause]*subDatRow.totalProb
+                    }
+                })
+                if(innerCauseInGroup){
+                    squares.push(
+                        {
+                            name: subParent,
+                            cause: innerCause,
+                            x0: zeroTruncater(explainedSoFar)*rescaler,
+                            x: zeroTruncater(explainedSoFar+contrib)*rescaler
+                        }
+                    )
+                    explainedSoFar+=contrib
                 }
-            }) 
+            })
         })   
     }
     
     return {squares, totalProb};
 }
 
-
-function make_squares(
-    res_dat: DataSet, 
-    setToWidth: string | null, 
-    grouping: CauseGrouping,
-    noMergeAcross: {[key:string]: boolean}={}
-):{allSquares: SquareSection[], totalProbs: DataRow[]}
-
-{
+function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping){
     let parentToRows: ParentToDataRows={}
     res_dat.forEach((datRow) => {
         const parent=grouping.causeToParent[datRow.name]
@@ -131,6 +140,19 @@ function make_squares(
             parentToRows[parent]=[datRow]
         }
     })
+    return parentToRows
+}
+
+
+function make_squares(
+    res_dat: DataSet, 
+    setToWidth: string | null, 
+    grouping: CauseGrouping,
+    noMergeAcross: {[key:string]: CauseGrouping}={}
+):{allSquares: SquareSection[], totalProbs: DataRow[]}
+
+{
+    let parentToRows= computeParentToRows(res_dat, grouping);
     let max: number | null=null; 
     if(setToWidth && setToWidth in parentToRows){
         max=Object.entries(parentToRows).filter(([parent, datRows])=> {
@@ -144,7 +166,8 @@ function make_squares(
             datRows, 
             parent, 
             max, 
-            !(parent in noMergeAcross)
+            !(parent in noMergeAcross),
+            parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping)
         )
         squareSections.push(squares)
         totalProbs.push({
