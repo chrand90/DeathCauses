@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Fragment } from "react";
 import "./VizWindow.css";
 import BarChartWrapper from "./BarChartWrapper";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
@@ -7,7 +7,7 @@ import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
 import { Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
-import Deathcause, {DeathCauseJson} from "./database/Deathcause";
+import Deathcause, { DeathCauseJson } from "./database/Deathcause";
 import causesData from "../resources/Causes.json";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
@@ -23,12 +23,18 @@ interface VizWindowProps {
 }
 
 interface RawDataJson {
-  [deathCauseName: string]:DeathCauseJson;
+  [deathCauseName: string]: DeathCauseJson;
+}
+
+interface SummaryPagedata {
+  lifeExtencancy: number;
+  yearsLostToDeathcause: { deathcause: string, yearsLost: number }[]
 }
 
 interface VizWindowStates {
   database: DataSet | null;
   survivalData: SurvivalCurveData[];
+  summaryPageData: SummaryPagedata | null;
   initializedDatabase: boolean;
 }
 
@@ -42,8 +48,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       database: null,
       survivalData: [],
       initializedDatabase: false,
+      summaryPageData: null
     };
-    
+
     this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
   }
 
@@ -72,12 +79,12 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   loadFactorDatabase() {
     setTimeout(() => {
       let database: Deathcause[] = [];
-      const rawData:RawDataJson=(causesData as RawDataJson);
-      Object.entries(rawData).forEach( ([key, deathcause]) => {
+      const rawData: RawDataJson = (causesData as RawDataJson);
+      Object.entries(rawData).forEach(([key, deathcause]) => {
         database.push(
           new Deathcause(deathcause, key)
         );
-      } )
+      })
       const c = new CalculationFacade(database);
       this.computerController = new ComputeController(
         this.props.relationLinkData,
@@ -85,7 +92,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         120,
         c
       );
-      this.setState({initializedDatabase: true});
+      this.setState({ initializedDatabase: true });
     }, 500);
   }
 
@@ -127,7 +134,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   };
 
   renderChosenGraph() {
-    if(!this.state.initializedDatabase){
+    if (!this.state.initializedDatabase) {
       return "Loading database..."
     }
     switch (this.props.visualization) {
@@ -140,8 +147,8 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
                 colorDic={this.props.relationLinkData.getColorDic()}
               />
             ) : (
-              "Input age to get started"
-            )}
+                "Input age to get started"
+              )}
           </div>
         );
       }
@@ -161,6 +168,8 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       }
       case Visualization.SURVIVAL_GRAPH:
         return <BarPlotWrapper data={this.state.survivalData} />;
+      case Visualization.SUMMARY:
+        return <Fragment></Fragment>
       case Visualization.NO_GRAPH: {
         return "Input an age to get started";
       }
@@ -188,8 +197,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
             >
               {[
                 Visualization.SURVIVAL_GRAPH,
-                Visualization.RELATION_GRAPH, 
+                Visualization.RELATION_GRAPH,
                 Visualization.BAR_GRAPH,
+                Visualization.SUMMARY
               ].map((d: string) => {
                 return <option value={d} key={d}>{d}</option>;
               })}
