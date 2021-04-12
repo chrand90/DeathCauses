@@ -194,9 +194,6 @@ function computeForSameOptimizabilityClass(
   riskFactorGroupsWithMissing: number[],
   valueStore: BestValues,
 ) {
-  if(deathcause.deathCauseName==="Bronchitis"){
-    console.log("debug location")
-  }
   let marginalContributions: SetToNumber[] = [];
   let totalRR = 1;
   deathcause.riskFactorGroups.forEach((rfg, index) => {

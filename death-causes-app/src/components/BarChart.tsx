@@ -963,7 +963,6 @@ export default class BarChart {
 
   async update(dataset: DataSet, diseaseToWidth: string | null, durationPerTransition: number=500) {
 
-    console.log(dataset)
 	  await this.waitForTransitionsToBeFree(0,0.5);
     const vis = this;
 
