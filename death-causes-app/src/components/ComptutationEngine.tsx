@@ -1,12 +1,14 @@
 import { truncate } from "fs";
 import { CauseGrouping } from "../models/RelationLinks";
+import { mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
     name: string,
     cause: string,
     x0: number,
-    x: number
+    x: number,
+    comparison?: string,
 }
 
 interface ProbSums {
@@ -65,6 +67,10 @@ function makeRowSquare(
     const unexplained=1.0-total_explained
     let explainedSoFar=0;
     if(mergeAcross){
+        const comparators=datRows.map((datRow)=>{
+            return datRow.comparisonWithBestValues
+        })
+        const combinedBestValues=mergeBestValues(comparators);
         squares.push({
             name: parent,
             cause: 'Unexplained',
@@ -73,12 +79,15 @@ function makeRowSquare(
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
+        
         Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
+            const statement=combinedBestValues?.getConsensusStatement(innerCause)
             squares.push({
                 name: parent,
                 cause: innerCause,
                 x0: zeroTruncater(explainedSoFar)*rescaler,
-                x: zeroTruncater(explainedSoFar+width)*rescaler
+                x: zeroTruncater(explainedSoFar+width)*rescaler,
+                comparison: statement
             });
             explainedSoFar+=width;
         })
