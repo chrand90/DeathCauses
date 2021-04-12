@@ -21,6 +21,7 @@ import RelationLinks from "../models/RelationLinks";
 import { OrderVisualization } from "./Helpers";
 import QuestionListFrame from "./QuestionListFrame";
 import factorDatabase from "../resources/FactorDatabase.json";
+import DataPrivacyBox from "./DataPrivacyBox";
 
 interface QuestionMenuProps extends OrderVisualization {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
@@ -614,8 +615,8 @@ class QuestionMenu extends React.Component<
     return (
       <div>
         <p>
-          Input risk factors to calculate probability of dying of most diseases
-          and expected lifespan
+          Answer questions to get personalized risks of dying from different causes  
+          <DataPrivacyBox></DataPrivacyBox>
         </p>
           <Collapse
             in={this.state.view === QuestionView.QUESTION_MANAGER}
