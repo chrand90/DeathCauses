@@ -30,6 +30,7 @@ interface NodeValue {
   type: NodeType;
   color: string;
   ancestors: string[];
+  optimizability?: number;
 }
 
 export interface RelationLinkJson {
@@ -46,6 +47,14 @@ interface NodeDic {
 
 interface NodeToType {
   [nodeName: string]: NodeType;
+}
+
+interface NodeToOptimizability {
+  [nodeName: string]: number;
+}
+
+interface OptimizabilityToNodes {
+  [optim: number]: string[]
 }
 
 export interface NodeToColor{
@@ -141,12 +150,14 @@ export default class RelationLinks {
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
   colorDic: NodeToColor = {};
+  optimizabilities: NodeToOptimizability = {}
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
     this.initializeInheritanceListsAndTypeAndColor(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
+    this.initializeOptimizabilities();
   }
 
   initializeReverseNodeTypeOrder() {
@@ -164,6 +175,9 @@ export default class RelationLinks {
       this.colorDic[nodeName] = node.color;
       this.NodeType[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
+      if(node.optimizability){
+        this.optimizabilities[nodeName]=node.optimizability;
+      }
 
       this.ancestorList[nodeName].forEach((ancestor: string) => {
         try {
@@ -203,6 +217,43 @@ export default class RelationLinks {
         this.descendantList
       );
     });
+  }
+
+  initializeOptimizabilities(){
+    this.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((nodeName:string) => {
+      this.optimizabilities[nodeName] = this.followMaximumOfSummary(
+        nodeName, 
+        this.ancestorList, 
+        () => true,
+        (nodename: string) => { 
+          if(this.optimizabilities[nodename]){
+            return this.optimizabilities[nodename]
+          }
+          return 0
+        },
+        (previous: number[], thisNodeContribution: number) => {
+          return Math.max(...previous, thisNodeContribution);
+        })
+    })
+  }
+
+  getOptimizabilityClasses(nodeNames: string[]){
+    let valueToNodeName: OptimizabilityToNodes={}
+    nodeNames.forEach((nodeName:string) => {
+      let optimValue=this.optimizabilities[nodeName];
+      if(!(optimValue in valueToNodeName)){
+        let emptyStrings: string[]=[]
+        valueToNodeName[optimValue]=emptyStrings
+      }
+      valueToNodeName[optimValue].push(nodeName)
+    })
+    let optims=Object.keys(valueToNodeName).map((optimAsString:string) => {
+      return parseInt(optimAsString)
+    })
+    optims.sort()
+    return optims.map((optimValue:number) => {
+      return valueToNodeName[optimValue]
+    })
   }
 
   arrowInterpretation(
@@ -392,7 +443,7 @@ export default class RelationLinks {
         .map((ut: UntransformedLabel) => {
           //this computes an estimated length of the labels connected to ut in the same category as ut. 
           //It adds 10 for each label to account for space between labels.
-          return this.followMaximumSumOfSummary(
+          return this.followMaximumOfSummary(
             ut.nodeName,
             this.descendantList,
             (d: string) => this.NodeType[d] === cat,
@@ -644,11 +695,12 @@ export default class RelationLinks {
     // return childType === NodeType.CAUSE_CATEGORY ? "no-arrow" : "arrow";
   }
 
-  followMaximumSumOfSummary(
+  followMaximumOfSummary(
     nodeName: string,
     nodeDic: NodeDic,
     continueTest: (name: string) => boolean,
-    summary: (name: string) => number
+    summary: (name: string) => number,
+    combineContributions: (fromFurtherDown: number[], thisNodeContribution: number) => number = (nums:number[],num:number) => Math.max(...nums)+num,
   ): number {
     if (!continueTest(nodeName)) {
       return 0;
@@ -657,9 +709,9 @@ export default class RelationLinks {
       return summary(nodeName);
     }
     let tmp = nodeDic[nodeName].map((d: string) => {
-      return this.followMaximumSumOfSummary(d, nodeDic, continueTest, summary);
+      return this.followMaximumOfSummary(d, nodeDic, continueTest, summary, combineContributions);
     });
-    return Math.max(...tmp) + summary(nodeName);
+    return combineContributions(tmp, summary(nodeName));
   }
 
   followGraph(

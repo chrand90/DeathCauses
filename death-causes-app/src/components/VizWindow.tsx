@@ -78,7 +78,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
           new Deathcause(deathcause, key)
         );
       } )
-      const c = new CalculationFacade(database);
+      const c = new CalculationFacade(database, this.props.relationLinkData);
       this.computerController = new ComputeController(
         this.props.relationLinkData,
         null,

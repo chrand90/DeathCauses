@@ -27,8 +27,8 @@ def remove_duplicates_and_Age(listi):
 def combine_relations(relations):
     with open(FACTORQUESTIONS_FILE, "r") as f:
         factors = json.load(f)
-    for factor in factors:
-        relations[factor] = {"type": "Input factor", "ancestors": []}
+    for factor,factor_info in factors.items():
+        relations[factor] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     relations.update(computed_factors)

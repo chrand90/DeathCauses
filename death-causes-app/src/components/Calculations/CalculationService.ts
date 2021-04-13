@@ -9,6 +9,7 @@ import { RiskRatioTableCellInterface } from "../database/RiskRatioTableCell/Risk
 import { DataRow } from "../PlottingData";
 import { SurvivalCurveData } from "./SurvivalCurveData";
 import calculateInnerProbabilities from './DebtInheritance';
+import RelationLinks from "../../models/RelationLinks";
 
 interface InnerCausesForAllAges {
     [key: string]: DataRow[]
@@ -25,6 +26,12 @@ interface UStar {
 }
 
 export class RiskRatioCalculationService {
+    rdat: RelationLinks;
+
+    constructor(rdat: RelationLinks){
+        this.rdat=rdat;
+    }
+
     private readonly MAX_AGE = 120;
 
     calculateSurvivalCurve(submittedFactorAnswers: FactorAnswers, deathcauses: DeathCause[]): SurvivalCurveData[] {
@@ -121,7 +128,7 @@ export class RiskRatioCalculationService {
             let innerCausesForAges: DataRow[] = []
 
             deathCauses.forEach(deathCause => {
-                innerCausesForAges.push(calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
+                innerCausesForAges.push(calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause, this.rdat))
             })
 
             totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)

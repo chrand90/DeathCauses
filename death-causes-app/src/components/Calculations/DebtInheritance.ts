@@ -2,8 +2,9 @@ import { FactorAnswers } from "../../models/Factors";
 import { DataRow } from "../PlottingData";
 import DeathCause from "../database/Deathcause";
 import { RiskRatioTable } from "../database/RiskRatioTable";
+import RelationLinks from "../../models/RelationLinks";
 
-const TOLERABLE_NUMERIC_ERROR=1e-11
+const TOLERABLE_NUMERIC_ERROR = 1e-11;
 
 interface Accounts {
   [key: string]: number;
@@ -14,17 +15,15 @@ interface SetToNumber {
 }
 
 const cartesianProduct = (a: string[][]) => {
-  let defaultString: string[]=[]
-  let defaultString2: string[][]=[defaultString];
-  return a.reduce(
-    (a: string[][], b: string[]):string[][] =>{
-      return a.flatMap((d: string[]):string[][] => {
-        return b.map((e: string) => {
-          return [d, e].flat();
-        });
-      })},
-    defaultString2
-  );
+  let defaultString: string[] = [];
+  let defaultString2: string[][] = [defaultString];
+  return a.reduce((a: string[][], b: string[]): string[][] => {
+    return a.flatMap((d: string[]): string[][] => {
+      return b.map((e: string) => {
+        return [d, e].flat();
+      });
+    });
+  }, defaultString2);
 };
 
 const getAllSubsets = (theArray: any) =>
@@ -40,36 +39,36 @@ function getSortedSubsets(l: string[]): string[][] {
   });
 }
 
-function trivialUsAndSs(factorNames: string[]){
+function trivialUsAndSs(factorNames: string[]) {
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
   let sortedSubsets = getSortedSubsets(factorNames);
   sortedSubsets.forEach((set: string[], index: number) => {
     let key = set.sort().join(",");
-    if(set.length===0){
-      SDic[key]=1
+    if (set.length === 0) {
+      SDic[key] = 1;
+    } else {
+      SDic[key] = 0;
     }
-    else{
-      SDic[key]=0
-    }
-    UDic[key]=1
-  })
-  let RRmax=1
-  return {UDic, SDic, RRmax};
+    UDic[key] = 1;
+  });
+  let RRmax = 1;
+  return { UDic, SDic, RRmax };
 }
 
 function computeUsAndSs(
   riskRatioTable: RiskRatioTable,
-  factorAnswersSubmitted: FactorAnswers
+  factorAnswersSubmitted: FactorAnswers,
+  freeFactors: string[],
+  fixedFactors: string[]
 ) {
-  const factorNames= riskRatioTable.getFactorNamesWithoutAge()
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
-  let sortedSubsets = getSortedSubsets(factorNames);
+  let sortedSubsets = getSortedSubsets(freeFactors);
   sortedSubsets.forEach((set: string[], index: number) => {
     let key = set.sort().join(",");
     UDic[key] = riskRatioTable.interpolation
-      .getMinimumRR(factorAnswersSubmitted, set)
+      .getMinimumRR(factorAnswersSubmitted, set.concat(fixedFactors))
       .getValue();
     SDic[key] = UDic[key];
     for (let j = 0; j < index; j++) {
@@ -84,27 +83,22 @@ function computeUsAndSs(
       }
     }
   });
-  let RRmax = UDic[factorNames.sort().join(",")];
+  let RRmax = UDic[freeFactors.sort().join(",")];
   return { UDic, SDic, RRmax };
 }
 
-function naiveDebtComputation(
-  SDics: SetToNumber[],
-  totalRR: number
-): SetToNumber {
+function naiveDebtComputation(SDics: SetToNumber[]): SetToNumber {
   let innerCauses: Accounts = {};
   let allKeys = SDics.map((SDic) => {
     return Object.keys(SDic);
   });
   let cartesProduct = cartesianProduct(allKeys);
-  cartesProduct.map((keySetsToCombine: string[]) => {
+  cartesProduct.forEach((keySetsToCombine: string[]) => {
     let multiplicities: Accounts = {}; //when the same factor appears many times we want to combine the different
     let Ss = keySetsToCombine.map((key: string, index: number) => {
       key.split(",").forEach((factorName: string) => {
-        if(factorName===""){
-
-        }
-        else if (multiplicities[factorName]) {
+        if (factorName === "") {
+        } else if (multiplicities[factorName]) {
           multiplicities[factorName] += 1;
         } else {
           multiplicities[factorName] = 1;
@@ -118,46 +112,134 @@ function naiveDebtComputation(
     let SsProduct = Ss.reduce(function (a, b) {
       return a * b;
     }, 1);
-    let divisor = totalRR<1e-8 ? 1 : totalRR
     Object.entries(multiplicities).forEach(([factorName, multiplicity]) => {
       if (innerCauses[factorName]) {
-        innerCauses[factorName] +=
-          ((multiplicity * SsProduct) / setSize) / divisor;
+        innerCauses[factorName] += (multiplicity * SsProduct) / setSize;
       } else {
-        innerCauses[factorName] =
-          ((multiplicity * SsProduct) / setSize) / divisor;
+        innerCauses[factorName] = (multiplicity * SsProduct) / setSize;
       }
     });
   });
-  Object.entries(innerCauses).forEach(([factorName, contrib])=> {
-    if(contrib<0){
-      if(contrib>-TOLERABLE_NUMERIC_ERROR){
-        innerCauses[factorName]=0
-      }
-      else{
-        throw Error("An inner cause was given a negative value. Inner cause:"+factorName+"="+(contrib).toString())
+  Object.entries(innerCauses).forEach(([factorName, contrib]) => {
+    if (contrib < 0) {
+      if (contrib > -TOLERABLE_NUMERIC_ERROR) {
+        innerCauses[factorName] = 0;
+      } else {
+        throw Error(
+          "An inner cause was given a negative value. Inner cause:" +
+            factorName +
+            "=" +
+            contrib.toString()
+        );
       }
     }
-    
-  })
+  });
   return innerCauses;
 }
 
-function isAnyMissing(factorNames: string[], factorAnswers: FactorAnswers):boolean{
-  const noMissing= factorNames.every((factorName: string) => {
-    return factorAnswers[factorName]!==""
+function isAnyMissing(
+  factorNames: string[],
+  factorAnswers: FactorAnswers
+): boolean {
+  const noMissing = factorNames.every((factorName: string) => {
+    return factorAnswers[factorName] !== "";
   });
-  return !noMissing
+  return !noMissing;
+}
+
+function normalizeInnerCauses(innerCauses: SetToNumber, totalRR: number) {
+  let divisor = totalRR > 1e-8 ? totalRR : 1;
+  Object.entries(innerCauses).forEach(([factorName, value]) => {
+    innerCauses[factorName] = innerCauses[factorName] / divisor;
+  });
+  return innerCauses;
+}
+
+function getNormalizationFactorsAndMissingRFGindices(
+  age: number,
+  deathcause: DeathCause,
+  factorAnswersSubmitted: FactorAnswers
+) {
+  let normalizingFactors = 1;
+  let riskFactorGroupsWithMissing: number[] = [];
+  deathcause.riskFactorGroups.forEach((rfg, index) => {
+    const factorNamesOfThisGroup: string[] = Array.from(
+      rfg.getAllFactorsInGroup()
+    );
+    const anyMissing = isAnyMissing(
+      factorNamesOfThisGroup,
+      factorAnswersSubmitted
+    );
+    if (anyMissing) {
+      riskFactorGroupsWithMissing.push(index);
+    } else {
+      normalizingFactors /= rfg.normalisationFactors.getPrevalence(age);
+    }
+  });
+
+  return { normalizingFactors, riskFactorGroupsWithMissing };
+}
+
+function computeForSameOptimizabilityClass(
+  deathcause: DeathCause,
+  previouslyCountouredFactors: string[],
+  optimClassMembers: string[],
+  factorAnswersSubmitted: FactorAnswers,
+  riskFactorGroupsWithMissing: number[]
+) {
+  let marginalContributions: SetToNumber[] = [];
+  let totalRR = 1;
+  deathcause.riskFactorGroups.forEach((rfg, index) => {
+    let factorNamesOfThisGroup: string[] = Array.from(
+      rfg.getAllFactorsInGroup()
+    );
+    let factorNamesOnContour = factorNamesOfThisGroup.filter(
+      (factorName: string) => {
+        return optimClassMembers.includes(factorName);
+      }
+    );
+    if (!riskFactorGroupsWithMissing.includes(index)) {
+      rfg.riskRatioTables.forEach((rrt) => {
+        let fixedFactors = previouslyCountouredFactors.filter(
+          (factorName: string) => {
+            return previouslyCountouredFactors.includes(factorName);
+          }
+        );
+        let freeFactors = rrt.getFactorNames().filter((factorName: string) => {
+          return factorNamesOnContour.includes(factorName);
+        });
+        const { SDic, RRmax } = computeUsAndSs(
+          rrt,
+          factorAnswersSubmitted,
+          freeFactors,
+          fixedFactors
+        );
+        totalRR *= RRmax;
+        marginalContributions.push(SDic);
+      });
+    } else {
+      rfg.riskRatioTables.forEach((rrt) => {
+        let freeFactors = rrt.getFactorNames().filter((factorName: string) => {
+          return factorNamesOnContour.includes(factorName);
+        });
+        const { SDic } = trivialUsAndSs(freeFactors);
+        marginalContributions.push(SDic);
+      });
+    }
+  });
+  const groupInnerCauses = naiveDebtComputation(marginalContributions);
+  const totalRROfThisAndLowerOptimClasses = totalRR;
+  return { groupInnerCauses, totalRROfThisAndLowerOptimClasses };
 }
 
 export default function calculateInnerProbabilities(
   factorAnswersSubmitted: FactorAnswers,
-  deathcause: DeathCause
+  deathcause: DeathCause,
+  rdat: RelationLinks,
+  useOptimizabilities: boolean = true
 ): DataRow {
   const age: number = factorAnswersSubmitted["Age"] as number;
-  let marginalContributions: SetToNumber[] = [];
   let totalRR: number = 1;
-  let normalizingFactors: number = 1;
   const agePrevalence = deathcause.ages.getPrevalence(age);
   if (deathcause.riskFactorGroups.length === 0) {
     return {
@@ -166,30 +248,44 @@ export default function calculateInnerProbabilities(
       totalProb: agePrevalence,
     };
   }
-  deathcause.riskFactorGroups.forEach((rfg) => {
-    let factorNamesOfThisGroup:string[]= Array.from(rfg.getAllFactorsInGroup())
-    let anyMissing=isAnyMissing(factorNamesOfThisGroup, factorAnswersSubmitted)
-    if(!anyMissing){
-      rfg.riskRatioTables.forEach((rrt) => {
-        const { UDic, SDic, RRmax } = computeUsAndSs(
-          rrt,
-          factorAnswersSubmitted
-        );
-        totalRR *= RRmax;
-        marginalContributions.push(SDic);
-      });
-      normalizingFactors /= rfg.normalisationFactors.getPrevalence(age);
+  let optimDividedfactorNames: string[][];
+  if (useOptimizabilities) {
+    optimDividedfactorNames = deathcause.getOptimizabilityClasses(rdat);
+  } else {
+    optimDividedfactorNames = [deathcause.getAllFactorNamesWithoutAge()];
+  }
+  let innerCauses: SetToNumber = {};
+  let previouslyCountouredFactors: string[] = [];
+  const {
+    normalizingFactors,
+    riskFactorGroupsWithMissing,
+  } = getNormalizationFactorsAndMissingRFGindices(
+    age,
+    deathcause,
+    factorAnswersSubmitted
+  );
+  optimDividedfactorNames.forEach(
+    (optimClassMembers: string[], index: number) => {
+      const {
+        groupInnerCauses,
+        totalRROfThisAndLowerOptimClasses,
+      } = computeForSameOptimizabilityClass(
+        deathcause,
+        previouslyCountouredFactors,
+        optimClassMembers,
+        factorAnswersSubmitted,
+        riskFactorGroupsWithMissing
+      );
+      innerCauses = { ...groupInnerCauses, ...innerCauses };
+      previouslyCountouredFactors = previouslyCountouredFactors.concat(
+        optimClassMembers
+      );
+      if (index === optimDividedfactorNames.length - 1) {
+        totalRR = totalRROfThisAndLowerOptimClasses;
+      }
     }
-    else{
-      rfg.riskRatioTables.forEach((rrt) => {
-        const { UDic, SDic, RRmax } = trivialUsAndSs(
-          rrt.getFactorNamesWithoutAge()
-        );
-        marginalContributions.push(SDic);
-      });
-    }
-  });
-  const innerCauses = naiveDebtComputation(marginalContributions, totalRR);
+  );
+  innerCauses = normalizeInnerCauses(innerCauses, totalRR);
   return {
     innerCauses: innerCauses,
     totalProb: totalRR * normalizingFactors * agePrevalence,
