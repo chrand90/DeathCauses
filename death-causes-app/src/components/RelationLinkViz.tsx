@@ -12,7 +12,7 @@ import RelationLinks, {
 import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
 
-const SLIGHTLY_DARKER_GRAY="#aaaaaa"
+const SLIGHTLY_DARKER_GRAY="#707070"
 interface PlottingNodeDicValue {
   bbox: SVGRect;
   x: number;
@@ -105,7 +105,7 @@ export default class RelationLinkViz {
         return undefined;
       })
       .style("fill", SLIGHTLY_DARKER_GRAY)
-      .style("font-size","12px")
+      .style("font-size","14px")
       .attr("text-anchor", "start")
       .attr("alignment-baseline", "hanging")
       .style("opacity", function(d:any){
