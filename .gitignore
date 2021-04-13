@@ -50,3 +50,6 @@ npm-debug.log
 
 # any R histories that may be saved
 *.Rhistory
+
+#the extra copy of causes.json and other similar files
+/compile/*.json
