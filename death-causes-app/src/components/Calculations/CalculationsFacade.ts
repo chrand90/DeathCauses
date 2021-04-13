@@ -22,4 +22,8 @@ export class CalculationFacade {
     calculateSurvivalCurve = (submittedFactorAnswers: FactorAnswers) => {
         return this.probabilityOfDeathCauseCalculation.calculateSurvivalCurve(submittedFactorAnswers, this.deathCauses)
     }
+
+    calculateLifeExpentancy = (submittedFactorAnswers: FactorAnswers) => {
+        return this.probabilityOfDeathCauseCalculation.calculateLifeExpentancy(submittedFactorAnswers, this.deathCauses)
+    }
 }

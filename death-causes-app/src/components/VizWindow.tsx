@@ -34,7 +34,7 @@ interface SummaryPagedata {
 interface VizWindowStates {
   database: DataSet | null;
   survivalData: SurvivalCurveData[];
-  summaryPageData: SummaryPagedata | null;
+  summaryPageData: number | null;
   initializedDatabase: boolean;
 }
 
@@ -74,6 +74,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       );
       this.setState({ survivalData: b! });
     });
+    this.setState({summaryPageData: this.computerController?.computeLifeExpentancy(this.props.factorAnswersSubmitted!)})
   }
 
   loadFactorDatabase() {

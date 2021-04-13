@@ -45,6 +45,24 @@ export class RiskRatioCalculationService {
         return res
     }
 
+    calculateLifeExpentancy(submittedFactorAnswers: FactorAnswers, deathcauses: DeathCause[]): any {
+        let probabilitiesPerDeathCause = this.calculateProbabilitiesOfDeathCauses(submittedFactorAnswers, deathcauses)
+        let deathCauseProbabilities = probabilitiesPerDeathCause.probabilitiesOfAllDeathCauses.map(x => x.probabiltiesOfDeathCause)
+
+        let summedProbability = deathCauseProbabilities.reduce((sum, current) => current.map((val, i) => ((sum[i] || 0) + val)), [])
+        let probabiltyOfBeingAlive = [1]
+        probabiltyOfBeingAlive.push(...summedProbability.map(x => 1 - x))
+        let res = 0;
+        let ages = probabilitiesPerDeathCause.ages
+        let currentProbOfBeingAlive = 1;
+
+        for (let index = 0; index < ages.length; index++) {
+            res += ages[index] * summedProbability[index] * currentProbOfBeingAlive
+            currentProbOfBeingAlive *= probabiltyOfBeingAlive[index + 1]
+        }
+        return res;
+    }
+
     calculateProbabilitiesOfDeathCauses(submittedFactorAnswers: FactorAnswers, deathcauses: DeathCause[]): ProbabilitiesOfAllDeathCauses {
         let currentAge: number = +submittedFactorAnswers['Age']
         let ageRange: number[] = this.getAgeRange(currentAge);
@@ -97,9 +115,9 @@ export class RiskRatioCalculationService {
 
         let res = 1;
         riskFactorGroup.riskRatioTables.forEach(riskRatioTable => {
-            let factor=riskRatioTable.getRiskRatio(factorAnswers)
-            if(factor<0){
-                console.log("factor: "+factor.toString())
+            let factor = riskRatioTable.getRiskRatio(factorAnswers)
+            if (factor < 0) {
+                console.log("factor: " + factor.toString())
             }
             res = res * factor
         });
@@ -128,7 +146,7 @@ export class RiskRatioCalculationService {
 
             innerCausesForAges.forEach(innerCause => innerCause.totalProb *= currentProbOfBeingAlive)
 
-            currentProbOfBeingAlive *= 1 - Math.min(1,totalProbOfDying)
+            currentProbOfBeingAlive *= 1 - Math.min(1, totalProbOfDying)
 
             innerCausesForAges.forEach(innerCause => {
                 innerCausesForAllAges[innerCause.name].push(innerCause)
@@ -152,7 +170,7 @@ export class RiskRatioCalculationService {
         if (sum === 0) {
             let emptyInnerCause: ProbabilityKeyValue = {}
             for (let factor of factors) {
-                emptyInnerCause[factor]=0
+                emptyInnerCause[factor] = 0
             }
             return { name: deathCauseName, totalProb: 0, innerCauses: emptyInnerCause }
         }
@@ -270,7 +288,7 @@ export class RiskRatioCalculationService {
     //                 res[factor]=0
     //             });
     //         }
-            
+
     //     })
     //     return res;
     // }

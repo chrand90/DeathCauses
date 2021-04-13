@@ -79,5 +79,13 @@ export default class ComputeController {
         // })
     }
 
+    computeLifeExpentancy(factorAnswers: FactorAnswers): any { //Promise<SurvivalCurveData[]>{
+        return this.calculationFacade.calculateLifeExpentancy(updateDicToFactorAnswers(this.compute(factorAnswers)));
+        // return this.compute(factorAnswers).then((udic:UpdateDic) => {
+        //     return updateDicToFactorAnswers(udic);
+        // }).then((fAnswers: FactorAnswers) => {
+        //     return this.calculationFacade.calculateSurvivalCurve(fAnswers);
+        // })
+    }
 
 } 
