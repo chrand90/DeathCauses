@@ -90,7 +90,7 @@ interface DirectionInfo {
   usedKeys: string[];
 }
 
-interface XDivision {
+export interface XDivision {
   x0: number;
   width: number;
   cat: NodeType;
@@ -370,18 +370,12 @@ export default class RelationLinks {
     } else if (fromType === NodeType.CONDITION) {
       res += "The status of " + fromNode + " is used ";
     } else if (fromType === NodeType.CAUSE_CATEGORY) {
-      res +=
-        "The risk factors common to all types of " + fromNode + " are used ";
+      return toNode +" is a type of " + fromNode 
     }
     if (toType === NodeType.COMPUTED_FACTOR) {
       res += "to compute " + toNode;
     } else if (toType === NodeType.CONDITION) {
       res += "to estimate the status of " + toNode;
-    } else if (
-      toType === NodeType.CAUSE_CATEGORY &&
-      fromType === NodeType.CAUSE_CATEGORY
-    ) {
-      res += "as risk factors for all types of " + toNode;
     } else if (toType === NodeType.CAUSE_CATEGORY) {
       res += "as a risk factor for all types of " + toNode;
     } else if (toType === NodeType.CAUSE) {
@@ -579,13 +573,11 @@ export default class RelationLinks {
     });
     let xDivisions: XDivision[] = [];
     for (let index = 0; index < cumWeights.length - 1; index++) {
-      if (weights[index] > 0) {
-        xDivisions.push({
-          x0: cumWeights[index],
-          width: weights[index],
-          cat: NODE_ORDER[index],
-        });
-      }
+      xDivisions.push({
+        x0: cumWeights[index],
+        width: weights[index],
+        cat: NODE_ORDER[index],
+      });
     }
 
     return { transformedLabels: resDat, xDivisions: xDivisions };
@@ -803,10 +795,11 @@ export default class RelationLinks {
     childType: string,
     xDirection: (x: number) => number
   ) {
-    if (xDirection(0.2) === 0.2) {
-      return parentType === NodeType.CAUSE_CATEGORY ? "no-arrow" : "arrow";
-    }
-    return childType === NodeType.CAUSE_CATEGORY ? "no-arrow" : "arrow";
+    return "arrow";
+    // if (xDirection(0.2) === 0.2) {
+    //   return parentType === NodeType.CAUSE_CATEGORY ? "no-arrow" : "arrow";
+    // }
+    // return childType === NodeType.CAUSE_CATEGORY ? "no-arrow" : "arrow";
   }
 
   followMaximumOfSummary(
