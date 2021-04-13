@@ -187,7 +187,7 @@ export default class Location {
 
   setWithVarNameButInterpolationX(dict: VarNameToCoordinateWithUndefined) {
     Object.entries(dict).forEach(([key, value]) => {
-      if (isXVariableName(key) && value) {
+      if (isXVariableName(key) && value!==undefined) {
         let realVarName = this.interpolationVariables.getRealNameFromXVarName(
           key
         );

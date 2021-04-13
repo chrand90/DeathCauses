@@ -3,6 +3,7 @@ import { DataRow } from "../PlottingData";
 import DeathCause from "../database/Deathcause";
 import { RiskRatioTable } from "../database/RiskRatioTable";
 import RelationLinks from "../../models/RelationLinks";
+import { BestValues } from "./ConsensusBestValue";
 
 const TOLERABLE_NUMERIC_ERROR = 1e-11;
 
@@ -60,16 +61,21 @@ function computeUsAndSs(
   riskRatioTable: RiskRatioTable,
   factorAnswersSubmitted: FactorAnswers,
   freeFactors: string[],
-  fixedFactors: string[]
+  fixedFactors: string[],
+  valueStore: BestValues,
 ) {
+  const fixedFactorSet=new Set<string>(fixedFactors);
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
   let sortedSubsets = getSortedSubsets(freeFactors);
   sortedSubsets.forEach((set: string[], index: number) => {
     let key = set.sort().join(",");
-    UDic[key] = riskRatioTable.interpolation
-      .getMinimumRR(factorAnswersSubmitted, set.concat(fixedFactors))
-      .getValue();
+    const varsEqualingUserInput= set.concat(fixedFactors)
+    const minLocationAndValue=riskRatioTable.interpolation
+      .getMinimumRR(factorAnswersSubmitted, varsEqualingUserInput)
+    UDic[key] = minLocationAndValue.getValue();
+    valueStore.addContribution(minLocationAndValue, varsEqualingUserInput);
+    
     SDic[key] = UDic[key];
     for (let j = 0; j < index; j++) {
       let candidateSubset = sortedSubsets[j];
@@ -185,7 +191,8 @@ function computeForSameOptimizabilityClass(
   previouslyCountouredFactors: string[],
   optimClassMembers: string[],
   factorAnswersSubmitted: FactorAnswers,
-  riskFactorGroupsWithMissing: number[]
+  riskFactorGroupsWithMissing: number[],
+  valueStore: BestValues,
 ) {
   let marginalContributions: SetToNumber[] = [];
   let totalRR = 1;
@@ -212,7 +219,8 @@ function computeForSameOptimizabilityClass(
           rrt,
           factorAnswersSubmitted,
           freeFactors,
-          fixedFactors
+          fixedFactors,
+          valueStore
         );
         totalRR *= RRmax;
         marginalContributions.push(SDic);
@@ -264,6 +272,7 @@ export default function calculateInnerProbabilities(
     deathcause,
     factorAnswersSubmitted
   );
+  const valueStore=new BestValues(optimDividedfactorNames, factorAnswersSubmitted);
   optimDividedfactorNames.forEach(
     (optimClassMembers: string[], index: number) => {
       const {
@@ -274,7 +283,8 @@ export default function calculateInnerProbabilities(
         previouslyCountouredFactors,
         optimClassMembers,
         factorAnswersSubmitted,
-        riskFactorGroupsWithMissing
+        riskFactorGroupsWithMissing,
+        valueStore
       );
       innerCauses = { ...groupInnerCauses, ...innerCauses };
       previouslyCountouredFactors = previouslyCountouredFactors.concat(
@@ -290,5 +300,6 @@ export default function calculateInnerProbabilities(
     innerCauses: innerCauses,
     totalProb: totalRR * normalizingFactors * agePrevalence,
     name: deathcause.deathCauseName,
+    comparisonWithBestValues: valueStore,
   };
 }

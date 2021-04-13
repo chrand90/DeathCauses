@@ -138,7 +138,6 @@ export default class BarChart {
     },
 	
   ) {
-
     //Initializers
     this.yBars = d3.scaleBand();
     this.xscale = d3.scaleLinear();
@@ -474,7 +473,7 @@ export default class BarChart {
     vis.stip = d3Tip()
       .attr("class", "d3-tip")
       .html((d: SquareSection) => {
-        return d.cause;
+        return d.comparison ? d.comparison : d.cause;
       })
       .direction("s")
       .offset([10, 0]);
@@ -964,7 +963,7 @@ export default class BarChart {
 
   async update(dataset: DataSet, diseaseToWidth: string | null, durationPerTransition: number=500) {
 
-	await this.waitForTransitionsToBeFree(0,0.5);
+	  await this.waitForTransitionsToBeFree(0,0.5);
     const vis = this;
 
     const {

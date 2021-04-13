@@ -10,6 +10,7 @@ import { DataRow } from "../PlottingData";
 import { SurvivalCurveData } from "./SurvivalCurveData";
 import calculateInnerProbabilities from './DebtInheritance';
 import RelationLinks from "../../models/RelationLinks";
+import { mergeBestValues } from "./ConsensusBestValue";
 
 interface InnerCausesForAllAges {
     [key: string]: DataRow[]
@@ -144,8 +145,8 @@ export class RiskRatioCalculationService {
         })
 
         let res: DataRow[] = []
-        for (let key of Object.keys(innerCausesForAllAges)) {
-            res.push(this.combineMultipleInnerCauses(innerCausesForAllAges[key]))
+        for (let deathcause of Object.keys(innerCausesForAllAges)) {
+            res.push(this.combineMultipleInnerCauses(innerCausesForAllAges[deathcause]))
         }
         return res;
     }
@@ -173,7 +174,13 @@ export class RiskRatioCalculationService {
             })
         }
 
-        return { name: deathCauseName, totalProb: sum, innerCauses: combinedInnerCause }
+        const combinedValueStores=mergeBestValues(
+            innerCauses.map((cause) => {
+                return cause.comparisonWithBestValues
+            })
+        )
+
+        return { name: deathCauseName, totalProb: sum, innerCauses: combinedInnerCause, comparisonWithBestValues: combinedValueStores };
     }
 
 
