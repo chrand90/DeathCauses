@@ -1,7 +1,7 @@
 #credibility=300
 #
 #
-SmokeTypicalAmmount	SmokeSinceStop	freq
+SmokeTypicalAmount	SmokeSinceStop	freq
 0	0	0.586
 0	0,1	0
 0	1,3	0

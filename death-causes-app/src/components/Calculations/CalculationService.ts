@@ -1,3 +1,4 @@
+import { getEffectiveTypeRoots } from "typescript";
 import { FactorAnswers } from "../../models/Factors";
 import { ProbabilityKeyValue } from "../../models/ProbabilityKeyValue";
 import DeathCause from "../database/Deathcause";
@@ -7,6 +8,7 @@ import { MinimumRiskRatios } from "../database/RiskRatioTable";
 import { RiskRatioTableCellInterface } from "../database/RiskRatioTableCell/RiskRatioTableCellInterface";
 import { DataRow } from "../PlottingData";
 import { SurvivalCurveData } from "./SurvivalCurveData";
+import calculateInnerProbabilities from './DebtInheritance';
 
 interface InnerCausesForAllAges {
     [key: string]: DataRow[]
@@ -19,7 +21,6 @@ interface MinimumFactorInputs {
 interface UStar {
     propForDeathcause: number,
     minProbForDeathcause: number,
-    minFactorIntervals: MinimumFactorInputs,
     minFactorValues: FactorAnswers;
 }
 
@@ -96,7 +97,11 @@ export class RiskRatioCalculationService {
 
         let res = 1;
         riskFactorGroup.riskRatioTables.forEach(riskRatioTable => {
-            res = res * riskRatioTable.getRiskRatio(factorAnswers)
+            let factor=riskRatioTable.getRiskRatio(factorAnswers)
+            if(factor<0){
+                console.log("factor: "+factor.toString())
+            }
+            res = res * factor
         });
         return res / riskFactorGroup.normalisationFactors.getPrevalence(age)
     }
@@ -116,7 +121,7 @@ export class RiskRatioCalculationService {
             let innerCausesForAges: DataRow[] = []
 
             deathCauses.forEach(deathCause => {
-                innerCausesForAges.push(this.calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
+                innerCausesForAges.push(calculateInnerProbabilities(factorAnswersSubmittedUpdated, deathCause))
             })
 
             totalProbOfDying = innerCausesForAges.map(it => it.totalProb).reduce((first, second) => first + second, 0)
@@ -166,106 +171,107 @@ export class RiskRatioCalculationService {
 
 
 
-    calculateInnerProbabilities(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): DataRow {
-        let uStar = this.calculateUStar(factorAnswersSubmitted, deathcause);
-        let firstOrderDecomposition = this.calculateFirstOrderDecomposition(factorAnswersSubmitted, deathcause);
+    // calculateInnerProbabilities(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): DataRow {
+    //     let uStar = this.calculateUStar(factorAnswersSubmitted, deathcause);
+    //     let firstOrderDecomposition = this.calculateFirstOrderDecomposition(factorAnswersSubmitted, deathcause);
 
-        let ratio
-        if (uStar.propForDeathcause < 1e-12) {
-            ratio = 0
-        } else {
-            ratio = Math.max(0,uStar.propForDeathcause - uStar.minProbForDeathcause) / uStar.propForDeathcause
-        }
-        let innerCauses: ProbabilityKeyValue = {}
-        for (let key of Object.keys(firstOrderDecomposition)) {
-            innerCauses[key] = firstOrderDecomposition[key] * ratio
-        }
+    //     let ratio
+    //     if (uStar.propForDeathcause < 1e-12) {
+    //         ratio = 0
+    //     } else {
+    //         ratio = Math.max(0,uStar.propForDeathcause - uStar.minProbForDeathcause) / uStar.propForDeathcause
+    //     }
+    //     let innerCauses: ProbabilityKeyValue = {}
+    //     for (let key of Object.keys(firstOrderDecomposition)) {
+    //         innerCauses[key] = firstOrderDecomposition[key] * ratio
+    //     }
 
-        let res = {
-            name: deathcause.deathCauseName,
-            totalProb: uStar.propForDeathcause,
-            innerCauses: innerCauses
-        }
+    //     let res = {
+    //         name: deathcause.deathCauseName,
+    //         totalProb: uStar.propForDeathcause,
+    //         innerCauses: innerCauses
+    //     }
 
-        return res
-    }
+    //     return res
+    // }
 
-    private calculateUStar(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): UStar {
-        let probForDeathcause = this.calculateProbabilityForSingleCauseAndAge(factorAnswersSubmitted, factorAnswersSubmitted['Age'] as number, deathcause)
-        let minimumFactorIntervals: MinimumFactorInputs = {}
-        deathcause.riskFactorGroups.forEach(rfg => {
-            rfg.riskRatioTables.forEach(rrt => {
-                minimumFactorIntervals = { ...minimumFactorIntervals, ...rrt.getMinimumRRFactors() }
-            })
-        })
+    // private calculateUStar(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): UStar {
+    //     let probForDeathcause = this.calculateProbabilityForSingleCauseAndAge(factorAnswersSubmitted, factorAnswersSubmitted['Age'] as number, deathcause)
+    //     let minimumFactorInputs: FactorAnswers = {}
+    //     deathcause.riskFactorGroups.forEach(rfg => {
+    //         rfg.riskRatioTables.forEach(rrt => {
+    //             //checking for missing:
+    //             const noMissing=rrt.getFactorNames().every( (factorName:string) => {
+    //                 return factorAnswersSubmitted[factorName]!==""
+    //             })
+    //             if(noMissing){
+    //                 minimumFactorInputs = { ...minimumFactorInputs, ...rrt.getMinimumRRFactors() }
+    //             }
+    //             else{
+    //                 rrt.getFactorNames().forEach( (factorName:string) => {
+    //                     minimumFactorInputs[factorName]=""
+    //                 })
+    //             }
+    //         })
+    //     })
 
-        let minimumFactorInputs: FactorAnswers = {}
-        for (var key in minimumFactorIntervals) {
-            if(factorAnswersSubmitted[key]===""){
-                minimumFactorInputs[key]=""
-            }
-            else{
-                minimumFactorInputs[key] = minimumFactorIntervals[key].getValueInCell()
-            }
-        }
+    //     let minProbForDeathcause = this.calculateProbabilityForSingleCauseAndAge(minimumFactorInputs, factorAnswersSubmitted['Age'] as number, deathcause)
 
-        let minProbForDeathcause = this.calculateProbabilityForSingleCauseAndAge(minimumFactorInputs, factorAnswersSubmitted['Age'] as number, deathcause)
+    //     return { propForDeathcause: probForDeathcause, minProbForDeathcause: minProbForDeathcause, minFactorValues: minimumFactorInputs }
+    // }
 
-        return { propForDeathcause: probForDeathcause, minProbForDeathcause: minProbForDeathcause, minFactorIntervals: minimumFactorIntervals, minFactorValues: minimumFactorInputs }
-    }
+    // private calculateFirstOrderDecomposition(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): ProbabilityKeyValue {
+    //     let res: ProbabilityKeyValue = {}
+    //     for (let rfg of deathcause.riskFactorGroups) {
+    //         let rfgRes = this.calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted, rfg);
+    //         res = { ...res, ...rfgRes };
+    //     }
 
-    private calculateFirstOrderDecomposition(factorAnswersSubmitted: FactorAnswers, deathcause: DeathCause): ProbabilityKeyValue {
-        let res: ProbabilityKeyValue = {}
-        for (let rfg of deathcause.riskFactorGroups) {
-            let rfgRes = this.calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted, rfg);
-            res = { ...res, ...rfgRes };
-        }
+    //     let sum = 0;
+    //     for (let key of Object.keys(res)) {
+    //         sum += res[key];
+    //     }
+    //     for (let key of Object.keys(res)) {
+    //         if (sum === 0) {
+    //             res[key] = 1 / Object.keys(res).length
+    //         } else {
+    //             res[key] = res[key] / sum;
+    //         }
+    //     }
 
-        let sum = 0;
-        for (let key of Object.keys(res)) {
-            sum += res[key];
-        }
-        for (let key of Object.keys(res)) {
-            if (sum === 0) {
-                res[key] = 1 / Object.keys(res).length
-            } else {
-                res[key] = res[key] / sum;
-            }
-        }
+    //     return res;
+    // }
 
-        return res;
-    }
+    // //todo: returner objekter med de optimale faktorværdier og om det submitted faktor værdi er for lidt / for meget ift. den minimale.
+    // private calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted: FactorAnswers, riskFactorGroup: RiskFactorGroup) {
+    //     let res: MinimumRiskRatios = {}
+    //     let factors = riskFactorGroup.getAllFactorsInGroup()
 
-    //todo: returner objekter med de optimale faktorværdier og om det submitted faktor værdi er for lidt / for meget ift. den minimale.
-    private calculateFirstOrderDecompositionForRiskFactorGroup(factorAnswersSubmitted: FactorAnswers, riskFactorGroup: RiskFactorGroup) {
-        let res: MinimumRiskRatios = {}
-        let factors = riskFactorGroup.getAllFactorsInGroup()
+    //     factors.forEach(factor => {
+    //         res[factor] = 1
+    //     })
 
-        factors.forEach(factor => {
-            res[factor] = 1
-        })
-
-        riskFactorGroup.riskRatioTables.forEach(rrt => {
-            let ratio = 1;
-            if(rrt.factorNames.every( (fname:string) => factorAnswersSubmitted[fname]!=="")){ //checking if there are no missing variables.
-                rrt.factorNames.forEach(factor => {
-                    let minRR = rrt.getMinimumRR() //todo: return factor values/factor intervals for minRR and minRRexceptForOne
-                    let minRRexceptForOne = rrt.getMinimumRRForSingleFactor(factorAnswersSubmitted, factor)
-                    if (minRR === 0) {
-                        ratio = 0
-                    } else {
-                        ratio = ratio * Math.max(0,minRRexceptForOne - minRR) / minRR
-                    }
-                    res[factor] *= ratio;
-                })
-            }
-            else{
-                rrt.factorNames.forEach(factor => {
-                    res[factor]=0
-                });
-            }
+    //     riskFactorGroup.riskRatioTables.forEach(rrt => {
+    //         let ratio = 1;
+    //         if(rrt.factorNames.every( (fname:string) => factorAnswersSubmitted[fname]!=="")){ //checking if there are no missing variables.
+    //             rrt.factorNames.forEach(factor => {
+    //                 let minRR = rrt.getMinimumRR() //todo: return factor values/factor intervals for minRR and minRRexceptForOne
+    //                 let minRRexceptForOne = rrt.getMinimumRRForSingleFactor(factorAnswersSubmitted, factor)
+    //                 if (minRR === 0) {
+    //                     ratio = 0
+    //                 } else {
+    //                     ratio = ratio * Math.max(0,minRRexceptForOne - minRR) / minRR
+    //                 }
+    //                 res[factor] *= ratio;
+    //             })
+    //         }
+    //         else{
+    //             rrt.factorNames.forEach(factor => {
+    //                 res[factor]=0
+    //             });
+    //         }
             
-        })
-        return res;
-    }
+    //     })
+    //     return res;
+    // }
 }

@@ -1,10 +1,10 @@
 import { FactorAnswers } from "../../models/Factors";
-import { InterpolationEntry, InterpolationTableJson } from "./InterpolationEntry";
+import { InterpolationTable, InterpolationTableJson } from "./InterpolationTable";
 import { RiskRatioTableEntry } from "./RiskRatioTableEntry";
 
 export interface RiskRatioTableJson {
     riskFactorNames: string[];
-    interpolationTable: InterpolationTableJson[];
+    interpolationTable: InterpolationTableJson;
     riskRatioTable: (string[] | number)[][];
 }
 
@@ -15,53 +15,54 @@ export interface MinimumRiskRatios {
 class RiskRatioTable {
     factorNames: string[];
     riskRatioTable: RiskRatioTableEntry[];
-    interpolation: InterpolationEntry[] = [];
+    interpolation: InterpolationTable;
 
     constructor(json: RiskRatioTableJson) {
         this.factorNames = json.riskFactorNames;
         this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number))
-        json.interpolationTable.forEach(element => {
-            return this.interpolation.push(new InterpolationEntry(element))
-        });
+        this.interpolation=new InterpolationTable(json.interpolationTable)
     }
 
     getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
-        let indexOfFactor = this.factorNames.indexOf(factorToMinimize)
-        if (indexOfFactor === -1) {
-            return 1;
+        let fixedFactors=[factorToMinimize]
+        const noMissing=fixedFactors.every((factorName) => {
+            return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
+        })
+        if(noMissing){
+            return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
         }
-
-        let riskRatiosToMinimize = this.riskRatioTable.filter(rrt => {
-            return rrt.isSingleFactorInDomain(indexOfFactor, submittedFactorAnswers[factorToMinimize])
-        }).map(rte => rte.riskRatioValue)
-
-        return Math.min(...riskRatiosToMinimize)
+        return 1.0
     }
 
     getMinimumRR() {
-        let riskRatioValues = this.riskRatioTable.map(rrte => rrte.riskRatioValue)
-        return Math.min(...riskRatioValues)
+        let fixedFactors:string[]=[]
+        return Math.max(0,this.interpolation.getMinimumRR({}, fixedFactors).getValue());
     }
 
     getMinimumRRFactors() {
-        let riskRatioValues = this.riskRatioTable.map(rrte => rrte.riskRatioValue)
-        let minimumIndex = riskRatioValues.indexOf(Math.min(...riskRatioValues))
-        let minRrte = this.riskRatioTable[minimumIndex]
-        let res: any = {}
-        this.factorNames.forEach((value, index) =>
-            res[value] = minRrte.factorValues[index]
-        )
-        return res
+        let fixedFactors:string[]=[]
+        return this.interpolation.getMinimumRR({}, fixedFactors).getVariableToCoordinate()
     }
 
     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
-        let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-        for (let i = 0; i < this.riskRatioTable.length; i++) {
-            if (this.riskRatioTable[i].isFactorAnswersInDomain(relevantFactorAnswers)) {
-                return this.riskRatioTable[i].riskRatioValue;
-            }
+        let fixedFactors:string[]= this.factorNames
+        const noMissing=fixedFactors.every((factorName) => {
+            return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
+        })
+        if(noMissing){
+            return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
         }
-        return this.riskRatioTable[this.riskRatioTable.length-1].riskRatioValue; // tmp to make it run
+        return 1.0
+    }
+
+    getFactorNames(){
+        return this.factorNames;
+    }
+
+    getFactorNamesWithoutAge(){
+        return this.factorNames.filter((d:string) => {
+            return d!=="Age";
+        });
     }
 
     private getRelevantFactorAnswers = (sumbittedFactorAnswers: FactorAnswers): (string  | number)[] => {
@@ -70,20 +71,6 @@ class RiskRatioTable {
         return res;
     }
 
-    getInterpolatedRiskRatio(submittedFactorAnswers: FactorAnswers): number {
-        let relevantFactorAnswers = this.getRelevantFactorAnswers(submittedFactorAnswers);
-
-        for (let index = 0; index < this.interpolation.length; index++) {
-            let interpolationEntry = this.interpolation[index];
-            let relevantInterpolationFactorAnswers = interpolationEntry.getRelevantFactorAnswers(submittedFactorAnswers) as number[];
-            if (interpolationEntry.isFactorAnswersInDomain(relevantFactorAnswers)) {
-                return interpolationEntry.interpolateRR(relevantInterpolationFactorAnswers);
-            }
-
-        }
-
-        return 1;
-    }
 }
 
 export { RiskRatioTable };

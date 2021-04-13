@@ -21,36 +21,54 @@ export const parseStringToInputType = (input: string): RiskRatioTableCellInterfa
 }
 
 export const parseStringToPolynomial = (input: string): Polynomial => {
-    let polynomialTermRegex = new RegExp('[+]?(?<coef>[-]?[.0-9e-]+)[*]?(?<expo>[x0-9^*]*)', 'g')
+    let polynomialTermRegex = new RegExp('[+]?([-]?[.0-9e-]+)[*]?([x0-9^*]*)', 'g')
     let variablesRegex = new RegExp('(x\\d+)')
     let regexResult
-    let numberOfVariables = new Set(input.match(variablesRegex)).size
+    let numberOfVariables:number;
     let monomials = []
     while ((regexResult = polynomialTermRegex.exec(input)) !== null) {
-        if (!regexResult.groups?.coef) {
-            continue
-        }
-        monomials.push(new Monomial(+regexResult.groups.coef, parseExponents(regexResult.groups?.expo, numberOfVariables)))
+        let coefficient= regexResult[1]
+        let exponentsAndVariables=regexResult[2];
+        let xvars=parseVariableNames(exponentsAndVariables)
+        let exponents=parseExponents(exponentsAndVariables)
+        monomials.push(new Monomial(+coefficient, exponents, xvars))
     }
-
     return new Polynomial(monomials);
 }
 
-const parseExponents = (input: string, numberOfVariables: number): number[] => {
-    let exponentRegex = new RegExp('([0-9]+)(?:\\^)([0-9]+)\\*?', 'g')
+export const parseVariableNumber = (input: string): number => {
+    let numberRegex=new RegExp('[0-9]+','g')
+    let numberAsString =input.match(numberRegex)
+    if(!numberAsString || numberAsString.length===0){
+        throw Error("The variable "+input+" could not be parsed");
+    }
+    return parseInt(numberAsString[0]);
+}
+
+export const isXVariableName = (input: string): boolean => {
+    const numberRegex= new RegExp('^x[0-9]+$')
+    return numberRegex.test(input)
+}
+
+const parseVariableNames = (input: string): string[] => {
+    if(input=== ''){
+        return [];
+    }
+    const variableRegex = new RegExp('(x[0-9]+)','g')
+    const variableMatches=input.match(variableRegex)
+    return variableMatches ? variableMatches : [];
+}
+
+const parseExponents = (input: string): number[] => {
 
     if (input === '') {
         return []
     }
-
-    let exponents = new Array(numberOfVariables);
-    for (let i = 0; i < numberOfVariables; ++i) {
-        exponents[i] = 0;
-    }
-
-    let regexResult
-    while ((regexResult = exponentRegex.exec(input))) {
-        exponents.splice(+regexResult[1], 1, +regexResult[2])
+    let exponentRegex = new RegExp('\\^([0-9])', 'g')
+    let exponentRegexResult;
+    let exponents: number[]=[];
+    while ((exponentRegexResult = exponentRegex.exec(input)) !== null) {
+        exponents.push(+exponentRegexResult[1])
     }
     return exponents;
 }
