@@ -12,7 +12,7 @@
 #The children are put in the same category as 20,29 category and are simply not recorded
 #That is because the one typing in is a bit lazy. In the same way, 
 #Gender,Age is not taken into account.
-Age	Gender	WaistCircumference	freq
+Age	Sex	WaistCircumference	freq
 ,30	Male	,80	0.105645161290323
 30,40	Male	,80	0.0322580645161291
 40,50	Male	,80	0.0235849056603774

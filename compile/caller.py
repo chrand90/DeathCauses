@@ -27,8 +27,8 @@ def remove_duplicates_and_Age(listi):
 def combine_relations(relations):
     with open(FACTORQUESTIONS_FILE, "r") as f:
         factors = json.load(f)
-    for factor in factors:
-        relations[factor] = {"type": "Input factor", "ancestors": []}
+    for factor,factor_info in factors.items():
+        relations[factor] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     relations.update(computed_factors)
@@ -52,11 +52,7 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
     for RR in RRs:
         RRlist = RR.get_as_list_of_lists()
         factor_names = RR.get_FactorNames()
-        interpolated_RR_or_empty = interpolate_one_spline(RR)
-        if interpolated_RR_or_empty is None:  # checking if there was something to interpolate
-            interpolated_RR = []
-        else:
-            interpolated_RR = interpolated_RR_or_empty.get_interpolation_as_object()
+        interpolated_RR = interpolate_one_spline(RR).as_json()
         riskratiotable = {'riskRatioTable': RRlist,
                           'riskFactorNames': factor_names,
                           'interpolationTable': interpolated_RR}
@@ -127,7 +123,7 @@ def run(age_intervals=None):
 def transform_to_json(inp, filename):
     # print inp
     with open(filename, 'w') as f:
-        f.write(json.dumps(inp, default=lambda df: df.getDataframeAsList()))
+        f.write(json.dumps(inp, default=lambda formula: str(formula)))
 
 
 def integrate_one(writtenF_dir, age_intervals, age_distribution):

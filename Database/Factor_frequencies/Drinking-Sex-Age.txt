@@ -4,7 +4,7 @@
 #
 #
 #
-Age	Gender	Drinking	freq
+Age	Sex	Drinking	freq
 ,25	Male	0	0.1705
 25,45	Male	0	0.1055
 45,65	Male	0	0.143

@@ -1,3 +1,4 @@
+import Location from "./InterpolationLocation";
 import { Monomial } from "./Monomial";
 
 export class Polynomial {
@@ -7,11 +8,12 @@ export class Polynomial {
         this.monomials = monomials;
     }
 
-    evaluate(submittedFactorAnswers: number[]): number {
+    evaluate(xvalue: Location): number {
         let res = 0;
         this.monomials.forEach(monomial => 
-            res += monomial.evaluate(submittedFactorAnswers)    
+            res += monomial.evaluate(xvalue)    
         );
         return res;
     }
+
 }
