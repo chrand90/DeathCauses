@@ -138,6 +138,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
               <BarChartWrapper
                 database={this.state.database}
                 colorDic={this.props.relationLinkData.getColorDic()}
+                rdat={this.props.relationLinkData}
               />
             ) : (
               "Input age to get started"

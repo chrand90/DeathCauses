@@ -1,6 +1,8 @@
 import * as d3 from 'd3';
 
 export const ALTERNATING_COLORS=["#CFCFCF","#E4E4E4"];
+export const CLICKED_COLOR="#551A8B";
+export const LINK_COLOR="#0000EE";
 
 export enum Visualization {
   RELATION_GRAPH="Relation graph",

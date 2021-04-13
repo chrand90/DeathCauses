@@ -1,335 +1,1131 @@
-import * as d3 from 'd3';
+import * as d3 from "d3";
 import d3Tip from "d3-tip";
-import './BarChart.css';
-import { DataRow, DataSet, AugmentedDataSet, AugmentedDataRow } from './PlottingData';
-import  make_squares, {SquareSection}  from './ComptutationEngine';
-import { ScaleBand } from 'd3';
-import {ALTERNATING_COLORS} from './Helpers';
-import { NodeToColor } from '../models/RelationLinks';
+import "./BarChart.css";
+import { DataRow, DataSet } from "./PlottingData";
+import make_squares, { SquareSection } from "./ComptutationEngine";
+import { ScaleBand, ScaleLinear } from "d3";
+import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
+import { CauseGrouping, CauseToParentMapping, NodeToColor, ParentToCausesMapping } from "../models/RelationLinks";
 
 
-const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 }
+
+const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
-let DESIGN= "LONG";
+let DESIGN = "LONG";
 const BARHEIGHT = 50;
-const XBARHEIGHT= 50;
+const XBARHEIGHT = 50;
 const PADDING = 0.3;
-const TEXT_COLUMN_SIZE=100;
+const TEXT_COLUMN_SIZE = 100;
+const TEXT_GRAY = "#666666";
+const NOT_CLICKABLE_GRAY = "#b8b8b8";
 
-const BASE_COLORS: NodeToColor={'Unexplained':"#FFFFFF",
-'partying':'#FF6C00'};
+const BASE_COLORS: NodeToColor = {
+  Unexplained: "#FFFFFF",
+  partying: "#FF6C00",
+};
 
 function getDivWidth(div: HTMLElement | null): number {
-	console.log(div);
-	if(div === null){
-		return 0;
-	}
-    var width = d3.select(div)
-      // get the width of div element
-      .style('width')
-      // take of 'px'
-      .slice(0, -2)
-    // return as an integer
-    return Math.round(Number(width))
+  if (div === null) {
+    return 0;
   }
+  var width = d3
+    .select(div)
+    // get the width of div element
+    .style("width")
+    // take of 'px'
+    .slice(0, -2);
+  // return as an integer
+  return Math.round(Number(width));
+}
 
 interface DesignConstants {
-	barheight: number,
-	totalheight: number,
-	totalheightWithXBar: number,
-	startXScale: number,
-	yListStart: number,
-	yListInnerPadding: number,
-	yListOuterPadding: number,
-	yListAlign: number,
-	middleOfChart: number,
-	width: number,
-	textTranslation: string,
-	textAnchor: 'start' | 'middle' | 'end'
+  barheight: number;
+  totalheight: number;
+  totalheightWithXBar: number;
+  startXScale: number;
+  yListStart: number;
+  yListInnerPadding: number;
+  yListOuterPadding: number;
+  yListAlign: number;
+  middleOfChart: number;
+  width: number;
+  textTranslation: string;
+  collectButtonTranslation: string;
+  textAnchor: "start" | "middle" | "end";
+  expandButtonTranslation: string;
+  collapseButtonsWidth: number;
+  collapseButtonsHeight: number;
 }
 
-function longDesignConstants(n: number, width:number): DesignConstants{
-	return {
-		barheight: 1.5*BARHEIGHT,
-		totalheight: n*1.5*BARHEIGHT,
-		totalheightWithXBar: n*1.5*BARHEIGHT+XBARHEIGHT,
-		startXScale: 10,
-		yListStart: XBARHEIGHT,
-		yListInnerPadding: 0.48,
-		yListOuterPadding: 0.24,
-		yListAlign:0.8,
-		middleOfChart: width/2,
-		width: width,
-		textTranslation: "translate(" + 10 +
-		 "," + -BARHEIGHT/8 + ")",
-		textAnchor: 'start'
-	}
+const buttonSize = 18;
+const sameConstants = {
+  collectButtonTranslation:
+    "translate(" + 10 + "," + (-BARHEIGHT / 16 - buttonSize) + ")",
+  expandButtonTranslation:
+    "translate(" + 10 + "," + (-BARHEIGHT / 16 - buttonSize) + ")",
+  collapseButtonsWidth: buttonSize,
+  collapseButtonsHeight: buttonSize,
+};
+
+function longDesignConstants(n: number, width: number): DesignConstants {
+  return {
+    ...sameConstants,
+    barheight: 1.5 * BARHEIGHT,
+    totalheight: n * 1.5 * BARHEIGHT,
+    totalheightWithXBar: n * 1.5 * BARHEIGHT + XBARHEIGHT,
+    startXScale: 10,
+    yListStart: XBARHEIGHT,
+    yListInnerPadding: 0.48,
+    yListOuterPadding: 0.24,
+    yListAlign: 0.8,
+    middleOfChart: width / 2,
+    width: width,
+    textTranslation: "translate(" + 10 + "," + -BARHEIGHT / 8 + ")",
+    textAnchor: "start",
+  };
 }
 
-function wideDesignConstants(n: number, width: number): DesignConstants{
-	return {
-		barheight: BARHEIGHT,
-		totalheight: n*BARHEIGHT,
-		totalheightWithXBar: n*BARHEIGHT+XBARHEIGHT,
-		startXScale: TEXT_COLUMN_SIZE,
-		yListStart: XBARHEIGHT,
-		yListInnerPadding: PADDING,
-		yListOuterPadding: PADDING/2,
-		yListAlign: 0.5,
-		middleOfChart: TEXT_COLUMN_SIZE+(width-TEXT_COLUMN_SIZE)/2,
-		width: width,
-		textTranslation: "translate(" + -10 + "," + (BARHEIGHT/2) + ")",
-		textAnchor: 'end'
-	}
+function wideDesignConstants(n: number, width: number): DesignConstants {
+  return {
+    ...sameConstants,
+    barheight: BARHEIGHT,
+    totalheight: n * BARHEIGHT,
+    totalheightWithXBar: n * BARHEIGHT + XBARHEIGHT,
+    startXScale: TEXT_COLUMN_SIZE,
+    yListStart: XBARHEIGHT,
+    yListInnerPadding: PADDING,
+    yListOuterPadding: PADDING / 2,
+    yListAlign: 0.5,
+    middleOfChart: TEXT_COLUMN_SIZE + (width - TEXT_COLUMN_SIZE) / 2,
+    width: width,
+    textTranslation: "translate(" + -10 + "," + BARHEIGHT / 2 + ")",
+    textAnchor: "end",
+  };
 }
 
 export default class BarChart {
-    element: HTMLElement|null=null ;
-    width: number=0;
-    svg!: d3.Selection<SVGSVGElement,unknown,null,undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
-    xAxisGroup: any| null;
-	data: DataRow[] ;
-	data2: SquareSection[]=[];
-	stip: any;
-	drect_order: string[];
-	yBars: ScaleBand<string>;
-	colorDic: NodeToColor;
+  element: HTMLElement | null = null;
+  width: number = 0;
+  svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
+  xAxisGroup: any | null;
+  stip: any;
+  yBars: ScaleBand<string>;
+  xscale: ScaleLinear<number, number>;
+  colorDic: NodeToColor;
+  setDiseaseToWidth: (newDiseaseToWidth: string | null) => void;
+  expandCollectedGroup: (causecategory: string) => void;
+  collectGroup: (causecategory: string) => void;
+  grouping: CauseGrouping;
+  currentMax: number;
+  expandables: Set<string>;
+  collapsables: Set<string>;
+  chainedTransitionInProgress: boolean;
+  transitionsOrdered: number;
+  transitionsFinished: number;
 
-	constructor(element: HTMLElement | null, database: DataSet, colorDic: NodeToColor) {
-		console.log(database);
+  constructor(
+    element: HTMLElement | null,
+    database: DataSet,
+    colorDic: NodeToColor,
+    diseaseToWidth: string | null,
+    setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
+    collectedGroups: CauseGrouping,
+    expandCollectedGroup: (causecategory: string) => void,
+    collectGroup: (causecategory: string) => void,
+    collapseAndExpandables: {
+      collapsables: Set<string>;
+      expandables: Set<string>;
+    },
+	
+  ) {
 
-		//Initializers
-		this.drect_order=[];
-		this.yBars=d3.scaleBand();
-		this.colorDic=Object.assign({}, colorDic, BASE_COLORS);
+    //Initializers
+    this.yBars = d3.scaleBand();
+    this.xscale = d3.scaleLinear();
+    this.colorDic = Object.assign({}, colorDic, BASE_COLORS);
+    this.setDiseaseToWidth = setDiseaseToWidth;
+    this.expandCollectedGroup = expandCollectedGroup;
+    this.collectGroup = collectGroup;
+    this.grouping = collectedGroups;
+    this.currentMax = 0;
+    this.collapsables = collapseAndExpandables.collapsables;
+    this.expandables = collapseAndExpandables.expandables;
+	this.chainedTransitionInProgress = false;
+	this.transitionsFinished=0;
+	this.transitionsOrdered=0;
+
+    const vis = this;
+    vis.element = element;
+    vis.width = getDivWidth(element) * 0.9; //getDivWidth(element)*0.9;
+
+    //width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
+    vis.svg = d3
+      .select(element)
+      .append("svg")
+      .attr("width", vis.width)
+      .attr("height", BARHEIGHT + XBARHEIGHT);
+
+    vis.xAxisGroup = vis.svg
+      .append("g")
+      .attr("transform", `translate(0,${XBARHEIGHT})`);
+    let designConstants =
+      DESIGN === "WIDE"
+        ? wideDesignConstants(1, vis.width)
+        : longDesignConstants(1, vis.width);
+
+    vis.svg
+      .append("text")
+      .attr("x", designConstants.middleOfChart)
+      .attr("y", XBARHEIGHT / 2)
+      .attr("font-size", 20)
+      .attr("text-anchor", "middle")
+      .text("Probability of dying of cause");
+
+    vis.make(database, diseaseToWidth);
+  }
+
+  clear() {
+    d3.select("svg").remove();
+  }
 
 
-		this.data=database;
-		const vis = this
-		vis.element=element;
-		vis.width=getDivWidth(element)*0.9;  //getDivWidth(element)*0.9;
-		console.log("vis width " + vis.width);
-		//width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
-		vis.svg = d3.select(element)
-			.append("svg")
-				.attr("width", vis.width)
-                .attr("height", BARHEIGHT+XBARHEIGHT)
+
+  async waitForTransitionsToBeFree(durationIfNoWait: number, threshold:number=1.5){
+	  return new Promise<number>(resolve => {
+		const ticket = this.transitionsOrdered;
+		let counter=0;
+		const checkerFunction= () => {
+			if ((ticket-this.transitionsFinished)<threshold){
+				resolve(durationIfNoWait/(counter/5+1));
+			}
+			else{
+				counter+=1;
+				setTimeout(checkerFunction,100)
+			}
+		}
+		checkerFunction();
+	});
 		
+  }
 
-		vis.xAxisGroup = vis.svg.append("g")
-							.attr('transform',`translate(0,${XBARHEIGHT})`)
-		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(1,vis.width) : longDesignConstants(1, vis.width);
+  recalibrate_ybars(sort_data: DataSet, designConstants: DesignConstants) {
+    this.yBars = d3
+      .scaleBand()
+      .domain(sort_data.map((d: any) => d.name))
+      .range([designConstants.yListStart, designConstants.totalheightWithXBar])
+      .paddingInner(designConstants.yListInnerPadding)
+      .paddingOuter(designConstants.yListOuterPadding)
+      .align(designConstants.yListAlign);
+  }
 
-		vis.svg.append('text')
-			.attr("x", designConstants.middleOfChart)
-			.attr("y", XBARHEIGHT/2)
-			.attr("font-size", 20)
-			.attr("text-anchor", "middle")
-			.text("Probability of dying of cause")
-		
-		vis.make();
-	}
+  makeButtons(
+    dtextGroups: d3.Selection<any, any, any, any>,
+    designConstants: DesignConstants
+  ) {
+    const vis = this;
+    dtextGroups
+      .append("text")
+      .attr("class", "dtext")
+      .attr("y", 0)
+      .attr("x", 0)
+      .text(function (d: any) {
+        return d.name;
+      })
+      .style("text-anchor", designConstants.textAnchor)
+      .attr("transform", designConstants.textTranslation)
+      .call(insertBB);
 
-	clear(){
-		d3.select('svg').remove();
-	}
+    const collectButtons = dtextGroups
+      .append("g")
+      .attr("class", "dtextGroupCollect")
+      .attr("transform", (d: any) => {
+        return (
+          "translate(" +
+          (d.bbox.width + designConstants.collapseButtonsWidth * 2.25) +
+          ", " +
+          -5 +
+          ")"
+        );
+      })
+      .style("cursor", function (d) {
+        if (vis.collapsables.has(d.name)) {
+          return "pointer";
+        }
+        return "";
+      })
+      .each(function (d: any) {
+        d.collapsable = vis.collapsables.has(d.name);
+      });
 
-	recalibrate_ybars(sort_data: DataSet, designConstants: DesignConstants){
-		this.yBars = d3.scaleBand()
-		.domain(sort_data.map((d:any) => d.name))
-		.range([designConstants.yListStart, designConstants.totalheightWithXBar])
-		.paddingInner(designConstants.yListInnerPadding)
-		.paddingOuter(designConstants.yListOuterPadding)
-		.align(designConstants.yListAlign)
-	}
+    collectButtons
+      .append("text")
+      .attr("class", "ctext")
+      .text("-")
+      .style("font-weight", 800)
+      .style("font-size", "24px")
+      .style("fill", function (d) {
+        if (d.collapsable) {
+          return TEXT_GRAY;
+        } else {
+          return NOT_CLICKABLE_GRAY;
+        }
+      })
+      .on("mouseenter", function (e: Event, d: any) {
+        if (d.collapsable) {
+          d3.select(this).style("fill", LINK_COLOR);
+        }
+      })
+      .on("mouseleave", function (e: Event, d: any) {
+        if (d.collapsable) {
+          d3.select(this).style("fill", TEXT_GRAY);
+        }
+      })
+      .on("click", (e: Event, d: any) => {
+        if (d.collapsable) {
+          this.collectGroup(d.name);
+        }
+      });
 
-	make() {
-		const vis = this;
-		const n=vis.data.length;
-		let designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
+    const expandButtons = dtextGroups
+      .append("g")
+      .attr("class", "dtextGroupCollect")
+      .attr("transform", (d: any) => {
+        return (
+          "translate(" +
+          (d.bbox.width + designConstants.collapseButtonsWidth * 1) +
+          ", " +
+          -5 +
+          ")"
+        );
+      })
+      .style("cursor", function (d) {
+        if (vis.expandables.has(d.name)) {
+          return "pointer";
+        }
+        return "";
+      })
+      .each(function (d: any) {
+        d.expandable = vis.expandables.has(d.name);
+      });
 
-		vis.svg.attr("height", designConstants.totalheightWithXBar)
-		const dataSortedName= copyOfSortedDataset(vis.data, 'name');
-		const dataSortedTotal= copyOfSortedDataset(vis.data, 'totalProb');
+    expandButtons
+      .append("text")
+      .attr("class", "ctext")
+      .text("+")
+      .style("font-weight", 800)
+      .style("font-size", "24px")
+      .style("fill", function (d) {
+        if (d.expandable) {
+          return TEXT_GRAY;
+        } else {
+          return NOT_CLICKABLE_GRAY;
+        }
+      })
+      .on("mouseenter", function (e: Event, d: DataRow) {
+        if ((d as any).expandable) {
+          d3.select(this).style("fill", LINK_COLOR);
+        }
+      })
+      .on("mouseleave", function (e: Event, d: DataRow) {
+        if ((d as any).expandable) {
+          d3.select(this).style("fill", TEXT_GRAY);
+        }
+      })
+      .on("click", (e: Event, d: DataRow) => {
+        if ((d as any).expandable) {
+          this.expandCollectedGroup(d.name);
+        }
+      });
+  }
 
-		const augmented_data: AugmentedDataSet=dataSortedTotal.map((d: DataRow, index: number): AugmentedDataRow=> {
-			let res: any= d;
-			res["id"]=index;
-			return res;
+  disableExpandCollectButtons(subjects: string[]){
+	this.svg.selectAll('.ctext')
+		.filter(function(d:any) { return subjects.includes(d.name)})
+		.on("click", null)
+  }
+
+  insertPercentageText(dataSortedTotal: DataRow[]) {
+    this.svg
+      .selectAll(".ptext")
+      .data(dataSortedTotal, function (d: any) {
+        return d.name;
+      })
+      .enter()
+      .append("text")
+      .attr("class", "ptext")
+      .attr("y", (d: any) => this.yBars(d.name) as number)
+      .attr("x", (d: any) =>
+        this.xscale(Math.min(this.currentMax, d.totalProb))
+      )
+      .text(function (d: any) {
+        return (d.totalProb * 100).toPrecision(3) + "%";
+      })
+      .style("text-anchor", "start")
+      .attr("transform", "translate(" + 5 + "," + BARHEIGHT / 2 + ")")
+      .style("fill", NOT_CLICKABLE_GRAY);
+  }
+
+  make(dataset: DataSet, diseaseToWidth: string | null) {
+    const vis = this;
+
+    const {
+      dataSortedTotal,
+      dataSquares,
+      dataIds,
+    } = this.computeRankAndSquares(dataset, diseaseToWidth);
+
+    const n = dataSortedTotal.length;
+    let designConstants =
+      DESIGN === "WIDE"
+        ? wideDesignConstants(n, vis.width)
+        : longDesignConstants(n, vis.width);
+    vis.svg.attr("height", designConstants.totalheightWithXBar);
+
+    //Setting X-axis
+    this.currentMax = getMaxX(dataSquares);
+    const xAxisCall = this.createXAxisCall(this.currentMax, designConstants);
+    vis.xAxisGroup.call(xAxisCall);
+
+    //Setting the mapping disease -> y value
+    this.recalibrate_ybars(dataSortedTotal, designConstants);
+
+    this.instantUpdateOfRects(dataSortedTotal, designConstants);
+
+    const dtextGroups = vis.svg
+      .selectAll("dtextGroups")
+      .data(dataSortedTotal, function (d: any) {
+        return d.name;
+      })
+      .enter()
+      .append("g")
+      .attr("class", "dtextGroups")
+      .attr("transform", (d: any) => {
+        return (
+          "translate(" +
+          this.xscale(0) +
+          "," +
+          (this.yBars(d.name) as number).toString() +
+          ")"
+        );
+      });
+    this.makeButtons(dtextGroups, designConstants);
+
+    this.insertPercentageText(dataSortedTotal);
+
+    const rectButtons = vis.svg
+      .selectAll("fitscreenButtons")
+      .data(dataIds, function (i: any) {
+        return i;
+      })
+      .enter()
+      .append("g")
+      .attr("class", "fitscreenButtons")
+      .attr("transform", (i: any) => {
+        return (
+          "translate(" +
+          (designConstants.width - 30).toString() +
+          "," +
+          (this.yBars(dataSortedTotal[i].name) as number).toString() +
+          ")"
+        );
+      })
+      .style("cursor", "pointer")
+      .on("click", (e: Event, i: number) => {
+        const clickedDisease = dataSortedTotal[i].name;
+        if (clickedDisease === diseaseToWidth) {
+          this.setDiseaseToWidth(null);
+        } else {
+          this.setDiseaseToWidth(clickedDisease);
+        }
+      });
+
+    rectButtons
+      .append("rect")
+      .attr("width", 25)
+      .attr("height", this.yBars.bandwidth() / 2)
+      .style("opacity", 0);
+
+    rectButtons
+      .append("text")
+      .style("font-size", "20px")
+      .attr("x", (d: any) => 0)
+      .attr("y", (d: any) => BARHEIGHT / 2)
+      .attr("text-anchor", "central")
+      .style("fill", TEXT_GRAY)
+      .text(function (d: any, index: number) {
+        return "\u27F7";
+      })
+      .on("mouseenter", function (d) {
+        d3.select(this).style("fill", LINK_COLOR);
+      })
+      .on("mouseleave", function (d) {
+        d3.select(this).style("fill", TEXT_GRAY);
+      });
+
+    //The causes themselves are plotted by this.
+    const gs = vis.svg
+      .selectAll(".causebar")
+      .data(dataSquares, function (d: any) {
+        return d.name + "." + d.cause;
+      });
+
+    d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+
+    vis.stip = d3Tip()
+      .attr("class", "d3-tip")
+      .html((d: SquareSection) => {
+        return d.cause;
+      })
+      .direction("s")
+      .offset([10, 0]);
+
+    vis.svg.call(vis.stip);
+
+    const addedBars = gs.enter().append("rect").attr("class", "causebar");
+
+    this.addAttributesToCauseBars(addedBars);
+  }
+
+  addAttributesToCauseBars(
+    causeBars: d3.Selection<any, any, any, any>,
+    yReMapper: (node: string) => string = (x) => x
+  ) {
+    const vis = this;
+    causeBars
+      .attr("y", (d) => this.yBars(yReMapper(d.name)) as number)
+      .attr("x", (d) => this.xscale(d.x0))
+      .attr("height", this.yBars.bandwidth)
+      .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
+      .attr("fill", (d) => this.colorDic[d.cause])
+      .attr("stroke", "#2378ae")
+      .on("mouseenter", function (e: Event, d: SquareSection) {
+        d3.selectAll(".d3-tip").style(
+          "background-color",
+          vis.colorDic[d.cause]
+        );
+        vis.stip.show(d, this);
+        d3.select(this)
+          .raise()
+          .style("stroke-width", 3)
+          .style("stroke", "#000000");
+      })
+      .on("mouseleave", function (e: Event, d: SquareSection) {
+        vis.stip.hide(d, this);
+        d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
+      })
+      .on("resize", function (e: Event, d: SquareSection) {
+        vis.stip.hide(d, this);
+        d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
+      });
+  }
+
+  createXAxisCall(newMax: number, designConstants: DesignConstants) {
+    const x = d3
+      .scaleLinear()
+      .domain([0, newMax * 1.15])
+      .range([designConstants.startXScale, designConstants.width]);
+    this.xscale = x;
+    return d3.axisTop(x);
+  }
+
+  instantUpdateOfRects(
+    totalProbs: DataRow[],
+    designConstants: DesignConstants
+  ) {
+    const vis = this;
+    const yRects = d3
+      .scaleBand()
+      .domain(totalProbs.map((d: any) => d.name))
+      .align(designConstants.yListAlign)
+      .range([designConstants.yListStart, designConstants.totalheightWithXBar]);
+
+    const diseases = vis.svg
+      .selectAll(".drect")
+      .data(totalProbs, function (d: any) {
+        return d.name;
+      });
+
+    diseases
+      .join("rect")
+      .attr("class", "drect")
+      .attr("y", (d: any, i: number) => yRects(d.name) as number)
+      .attr("x", this.xscale(0))
+      .attr("width", designConstants.width)
+      .attr("height", designConstants.barheight)
+      .attr("fill", function (d: any, i: number) {
+        return ALTERNATING_COLORS[i % 2];
+      })
+      .style("opacity", 0.5)
+      .lower();
+  }
+
+  collapseCats(
+    dataset: DataSet,
+    diseaseToWidth: string | null,
+    oldCollectedGroups: CauseGrouping,
+    removed: string[],
+    added: string[],
+    durationPerTransition: number = 1000
+  ) {
+	this.disableExpandCollectButtons(removed);
+    const { allSquares: dataSquares, totalProbs } = make_squares(
+      dataset,
+      diseaseToWidth,
+      this.grouping
+    );
+    const notToBeMerged= getSubCollectGroup(oldCollectedGroups, removed, added[0])
+    const { allSquares: noMergeSquares, totalProbs: notUsed } = make_squares(
+      dataset,
+      diseaseToWidth,
+      this.grouping,
+      notToBeMerged
+    );
+    const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
+      totalProbs,
+      removed,
+      added[0],
+      this.yBars
+    );
+    const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
+
+    const vis = this;
+    let designConstants = this.setHeightAndGetDesignConstants(
+      sortedTotalsWithRemovedCats
+    );
+
+    this.recalibrate_ybars(sortedTotalsWithRemovedCats, designConstants);
+
+    //this.instantUpdateOfRects(sortedTotalsWithRemovedCats, designConstants)
+    this.reArrangeBars(
+      sortedTotalsWithRemovedCats,
+      durationPerTransition,
+      designConstants,
+	  diseaseToWidth,
+      () => {
+        this.removePercentageText();
+        const newMaxX = this.transitionXAxis(
+          dataSquares,
+          designConstants,
+          durationPerTransition
+        );
+        const gsWitExpandedData = vis.svg
+          .selectAll(".causebar")
+          .data(noMergeSquares, function (d: any) {
+            return d.name + "." + d.cause;
+          });
+        gsWitExpandedData
+          .transition("bars_x_change")
+          .duration(durationPerTransition)
+          .attr("x", (d) => this.xscale(d.x0))
+          .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
+		  .end()
+          .then(() => {
+            gsWitExpandedData
+              .transition("bars_y_move")
+              .duration(durationPerTransition)
+              .attr("y", (d) => {
+                let mapTo = removed.includes(d.name)
+                  ? added[0]
+                  : d.name;
+                return this.yBars(mapTo) as number;
+              })
+              .end()
+              .then(() => {
+                this.currentMax = newMaxX;
+                let newN = sortedTotalsFinal.length;
+                designConstants =
+                  DESIGN === "WIDE"
+                    ? wideDesignConstants(newN, vis.width)
+                    : longDesignConstants(newN, vis.width);
+                this.recalibrate_ybars(sortedTotalsFinal, designConstants);
+                const gsWithFinalData = vis.svg
+                  .selectAll(".causebar")
+                  .data(dataSquares, function (d: any) {
+                    return d.name + "." + d.cause;
+                  });
+                gsWithFinalData.exit().remove();
+
+                const enteredBars = gsWithFinalData
+                  .enter()
+                  .append("rect")
+                  .attr("class", "causebar");
+                this.addAttributesToCauseBars(enteredBars);
+                this.reArrangeBars(
+                  sortedTotalsFinal,
+                  durationPerTransition,
+                  designConstants,
+				  diseaseToWidth,
+                  () => {
+                    vis.svg.attr("height", designConstants.totalheightWithXBar);
+                    this.instantUpdateOfRects(
+                      sortedTotalsFinal,
+                      designConstants
+                    );
+                    this.insertPercentageText(sortedTotalsFinal);
+                    this.reMapFitScreenButtons(
+                      sortedTotalsFinal,
+                      sortedTotalsFinal.map((d, i) => i),
+                      diseaseToWidth
+                    );
+					this.transitionsFinished+=1;
+                  }
+                );
+              });
+          });
+      }
+    );
+  }
+
+  reArrangeBars(
+    dataSortedTotal: DataRow[],
+    durationPerTransition: number,
+    designConstants: DesignConstants,
+	diseaseToWidth: string | null,
+    callback: () => void = () => {},
+	delayBeforeTransition:number=0,
+  ) {
+    const vis = this;
+    const gs = vis.svg.selectAll<SVGRectElement, SquareSection[]>(".causebar");
+
+    gs.transition("bars_y_move")
+      .duration(durationPerTransition)
+	  .delay(delayBeforeTransition)
+      .attr("y", (d: any) => this.yBars(d.name) as number)
+	  .style("opacity", (d:any) => {
+		  if(diseaseToWidth){
+			const heightOfDiseaseToWidth=this.yBars(diseaseToWidth) as number
+			const heightOfThisGroup= this.yBars(d.name) as number
+			if(heightOfDiseaseToWidth>heightOfThisGroup+1e-8){
+				return 0.2
+			}
+			else{
+				return 1
+			}
+		}
+		  else{
+			  return 1
+		  }
+	  })
+
+    const dtexts = vis.svg
+      .selectAll<any, any>(".dtextGroups")
+      .data(dataSortedTotal, function (d: any) {
+        return d.name;
+      });
+
+    vis.svg
+      .selectAll<any, any>(".ptext")
+      .transition("percentage_y_change")
+      .duration(durationPerTransition)
+	  .delay(delayBeforeTransition)
+      .attr("y", (d: any) => this.yBars(d.name) as number)
+	  
+
+    dtexts.exit().remove();
+
+	if(dtexts.enter().size()>0){
+		dtexts
+		.transition("labels_move")
+		.duration(durationPerTransition)
+		.delay(delayBeforeTransition)
+		.attr("transform", (d) => {
+		  return "translate(" + 10 + ", " + this.yBars(d.name) + ")";
 		})
-
-		this.drect_order=dataSortedTotal.map((d) => d.name);
-		const dataSquares=make_squares(dataSortedName);
-
-		//Setting X-axis
-		const newMaxX=getMaxX(dataSquares);
-		const {xAxisCall, xscale} = this.createXAxisCall(newMaxX, designConstants)
-		vis.xAxisGroup.call(xAxisCall)
-
-		//Setting the mapping disease -> y value
-		this.recalibrate_ybars(dataSortedTotal, designConstants);
-
-		const yRects = d3.scaleBand()
-			.domain(dataSortedTotal.map((d:any) => d.name))
-			.align(designConstants.yListAlign)
-			.range([designConstants.yListStart, designConstants.totalheightWithXBar])
-		
-		//DATA JOIN
-		const diseases = vis.svg.selectAll("rect.shell").data(augmented_data, function(d: any){ return d.name })
-
-		// EXIT
-		diseases.exit().remove()
-
-		// ENTER
-		const g_components= diseases.enter().append('g').attr('class','rect.shell')
-
-		/*  One disadvantage of this structure is that it is important that the text is never inserted before the 
-			rectangle. Therefore it is important that they are inserted in the same order. 
-		*/
-		g_components.append('rect').attr('class','drect')
-				.attr("y", (d:any,i:number) => (yRects(d.name) as number))
-				.attr("x", xscale(0))
-				.attr("width", designConstants.width)
-				.attr("height", designConstants.barheight)
-				.attr('fill', function(d:any,i:number) { return ALTERNATING_COLORS[d.id%2]})
-				.style("opacity", 0.5)
-
-		g_components.insert('text').attr('class','dtext')
-				.attr("y", (d:any) => (this.yBars(d.name) as number))
-				.attr("x", xscale(0))
-				.text( (d:any) => d.name)
-				.style('text-anchor',designConstants.textAnchor)
-				.attr("transform",designConstants.textTranslation)
-
-		
-		//The causes themselves are plotted by this.
-        const gs= vis.svg.selectAll(".causebar")
-					.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
-
-
-		d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen). 
-
-
-		vis.stip = d3Tip().attr('class', 'd3-tip').html( (d: SquareSection) => {
-			return d.cause;
-			} )
-							.direction('s')
-							.offset([10,0])
-						
-		vis.svg.call(vis.stip);
-		
-		gs.exit().remove()
-
-		gs.enter().append('rect')
-			.attr('class','causebar')
-			.attr("y", d => (this.yBars(d.name) as number))
-			.attr("x", d => xscale(d.x0))
-			.attr('height', this.yBars.bandwidth)
-			.attr("width", d => xscale(d.x)-xscale(d.x0))
-			.attr("fill", d => this.colorDic[d.cause])
-			.attr('stroke', '#2378ae' )
-			.on("mouseenter", function(e: Event, d: SquareSection){
-				d3.selectAll(".d3-tip").style("background-color", vis.colorDic[d.cause])
-				vis.stip.show(d,this);
-				d3.select(this)
-					.raise()
-					.style("stroke-width",3)
-					.style('stroke','#000000')
-				})
-			.on("mouseleave",  function(e: Event, d: SquareSection){
-				vis.stip.hide(d,this);
-				d3.select(this)
-					.style("stroke-width",1)
-					.style('stroke','#2378ae')
-				})
-			.on("resize",  function(e: Event, d: SquareSection){
-				console.log('fullscreenchange');
-				vis.stip.hide(d,this);
-				d3.select(this)
-					.style("stroke-width",1)
-					.style('stroke','#2378ae')
-				})
-
-			
-			//
-			//});
-			//.transition().duration(500)
-				//.attr("height", d => HEIGHT - y(d.total_prob))
-				//.attr("y", d => y(d.height)) */	
-			
+		.end()
+		.then(() => {
+		  const addedDtextGroups = dtexts
+			.enter()
+			.append("g")
+			.attr("class", "dtextGroups")
+			.attr("transform", (d: any) => {
+			  return (
+				"translate(" +
+				this.xscale(0) +
+				"," +
+				(this.yBars(d.name) as number).toString() +
+				")"
+			  );
+			});
+		  this.makeButtons(addedDtextGroups, designConstants);
+		  callback();
+		});
 	}
-
-	createXAxisCall(newMax: number, designConstants: DesignConstants){
-		const x = d3.scaleLinear()
-		.domain([
-			0, 
-			newMax*1.15
-		])
-		.range([designConstants.startXScale,designConstants.width])
-		
-		return {xAxisCall: d3.axisTop(x), xscale:x}
-	}
-
-	update(dataset: DataSet){
-
-		const vis = this;
-		
-		const dataSortedTotal = copyOfSortedDataset(dataset, "totalProb"); 
-		const dataSortedName = copyOfSortedDataset(dataset, 'name'); 
-
-		//dataset that connects the original disease order (drect_order) with the new label.
-		//In theory, it would be possible to rearrange the labels, but some of them will almost always end up
-		//"below" a drect-object. Therefore it is easier to rename them.
-		const rename_object= this.drect_order.map((d,i) => {
-			return {new_name: dataSortedTotal[i].name, name: d}
+	else{
+		dtexts
+		.transition("labels_move")
+		.duration(durationPerTransition)
+		.delay(delayBeforeTransition)
+		.attr("transform", (d) => {
+		  return "translate(" + 10 + ", " + this.yBars(d.name) + ")";
 		})
+		setTimeout(callback, durationPerTransition+delayBeforeTransition)
+	}
+    
+  }
 
-		const dataSquares=make_squares(dataSortedName);
+  setHeightAndGetDesignConstants(sortedTotals: DataRow[]) {
+    const n = sortedTotals.length;
+    let designConstants =
+      DESIGN === "WIDE"
+        ? wideDesignConstants(n, this.width)
+        : longDesignConstants(n, this.width);
+    this.svg.attr("height", designConstants.totalheightWithXBar);
+    return designConstants;
+  }
 
-		const n=dataSortedName.length;
-		const designConstants = (DESIGN==='WIDE') ? wideDesignConstants(n,vis.width) : longDesignConstants(n, vis.width);
+  removePercentageText() {
+    this.svg.selectAll<any, any>(".ptext").remove();
+  }
 
-		//Updating X-axis
-		const newMaxX=getMaxX(dataSquares);
-		const {xAxisCall, xscale} = this.createXAxisCall(newMaxX, designConstants)
-		vis.xAxisGroup.call(xAxisCall)
+  transitionXAxis(
+    dataSquares: SquareSection[],
+    designConstants: DesignConstants,
+    durationPerTransition: number
+  ) {
+    const newMaxX = getMaxX(dataSquares);
+    const xAxisCall = this.createXAxisCall(newMaxX, designConstants);
+    this.xAxisGroup
+      .transition("x_axis_change")
+      .duration(durationPerTransition)
+      .call(xAxisCall)
+    return newMaxX;
+  }
 
-		//Updating the disease-to-y mapping (this.yBars)
-		this.recalibrate_ybars(dataSortedTotal, designConstants); 
+  expandCats(
+    dataset: DataSet,
+    diseaseToWidth: string | null,
+    oldCollectedGroups: CauseGrouping,
+    removed: string[],
+    added: string[],
+    durationPerTransition: number = 1000
+  ) {
+	this.chainedTransitionInProgress=true;
+	this.disableExpandCollectButtons(removed);
+    const { allSquares: dataSquares, totalProbs } = make_squares(
+      dataset,
+      diseaseToWidth,
+      this.grouping
+    );
+    const notToBeMerged= getSubCollectGroup(this.grouping, added, removed[0])
+    const {
+      allSquares: noMergeSquares,
+      totalProbs: noMergeTotals,
+    } = make_squares(dataset, diseaseToWidth, oldCollectedGroups, notToBeMerged);
+    const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
+    let tmpComparator = d3
+      .scaleBand()
+      .domain(sortedTotalsFinal.map((d: any) => d.name))
+      .range([0, 1]);
+    const sortedTotalsWithRemovedCat = insertRemovedCatsInCopy(
+      noMergeTotals,
+      added,
+      removed[0],
+      tmpComparator
+    );
+    const yReMapper = (nodeName: string) => {
+      if (added.includes(nodeName)) {
+        return removed[0];
+      }
+      return nodeName;
+    };
 
-		const gs= vis.svg.selectAll<SVGRectElement, SquareSection[]>(".causebar")
-			.data(dataSquares, function(d: any) {return d.name+'.'+d.cause})
+    const vis = this;
+    let designConstants = this.setHeightAndGetDesignConstants(
+      sortedTotalsWithRemovedCat
+    );
 
-		const duration_per_transition=500;
+    this.recalibrate_ybars(sortedTotalsWithRemovedCat, designConstants);
 
-		gs.exit().remove()
+    this.instantUpdateOfRects(sortedTotalsWithRemovedCat, designConstants);
 
-		gs.transition()
-			.duration(duration_per_transition)
-			.attr("x", d => xscale(d.x0))
-			.attr("width", d => xscale(d.x)-xscale(d.x0))
-		gs.transition()
-			.delay(duration_per_transition)
-			.duration(duration_per_transition)
-			.attr("y", d => (this.yBars(d.name) as number))
+    this.reArrangeBars(
+      sortedTotalsWithRemovedCat,
+      durationPerTransition,
+      designConstants,
+	  diseaseToWidth,
+      () => {
+        this.removePercentageText();
 
-		vis.svg.selectAll('.dtext')
-		.data(rename_object, function(d:any){ return d.name})
-			.transition()
-			.delay(duration_per_transition*2)
-			.text( (d:any) => d.new_name)
+        const gsWithSplitData = vis.svg
+          .selectAll(".causebar")
+          .data(noMergeSquares, function (d: any) {
+            return d.name + "." + d.cause;
+          });
+        gsWithSplitData.exit().remove();
 
-	};
+        const enteredBars = gsWithSplitData
+          .enter()
+          .append("rect")
+          .attr("class", "causebar");
+        vis.addAttributesToCauseBars(enteredBars, yReMapper);
+
+        const finalCauseBars = vis.svg
+          .selectAll<SVGRectElement, SquareSection[]>(".causebar")
+          .data(dataSquares, function (d: any) {
+            return d.name + "." + d.cause;
+          });
+
+        finalCauseBars
+          .transition("bars_y_move2")
+          .duration(durationPerTransition)
+          .attr("y", (d: any) => vis.yBars(d.name) as number)
+          .end()
+          .then(() => {
+            this.transitionXAxis(
+              dataSquares,
+              designConstants,
+              durationPerTransition
+            );
+            finalCauseBars
+              .transition("bars_x_move")
+              .duration(durationPerTransition)
+              .attr("x", (d: any) => vis.xscale(d.x0))
+              .attr("width", (d: any) => Math.max(0,vis.xscale(d.x) - vis.xscale(d.x0)))
+              .end()
+              .then(() => {
+                designConstants = this.setHeightAndGetDesignConstants(
+                  sortedTotalsFinal
+                );
+                vis.recalibrate_ybars(sortedTotalsFinal, designConstants);
+                vis.instantUpdateOfRects(sortedTotalsFinal, designConstants);
+                vis.reArrangeBars(
+                  sortedTotalsFinal,
+                  durationPerTransition,
+                  designConstants,
+				  diseaseToWidth,
+                  () => {
+                    vis.insertPercentageText(sortedTotalsFinal);
+                    vis.reMapFitScreenButtons(
+                      sortedTotalsFinal,
+					  sortedTotalsFinal.map((d,i)=>i),
+                      diseaseToWidth
+                    );
+					vis.transitionsFinished+=1;
+                  }
+                );
+              });
+          });
+      }
+    );
+  }
+
+  async changeCats(
+    dataset: DataSet,
+    diseaseToWidth: string | null,
+    newCollectedGroups: CauseGrouping,
+	durationIfNoWait: number=700
+  ) {
+	this.transitionsOrdered+=1;
+	const duration=Math.max(await this.waitForTransitionsToBeFree(durationIfNoWait),10)
+    const { removed, added } = getBooleanSet(this.grouping, newCollectedGroups);
+	const oldCollectedGroups=this.grouping;
+	this.grouping=newCollectedGroups
+    if (removed.length > added.length) {
+      this.collapseCats(
+        dataset,
+        diseaseToWidth,
+        oldCollectedGroups,
+        removed,
+        added,
+		duration
+      );
+    } else {
+      this.expandCats(
+        dataset,
+        diseaseToWidth,
+        oldCollectedGroups,
+        removed,
+        added,
+		duration
+      );
+    }
+  }
+
+
+  computeRankAndSquares(
+    data: DataRow[],
+    diseaseToWidth: string | null
+  ): {
+    dataSortedTotal: DataRow[];
+    dataSquares: SquareSection[];
+    dataIds: number[];
+  } {
+    const { allSquares: dataSquares, totalProbs } = make_squares(
+      data,
+      diseaseToWidth,
+      this.grouping
+    );
+    const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
+    const dataIds = dataSortedTotal.map((v: any, index: number) => {
+      return index;
+    });
+    return { dataSortedTotal, dataSquares, dataIds };
+  }
+
+  async update(dataset: DataSet, diseaseToWidth: string | null, durationPerTransition: number=500) {
+
+	await this.waitForTransitionsToBeFree(0,0.5);
+    const vis = this;
+
+    const {
+      dataSortedTotal,
+      dataSquares,
+      dataIds,
+    } = this.computeRankAndSquares(dataset, diseaseToWidth);
+
+
+    const n = dataSortedTotal.length;
+    const designConstants =
+      DESIGN === "WIDE"
+        ? wideDesignConstants(n, vis.width)
+        : longDesignConstants(n, vis.width);
+
+	//Updating the disease-to-y mapping (this.yBars)
+    this.recalibrate_ybars(dataSortedTotal, designConstants);
+
+    //Updating X-axis
+    this.currentMax = this.transitionXAxis(dataSquares, designConstants, durationPerTransition)
+
+    const gs = vis.svg
+      .selectAll<SVGRectElement, SquareSection[]>(".causebar")
+      .data(dataSquares, function (d: any) {
+        return d.name + "." + d.cause;
+      });
+
+    vis.svg
+      .selectAll<any, any>(".ptext")
+      .data(dataSortedTotal, function (d: any) {
+        return d.name;
+      })
+      .transition("percentage_x_change_and_move")
+      .duration(durationPerTransition)
+      .attr(
+        "x",
+        (d: any) =>
+          this.xscale(Math.min(d.totalProb, this.currentMax)) as number
+      )
+      .text(function (d: any) {
+        return (d.totalProb * 100).toPrecision(3) + "%";
+      });
+
+	  
+
+	 gs.transition("bars_x_change")
+      .duration(durationPerTransition)
+      .attr("x", (d) => this.xscale(d.x0))
+      .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
+	this.reArrangeBars(dataSortedTotal, durationPerTransition, designConstants,diseaseToWidth,
+		() =>{
+			this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
+		},
+		durationPerTransition
+	)
+   
+  }
+
+  reMapFitScreenButtons(
+    dataSortedTotal: DataRow[],
+    dataIds: number[],
+    diseaseToWidth: string | null
+  ) {
+    this.svg
+      .selectAll<any, any>(".fitscreenButtons")
+      .data(dataIds, function (i: any) {
+        return i;
+      })
+      .on("click", (e: Event, i: number) => {
+        const clickedDisease = dataSortedTotal[i].name;
+        if (clickedDisease === diseaseToWidth) {
+          this.setDiseaseToWidth(null);
+        } else {
+          this.setDiseaseToWidth(clickedDisease);
+        }
+      });
+  }
 }
 
-function copyOfSortedDataset(dataset: DataSet, sorter: 'totalProb' | 'name' ='totalProb'): DataSet{
-	return dataset.slice().sort(function(a: DataRow, b: DataRow) { return d3.descending(a[sorter], b[sorter]) });
+
+
+function copyOfSortedDataset(
+  dataset: DataSet,
+  sorter: "totalProb" | "name" = "totalProb"
+): DataSet {
+  return dataset.slice().sort(function (a: DataRow, b: DataRow) {
+    return d3.descending(a[sorter], b[sorter]);
+  });
 }
 
-function getMaxX(dataset: SquareSection[]):number{
-	let a= d3.max(dataset, d => d.x);
-	if(a === undefined){
-		a=1.0
+function insertRemovedCatsInCopy(
+  dataset: DataSet,
+  insertedValues: string[],
+  belowValue: string,
+  compareInsertedValues: d3.ScaleBand<string>
+): DataSet {
+  let copy = dataset.slice().sort(function (a: DataRow, b: DataRow) {
+    return d3.descending(a["totalProb"], b["totalProb"]);
+  });
+  let indexOfAdded = -1;
+  copy.forEach((d: DataRow, i: number) => {
+    if (d.name === belowValue) {
+      indexOfAdded = i;
+    }
+  });
+  insertedValues
+    .sort(function (a, b) {
+      return (
+        (compareInsertedValues(b) as number) -
+        (compareInsertedValues(a) as number)
+      );
+    })
+    .forEach((insertedValue) => {
+      copy.splice(indexOfAdded + 1, 0, {
+        name: insertedValue,
+        totalProb: -1,
+        innerCauses: {},
+      });
+    });
+  return copy;
+}
+
+function getMaxX(dataset: SquareSection[]): number {
+  let a = d3.max(dataset, (d) => d.x);
+  if (a === undefined) {
+    a = 1.0;
+  }
+  return a;
+}
+
+function insertBB(selection: d3.Selection<any, any, any, any>) {
+  selection.each(function (d: any) {
+    d.bbox = this.getBBox();
+  });
+}
+
+function getBooleanSet(oldGrouping: CauseGrouping, newGrouping: CauseGrouping) {
+  const listOne = Object.keys(oldGrouping.parentToCauses);
+  const listTwo = Object.keys(newGrouping.parentToCauses);
+  let removed: string[] = listOne.filter((d) => !listTwo.includes(d));
+  let added: string[] = listTwo.filter((d) => !listOne.includes(d));
+  return { removed, added };
+}
+
+function getSubCollectGroup(
+    groupingWithSubGroups:CauseGrouping, 
+	subGroupNames: string[],
+	bigGroupName: string
+	): {[key:string]:CauseGrouping}{
+	
+	let parentToCauses: ParentToCausesMapping={};
+	let causeToParent: CauseToParentMapping={};
+	subGroupNames.forEach((subGroupName: string) => {
+		let children=groupingWithSubGroups.parentToCauses[subGroupName]
+		parentToCauses[subGroupName]=children;
+		children.forEach((child: string) => {
+			causeToParent[child]=subGroupName;
+		})
 	}
-	return a;
+	)
+	let res: {[key:string]: CauseGrouping}={};
+	res[bigGroupName]={parentToCauses, causeToParent}
+	return res
 }
