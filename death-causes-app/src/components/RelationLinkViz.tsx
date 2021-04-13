@@ -87,7 +87,7 @@ export default class RelationLinkViz {
       .attr("y", y(yfromDomain))
       .attr("height", y(ytoDomain) - y(yfromDomain))
       .style("fill", (d: any) => d.color)
-      .style("opacity", 0.5);
+      .style("opacity", 0.8);
 
     const categoryText = this.svg.selectAll(".cattext")
       .data(xDivisions, function (d: any) {
@@ -354,7 +354,7 @@ export default class RelationLinkViz {
       .attr("x", (d: any) => x(d.x0))
       .attr("width", (d: any) => x(d.x0 + d.width) - x(d.x0))
       .style("fill", (d: any) => d.color)
-      .style("opacity", 0.5);
+      .style("opacity", 0.8);
 
 
     const categoryText = this.svg.selectAll(".cattext")
