@@ -51,8 +51,7 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 	useEffect(() => {
 		console.log('dataset changed');
 		if (chart) {
-			chart.clear();
-			createNewChart()
+			chart.update(elementInFocus);
 		}
 	}, [elementInFocus]);
 
