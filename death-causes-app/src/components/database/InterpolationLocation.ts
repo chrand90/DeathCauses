@@ -1,3 +1,4 @@
+import { DimensionStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
 import { isXVariableName } from "./ParsingFunctions";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
@@ -172,9 +173,15 @@ export default class Location {
     });
   }
 
-  setWithVarNamesWhenMatch(dict: VarNameToCoordinate, matchList: string[]) {
+  setWithVarNamesWhenMatch(dict: UpdateDic, ageIndex:number, matchList: string[]) {
     matchList.forEach((key) => {
-      let value = dict[key];
+      let value: string | number;
+      if(dict[key].dimension===DimensionStatus.YEARLY){
+        value=(dict[key].value as string[] | number[])[ageIndex];
+      }
+      else{
+        value=dict[key].value as string | number;
+      }
       if (this.interpolationVariables.includesVarName(key)) {
         this.setInterpolationVariables.push(key);
         this.variableToCoordinate[key] = value;

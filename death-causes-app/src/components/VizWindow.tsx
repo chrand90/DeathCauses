@@ -7,12 +7,12 @@ import { FactorAnswers } from "../models/Factors";
 import RelationLinks from "../models/RelationLinks";
 import { Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
-import Deathcause, {DeathCauseJson} from "./database/Deathcause";
+import Deathcause, {DeathCauseJson, RiskFactorGroupsContainer} from "./database/Deathcause";
 import causesData from "../resources/Causes.json";
+import causesCategoryData from "../resources/CategoryCauses.json";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import { CalculationFacade } from "./Calculations/CalculationsFacade";
 
 interface VizWindowProps {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -58,13 +58,10 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   updateComputerController() {
-    const a = this.computerController?.computeInnerProbabilities(
-      this.props.factorAnswersSubmitted!
-    );
+    this.computerController?.compute(this.props.factorAnswersSubmitted!)
+    const a = this.computerController?.computeInnerProbabilities()
     this.setState({ database: a! }, () => {
-      const b = this.computerController?.computeSurvivalData(
-        this.props.factorAnswersSubmitted!
-      );
+      const b = this.computerController?.computeSurvivalData();
       this.setState({ survivalData: b! });
     });
   }
@@ -78,12 +75,19 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
           new Deathcause(deathcause, key)
         );
       } )
-      const c = new CalculationFacade(database, this.props.relationLinkData);
+      let categoryDatabse: RiskFactorGroupsContainer[]=[];
+      const rawCategoryData:RawDataJson=(causesCategoryData as RawDataJson);
+      Object.entries(rawCategoryData).forEach( ([key, deathcause]) => {
+        categoryDatabse.push(
+          new RiskFactorGroupsContainer(deathcause, key)
+        );
+      } )
       this.computerController = new ComputeController(
         this.props.relationLinkData,
         null,
         120,
-        c
+        database,
+        categoryDatabse
       );
       this.setState({initializedDatabase: true});
     }, 500);

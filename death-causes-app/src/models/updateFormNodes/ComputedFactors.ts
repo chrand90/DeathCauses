@@ -1,4 +1,5 @@
-import { ChangeStatus, UpdateDic, UpdateForm, FormUpdater, FormUpdaterDic, TypeStatus, DimensionStatus, StochasticStatus } from "./UpdateFormInitialize"
+import FormUpdater from "./FormUpdater";
+import { ChangeStatus, UpdateDic, UpdateForm,  TypeStatus, DimensionStatus, StochasticStatus } from "./UpdateForm"
 
 class SmokeSinceStop extends FormUpdater{
 

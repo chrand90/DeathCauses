@@ -1,4 +1,6 @@
 import { FactorAnswers } from "../../models/Factors";
+import { OptimizabilityToNodes } from "../../models/RelationLinks";
+import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 
 enum Flank {
@@ -15,19 +17,21 @@ enum FlankStability {
 
 export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
-  factorAnswers: FactorAnswers;
+  factorAnswers: UpdateDic;
+  optimClasses: OptimizabilityToNodes;
 
   constructor(
-    optimDividedFactorNames: string[][],
-    factorAnswers: FactorAnswers
+    optimClasses: OptimizabilityToNodes,
+    allPreviousUpdateForms: UpdateDic
   ) {
+    this.optimClasses=optimClasses;
     this.optimals = {};
-    optimDividedFactorNames.forEach((fnames) => {
+    Object.values(optimClasses).forEach((fnames) => {
       fnames.forEach((fname) => {
         this.optimals[fname] = [] as (number | string)[];
-      });
+      })
     });
-    this.factorAnswers = factorAnswers;
+    this.factorAnswers = allPreviousUpdateForms;
   }
 
   addContribution(loc: LocationAndValue, fixedFactors: string[]) {
@@ -68,7 +72,7 @@ export class BestValues {
     if (typeof firstEntry === "number") {
       const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
         this.optimals[factorName] as number[],
-        factorAnswer as number
+        factorAnswer.value as number
       );
       switch (factorAnswerFlank) {
         case Flank.NEITHER: {
@@ -109,6 +113,13 @@ export class BestValues {
         this.optimals[factorName] = vals;
       }
     });
+    Object.entries(otherStore.optimClasses).forEach(([optimValue, nodes]) =>{
+      if (optimValue in this.optimClasses) {
+        this.optimClasses[optimValue] = [...Array.from(new Set<string>(this.optimClasses[optimValue].concat(nodes)))];
+      } else {
+        this.optimClasses[optimValue] = nodes;
+      }
+    })
   }
 }
 
@@ -156,19 +167,10 @@ function computeFlankOfFactorAnswer(
 }
 
 export function mergeBestValues(
-  bestValues: (BestValues | undefined)[]
-): BestValues | undefined {
+  bestValues: BestValues[]
+): BestValues  {
   return bestValues.reduce(
-    (first: BestValues | undefined, second: BestValues | undefined) => {
-      if (!first) {
-        if (!second) {
-          return undefined;
-        }
-        return second;
-      }
-      if (!second) {
-        return first;
-      }
+    (first: BestValues , second: BestValues ) => {
       first.merge(second);
       return first;
     }

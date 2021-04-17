@@ -1,6 +1,6 @@
 import { truncate } from "fs";
 import { CauseGrouping } from "../models/RelationLinks";
-import { mergeBestValues } from "./Calculations/ConsensusBestValue";
+import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -67,10 +67,12 @@ function makeRowSquare(
     const unexplained=1.0-total_explained
     let explainedSoFar=0;
     if(mergeAcross){
-        const comparators=datRows.map((datRow)=>{
+        const comparators:BestValues[]=datRows.map((datRow)=>{
             return datRow.comparisonWithBestValues
-        })
-        const combinedBestValues=mergeBestValues(comparators);
+        }).filter((d): d is BestValues => {
+            return d!==undefined;
+        });
+        const combinedBestValues=comparators.length>0 ? mergeBestValues(comparators) : undefined;
         squares.push({
             name: parent,
             cause: 'Unexplained',

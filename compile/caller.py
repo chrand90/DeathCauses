@@ -16,6 +16,7 @@ FACTORQUESTIONS_FILE = "../death-causes-app/src/resources/FactorDatabase.json"
 COMPUTED_FACTORS_FILE = "../death-causes-app/src/resources/ComputedFactorsRelations.json"
 RELATIONFILE_DESTINATION = "../death-causes-app/src/resources/Relations.json"
 CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/Causes.json"
+CATEGORY_CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/CategoryCauses.json"
 
 
 def remove_duplicates_and_Age(listi):
@@ -114,9 +115,8 @@ def run(age_intervals=None):
         age_intervals = get_age_totals()[0]
     relations, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
     transform_to_json(combine_relations(relations), RELATIONFILE_DESTINATION)
-    transform_to_json(death_causes, "Causes.json")
     transform_to_json(death_causes, CAUSES_DESTIONATION_FILE)
-    transform_to_json(death_cause_categories, "CauseCategories.json")
+    transform_to_json(death_cause_categories, CATEGORY_CAUSES_DESTIONATION_FILE)
     # transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
 

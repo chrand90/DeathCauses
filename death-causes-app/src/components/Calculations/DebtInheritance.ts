@@ -4,6 +4,8 @@ import DeathCause from "../database/Deathcause";
 import { RiskRatioTable } from "../database/RiskRatioTable";
 import RelationLinks from "../../models/RelationLinks";
 import { BestValues } from "./ConsensusBestValue";
+import { RiskFactorGroup } from "../database/RickFactorGroup";
+import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 
 const TOLERABLE_NUMERIC_ERROR = 1e-11;
 
@@ -11,7 +13,7 @@ interface Accounts {
   [key: string]: number;
 }
 
-interface SetToNumber {
+export interface SetToNumber {
   [key: string]: number;
 }
 
@@ -57,12 +59,13 @@ function trivialUsAndSs(factorNames: string[]) {
   return { UDic, SDic, RRmax };
 }
 
-function computeUsAndSs(
+export function computeUsAndSs(
   riskRatioTable: RiskRatioTable,
-  factorAnswersSubmitted: FactorAnswers,
+  factorAnswersSubmitted: UpdateDic,
   freeFactors: string[],
   fixedFactors: string[],
   valueStore: BestValues,
+  ageIndex: number,
 ) {
   const fixedFactorSet=new Set<string>(fixedFactors);
   let UDic: SetToNumber = {};
@@ -72,7 +75,7 @@ function computeUsAndSs(
     let key = set.sort().join(",");
     const varsEqualingUserInput= set.concat(fixedFactors)
     const minLocationAndValue=riskRatioTable.interpolation
-      .getMinimumRR(factorAnswersSubmitted, varsEqualingUserInput)
+      .getMinimumRR(factorAnswersSubmitted, varsEqualingUserInput, ageIndex)
     UDic[key] = minLocationAndValue.getValue();
     valueStore.addContribution(minLocationAndValue, varsEqualingUserInput);
     
@@ -93,7 +96,7 @@ function computeUsAndSs(
   return { UDic, SDic, RRmax };
 }
 
-function naiveDebtComputation(SDics: SetToNumber[]): SetToNumber {
+export function naiveDebtComputation(SDics: SetToNumber[]): SetToNumber {
   let innerCauses: Accounts = {};
   let allKeys = SDics.map((SDic) => {
     return Object.keys(SDic);
@@ -153,14 +156,14 @@ function isAnyMissing(
   return !noMissing;
 }
 
-function normalizeInnerCauses(innerCauses: SetToNumber, totalRR: number) {
+export function normalizeInnerCauses(innerCauses: SetToNumber, totalRR: number) {
   let divisor = totalRR > 1e-8 ? totalRR : 1;
   Object.entries(innerCauses).forEach(([factorName, value]) => {
     innerCauses[factorName] = innerCauses[factorName] / divisor;
   });
   return innerCauses;
 }
-
+/*
 function getNormalizationFactorsAndMissingRFGindices(
   age: number,
   deathcause: DeathCause,
@@ -303,3 +306,4 @@ export default function calculateInnerProbabilities(
     comparisonWithBestValues: valueStore,
   };
 }
+*/

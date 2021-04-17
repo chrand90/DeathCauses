@@ -250,7 +250,7 @@ export default class InterpolationTableCell {
     );
   }
 
-  extractFixedMinObject(fixedVariableSet: string[]): FixedMin[] {
+  extractFixedMinObject(fixedVariableSet: string[]): FixedMin[] | undefined{
     let fixedVariableSetChecker: string = fixedVariableSet.sort().join(",");
     for (let i = 0; i < this.fixedMins.length; i++) {
       if (
@@ -260,7 +260,7 @@ export default class InterpolationTableCell {
       }
     }
     throw Error(
-      "A fixedMin set which was supposed to exist did in fact not appear."
+       "A fixedMin set which was supposed to exist did in fact not appear."
     );
   }
 
@@ -346,7 +346,7 @@ export default class InterpolationTableCell {
     );
     const fixedMinObjects: FixedMin[] = this.extractFixedMinObject(
       fixedVariableSet as string[]
-    );
+    ) as FixedMin[];
     let candidates = this.computeDiscriminantCandidates(
       fixedMinObjects,
       fixedInterpolationFactorAnswers
