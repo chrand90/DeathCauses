@@ -91,24 +91,26 @@ export default class RiskRatioGroupNode extends FormUpdater {
     Object.entries(this.optimizabilityClasses).forEach(
       ([optimValue, nodes]) => {
         let RRresults: RiskRatioResult[]=[];
-        this.riskFactorGroup.riskRatioTables.forEach((rrt) => {
+        this.riskFactorGroup.riskRatioTables.forEach((rrt, index) => {
           let freeFactors = rrt
             .getFactorNamesWithoutAge()
             .filter((factorName: string) => {
               return nodes.includes(factorName);
             });
-          const { SDic, RRmax } = computeUsAndSs(
-            rrt,
-            allPreviousUpdateForms,
-            freeFactors,
-            previouslyCountouredFactors,
-            valueStore,
-            ageIndex
-          );
-          RRresults.push({
-            RRmax: RRmax,
-            SDics: SDic
-          })
+          if(freeFactors.length>0){
+            const { SDic, RRmax } = computeUsAndSs(
+              rrt,
+              allPreviousUpdateForms,
+              freeFactors,
+              previouslyCountouredFactors,
+              valueStore,
+              ageIndex
+            );
+            RRresults.push({
+              RRmax: RRmax,
+              SDics: SDic
+            })
+          }
         });
         previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=>d!=="Age"))
         optimToSdics[optimValue]=RRresults;

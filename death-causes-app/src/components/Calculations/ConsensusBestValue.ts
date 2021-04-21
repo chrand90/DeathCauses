@@ -59,6 +59,13 @@ export class BestValues {
     });
   }
 
+  getMinMaxOfFactorAnswers(factorAnswer: number | number[]){
+    if(Array.isArray(factorAnswer)){
+      return {min: Math.min(...factorAnswer), max: Math.max(...factorAnswer)}
+    }
+    return {min: factorAnswer, max: factorAnswer};
+  }
+
   getConsensusStatement(factorName: string) {
     if (
       !(factorName in this.optimals) ||
@@ -70,9 +77,10 @@ export class BestValues {
     const factorAnswer = this.factorAnswers[factorName];
     const firstEntry = this.optimals[factorName][0];
     if (typeof firstEntry === "number") {
+      const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
       const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
         this.optimals[factorName] as number[],
-        factorAnswer.value as number
+        min, max
       );
       switch (factorAnswerFlank) {
         case Flank.NEITHER: {
@@ -126,17 +134,15 @@ export class BestValues {
 
 function computeFlankOfFactorAnswer(
   optimals: number[],
-  factorAnswer: number
+  minVal: number,
+  maxVal: number,
 ): { side: Flank; stability: FlankStability } {
-  if(typeof factorAnswer==="string"){
-      factorAnswer=parseFloat(factorAnswer);
-  }
   let side = Flank.NEITHER;
-
+  
   let stability = FlankStability.STABLE;
   let lastBestValue: number;
   optimals.forEach((d, i) => {
-    if (d < factorAnswer - 1e-10) {
+    if (d < maxVal - 1e-10) {
       if (side === Flank.MINUS_INFINITY) {
         side = Flank.BOTH;
       }
@@ -144,7 +150,7 @@ function computeFlankOfFactorAnswer(
         side = Flank.INFINITY;
       }
     }
-    if (d > factorAnswer + 1e-10) {
+    if (d > minVal + 1e-10) {
       if (side === Flank.INFINITY) {
         side = Flank.BOTH;
       }
@@ -169,10 +175,13 @@ function computeFlankOfFactorAnswer(
 export function mergeBestValues(
   bestValues: BestValues[]
 ): BestValues  {
+  const firstBestValues=bestValues[0]
+  const shell= new BestValues({}, firstBestValues.factorAnswers);
   return bestValues.reduce(
     (first: BestValues , second: BestValues ) => {
       first.merge(second);
       return first;
-    }
+    },
+    shell
   );
 }

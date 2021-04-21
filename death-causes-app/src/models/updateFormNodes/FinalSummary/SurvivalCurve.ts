@@ -9,6 +9,5 @@ export default function survivalCurve(causeNodeResults: CauseNodeResult[], ageFr
     for (let i = 1; i < survivalProb.length; i++) {
         res.push({age: i+ageFrom, prob: survivalProb[i]});
     }
-    console.log(res);
     return res;
 }

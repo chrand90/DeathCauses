@@ -8,13 +8,13 @@ export default abstract class FormUpdater {
     constructor(ancestors: string[], ageFrom: number | null, ageTo: number){
         this.lastOutput=null;
         this.ancestors=ancestors;
-        this.ageFrom = ageFrom;
-        this.ageTo = ageTo;
+        this.ageFrom = ageFrom ? Math.floor(ageFrom) : ageFrom;
+        this.ageTo = Math.floor(ageTo);
     }
 
     getAgeFrom(allPreviousUpdateForms: UpdateDic):number{
         if(this.ageFrom===null){
-            return (allPreviousUpdateForms["Age"].value as number)
+            return Math.floor(allPreviousUpdateForms["Age"].value as number)
         }
         else{
             return this.ageFrom

@@ -35,7 +35,6 @@ export default function riskFactorContributions(causeNodeResults: CauseNodeResul
         }
         
     })
-    console.log(res);
     return res;
 
 }

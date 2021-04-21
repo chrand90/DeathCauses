@@ -52,7 +52,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       prevProps.factorAnswersSubmitted !== this.props.factorAnswersSubmitted &&
       this.props.factorAnswersSubmitted
     ) {
-      console.log("initiating update computercontroller");
       this.updateComputerController();
     }
   }
@@ -206,7 +205,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   render(): React.ReactNode {
-    console.log(this.props);
     return (
       <div className="vizwindow">
         <h4> Visualization Menu </h4>

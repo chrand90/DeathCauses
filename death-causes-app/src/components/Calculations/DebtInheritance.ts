@@ -65,33 +65,45 @@ export function computeUsAndSs(
   freeFactors: string[],
   fixedFactors: string[],
   valueStore: BestValues,
-  ageIndex: number,
+  ageIndex: number
 ) {
-  const fixedFactorSet=new Set<string>(fixedFactors);
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
-  let sortedSubsets = getSortedSubsets(freeFactors);
-  sortedSubsets.forEach((set: string[], index: number) => {
-    let key = set.sort().join(",");
-    const varsEqualingUserInput= set.concat(fixedFactors)
-    const minLocationAndValue=riskRatioTable.interpolation
-      .getMinimumRR(factorAnswersSubmitted, varsEqualingUserInput, ageIndex)
-    UDic[key] = minLocationAndValue.getValue();
-    valueStore.addContribution(minLocationAndValue, varsEqualingUserInput);
-    
-    SDic[key] = UDic[key];
-    for (let j = 0; j < index; j++) {
-      let candidateSubset = sortedSubsets[j];
-      if (
-        candidateSubset.length < set.length &&
-        candidateSubset.every((d) => {
-          return set.includes(d);
-        })
-      ) {
-        SDic[key] = SDic[key] - SDic[candidateSubset.sort().join(",")];
+  if (freeFactors.length > 0) {
+    let sortedSubsets = getSortedSubsets(freeFactors);
+    sortedSubsets.forEach((set: string[], index: number) => {
+      let key = set.sort().join(",");
+      const varsEqualingUserInput = set.concat(fixedFactors);
+      const minLocationAndValue = riskRatioTable.interpolation.getMinimumRR(
+        factorAnswersSubmitted,
+        varsEqualingUserInput,
+        ageIndex
+      );
+      UDic[key] = minLocationAndValue.getValue();
+      valueStore.addContribution(minLocationAndValue, varsEqualingUserInput);
+
+      SDic[key] = UDic[key];
+      for (let j = 0; j < index; j++) {
+        let candidateSubset = sortedSubsets[j];
+        if (
+          candidateSubset.length < set.length &&
+          candidateSubset.every((d) => {
+            return set.includes(d);
+          })
+        ) {
+          SDic[key] = SDic[key] - SDic[candidateSubset.sort().join(",")];
+        }
       }
-    }
-  });
+    });
+  } else {
+    const minLocationAndValue = riskRatioTable.interpolation.getMinimumRR(
+      factorAnswersSubmitted,
+      fixedFactors,
+      ageIndex
+    );
+    UDic[""] = minLocationAndValue.getValue();
+    SDic[""] = UDic[""];
+  }
   let RRmax = UDic[freeFactors.sort().join(",")];
   return { UDic, SDic, RRmax };
 }
@@ -156,10 +168,13 @@ function isAnyMissing(
   return !noMissing;
 }
 
-export function normalizeInnerCauses(innerCauses: SetToNumber, totalRR: number) {
+export function normalizeInnerCauses(
+  innerCauses: SetToNumber,
+  totalRR: number
+) {
   let divisor = totalRR > 1e-8 ? totalRR : 1;
   Object.entries(innerCauses).forEach(([factorName, value]) => {
-    innerCauses[factorName] = innerCauses[factorName] / divisor;
+    innerCauses[factorName] = value / divisor;
   });
   return innerCauses;
 }

@@ -19,8 +19,8 @@ export function computeProbOfNotDying(causeNodeResults: CauseNodeResult[]){
 export function probOfStillBeingAlive(causeNodeResults: CauseNodeResult[]){
     const probOfNotDying= computeProbOfNotDying(causeNodeResults);
     const survivalCurve: number[]=[1]
-    for (let i = 1; i < probOfNotDying.length; i++) {
-        survivalCurve[i] = survivalCurve[i - 1] * probOfNotDying[i]
+    for (let i = 1; i <= probOfNotDying.length; i++) {
+        survivalCurve.push(survivalCurve[i - 1] * probOfNotDying[i-1])
     }
     return survivalCurve
 }
