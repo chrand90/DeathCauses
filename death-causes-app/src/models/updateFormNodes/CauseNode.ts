@@ -54,7 +54,7 @@ export default class CauseNode extends FormUpdater {
     return this.compute(allPreviousUpdateForms);
   }
 
-  collectSDicsAndRRs(allPreviousUpdateForms: UpdateDic, ageIndex: number):OptimsToSDics {
+  collectSDicsAndRRs(allPreviousUpdateForms: UpdateDic, ageIndex: number): {allRiskFactorGroups: OptimsToSDics[], totalRR: number} {
     const stratifiedByRFG= this.nonMissingAncestors(allPreviousUpdateForms).map(
       (riskFactorGroupName) => {
         let allAgeResult = allPreviousUpdateForms[riskFactorGroupName]
@@ -68,7 +68,7 @@ export default class CauseNode extends FormUpdater {
         return allAgeResult.SDics as OptimsToSDics;
       }
     );
-    return stratifiedByRFG.reduce((a,b) => {
+    const flattenedOptimsToSDic= stratifiedByRFG.reduce((a,b) => {
       Object.entries(b).forEach(([key, val]) =>{
         if(key in a){
           a[key]=a[key].concat(val)
@@ -79,6 +79,18 @@ export default class CauseNode extends FormUpdater {
       })
       return a
     },{})
+    const totalRR=this.computeTotalRR(stratifiedByRFG);
+    return {allRiskFactorGroups: stratifiedByRFG,  totalRR}
+  }
+
+  computeTotalRR(optimsToSDicStratifiedByRFG: OptimsToSDics[]){
+    let totalRR=1;
+    optimsToSDicStratifiedByRFG.forEach((optimDividedResult: OptimsToSDics) => {
+      const numericOptims=Object.keys(optimDividedResult).map(s=>+s)
+      const maxOptim=numericOptims[numericOptims.length-1]
+      totalRR*= optimDividedResult[maxOptim.toString()].map(r=>r.RRmax).reduce((a,b)=>a*b,1)
+    })
+    return totalRR
   }
 
   nonMissingAncestors(allPreviousUpdateForms: UpdateDic) {
@@ -145,31 +157,49 @@ export default class CauseNode extends FormUpdater {
     allPreviousUpdateForms: UpdateDic,
     ageIndex: number
   ) {
-    const optimDividedResults: OptimsToSDics = this.collectSDicsAndRRs(
+    const {allRiskFactorGroups, totalRR} = this.collectSDicsAndRRs(
       allPreviousUpdateForms,
       ageIndex
     );
-    const allSeenOptimizabilities = Object.keys(optimDividedResults);
-    const numericOptims = allSeenOptimizabilities.map((s) => +s);
+    const allSeenOptimizabilities = ([] as string[]).concat(allRiskFactorGroups.flatMap(d=>Object.keys(d)));
+    const numericOptims = Array.from(new Set<string>(allSeenOptimizabilities)).map((s) => +s);
     let innerCauses: SetToNumber = { ...this.baseInnerCauseObject };
     numericOptims.sort();
-    numericOptims.forEach((optimizability, index) => {
+    numericOptims.forEach((optimizability) => {
+      let extractedSOptims: SetToNumber[]=[]
       const stringOptim = optimizability.toString();
+      let scaler=1;
+      allRiskFactorGroups.forEach( (optimToSDic: OptimsToSDics) => {
+        if(stringOptim in optimToSDic){
+          extractedSOptims=extractedSOptims.concat(optimToSDic[stringOptim].map(d=>d.SDics))
+        }
+        else{
+          const numKeys=Object.keys(optimToSDic).map(s=>+s)
+          const minOptim=Math.min(...numKeys)
+          if(minOptim>optimizability){
+            scaler*=optimToSDic[minOptim.toString()].map(s=> s.SDics['']).reduce((a,b)=>a*b,1);
+          }
+          else{
+            const maxPossibleOptim=Math.max(...numKeys.filter(n=>n<optimizability))
+            scaler*=optimToSDic[maxPossibleOptim.toString()].map(r=> r.RRmax).reduce((a,b)=>a*b,1);
+          }
+        }
+      })
       const innerCausesOfOptimizability = naiveDebtComputation(
-        optimDividedResults[stringOptim].map((r) => r.SDics)
+        extractedSOptims, scaler
       );
       innerCauses = { ...innerCauses, ...innerCausesOfOptimizability };
     });
-    let totalRR=1;
     if(numericOptims.length>0){
-      const maxOptim=numericOptims[numericOptims.length-1]
-      totalRR= optimDividedResults[maxOptim.toString()].map(r=>r.RRmax).reduce((a,b)=>a*b,1)
       innerCauses = normalizeInnerCauses(innerCauses, totalRR);
     }
     return { totalRR, innerCauses };
   }
 
   compute(allPreviousUpdateForms: UpdateDic): UpdateForm {
+    if(this.cause.deathCauseName==="LungCancer"){
+      console.log("debug location")
+    }
     const startAge = this.getAgeFrom(allPreviousUpdateForms);
     const endAge = this.getAgeTo();
 

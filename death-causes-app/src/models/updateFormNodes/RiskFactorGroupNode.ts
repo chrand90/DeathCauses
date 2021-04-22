@@ -97,7 +97,6 @@ export default class RiskRatioGroupNode extends FormUpdater {
             .filter((factorName: string) => {
               return nodes.includes(factorName);
             });
-          if(freeFactors.length>0){
             const { SDic, RRmax } = computeUsAndSs(
               rrt,
               allPreviousUpdateForms,
@@ -111,7 +110,7 @@ export default class RiskRatioGroupNode extends FormUpdater {
               SDics: SDic
             })
           }
-        });
+        );
         previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=>d!=="Age"))
         optimToSdics[optimValue]=RRresults;
       }

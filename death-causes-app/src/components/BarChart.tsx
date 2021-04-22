@@ -18,6 +18,7 @@ const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
 const NOT_CLICKABLE_GRAY = "#b8b8b8";
+const SELECTED_DISEASE_COLOR= "#a3e3f0"
 
 const BASE_COLORS: NodeToColor = {
   Unexplained: "#FFFFFF",
@@ -388,7 +389,7 @@ export default class BarChart {
     //Setting the mapping disease -> y value
     this.recalibrate_ybars(dataSortedTotal, designConstants);
 
-    this.instantUpdateOfRects(dataSortedTotal, designConstants);
+    this.instantUpdateOfRects(dataSortedTotal, designConstants, diseaseToWidth);
 
     const dtextGroups = vis.svg
       .selectAll("dtextGroups")
@@ -529,7 +530,8 @@ export default class BarChart {
 
   instantUpdateOfRects(
     totalProbs: DataRow[],
-    designConstants: DesignConstants
+    designConstants: DesignConstants,
+    diseaseToWidth: string | null
   ) {
     const vis = this;
     const yRects = d3
@@ -552,6 +554,9 @@ export default class BarChart {
       .attr("width", designConstants.width)
       .attr("height", designConstants.barheight)
       .attr("fill", function (d: any, i: number) {
+        if(diseaseToWidth && d.name===diseaseToWidth){
+          return SELECTED_DISEASE_COLOR;
+        }
         return ALTERNATING_COLORS[i % 2];
       })
       .style("opacity", 0.5)
@@ -594,7 +599,7 @@ export default class BarChart {
 
     this.recalibrate_ybars(sortedTotalsWithRemovedCats, designConstants);
 
-    //this.instantUpdateOfRects(sortedTotalsWithRemovedCats, designConstants)
+    this.instantUpdateOfRects(sortedTotalsWithRemovedCats, designConstants,null)
     this.reArrangeBars(
       sortedTotalsWithRemovedCats,
       durationPerTransition,
@@ -658,7 +663,8 @@ export default class BarChart {
                     vis.svg.attr("height", designConstants.totalheightWithXBar);
                     this.instantUpdateOfRects(
                       sortedTotalsFinal,
-                      designConstants
+                      designConstants,
+                      diseaseToWidth
                     );
                     this.insertPercentageText(sortedTotalsFinal);
                     this.reMapFitScreenButtons(
@@ -759,7 +765,6 @@ export default class BarChart {
 		})
 		setTimeout(callback, durationPerTransition+delayBeforeTransition)
 	}
-    
   }
 
   setHeightAndGetDesignConstants(sortedTotals: DataRow[]) {
@@ -835,7 +840,7 @@ export default class BarChart {
 
     this.recalibrate_ybars(sortedTotalsWithRemovedCat, designConstants);
 
-    this.instantUpdateOfRects(sortedTotalsWithRemovedCat, designConstants);
+    this.instantUpdateOfRects(sortedTotalsWithRemovedCat, designConstants, null);
 
     this.reArrangeBars(
       sortedTotalsWithRemovedCat,
@@ -886,7 +891,6 @@ export default class BarChart {
                   sortedTotalsFinal
                 );
                 vis.recalibrate_ybars(sortedTotalsFinal, designConstants);
-                vis.instantUpdateOfRects(sortedTotalsFinal, designConstants);
                 vis.reArrangeBars(
                   sortedTotalsFinal,
                   durationPerTransition,
@@ -894,6 +898,7 @@ export default class BarChart {
 				  diseaseToWidth,
                   () => {
                     vis.insertPercentageText(sortedTotalsFinal);
+                    vis.instantUpdateOfRects(sortedTotalsFinal, designConstants, diseaseToWidth);
                     vis.reMapFitScreenButtons(
                       sortedTotalsFinal,
 					  sortedTotalsFinal.map((d,i)=>i),
@@ -961,7 +966,7 @@ export default class BarChart {
     return { dataSortedTotal, dataSquares, dataIds };
   }
 
-  async update(dataset: DataSet, diseaseToWidth: string | null, durationPerTransition: number=500) {
+  async update(dataset: DataSet, diseaseToWidth: string | null, instantDiseaseToWidthColoring: boolean= false, durationPerTransition: number=500) {
 
 	  await this.waitForTransitionsToBeFree(0,0.5);
     const vis = this;
@@ -981,6 +986,8 @@ export default class BarChart {
 
 	//Updating the disease-to-y mapping (this.yBars)
     this.recalibrate_ybars(dataSortedTotal, designConstants);
+
+    this.instantUpdateOfRects(dataSortedTotal, designConstants, instantDiseaseToWidthColoring ? diseaseToWidth : null);
 
     //Updating X-axis
     this.currentMax = this.transitionXAxis(dataSquares, designConstants, durationPerTransition)
@@ -1016,6 +1023,7 @@ export default class BarChart {
 	this.reArrangeBars(dataSortedTotal, durationPerTransition, designConstants,diseaseToWidth,
 		() =>{
 			this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
+      this.instantUpdateOfRects(dataSortedTotal, designConstants, diseaseToWidth);
 		},
 		durationPerTransition
 	)

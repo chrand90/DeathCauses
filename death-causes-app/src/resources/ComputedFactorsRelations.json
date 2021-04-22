@@ -1,7 +1,7 @@
 {
   "SmokeSinceStop": {
     "type": "Computed factor",
-    "ancestors": ["SmokingStopped"]
+    "ancestors": ["Smoking", "SmokingStopped"]
   },
   "PhysicalTotal": {
     "type": "Computed factor",

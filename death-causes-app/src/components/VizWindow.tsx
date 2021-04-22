@@ -205,6 +205,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   render(): React.ReactNode {
+    console.log(this.state.database);
     return (
       <div className="vizwindow">
         <h4> Visualization Menu </h4>

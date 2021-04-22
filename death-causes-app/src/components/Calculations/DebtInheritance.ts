@@ -108,7 +108,7 @@ export function computeUsAndSs(
   return { UDic, SDic, RRmax };
 }
 
-export function naiveDebtComputation(SDics: SetToNumber[]): SetToNumber {
+export function naiveDebtComputation(SDics: SetToNumber[], scaler: number=1): SetToNumber {
   let innerCauses: Accounts = {};
   let allKeys = SDics.map((SDic) => {
     return Object.keys(SDic);
@@ -132,7 +132,7 @@ export function naiveDebtComputation(SDics: SetToNumber[]): SetToNumber {
     }, 0);
     let SsProduct = Ss.reduce(function (a, b) {
       return a * b;
-    }, 1);
+    }, 1)*scaler;
     Object.entries(multiplicities).forEach(([factorName, multiplicity]) => {
       if (innerCauses[factorName]) {
         innerCauses[factorName] += (multiplicity * SsProduct) / setSize;
