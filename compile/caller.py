@@ -43,8 +43,8 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
     normalizers, RRs, string_interaction_name = integrate_one(rr_dir, age_intervals, age_distribution)
 
     normalizer_age_object = initialize_data_frame_by_columns(Age=Ages, values_list=normalizers)
-    print('normalizer age object -----------------------------------------------------')
-    print(normalizer_age_object)
+    #print('normalizer age object -----------------------------------------------------')
+    #print(normalizer_age_object)
     riskfactorgroup['normalisingFactors'] = normalizer_age_object.get_as_standard_age_prevalences()
     riskfactorgroup['interactionFunction'] = string_interaction_name
     riskratiotables = []
@@ -72,8 +72,8 @@ def integrate_and_interpolate_all(age_intervals, folder):
     cause_dirs = search_for_causes(folder)
     rr_dirs = search_for_rrs(folder)
 
-    for disease, d_dic in relations.items():
-        print(disease, ": ", d_dic["type"])
+    # for disease, d_dic in relations.items():
+    #     print(disease, ": ", d_dic["type"])
 
     writtenF_dirs = search_for_writtenF_directories(folder)
 
@@ -95,7 +95,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
 
     for disease, rr_dirs in rr_dirs.items():
         for rr_dir in rr_dirs:
-            print(rr_dir)
+            #print(rr_dir)
             rr_norm, riskfactor_names = integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
             relations[disease]["ancestors"].extend(riskfactor_names)
             if disease in death_causes:
@@ -138,7 +138,9 @@ def integrate_one(writtenF_dir, age_intervals, age_distribution):
     RR = rr.make_simultane_and_get_writtenF(RRs, interaction)
     RRages = [factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in
               age_intervals]
-
+    folder=writtenF_dir.split(os.sep)[-1]
+    disease = writtenF_dir.split(os.sep)[-2]
+    print("Integrating: "+ folder)
     factor_prob_data_frames = factor_probabilities.get_factor_probabilities(RR.get_categories(RR.get_FactorNames()),
                                                                             age_intervals)
 
