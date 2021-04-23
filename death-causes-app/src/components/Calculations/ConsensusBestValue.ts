@@ -1,6 +1,6 @@
 import { FactorAnswers } from "../../models/Factors";
 import { OptimizabilityToNodes } from "../../models/RelationLinks";
-import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
+import { DimensionStatus, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 
 enum Flank {
@@ -32,6 +32,26 @@ export class BestValues {
       })
     });
     this.factorAnswers = allPreviousUpdateForms;
+  }
+
+  getGivensAndOptimizability(factorName:string){
+    let factorOptimClass: number=-10;
+    Object.entries(this.optimClasses).forEach(([optimizability, members]) => {
+      if(members.includes(factorName)){
+        factorOptimClass=parseInt(optimizability)
+      }
+    })
+    if(factorOptimClass<0){
+      throw Error("The factor" + factorName + " was not found in the possible optimClasses")
+    }
+    const numClasses=Object.keys(this.optimClasses).map(s=>+s)
+    let givens:string[]=[];
+    numClasses.forEach((optimizability) => {
+      if(optimizability<factorOptimClass){
+        givens=givens.concat(this.optimClasses[optimizability.toString()])
+      }
+    })
+    return {givens: givens.filter(d=>d!=="Age"), optimizability:factorOptimClass};
   }
 
   addContribution(loc: LocationAndValue, fixedFactors: string[]) {
@@ -114,7 +134,63 @@ export class BestValues {
   }
 
   getLongConsensusStatement(factorName:string, probability: number, causeName: string){
-    return `If you die from ${causeName} the probability that it is due to ${factorName} is ${probability.toFixed(3)}`
+    const {givens,optimizability} = this.getGivensAndOptimizability(factorName);
+    let res= "If you die from "+causeName +", it will "
+    if(givens.length===0){
+      res+="only "
+    }
+    res+="be caused by your <strong>" + factorName + "</strong> "
+
+    res+="with probability <strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
+    
+    if(givens.length>0){
+      res=res+" given "+listFormatting(givens)
+    }
+    const factorAnswer = this.factorAnswers[factorName];
+    if(factorAnswer.dimension===DimensionStatus.SINGLE){
+      res=res+". Your "+factorName+ " is "+factorAnswer.value
+    }
+    if (
+      !(factorName in this.optimals) ||
+      this.optimals[factorName].length === 0
+    ) {
+      return res
+    }    
+    const firstEntry = this.optimals[factorName][0];
+    if (typeof firstEntry === "number") {
+      const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
+      const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
+        this.optimals[factorName] as number[],
+        min, max
+      );
+      if(factorAnswer.dimension===DimensionStatus.YEARLY){
+        const minAnswer=min.toFixed(2).replace(/\.?0+$/,"")
+        const maxAnswer=max.toFixed(2).replace(/\.?0+$/,"")
+        if(minAnswer===maxAnswer){
+          res=res+". Your "+factorName+ " is "+minAnswer
+        }
+        else{
+          res=res+". Your "+factorName+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " in the computation period"
+        }
+      }
+      const minVal=Math.min(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")
+      const maxVal=Math.max(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")
+      if(factorAnswerFlank===Flank.NEITHER){
+        res=res+". That is extremely close to the optimal value"
+      }
+      else if (stability === FlankStability.STABLE) {
+        res=res+ ". The optimal value is <strong>" + minVal +"</strong>"
+      } else {
+        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on year, subcause, and/or other risk factors."
+      }
+    } else {
+      if (this.optimals[factorName].every((d) => d === firstEntry)) {
+        res=res+ ". The optimal value is " + firstEntry;
+      } else {
+        res=res+ ". The optimal values is one of {"+  this.optimals[factorName].join(',')+"}"+" depending on year, subcause and/or other risk factors.";
+      }
+    }
+    return res+"."
   }
 
   merge(otherStore: BestValues) {
@@ -174,6 +250,20 @@ function computeFlankOfFactorAnswer(
     }
   });
   return { side, stability };
+}
+
+function listFormatting(factors: string[]){
+  if(factors.length===1){
+    return "<strong>"+factors[0]+"</strong>"
+  }
+  else{
+    const lastElement=factors.pop()
+    let res=""
+    factors.forEach((d)=> {
+      res+="<strong>"+d+"</strong>, "
+    })
+    return res+"and <strong>"+lastElement+"</strong>"
+  }
 }
 
 export function mergeBestValues(
