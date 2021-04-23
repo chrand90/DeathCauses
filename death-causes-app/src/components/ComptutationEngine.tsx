@@ -9,6 +9,7 @@ export interface SquareSection {
     x0: number,
     x: number,
     comparison?: string,
+    longComparison?: string,
 }
 
 interface ProbSums {
@@ -84,12 +85,17 @@ function makeRowSquare(
         
         Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
             const statement=combinedBestValues?.getConsensusStatement(innerCause)
+            const longStatement=combinedBestValues?.getLongConsensusStatement(
+                innerCause,
+                totalProb>1e-8 ? width/totalProb : 0,
+                parent );
             squares.push({
                 name: parent,
                 cause: innerCause,
                 x0: zeroTruncater(explainedSoFar)*rescaler,
                 x: zeroTruncater(explainedSoFar+width)*rescaler,
-                comparison: statement
+                comparison: statement,
+                longComparison: longStatement
             });
             explainedSoFar+=width;
         })

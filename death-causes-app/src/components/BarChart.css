@@ -1,29 +1,81 @@
-.d3-tip {
+.stip{
     line-height: 1;
-    font-weight: bold;
-    padding: 5px;
-    border-radius: 2px;
-    border: 1px solid #000000;
+    display: inline-block;
+    padding: 6px;
+    color: rgb(0, 0, 0);
+    border-style: solid;
+    border-radius: 4px;
+    border-color: rgb(77, 77, 77);
+    border-width: 1px;
     position: absolute;
     z-index: 2;
+    font-size: 14px;
+    font-weight: 500;
   }
   
   /* Creates a small triangle extender for the tooltip 
   */
-  .d3-tip:before {
+  .stip:before {
     box-sizing: border-box;
     display: inline;
-    font-size: 15px;
+    font-size: 14px;
     width: 100%;
-    color: rgba(0, 0, 0, 0.8);
+    color: rgba(77, 77, 77, 0.8);
     content: "\25B2";
     position: absolute;
     z-index: 0; 
     text-align: center;
   }
 
-  .d3-tip.s:before {
-    top: -50%;
+  .stip.s:before {
+    top: -13px;
     left: 0;
   }
+
+  .stip.small {
+    max-width: 100px;
+    word-wrap: break-word;
+  }
+
+  .clicktip {
+    line-height: 1;
+    padding: 6px;
+    color: rgb(0, 0, 0);
+    border-style: solid;
+    border-radius: 4px;
+    border-color: #000000;
+    border-width: 1px;
+    position: absolute;
+    font-size: 14px;
+    font-weight: 500;
+    max-width: 250px;
+    z-index: 1;
+    }
+    
+    /* Creates a small triangle extender for the tooltip 
+    */
+    .clicktip:before {
+      height:14px;
+      box-sizing: border-box;
+      font-size: 14px;
+      width: 100%;
+      line-height: 1;
+      padding: 0px;
+      margin: 0px;
+      color: rgba(0, 0, 0, 0.8);
+      content: "\25B2";
+      position: absolute;
+      text-align: center;
+    }
+    
+    .clicktip.s:before {
+      top: -13px;
+      left: 0;
+    }
+
+    .clicktip.small {
+      max-width: 100px;
+      word-wrap: break-word;
+    }
+    
   

@@ -113,6 +113,10 @@ export class BestValues {
     }
   }
 
+  getLongConsensusStatement(factorName:string, probability: number, causeName: string){
+    return `If you die from ${causeName} the probability that it is due to ${factorName} is ${probability.toFixed(3)}`
+  }
+
   merge(otherStore: BestValues) {
     Object.entries(otherStore.optimals).forEach(([factorName, vals]) => {
       if (factorName in this.optimals) {
