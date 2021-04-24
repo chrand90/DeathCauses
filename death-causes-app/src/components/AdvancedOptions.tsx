@@ -36,8 +36,8 @@ export default class AdvancedOptionsMenu extends React.PureComponent<AdvancedOpt
 
     render() {
         return (
-            <div style={{paddingRight:"20px", paddingLeft:"20px", marginBottom:"20px"}}> 
-                 <Button onClick={() => this.setState({open: !this.state.open})} variant='link' className="collapsebutton">
+            <div style={{paddingRight:"20px", paddingLeft:"40px", textAlign:"left"}}> 
+                 <Button onClick={() => this.setState({open: !this.state.open})} variant='link' className="collapsebutton" style={this.state.open ? {}: {backgroundColor:"white"}}>
                 {this.state.open ? "\u25BC" : "\u25B6"} Advanced Options
             </Button>
             <Collapse in={this.state.open} >
