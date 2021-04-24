@@ -1,0 +1,18 @@
+.bordereddiv {
+    border-style:solid;
+    border-width: 1px; 
+    border-color: rgb(226, 226, 226);
+    border-radius: 4px;
+    text-align: left;
+    background-color: rgb(200, 250, 239);
+}
+
+.collapsebutton {
+    color:rgb(80, 80, 80);
+    font-size:13px;
+    
+}
+
+.collapsebutton:focus {
+    background-color: rgb(200, 250, 239);
+}

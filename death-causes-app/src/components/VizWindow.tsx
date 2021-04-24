@@ -13,6 +13,7 @@ import causesCategoryData from "../resources/CategoryCauses.json";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
+import AdvancedOptionsMenu, {AdvancedOptions} from './AdvancedOptions';
 
 interface VizWindowProps {
   factorAnswersSubmitted: FactorAnswers | null;
@@ -30,6 +31,7 @@ interface VizWindowStates {
   database: DataSet | null;
   survivalData: SurvivalCurveData[];
   initializedDatabase: boolean;
+  advancedOptions: AdvancedOptions;
 }
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
@@ -42,8 +44,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       database: null,
       survivalData: [],
       initializedDatabase: false,
+      advancedOptions: {ageFrom: null, ageTo: 120}
     };
-    
+    this.updateAdvancedOptions=this.updateAdvancedOptions.bind(this);
     this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
   }
 
@@ -129,11 +132,19 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     }
   };
 
-  renderChosenGraph() {
-    if(!this.state.initializedDatabase){
-      return "Loading database..."
-    }
-    switch (this.props.visualization) {
+  updateAdvancedOptions(newOptions: AdvancedOptions){
+    this.setState({advancedOptions: newOptions});
+  }
+
+  renderAdvancedOptionsMenu(){
+    return (
+      <AdvancedOptionsMenu optionsSubmitted={this.state.advancedOptions} updateAdvancedOptions={this.updateAdvancedOptions}>
+      </AdvancedOptionsMenu>
+    )
+  }
+
+  renderDataBoundedGraph(visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH){
+    switch(visualization){
       case Visualization.BAR_GRAPH: {
         return (
           <div>
@@ -148,6 +159,27 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
             )}
           </div>
         );
+      } 
+      case Visualization.SURVIVAL_GRAPH: {
+        return <BarPlotWrapper data={this.state.survivalData} />;
+      } 
+    }
+
+  }
+
+  renderChosenGraph() {
+    if(!this.state.initializedDatabase){
+      return "Loading database..."
+    }
+    switch (this.props.visualization) {
+      case Visualization.BAR_GRAPH :
+      case Visualization.SURVIVAL_GRAPH: {
+        return (
+            <div>
+              {this.renderAdvancedOptionsMenu()}
+              {this.renderDataBoundedGraph(this.props.visualization)}
+            </div>
+        )
       }
       case Visualization.RELATION_GRAPH: {
         return (
@@ -163,8 +195,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
           />
         );
       }
-      case Visualization.SURVIVAL_GRAPH:
-        return <BarPlotWrapper data={this.state.survivalData} />;
       case Visualization.NO_GRAPH: {
         return "Input an age to get started";
       }

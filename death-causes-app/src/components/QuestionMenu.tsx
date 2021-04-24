@@ -618,7 +618,7 @@ class QuestionMenu extends React.Component<
           Answer questions to get personalized risks of dying from different causes  
           <DataPrivacyBox></DataPrivacyBox>
         </p>
-          <Collapse
+          <Collapse className="questionlistcollapser"
             in={this.state.view === QuestionView.QUESTION_MANAGER}
             onExited={() => {
               setTimeout(
@@ -626,7 +626,6 @@ class QuestionMenu extends React.Component<
                 250
               );
             }}
-            timeout={500}
           >
             <Form onSubmit={this.handleSubmit}>
             <div
@@ -637,12 +636,14 @@ class QuestionMenu extends React.Component<
             </div>
             </Form>
           </Collapse>
-          <Collapse
+          <Collapse className="questionlistcollapser"
             in={this.state.view === QuestionView.QUESTION_LIST}
             onExited={() => {
-              this.setState({ view: QuestionView.QUESTION_MANAGER });
+              setTimeout(
+                () => this.setState({ view: QuestionView.QUESTION_MANAGER }),
+                250
+              );
             }}
-            timeout={500}
           >
             <Form onSubmit={this.handleSubmit}>
             <div
