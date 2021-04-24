@@ -3,10 +3,9 @@ import d3Tip from "d3-tip";
 import "./BarChart.css";
 import { DataRow, DataSet } from "./PlottingData";
 import make_squares, { SquareSection } from "./ComptutationEngine";
-import { rgb, ScaleBand, ScaleLinear } from "d3";
-import { ALTERNATING_COLORS, hexToRgb, LINK_COLOR } from "./Helpers";
+import { ScaleBand, ScaleLinear } from "d3";
+import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
 import { CauseGrouping, CauseToParentMapping, NodeToColor, ParentToCausesMapping } from "../models/RelationLinks";
-import { idText } from "typescript";
 
 
 
@@ -488,6 +487,7 @@ export default class BarChart {
       })
       .direction("s")
       .offset([10, 0]);
+
       vis.clicktip = d3Tip()
       .attr("class", "clicktip small")
       .html((d: SquareSection) => {
@@ -504,6 +504,7 @@ export default class BarChart {
       })
       .direction("s")
       .offset([10, 0])
+
       vis.stip = d3Tip()
       .attr("class", "stip")
       .html((d: SquareSection) => {
