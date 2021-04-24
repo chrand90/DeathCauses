@@ -46,12 +46,17 @@ export class BestValues {
     }
     const numClasses=Object.keys(this.optimClasses).map(s=>+s)
     let givens:string[]=[];
+    let subtracted: string[]=[];
     numClasses.forEach((optimizability) => {
       if(optimizability<factorOptimClass){
         givens=givens.concat(this.optimClasses[optimizability.toString()])
       }
+      else if(optimizability>factorOptimClass){
+        subtracted=subtracted.concat(this.optimClasses[optimizability.toString()])
+      }
     })
-    return {givens: givens.filter(d=>d!=="Age"), optimizability:factorOptimClass};
+    const sames=this.optimClasses[factorOptimClass.toString()]
+    return {givens: givens.filter(d=>d!=="Age"), subtracted, sames, optimizability:factorOptimClass};
   }
 
   addContribution(loc: LocationAndValue, fixedFactors: string[]) {
@@ -134,17 +139,25 @@ export class BestValues {
   }
 
   getLongConsensusStatement(factorName:string, probability: number, causeName: string){
-    const {givens,optimizability} = this.getGivensAndOptimizability(factorName);
-    let res= "If you die from "+causeName +", it will "
+    const prob="<strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
+    const {givens, subtracted, optimizability} = this.getGivensAndOptimizability(factorName);
+    let res= "If you die from "+causeName +", the reason is "
     if(givens.length===0){
       res+="only "
     }
-    res+="be caused by your <strong>" + factorName + "</strong> "
+    res+="your value of "
+    res+="<strong>" + factorName + "</strong> "
 
-    res+="with probability <strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
+    res+="with probability "+prob
     
     if(givens.length>0){
-      res=res+" given "+listFormatting(givens)
+      res=res+". This includes cases where other valid reasons were "+listFormatting(givens, "or")
+      if(subtracted.length>0){
+        res=res+" but exludes those where "+listFormatting(subtracted)+ " could also explain the death"
+      }
+    }
+    else if(subtracted.length>0){
+      res=res+". This excludes cases where other valid reasons were "+listFormatting(subtracted, "or");
     }
     const factorAnswer = this.factorAnswers[factorName];
     if(factorAnswer.dimension===DimensionStatus.SINGLE){
@@ -181,13 +194,13 @@ export class BestValues {
       else if (stability === FlankStability.STABLE) {
         res=res+ ". The optimal value is <strong>" + minVal +"</strong>"
       } else {
-        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on year, subcause, and/or other risk factors."
+        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on year, subcause, and/or other risk factors"
       }
     } else {
       if (this.optimals[factorName].every((d) => d === firstEntry)) {
         res=res+ ". The optimal value is " + firstEntry;
       } else {
-        res=res+ ". The optimal values is one of {"+  this.optimals[factorName].join(',')+"}"+" depending on year, subcause and/or other risk factors.";
+        res=res+ ". The optimal values is one of {"+  removeDuplicates(this.optimals[factorName] as string[]).join(', ')+"}"+" depending on year, subcause and/or other risk factors";
       }
     }
     return res+"."
@@ -209,6 +222,10 @@ export class BestValues {
       }
     })
   }
+}
+
+function removeDuplicates(l: string[]){
+  return Array.from(new Set<string>(l))
 }
 
 
@@ -252,17 +269,17 @@ function computeFlankOfFactorAnswer(
   return { side, stability };
 }
 
-function listFormatting(factors: string[]){
+function listFormatting(factors: string[], finalword:string="or"){
   if(factors.length===1){
-    return "<strong>"+factors[0]+"</strong>"
+    return "<i>"+factors[0]+"</i>"
   }
   else{
     const lastElement=factors.pop()
     let res=""
     factors.forEach((d)=> {
-      res+="<strong>"+d+"</strong>, "
+      res+="<i>"+d+"</i>, "
     })
-    return res+"and <strong>"+lastElement+"</strong>"
+    return res.slice(0,-2)+ " "+finalword+ " <i>"+lastElement+"</i>"
   }
 }
 
