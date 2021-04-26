@@ -32,11 +32,13 @@ interface VizWindowStates {
   survivalData: SurvivalCurveData[];
   initializedDatabase: boolean;
   advancedOptions: AdvancedOptions;
+  advancedOptionsKey: boolean;
 }
 
 class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   computerController: ComputeController | null;
-  factorDatabase: Deathcause[] = [];
+  deathcauses: Deathcause[];
+  deathCauseCategories: RiskFactorGroupsContainer[];
 
   constructor(props: any) {
     super(props);
@@ -44,20 +46,38 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       database: null,
       survivalData: [],
       initializedDatabase: false,
-      advancedOptions: {ageFrom: null, ageTo: 120}
+      advancedOptions: {ageFrom: null, ageTo: 120},
+      advancedOptionsKey: false,
     };
     this.updateAdvancedOptions=this.updateAdvancedOptions.bind(this);
     this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
+    this.deathcauses=[];
+    this.deathCauseCategories=[];
+    this.resetAdvancedOptionsMenu=this.resetAdvancedOptionsMenu.bind(this);
   }
 
-  componentDidUpdate(prevProps: VizWindowProps) {
+  componentDidUpdate(prevProps: VizWindowProps, prevStates: VizWindowStates) {
     if (
       prevProps.factorAnswersSubmitted !== this.props.factorAnswersSubmitted &&
       this.props.factorAnswersSubmitted
     ) {
       this.updateComputerController();
     }
+    if(
+      prevStates.advancedOptions!==this.state.advancedOptions
+    ){
+      this.computerController=new ComputeController(
+        this.props.relationLinkData,
+        this.state.advancedOptions.ageFrom,
+        this.state.advancedOptions.ageTo,
+        this.deathcauses,
+        this.deathCauseCategories
+      );
+      this.updateComputerController();
+    }
   }
+
+
 
   updateComputerController() {
     this.computerController?.compute(this.props.factorAnswersSubmitted!)
@@ -70,26 +90,24 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
 
   loadFactorDatabase() {
     setTimeout(() => {
-      let database: Deathcause[] = [];
       const rawData:RawDataJson=(causesData as RawDataJson);
       Object.entries(rawData).forEach( ([key, deathcause]) => {
-        database.push(
+        this.deathcauses.push(
           new Deathcause(deathcause, key)
         );
       } )
-      let categoryDatabse: RiskFactorGroupsContainer[]=[];
       const rawCategoryData:RawDataJson=(causesCategoryData as RawDataJson);
       Object.entries(rawCategoryData).forEach( ([key, deathcause]) => {
-        categoryDatabse.push(
+        this.deathCauseCategories.push(
           new RiskFactorGroupsContainer(deathcause, key)
         );
       } )
       this.computerController = new ComputeController(
         this.props.relationLinkData,
-        null,
-        120,
-        database,
-        categoryDatabse
+        this.state.advancedOptions.ageFrom,
+        this.state.advancedOptions.ageTo,
+        this.deathcauses,
+        this.deathCauseCategories
       );
       this.setState({initializedDatabase: true});
     }, 500);
@@ -138,9 +156,20 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
 
   renderAdvancedOptionsMenu(){
     return (
-      <AdvancedOptionsMenu optionsSubmitted={this.state.advancedOptions} updateAdvancedOptions={this.updateAdvancedOptions}>
+      <div key={"advancedoptionsinstate"+this.state.advancedOptionsKey.toString()}>
+      <AdvancedOptionsMenu optionsSubmitted={this.state.advancedOptions} updateAdvancedOptions={this.updateAdvancedOptions} factorAnswers={this.props.factorAnswersSubmitted} reset={this.resetAdvancedOptionsMenu}>
       </AdvancedOptionsMenu>
+      </div>
     )
+  }
+
+  resetAdvancedOptionsMenu(){
+    //this changes the id of the div that contains the advancedoptionsmenu. This forces a full re-rendering of the component
+    this.setState((prevState: VizWindowStates) => {
+      return {
+        advancedOptionsKey: !prevState.advancedOptionsKey
+      }
+    })
   }
 
   renderDataBoundedGraph(visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH){
