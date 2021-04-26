@@ -98,6 +98,7 @@ class App extends React.Component<any, AppState> {
         elementInFocus={this.state.elementInFocus}
         visualization={this.state.visualization}
         orderVisualization={this.orderVisualization}
+        relationLinkRaw={relationLinkFile as RelationLinkJson}
       />
     );
   }

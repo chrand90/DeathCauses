@@ -3,7 +3,13 @@ import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
 import Button from "react-bootstrap/Button";
 import "./AdvancedOptions.css";
-import { BACKGROUNDCOLOR_DISABLED, CHANGED_COLOR, ERROR_COLOR, FormControlStyle, TEXTCOLOR_DISABLED } from "./Question";
+import {
+  BACKGROUNDCOLOR_DISABLED,
+  CHANGED_COLOR,
+  ERROR_COLOR,
+  FormControlStyle,
+  TEXTCOLOR_DISABLED,
+} from "./Question";
 import { FactorAnswers } from "../models/Factors";
 import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
@@ -13,10 +19,16 @@ import { InputValidity } from "../models/FactorAbstract";
 export interface AdvancedOptions {
   ageFrom: number | null;
   ageTo: number;
+  threading: Threading;
+}
+
+export enum Threading {
+  SINGLE = "single",
+  MULTI = "multi",
 }
 
 const ERROR_STYLE = { borderColor: ERROR_COLOR };
-const INPUT_NOT_WHOLE= "Input should be a whole number"
+const INPUT_NOT_WHOLE = "Input should be a whole number";
 
 interface AdvancedOptionsWithoutNull extends AdvancedOptions {
   ageFrom: number;
@@ -49,7 +61,7 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
 > {
   constructor(props: AdvancedOptionsProps) {
     super(props);
-    
+
     this.state = {
       options: {
         ...props.optionsSubmitted,
@@ -69,8 +81,9 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     };
     this.handleAgeChange = this.handleAgeChange.bind(this);
     this.handleAgeFromSetting = this.handleAgeFromSetting.bind(this);
-    this.handleSubmit=this.handleSubmit.bind(this);
-    this.abort=this.abort.bind(this)
+    this.handleSubmit = this.handleSubmit.bind(this);
+    this.handleRadioChange=this.handleRadioChange.bind(this);
+    this.abort = this.abort.bind(this);
   }
 
   handleAgeChange(ev: React.ChangeEvent<HTMLInputElement>): void {
@@ -93,6 +106,19 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     );
   }
 
+  handleRadioChange(ev: React.ChangeEvent<HTMLInputElement>){
+    const value = ev.currentTarget.value as Threading;
+    this.setState(
+      (prevState: AdvancedOptionsStates) => {
+        return {
+          options: { ...prevState.options, 
+                    threading: value},
+          changedSinceLastCommit: true
+        };
+      }
+    );
+  }
+
   getValidity(key: string): InputValidity {
     if (!(key in this.state.validities)) {
       return { status: "Success", message: "" };
@@ -106,7 +132,10 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       this.getValidity("ageFrom").message !== INPUT_NOT_WHOLE &&
       this.getValidity("ageTo").message !== INPUT_NOT_WHOLE
     ) {
-      if (parseInt(this.state.options.ageFrom.toString()) > parseInt(this.state.options.ageTo.toString())) {
+      if (
+        parseInt(this.state.options.ageFrom.toString()) >
+        parseInt(this.state.options.ageTo.toString())
+      ) {
         this.setState((prevState: AdvancedOptionsStates) => {
           return {
             validities: {
@@ -122,23 +151,22 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
             },
           };
         });
-      }
-      else{
+      } else {
         this.setState((prevState: AdvancedOptionsStates) => {
-            return {
-              validities: {
-                ...prevState.validities,
-                ageFrom: {
-                  status: "Success",
-                  message: "",
-                },
-                ageTo: {
-                  status: "Success",
-                  message: "",
-                },
+          return {
+            validities: {
+              ...prevState.validities,
+              ageFrom: {
+                status: "Success",
+                message: "",
               },
-            };
-          });
+              ageTo: {
+                status: "Success",
+                message: "",
+              },
+            },
+          };
+        });
       }
     }
   }
@@ -193,13 +221,13 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
   }
 
   ageFromRow() {
-    let style:FormControlStyle={}
-    if(this.getValidity("ageFrom").status==="Error"){
-        style["borderColor"]=ERROR_COLOR
+    let style: FormControlStyle = {};
+    if (this.getValidity("ageFrom").status === "Error") {
+      style["borderColor"] = ERROR_COLOR;
     }
-    if(this.state.disabledAgeFrom){
-        style["backgroundColor"]=BACKGROUNDCOLOR_DISABLED
-        style["color"]=TEXTCOLOR_DISABLED
+    if (this.state.disabledAgeFrom) {
+      style["backgroundColor"] = BACKGROUNDCOLOR_DISABLED;
+      style["color"] = TEXTCOLOR_DISABLED;
     }
     return (
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
@@ -224,24 +252,23 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
   }
 
   handleSubmit() {
-    this.setState({changedSinceLastCommit:false},
-        () => {
-            if(this.state.disabledAgeFrom){
-                this.props.updateAdvancedOptions({...this.state.options, ageFrom: null})
-            }
-            else{
-                this.props.updateAdvancedOptions(this.state.options)
-            }
-        }
-    )
+    this.setState({ changedSinceLastCommit: false }, () => {
+      if (this.state.disabledAgeFrom) {
+        this.props.updateAdvancedOptions({
+          ...this.state.options,
+          ageFrom: null,
+        });
+      } else {
+        this.props.updateAdvancedOptions(this.state.options);
+      }
+    });
   }
 
-  abort(){
+  abort() {
     this.props.reset();
   }
 
   ageToRow() {
-    
     return (
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
@@ -253,7 +280,7 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
               {this.ageFromAgeToTextfield(
                 "ageTo",
                 this.state.options.ageTo,
-                this.getValidity("ageTo").status==="Error" ? ERROR_STYLE : {},
+                this.getValidity("ageTo").status === "Error" ? ERROR_STYLE : {},
                 false
               )}
             </InputGroup>
@@ -306,13 +333,45 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
           {errorMessage === "" ? (
             ""
           ) : (
-            <Form.Label style={{ color: ERROR_COLOR , fontSize:"14px"}}>
+            <Form.Label style={{ color: ERROR_COLOR, fontSize: "14px" }}>
               {" "}
               {errorMessage}
             </Form.Label>
           )}
         </Col>
       </Row>
+    );
+  }
+
+  threadingRow() {
+    return (
+      <div style={{ marginLeft: "20px", marginRight: "20px" }}>
+        <Form.Row>
+          <Col md={6}>
+          <Form.Label>Threading </Form.Label>
+          </Col>
+          <Col md={6}>
+          <Form.Check
+                type="radio"
+                name="threading"
+                id={Threading.SINGLE}
+                label="One thread"
+                value={Threading.SINGLE}
+                onChange={this.handleRadioChange}
+                checked={this.state.options.threading===Threading.SINGLE}
+              />
+              <Form.Check
+                type="radio"
+                name="threading"
+                id={Threading.MULTI}
+                label="Two threads"
+                value={Threading.MULTI}
+                onChange={this.handleRadioChange}
+                checked={this.state.options.threading===Threading.MULTI}
+              />
+          </Col>
+        </Form.Row>
+      </div>
     );
   }
 
@@ -352,6 +411,8 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
             {this.ageFromRow()}
             <hr></hr>
             {this.ageToRow()}
+            <hr></hr>
+            {this.threadingRow()}
           </div>
         </Collapse>
       </div>

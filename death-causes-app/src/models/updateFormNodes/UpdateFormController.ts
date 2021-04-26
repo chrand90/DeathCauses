@@ -121,6 +121,11 @@ export default class ComputeController {
     console.log(this.allComputedNodes);
   }
 
+  computeAll(factorAnswers: FactorAnswers){
+      this.compute(factorAnswers)
+      return {survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities()}
+  }
+
   computeSurvivalData(): SurvivalCurveData[] {
     //Promise<SurvivalCurveData[]>{
       if(this.allComputedNodes === null){
