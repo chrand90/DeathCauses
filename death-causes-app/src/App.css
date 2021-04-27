@@ -40,3 +40,7 @@
 .container{
   width: 95%
 }
+
+.submitbutton {
+  width: 100px;
+}

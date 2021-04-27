@@ -15,6 +15,8 @@ import Col from "react-bootstrap/Col";
 import Row from "react-bootstrap/Row";
 import InputGroup from "react-bootstrap/InputGroup";
 import { InputValidity } from "../models/FactorAbstract";
+import { ComputationState } from "./Helpers";
+import { Spinner } from "react-bootstrap";
 
 export interface AdvancedOptions {
   ageFrom: number | null;
@@ -39,6 +41,8 @@ interface AdvancedOptionsProps {
   optionsSubmitted: AdvancedOptions;
   factorAnswers: FactorAnswers | null;
   reset: () => void;
+  computationState: ComputationState;
+  reportChangesToComputationState: (newState: ComputationState) => void;
 }
 
 enum CollapseStatus {
@@ -49,7 +53,6 @@ enum CollapseStatus {
 interface AdvancedOptionsStates {
   options: AdvancedOptionsWithoutNull;
   open: boolean;
-  changedSinceLastCommit: boolean;
   disabledAgeFrom: boolean;
   collapseStatus: CollapseStatus;
   validities: { [inputfield: string]: InputValidity };
@@ -75,7 +78,6 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       },
       validities: {},
       open: false,
-      changedSinceLastCommit: false,
       disabledAgeFrom: props.optionsSubmitted.ageFrom ? false : true,
       collapseStatus: CollapseStatus.CLOSED,
     };
@@ -93,7 +95,6 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       (prevState: AdvancedOptionsStates) => {
         return {
           options: { ...prevState.options, [factorname]: value },
-          changedSinceLastCommit: true,
           validities: {
             ...prevState.validities,
             [factorname]: this.makeInputValidity(value),
@@ -102,6 +103,7 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       },
       () => {
         this.setAgeConsistencyValidity();
+        this.props.reportChangesToComputationState(ComputationState.CHANGED)
       }
     );
   }
@@ -113,8 +115,10 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
         return {
           options: { ...prevState.options, 
                     threading: value},
-          changedSinceLastCommit: true
         };
+      },
+      () => {
+        this.props.reportChangesToComputationState(ComputationState.CHANGED)
       }
     );
   }
@@ -199,11 +203,13 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
             ageFrom: this.getDefaultAgeFrom(),
           },
           disabledAgeFrom: checked,
-          changedSinceLastCommit: true,
         };
+      },
+      () => {
+        this.props.reportChangesToComputationState(ComputationState.CHANGED)
       });
     } else {
-      this.setState({ disabledAgeFrom: checked, changedSinceLastCommit: true });
+      this.setState({ disabledAgeFrom: checked});
     }
   }
 
@@ -252,16 +258,14 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
   }
 
   handleSubmit() {
-    this.setState({ changedSinceLastCommit: false }, () => {
-      if (this.state.disabledAgeFrom) {
-        this.props.updateAdvancedOptions({
-          ...this.state.options,
-          ageFrom: null,
-        });
-      } else {
-        this.props.updateAdvancedOptions(this.state.options);
-      }
-    });
+    if (this.state.disabledAgeFrom) {
+      this.props.updateAdvancedOptions({
+        ...this.state.options,
+        ageFrom: null,
+      });
+    } else {
+      this.props.updateAdvancedOptions(this.state.options);
+    }
   }
 
   abort() {
@@ -314,7 +318,7 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
 
   buttons(errorMessage: string) {
     const nextButtonStyle: FormControlStyle = {};
-    if (this.state.changedSinceLastCommit) {
+    if (this.props.computationState!==ComputationState.READY) {
       nextButtonStyle["backgroundColor"] = CHANGED_COLOR;
     }
     return (
@@ -324,11 +328,15 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
         </Col>
         <Col style={{ textAlign: "left" }}>
           <Button
+            className="submitbutton"
             style={nextButtonStyle}
-            disabled={!this.state.changedSinceLastCommit && errorMessage !== ""}
+            disabled={errorMessage !== ""}
             onClick={this.handleSubmit}
           >
-            {this.state.changedSinceLastCommit ? "Compute*" : "Compute"}
+            {this.props.computationState===ComputationState.CHANGED ? "Compute*" : 
+             this.props.computationState===ComputationState.RUNNING ? 
+             <Spinner animation="border" size="sm"></Spinner> :
+             "Compute"}
           </Button>
           {errorMessage === "" ? (
             ""

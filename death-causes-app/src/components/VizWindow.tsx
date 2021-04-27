@@ -5,7 +5,7 @@ import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import { TEST_DATA, TEST_DATA2, DataSet, DataRow } from "./PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import { Visualization } from "./Helpers";
+import { ComputationState, Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
 import Deathcause, {
   DeathCauseJson,
@@ -29,6 +29,8 @@ interface VizWindowProps {
   elementInFocus: string;
   visualization: Visualization;
   orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
+  computationState: ComputationState;
+  reportChangesToComputationState: (newState:ComputationState) => void;
 }
 
 const worker = new Worker();
@@ -107,7 +109,10 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       const a = this.computerController?.computeInnerProbabilities();
       this.setState({ database: a! }, () => {
         const b = this.computerController?.computeSurvivalData();
-        this.setState({ survivalData: b! });
+        this.setState({ survivalData: b! },
+        () => {
+          this.props.reportChangesToComputationState(ComputationState.READY)
+        });
       });
     } else {
       const promise: Promise<{
@@ -115,7 +120,10 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         innerCauses: DataRow[];
       }> = worker.processData(this.props.factorAnswersSubmitted);
       promise.then(({ survivalData, innerCauses }) => {
-        this.setState({ survivalData: survivalData, database: innerCauses });
+        this.setState({ survivalData: survivalData, database: innerCauses },
+        () => {
+          this.props.reportChangesToComputationState(ComputationState.READY)
+        });
       });
     }
   }
@@ -196,7 +204,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   };
 
   updateAdvancedOptions(newOptions: AdvancedOptions) {
-    this.setState({ advancedOptions: newOptions });
+    this.setState({ advancedOptions: newOptions },() => {
+      this.props.reportChangesToComputationState(ComputationState.RUNNING);
+    });
   }
 
   renderAdvancedOptionsMenu() {
@@ -211,6 +221,8 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
           updateAdvancedOptions={this.updateAdvancedOptions}
           factorAnswers={this.props.factorAnswersSubmitted}
           reset={this.resetAdvancedOptionsMenu}
+          computationState={this.props.computationState}
+          reportChangesToComputationState={this.props.reportChangesToComputationState}
         ></AdvancedOptionsMenu>
       </div>
     );
