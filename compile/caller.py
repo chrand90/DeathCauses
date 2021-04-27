@@ -39,6 +39,8 @@ def combine_relations(relations):
 
 
 def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages):
+    if rr_dir.split(os.sep)[-1]=="rr_BMI-HCVStatus":
+        print("debug location")
     riskfactorgroup = {}
     normalizers, RRs, string_interaction_name = integrate_one(rr_dir, age_intervals, age_distribution)
 
@@ -49,6 +51,8 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
     riskfactorgroup['interactionFunction'] = string_interaction_name
     riskratiotables = []
     riskfactor_names = []
+
+
 
     for RR in RRs:
         RRlist = RR.get_as_list_of_lists()

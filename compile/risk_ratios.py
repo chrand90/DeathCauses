@@ -85,6 +85,9 @@ class RiskRatioTable(data_frame):
                 newly_created_dataframes[factor_tuple]=new_data_frame
         return newly_created_dataframes
 
+    def get_group_by_factor_order(self, variables):
+        return [f for f in self.factornames if f in variables]
+
 
 def loadRRs(writtenF_dir):
     dataframes = []
