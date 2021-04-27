@@ -110,6 +110,7 @@ export default class BarChart {
   svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
   xAxisGroup: any | null;
   stip: any;
+  clicktip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
   colorDic: NodeToColor;
@@ -123,6 +124,7 @@ export default class BarChart {
   chainedTransitionInProgress: boolean;
   transitionsOrdered: number;
   transitionsFinished: number;
+  clickedSquareSection: SquareSection | null=null;
 
   constructor(
     element: HTMLElement | null,
@@ -137,7 +139,6 @@ export default class BarChart {
       collapsables: Set<string>;
       expandables: Set<string>;
     },
-	
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
@@ -186,6 +187,8 @@ export default class BarChart {
 
   clear() {
     d3.select("svg").remove();
+    d3.select(".stip").remove()
+    d3.select(".clicktip").remove()
   }
 
 
@@ -469,17 +472,55 @@ export default class BarChart {
         return d.name + "." + d.cause;
       });
 
-    d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".stip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
-    vis.stip = d3Tip()
-      .attr("class", "d3-tip")
+    
+
+    
+    
+    if(vis.width<501){
+      vis.stip = d3Tip()
+      .attr("class", "stip small")
       .html((d: SquareSection) => {
         return d.comparison ? d.comparison : d.cause;
       })
       .direction("s")
       .offset([10, 0]);
 
+      vis.clicktip = d3Tip()
+      .attr("class", "clicktip small")
+      .html((d: SquareSection) => {
+        return d.longComparison ? d.longComparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0])
+    }
+    else{
+      vis.clicktip = d3Tip()
+      .attr("class", "clicktip")
+      .html((d: SquareSection) => {
+        return d.longComparison ? d.longComparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0])
+
+      vis.stip = d3Tip()
+      .attr("class", "stip")
+      .html((d: SquareSection) => {
+        return d.comparison ? d.comparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0]);
+    }
+
     vis.svg.call(vis.stip);
+    vis.svg.call(vis.clicktip);
+
+    vis.svg.on("click", () => {
+      vis.clickedSquareSection=null
+      vis.clicktip.hide();
+    });
 
     const addedBars = gs.enter().append("rect").attr("class", "causebar");
 
@@ -498,12 +539,15 @@ export default class BarChart {
       .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
       .attr("fill", (d) => this.colorDic[d.cause])
       .attr("stroke", "#2378ae")
+      .style("cursor","pointer")
       .on("mouseenter", function (e: Event, d: SquareSection) {
-        d3.selectAll(".d3-tip").style(
+        d3.select(".stip").style(
           "background-color",
           vis.colorDic[d.cause]
         );
-        vis.stip.show(d, this);
+        if(vis.clickedSquareSection!==d){
+          vis.stip.show(d, this);
+        }
         d3.select(this)
           .raise()
           .style("stroke-width", 3)
@@ -516,7 +560,17 @@ export default class BarChart {
       .on("resize", function (e: Event, d: SquareSection) {
         vis.stip.hide(d, this);
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
-      });
+      })
+      .on("click", function(e: Event, d: SquareSection) {
+        d3.select(".clicktip").style(
+          "background-color",
+          vis.colorDic[d.cause]
+        );
+        vis.clicktip.show(d,this);
+        vis.clickedSquareSection=d;
+        vis.stip.hide();
+        e.stopPropagation();
+      })
   }
 
   createXAxisCall(newMax: number, designConstants: DesignConstants) {
@@ -968,6 +1022,8 @@ export default class BarChart {
 
   async update(dataset: DataSet, diseaseToWidth: string | null, instantDiseaseToWidthColoring: boolean= false, durationPerTransition: number=500) {
 
+    this.stip.hide()
+    this.clicktip.hide()
 	  await this.waitForTransitionsToBeFree(0,0.5);
     const vis = this;
 

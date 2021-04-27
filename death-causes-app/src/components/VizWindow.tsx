@@ -5,7 +5,7 @@ import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import { TEST_DATA, TEST_DATA2, DataSet, DataRow } from "./PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import { ComputationState, Visualization } from "./Helpers";
+import { hideAllToolTips, ComputationState, Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
 import Deathcause, {
   DeathCauseJson,
@@ -98,6 +98,9 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         );
       }
       this.updateComputerController();
+    }
+    if(prevProps.visualization!== this.props.visualization){
+      hideAllToolTips();
     }
   }
 

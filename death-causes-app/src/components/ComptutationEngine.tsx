@@ -9,6 +9,7 @@ export interface SquareSection {
     x0: number,
     x: number,
     comparison?: string,
+    longComparison?: string,
 }
 
 interface ProbSums {
@@ -77,19 +78,25 @@ function makeRowSquare(
             name: parent,
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
-            x: zeroTruncater(unexplained*totalProb)*rescaler
+            x: zeroTruncater(unexplained*totalProb)*rescaler,
+            longComparison: getUnexplainedStatement(unexplained, parent)
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
         
         Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
             const statement=combinedBestValues?.getConsensusStatement(innerCause)
+            const longStatement=combinedBestValues?.getLongConsensusStatement(
+                innerCause,
+                totalProb>1e-8 ? width/totalProb : 0,
+                parent );
             squares.push({
                 name: parent,
                 cause: innerCause,
                 x0: zeroTruncater(explainedSoFar)*rescaler,
                 x: zeroTruncater(explainedSoFar+width)*rescaler,
-                comparison: statement
+                comparison: statement,
+                longComparison: longStatement
             });
             explainedSoFar+=width;
         })
@@ -190,5 +197,9 @@ function make_squares(
     const allSquares = ([] as SquareSection[]).concat(...squareSections);
     return {allSquares, totalProbs};
 };
+
+function getUnexplainedStatement(prob: number, cause: string){
+    return "Given the data you have given to the program so far, there is a <strong>"+(prob*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong> probability that there is no explanation if you die from " +cause+"." 
+}
 
 export default make_squares;
