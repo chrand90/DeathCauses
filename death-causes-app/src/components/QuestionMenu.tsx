@@ -127,9 +127,7 @@ class QuestionMenu extends React.Component<
   loadFactorNames() {
     setTimeout(() => {
       this.factors = new Factors(factorDatabase as InputJson);
-      this.factorOrder = this.factors.getSortedOrder(
-        this.props.relationLinkData
-      );
+      this.factorOrder = this.factors.getSortedOrder();
       this.setState(
         {
           factorAnswers: this.factors.getFactorsAsStateObject(),

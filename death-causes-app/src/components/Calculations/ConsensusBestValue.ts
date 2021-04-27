@@ -19,28 +19,32 @@ export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
   factorAnswers: UpdateDic;
   optimClasses: OptimizabilityToNodes;
+  factorNameToOptimClass: {[k:string]:string}={}
 
   constructor(
     optimClasses: OptimizabilityToNodes,
-    allPreviousUpdateForms: UpdateDic
+    allPreviousUpdateForms: UpdateDic,
   ) {
     this.optimClasses=optimClasses;
     this.optimals = {};
-    Object.values(optimClasses).forEach((fnames) => {
+    Object.entries(optimClasses).forEach(([optimVal, fnames]) => {
       fnames.forEach((fname) => {
         this.optimals[fname] = [] as (number | string)[];
+        this.factorNameToOptimClass[fname]=optimVal
       })
     });
     this.factorAnswers = allPreviousUpdateForms;
   }
 
+  getOptimizability(factorName: string):number{
+    return parseInt(this.factorNameToOptimClass[factorName]);
+  }
+
   getGivensAndOptimizability(factorName:string){
     let factorOptimClass: number=-10;
-    Object.entries(this.optimClasses).forEach(([optimizability, members]) => {
-      if(members.includes(factorName)){
-        factorOptimClass=parseInt(optimizability)
-      }
-    })
+    if(factorName in this.factorNameToOptimClass){
+      factorOptimClass=parseInt(this.factorNameToOptimClass[factorName])
+    }
     if(factorOptimClass<0){
       return {givens: [], subtracted: [], sames: [], optimizability: factorOptimClass}
     }
@@ -221,6 +225,7 @@ export class BestValues {
         this.optimClasses[optimValue] = nodes;
       }
     })
+    this.factorNameToOptimClass={...this.factorNameToOptimClass, ...otherStore.factorNameToOptimClass};
   }
 }
 

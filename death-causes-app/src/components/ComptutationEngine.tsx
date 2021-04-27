@@ -67,13 +67,15 @@ function makeRowSquare(
     }).reduce((a,b)=>a+b,0)/normalizer;
     const unexplained=1.0-total_explained
     let explainedSoFar=0;
+    const comparators:BestValues[]=datRows.map((datRow)=>{
+        return datRow.comparisonWithBestValues
+    }).filter((d): d is BestValues => {
+        return d!==undefined;
+    });
+    const combinedBestValues=comparators.length>0 ? mergeBestValues(comparators) : undefined;
     if(mergeAcross){
-        const comparators:BestValues[]=datRows.map((datRow)=>{
-            return datRow.comparisonWithBestValues
-        }).filter((d): d is BestValues => {
-            return d!==undefined;
-        });
-        const combinedBestValues=comparators.length>0 ? mergeBestValues(comparators) : undefined;
+        
+        
         squares.push({
             name: parent,
             cause: 'Unexplained',
@@ -83,8 +85,16 @@ function makeRowSquare(
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
+        let innerCauses=Object.keys(widthOfEachInnerCause)
+        if(combinedBestValues){
+            innerCauses.sort((a,b) => {
+                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+            })
+        }
         
-        Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
+        
+        innerCauses.forEach((innerCause:string)=>{
+            let width=widthOfEachInnerCause[innerCause];
             const statement=combinedBestValues?.getConsensusStatement(innerCause)
             const longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
@@ -119,6 +129,12 @@ function makeRowSquare(
             explainedSoFar+=unexplainedByGroup
         })
         let widthOfEachInnerCause=getOccurences(datRows);
+        let innerCauses=Object.keys(widthOfEachInnerCause)
+        if(combinedBestValues){
+            innerCauses.sort((a,b) => {
+                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+            })
+        }
         Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
             Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) =>{
                 let contrib=0;
