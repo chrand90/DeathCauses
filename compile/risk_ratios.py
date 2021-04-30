@@ -19,6 +19,7 @@ class RiskRatioTable(data_frame):
         self.lambd = lambd
         self.bounding_method = bounding_method
         self.variances=[]
+        self.global_min_index=-1
         super().__init__(factornames, 0)
 
     def subcopy(self, factornames):
@@ -33,9 +34,21 @@ class RiskRatioTable(data_frame):
     def addVariance(self, variance):
         self.variances.append(variance)
 
-    def addRow(self, row):
+    def get_determined_global_min(self):
+        min_row = self.listOfRowsInTheDataFrame[self.global_min_index]
+        res = {"minValue": min_row[-1]}
+        min_location = {f: flevel for f, flevel in zip(self.factornames, min_row[:-1])}
+        res["minLocation"] = min_location
+        return res
+
+    def has_determined_global_min(self):
+        return self.global_min_index > -0.5
+
+    def addRow(self, row, global_min=False):
         assert len(row) == len(self.factornames) + 1, "Row does not fit data frame."
         self.listOfRowsInTheDataFrame.append(row)
+        if global_min:
+            self.global_min_index=len(self)-1
         if len(self)>len(self.variances):
             self.variances.extend([None]*(len(self)-len(self.variances)))
 
@@ -108,16 +121,20 @@ def loadRRs(writtenF_dir):
                         j = j + 1
                     else:
                         splittedLine = line.split()
-                        lastEntry=splittedLine[-1]
+                        lastEntry = splittedLine[-1]
+                        rr = float(lastEntry.split("(")[0].split("[")[0])
+                        global_min=False
+                        splittedLine[-1] = rr
                         if '(' in lastEntry:
-                            s_parts=lastEntry.split('(')
-                            rr=float(s_parts[0])
-                            sd=float(s_parts[1].split(')')[0])
+                            s_parts = lastEntry.split('(')
+                            sd = float(s_parts[1].split(')')[0])
                             df.addVariance(sd**2)
-                            splittedLine[-1]=rr
-                        else:
-                            splittedLine[-1] = float(splittedLine[-1])
-                        df.addRow(splittedLine)
+                        if '[' in lastEntry:
+                            g_part=lastEntry.split("[")[1]
+                            isG = g_part.split("]")[0]
+                            if isG.lower() == "global_min":
+                                global_min = True
+                        df.addRow(splittedLine, global_min)
                 elif 'lambda=' in line:
                     lambd = float(line.split('=')[1].strip())
                 elif 'tails=' in line:

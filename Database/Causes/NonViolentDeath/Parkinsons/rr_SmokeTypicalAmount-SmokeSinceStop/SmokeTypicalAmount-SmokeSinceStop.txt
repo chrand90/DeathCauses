@@ -1,3 +1,4 @@
+#tails=min_bounded,max_bounded
 SmokeTypicalAmount	SmokeSinceStop	RR
 0	0	1.0
 0,2.0	0	0.44

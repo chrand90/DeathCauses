@@ -645,7 +645,7 @@ standard_ages=c(0,1,seq(5,105,5))
 standard_ages_string=as.character(standard_ages)
 standard_ages_string[length(standard_ages_string)]='Inf'
 barwidths=diff(standard_ages)
-dat=fromJSON(file = '../../compile/Causes.json')
+dat=fromJSON(file = '../../death-causes-app/src/resources/Causes.json')
 
 get_info = function(ca) {
   subdat = dat[[ca]]

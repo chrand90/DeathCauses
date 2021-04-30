@@ -77,14 +77,28 @@ class InterpolationTable(object):
                     if bound=="max" or bound=="both":
                         cell.set_upper_truncation(regional_maximum)
 
-    def enforce_truncation_and_compute_global_min(self,RR):
+    def read_global_min(self, RR):
+        determined_min = RR.get_determined_global_min()
+        min_location = determined_min["minLocation"]
+        for i, varname in enumerate(self.interpolation_variables):
+            min_location['x' + str(i)] = min_location[varname]
+            del min_location[varname]
+        self.global_min = determined_min
+
+    def enforce_truncation_and_compute_global_min(self, RR):
         self.enforce_truncation(RR)
-        self.compute_global_min()
+        if RR.has_determined_global_min():
+            self.read_global_min(RR)
+        else:
+            self.compute_global_min()
 
     def enforce_truncation_and_compute_global_min_and_fixed_mins(self,RR):
         self.enforce_truncation(RR)
         self.find_all_mins()
-        self.compute_global_min()
+        if RR.has_determined_global_min():
+            self.read_global_min(RR)
+        else:
+            self.compute_global_min()
 
     def as_json(self):
         res = {}

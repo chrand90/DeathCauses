@@ -251,7 +251,7 @@ class Formula:
         def packaged_call(xval_as_list):
             xvals = {xvar: xval for xvar, xval in zip(self.xvars, xval_as_list)}
             res = self.__call__(xvals)
-            assert res > lower_bound - 1e-8, "The lower bound was breached"
+            assert lower_bound is None or res > lower_bound - 1e-8, "The lower bound was breached"
             return res
 
         return packaged_call
