@@ -2,11 +2,11 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { ButtonToolbar } from "reactstrap";
 import { InputValidity } from "../models/FactorAbstract";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FormControlStyle, CHANGED_COLOR } from "./Question";
+import ButtonToolbar from "react-bootstrap/esm/ButtonToolbar";
 
 interface AskedQuestionProps {
   factorName: string | undefined;

@@ -1,6 +1,5 @@
 import {json} from "d3";
 import React from "react";
-import { Col, Container, Row } from "reactstrap";
 import "./Main.css";
 import Header from "./components/Header";
 import QuestionMenu, { QuestionMenuStates } from "./components/QuestionMenu";
@@ -10,6 +9,7 @@ import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { Visualization } from "./components/Helpers";
 import relationLinkFile from "./resources/Relations.json";
+import { Col, Container, Row } from "react-bootstrap";
 
 interface MainState {
   factorAnswersSubmitted: FactorAnswers | null;
