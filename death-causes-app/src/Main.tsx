@@ -3,7 +3,7 @@ import React from "react";
 import { Col, Container, Row } from "reactstrap";
 import "./Main.css";
 import Header from "./components/Header";
-import QuestionMenu from "./components/QuestionMenu";
+import QuestionMenu, { QuestionMenuStates } from "./components/QuestionMenu";
 import VizWindow from "./components/VizWindow";
 import  { FactorAnswers } from "./models/Factors";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
@@ -18,8 +18,12 @@ interface MainState {
   visualization: Visualization;
 }
 
-class Main extends React.Component<any, MainState> {
-  constructor(props: any) {
+interface MainProps {
+  questionMenuState: QuestionMenuStates
+  updateQuestionMenuStates: (updatedStates: QuestionMenuStates, callback: () => void) => void
+}
+class Main extends React.Component<MainProps, MainState> {
+  constructor(props: MainProps) { 
     super(props);
 
     this.state = {
@@ -67,7 +71,9 @@ class Main extends React.Component<any, MainState> {
       <QuestionMenu 
         handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
         relationLinkData={this.state.relationLinkData!}
-        orderVisualization={this.orderVisualization}          
+        orderVisualization={this.orderVisualization}
+        questionMenuStates = {this.props.questionMenuState}
+        updateQuestionMenuStates = {this.props.updateQuestionMenuStates}
     />
     );
   }

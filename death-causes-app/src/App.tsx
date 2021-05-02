@@ -1,57 +1,69 @@
 import React from 'react';
-import { Button, Card, Col, Container, Row } from 'react-bootstrap';
-import { Switch, Route, Router, Link, BrowserRouter, withRouter } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { AboutPage } from './AboutPage';
+import { AnswerProgress, QuestionMenuStates, QuestionView } from './components/QuestionMenu';
 import { ContactPage } from './ContactPage';
 import Main from './Main';
 import Navigation from './NavBar';
-import NavBar from './NavBar';
-var html = require('./resources/intro.nb.html')
-var template = { __html: html }
 
+interface AppState {
+    questionMenuState: QuestionMenuStates
+}
 
+export default class App extends React.Component<{}, AppState> {
 
-export default class App extends React.Component {
+    constructor(props: any) {
+        super(props)
+        this.state = {
+            questionMenuState: {
+                validities: {},
+                factorAnswers: {},
+                factorAnswerScales: {},
+                hasBeenAnswered: [],
+                answeringProgress: AnswerProgress.ANSWERING,
+                currentFactor: "",
+                activelyIgnored: {},
+                windowWidth: Math.max(
+                    document.documentElement.clientWidth,
+                    window.innerWidth || 0
+                  ),
+                factorMaskings: {},
+                view: QuestionView.QUESTION_MANAGER,
+                changedSinceLastCommit: false,
+            }
+        }
+
+        this.updateQuestionMenuState = this.updateQuestionMenuState.bind(this)
+    }
+
+    updateQuestionMenuState(updatedState: QuestionMenuStates, callback: () => void) {
+        this.setState({
+            questionMenuState: updatedState
+        }, callback)
+    }
 
     render() {
         return (
             <BrowserRouter>
+                <Navigation />
                 <Switch>
                     <Route exact path="/">
-                        <Navigation fullWidth={true} />
-
-                        <Main />
+                        <Main questionMenuState={this.state.questionMenuState} updateQuestionMenuStates={this.updateQuestionMenuState} />
                     </Route>
                     <Route exact path="/model">
-                        <Navigation fullWidth={false} />
-                        <About />
+                        <AboutPage />
                     </Route>
                     <Route exact path="/contact">
-                        <Navigation fullWidth={false} />
                         <ContactPage />
                     </Route>
                     <Route exact>
-                        <Navigation fullWidth={false} />
                         <Error />
                     </Route>
                 </Switch>
             </BrowserRouter>
         );
     }
-}
-
-function Home() {
-    return (
-        <Main />
-    );
-}
-
-function About() {
-    return (
-        <Container>
-            <h2>About</h2>
-            <span dangerouslySetInnerHTML={template} />
-        </Container>
-    );
 }
 
 function Error() {

@@ -25,20 +25,22 @@ import factorDatabase from "../resources/FactorDatabase.json";
 interface QuestionMenuProps extends OrderVisualization {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
   relationLinkData: RelationLinks;
+  questionMenuStates: QuestionMenuStates
+  updateQuestionMenuStates: (updatedStates: QuestionMenuStates, callback: () => void) => void
 }
 
-enum AnswerProgress {
+export enum AnswerProgress {
   ANSWERING = "answering",
   FINISHED = "finished",
 }
 
-enum QuestionView {
+export enum QuestionView {
   QUESTION_MANAGER = "question-manager",
   NOTHING = "no-questions",
   QUESTION_LIST = "question-list",
 }
 
-interface QuestionMenuStates {
+export interface QuestionMenuStates {
   validities: InputValidities;
   factorAnswers: FactorAnswers;
   factorAnswerScales: FactorAnswerUnitScalings;
@@ -69,31 +71,28 @@ function getViewport() {
 }
 
 class QuestionMenu extends React.Component<
-  QuestionMenuProps,
-  QuestionMenuStates
-> {
+  QuestionMenuProps> {
   factors: Factors;
-  helpjsons: HelpJsons;
   factorOrder: string[];
 
   constructor(props: QuestionMenuProps) {
     super(props);
     this.factorOrder = [];
-    this.state = {
-      validities: {},
-      factorAnswers: {},
-      factorAnswerScales: {},
-      hasBeenAnswered: [],
-      answeringProgress: AnswerProgress.ANSWERING,
-      currentFactor: "",
-      activelyIgnored: {},
-      windowWidth: getViewport(),
-      factorMaskings: {},
-      view: QuestionView.QUESTION_MANAGER,
-      changedSinceLastCommit: false,
-    };
+    // this.state = {
+    //   validities: {},
+    //   factorAnswers: {},
+    //   factorAnswerScales: {},
+    //   hasBeenAnswered: [],
+    //   answeringProgress: AnswerProgress.ANSWERING,
+    //   currentFactor: "",
+    //   activelyIgnored: {},
+    //   windowWidth: getViewport(),
+    //   factorMaskings: {},
+    //   view: QuestionView.QUESTION_MANAGER,
+    //   changedSinceLastCommit: false,
+    // };
+    // this.state = this.props.questionMenuStates
     this.factors = new Factors(null);
-    this.helpjsons = {};
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleInputChange = this.handleInputChange.bind(this);
     this.handleIgnoreFactor = this.handleIgnoreFactor.bind(this);
@@ -104,14 +103,27 @@ class QuestionMenu extends React.Component<
     this.finishQuestionnaire = this.finishQuestionnaire.bind(this);
     this.insertRandom = this.insertRandom.bind(this);
     this.switchView = this.switchView.bind(this);
+
+    this.setQuestionMenuState = this.setQuestionMenuState.bind(this)
+    this.setQuestionMenuStateWithCallback = this.setQuestionMenuStateWithCallback.bind(this)
+
+    this.setQuestionMenuState({ ...this.props.questionMenuStates })
+  }
+
+  setQuestionMenuState(updatedState: QuestionMenuStates) {
+    this.props.updateQuestionMenuStates(updatedState, () => { })
+  }
+
+  setQuestionMenuStateWithCallback(updatedState: QuestionMenuStates, callback: () => void) {
+    this.props.updateQuestionMenuStates(updatedState, callback)
   }
 
   updateWidth() {
-    this.setState({ windowWidth: getViewport() });
+    this.setQuestionMenuState({ ...this.props.questionMenuStates, windowWidth: getViewport() });
   }
 
   switchView() {
-    this.setState({ view: QuestionView.NOTHING });
+    this.setQuestionMenuState({ ...this.props.questionMenuStates, view: QuestionView.NOTHING });
   }
 
   componentDidMount() {
@@ -129,44 +141,51 @@ class QuestionMenu extends React.Component<
       this.factorOrder = this.factors.getSortedOrder(
         this.props.relationLinkData
       );
-      this.setState(
-        {
-          factorAnswers: this.factors.getFactorsAsStateObject(),
-          currentFactor: this.factorOrder[0],
-        },
-        () => this.initializeValidities()
-      );
+      if (Object.keys(this.props.questionMenuStates.factorAnswers).length === 0) {
+        this.setQuestionMenuStateWithCallback(
+          {
+            ...this.props.questionMenuStates,
+            factorAnswers: this.factors.getFactorsAsStateObject(),
+            currentFactor: this.factorOrder[0],
+          },
+          () => this.initializeValidities()
+        );
+      }
     }, 500);
   }
 
+
   initializeValidities() {
     let res: InputValidities = {};
-    for (let factorName in this.state.factorAnswers) {
+    for (let factorName in this.props.questionMenuStates.factorAnswers) {
       res[factorName] = this.factors.getInputValidity(
         factorName,
-        this.state.factorAnswers[factorName] as string
+        this.props.questionMenuStates.factorAnswers[factorName] as string
       );
     }
-    this.setState({ validities: res });
+    this.setQuestionMenuState({ ...this.props.questionMenuStates, validities: res })
+    // console.log(questionMenuStates)
+    // console.log({...questionMenuStates, validities: res })
+    // this.props.updateQuestionMenuStates({...questionMenuStates, validities: res });
   }
 
   checkAllFormsForErrorAndMissing() {
     let submittable = true;
     let validitiesToBeChanged: InputValidities = {};
-    for (let factorName in this.state.validities) {
+    for (let factorName in this.props.questionMenuStates.validities) {
       //checking if there can be submitted a form.
-      let validity = this.state.validities[factorName];
+      let validity = this.props.questionMenuStates.validities[factorName];
       if (validity.status === "Error") {
         submittable = false;
       }
       if (
         validity.status === "Missing" &&
         !(
-          factorName in this.state.activelyIgnored &&
-          this.state.activelyIgnored[factorName]
+          factorName in this.props.questionMenuStates.activelyIgnored &&
+          this.props.questionMenuStates.activelyIgnored[factorName]
         ) &&
-        (this.state.hasBeenAnswered.includes(factorName) ||
-          this.state.currentFactor === factorName)
+        (this.props.questionMenuStates.hasBeenAnswered.includes(factorName) ||
+          this.props.questionMenuStates.currentFactor === factorName)
       ) {
         validitiesToBeChanged[factorName] = {
           message: "Ignored by the model",
@@ -178,7 +197,7 @@ class QuestionMenu extends React.Component<
   }
 
   isSubmittable() {
-    return Object.values(this.state.validities).every((d: InputValidity) => {
+    return Object.values(this.props.questionMenuStates.validities).every((d: InputValidity) => {
       return d.status !== "Error";
     });
   }
@@ -190,57 +209,56 @@ class QuestionMenu extends React.Component<
       submittable,
     } = this.checkAllFormsForErrorAndMissing();
     if (submittable) {
-      this.setState(
-        (prevState: QuestionMenuStates) => {
-          let newAnswerProgress = prevState.answeringProgress;
-          let newHasBeenAnswered = [...prevState.hasBeenAnswered];
-          let newCurrentFactor = prevState.currentFactor;
-          while (
-            newAnswerProgress === AnswerProgress.ANSWERING &&
-            (newCurrentFactor in prevState.factorMaskings ||
-              newCurrentFactor === prevState.currentFactor)
-          ) {
-            if (!newHasBeenAnswered.includes(newCurrentFactor)) {
-              newHasBeenAnswered.push(newCurrentFactor);
-            }
-            if (
-              this.factorOrder.indexOf(newCurrentFactor) + 1 ===
-              this.factorOrder.length
-            ) {
-              newAnswerProgress = AnswerProgress.FINISHED;
-              newCurrentFactor = "";
-            } else {
-              newCurrentFactor = this.factorOrder[
-                this.factorOrder.indexOf(newCurrentFactor) + 1
-              ];
-            }
-          }
-          return {
-            validities: {
-              ...prevState.validities,
-              ...missingWarnings,
-            },
-            hasBeenAnswered: newHasBeenAnswered,
-            answeringProgress: newAnswerProgress,
-            currentFactor: newCurrentFactor,
-            changedSinceLastCommit: false,
-          };
+      let newAnswerProgress = this.props.questionMenuStates.answeringProgress;
+      let newHasBeenAnswered = [...this.props.questionMenuStates.hasBeenAnswered];
+      let newCurrentFactor = this.props.questionMenuStates.currentFactor;
+      while (
+        newAnswerProgress === AnswerProgress.ANSWERING &&
+        (newCurrentFactor in this.props.questionMenuStates.factorMaskings ||
+          newCurrentFactor === this.props.questionMenuStates.currentFactor)
+      ) {
+        if (!newHasBeenAnswered.includes(newCurrentFactor)) {
+          newHasBeenAnswered.push(newCurrentFactor);
+        }
+        if (
+          this.factorOrder.indexOf(newCurrentFactor) + 1 ===
+          this.factorOrder.length
+        ) {
+          newAnswerProgress = AnswerProgress.FINISHED;
+          newCurrentFactor = "";
+        } else {
+          newCurrentFactor = this.factorOrder[
+            this.factorOrder.indexOf(newCurrentFactor) + 1
+          ];
+        }
+      }
+      this.setQuestionMenuStateWithCallback(
+        {
+          ...this.props.questionMenuStates,
+          validities: {
+            ...this.props.questionMenuStates.validities,
+            ...missingWarnings,
+          },
+          hasBeenAnswered: newHasBeenAnswered,
+          answeringProgress: newAnswerProgress,
+          currentFactor: newCurrentFactor,
+          changedSinceLastCommit: false,
         },
         () => {
-          let submittedAnswers = { ...this.state.factorAnswers };
+          let submittedAnswers = { ...this.props.questionMenuStates.factorAnswers };
           Object.entries(submittedAnswers).forEach(
             ([factorname, submittedValue]) => {
-              if (factorname in this.state.factorMaskings) {
-                submittedValue = this.state.factorMaskings[factorname]
+              if (factorname in this.props.questionMenuStates.factorMaskings) {
+                submittedValue = this.props.questionMenuStates.factorMaskings[factorname]
                   .effectiveValue;
-              } 
+              }
               else if (submittedValue === "") {
                 return; // skipping because it already has the correct value
               }
-              else if (factorname in this.state.factorAnswerScales) {
+              else if (factorname in this.props.questionMenuStates.factorAnswerScales) {
                 submittedValue = (
                   parseFloat(submittedAnswers[factorname] as string) *
-                  this.state.factorAnswerScales[factorname].scale
+                  this.props.questionMenuStates.factorAnswerScales[factorname].scale
                 ).toString();
               }
               submittedAnswers[factorname] = this.factors.factorList[
@@ -255,23 +273,22 @@ class QuestionMenu extends React.Component<
   }
 
   redoAllValidities(): void {
-    this.setState((prevState: QuestionMenuStates) => {
-      let new_validities: InputValidities = {};
-      Object.entries(prevState.factorAnswers).forEach(
-        ([factorname, factorval]) => {
-          new_validities[factorname] = this.factors.getInputValidity(
-            factorname,
-            factorval as string,
-            factorname in prevState.factorAnswerScales
-              ? prevState.factorAnswerScales[factorname].unitName
-              : undefined
-          );
-        }
-      );
-      return {
-        validities: new_validities,
-      };
-    });
+    let new_validities: InputValidities = {};
+    Object.entries(this.props.questionMenuStates.factorAnswers).forEach(
+      ([factorname, factorval]) => {
+        new_validities[factorname] = this.factors.getInputValidity(
+          factorname,
+          factorval as string,
+          factorname in this.props.questionMenuStates.factorAnswerScales
+            ? this.props.questionMenuStates.factorAnswerScales[factorname].unitName
+            : undefined
+        );
+      }
+    );
+    this.setQuestionMenuState({
+      ...this.props.questionMenuStates,
+      validities: new_validities
+    })
   }
 
   makeNewMasksUpdateObject(
@@ -282,10 +299,10 @@ class QuestionMenu extends React.Component<
     const possiblyNewMasks:
       | FactorMaskings
       | "nothing changed" = this.factors.updateMasked(
-      newFactorAnswers,
-      updatedFactor,
-      factorMaskings
-    );
+        newFactorAnswers,
+        updatedFactor,
+        factorMaskings
+      );
     let newMasks: any;
     if (possiblyNewMasks === "nothing changed") {
       newMasks = {};
@@ -299,82 +316,105 @@ class QuestionMenu extends React.Component<
     const { name } = ev.currentTarget;
     const value = ev.currentTarget.value;
 
-    this.setState((prevState: QuestionMenuStates) => {
-      const newFactorAnswers = { ...prevState.factorAnswers, [name]: value };
-      const newMasks = this.makeNewMasksUpdateObject(
-        newFactorAnswers,
-        name,
-        prevState.factorMaskings
-      );
-      return {
-        validities: {
-          ...prevState.validities,
-          [name]: this.factors.getInputValidity(
-            name,
-            value,
-            name in prevState.factorAnswerScales
-              ? prevState.factorAnswerScales[name].unitName
-              : undefined
-          ),
-        },
-        changedSinceLastCommit: true,
-        factorAnswers: newFactorAnswers,
-        ...newMasks,
-      };
-    });
+    const newFactorAnswers = { ...this.props.questionMenuStates.factorAnswers, [name]: value };
+    const newMasks = this.makeNewMasksUpdateObject(
+      newFactorAnswers,
+      name,
+      this.props.questionMenuStates.factorMaskings
+    );
+
+    this.setQuestionMenuState({
+      ...this.props.questionMenuStates,
+      validities: {
+        ...this.props.questionMenuStates.validities,
+        [name]: this.factors.getInputValidity(
+          name,
+          value,
+          name in this.props.questionMenuStates.factorAnswerScales
+            ? this.props.questionMenuStates.factorAnswerScales[name].unitName
+            : undefined
+        ),
+      },
+      changedSinceLastCommit: true,
+      factorAnswers: newFactorAnswers,
+      ...newMasks,
+    })
   }
 
   handleIgnoreFactor(e: React.ChangeEvent<HTMLInputElement>): void {
     const { name } = e.currentTarget;
     const factorname = name;
     const value = e.currentTarget.checked;
-    this.setState((prevState: QuestionMenuStates) => {
-      const newFactorAnswers = { ...prevState.factorAnswers, [name]: "" };
-      const newMasks = this.makeNewMasksUpdateObject(
-        newFactorAnswers,
-        name,
-        prevState.factorMaskings
-      );
-      return {
-        validities: {
-          ...prevState.validities,
-          [factorname]: this.factors.getInputValidity(factorname, ""),
-        },
-        factorAnswers: {
-          ...prevState.factorAnswers,
-          [factorname]: "",
-        },
-        activelyIgnored: {
-          ...prevState.activelyIgnored,
-          [factorname]: value,
-        },
-        changedSinceLastCommit: true,
-        ...newMasks,
-      };
-    });
+    let prevState = this.props.questionMenuStates
+
+    const newFactorAnswers = { ...this.props.questionMenuStates.factorAnswers, [name]: "" };
+    const newMasks = this.makeNewMasksUpdateObject(
+      newFactorAnswers,
+      name,
+      this.props.questionMenuStates.factorMaskings
+    );
+
+    this.setQuestionMenuState({
+      ...prevState,
+      validities: {
+        ...prevState.validities,
+        [factorname]: this.factors.getInputValidity(factorname, ""),
+      },
+      factorAnswers: {
+        ...prevState.factorAnswers,
+        [factorname]: "",
+      },
+      activelyIgnored: {
+        ...prevState.activelyIgnored,
+        [factorname]: value,
+      },
+      changedSinceLastCommit: true,
+      ...newMasks,
+    })
   }
 
   handleUnitChange(name: string, newUnitName: string): void {
-    this.setState((prevState: QuestionMenuStates) => {
-      return {
-        factorAnswerScales: {
-          ...prevState.factorAnswerScales,
-          [name]: {
-            unitName: newUnitName,
-            scale: this.factors.getScalingFactor(name, newUnitName),
-          },
+    let questionMenuStates = this.props.questionMenuStates
+
+    this.setQuestionMenuState({
+      ...questionMenuStates, factorAnswerScales: {
+        ...this.props.questionMenuStates.factorAnswerScales,
+        [name]: {
+          unitName: newUnitName,
+          scale: this.factors.getScalingFactor(name, newUnitName),
         },
-        validities: {
-          ...prevState.validities,
-          [name]: this.factors.getInputValidity(
-            name,
-            this.state.factorAnswers[name] as string,
-            newUnitName
-          ),
-        },
-        changedSinceLastCommit: true,
-      };
-    });
+      },
+      validities: {
+        ...this.props.questionMenuStates.validities,
+        [name]: this.factors.getInputValidity(
+          name,
+          this.props.questionMenuStates.factorAnswers[name] as string,
+          newUnitName
+        ),
+      },
+      changedSinceLastCommit: true,
+    })
+
+    // this.setState((prevState: QuestionMenuStates) => {
+    //   return {
+    //     factorAnswerScales: {
+    //       ...prevState.factorAnswerScales,
+    //       [name]: {
+    //         unitName: newUnitName,
+    //         scale: this.factors.getScalingFactor(name, newUnitName),
+    //       },
+    //     },
+    //     validities: {
+    //       ...prevState.validities,
+    //       [name]: this.factors.getInputValidity(
+    //         name,
+    //         this.state.factorAnswers[name] as string,
+    //         newUnitName
+    //       ),
+    //     },
+    //     changedSinceLastCommit: true,
+    //   };
+    // });
   }
 
   getHelpText(factorName: string): string {
@@ -392,24 +432,24 @@ class QuestionMenu extends React.Component<
           <SimpleNumericQuestion
             key={factorName + featured}
             name={factorName}
-            factorAnswer={this.state.factorAnswers[factorName] as string}
+            factorAnswer={this.props.questionMenuStates.factorAnswers[factorName] as string}
             phrasing={factor.phrasing}
             unitOptions={(factor as NumericFactorPermanent).unitStrings}
             handleChange={this.handleInputChange}
             handleIgnoreFactor={this.handleIgnoreFactor}
-            inputvalidity={this.state.validities[factorName]}
+            inputvalidity={this.props.questionMenuStates.validities[factorName]}
             helpText={this.getHelpText(factorName)}
             featured={featured}
             handleUnitChange={this.handleUnitChange}
             ignore={
-              factorName in this.state.activelyIgnored
-                ? this.state.activelyIgnored[factorName]
+              factorName in this.props.questionMenuStates.activelyIgnored
+                ? this.props.questionMenuStates.activelyIgnored[factorName]
                 : false
             }
-            windowWidth={this.state.windowWidth}
+            windowWidth={this.props.questionMenuStates.windowWidth}
             placeholder={
-              factorName in this.state.factorAnswerScales
-                ? this.state.factorAnswerScales[factorName].unitName
+              factorName in this.props.questionMenuStates.factorAnswerScales
+                ? this.props.questionMenuStates.factorAnswerScales[factorName].unitName
                 : factor.placeholder
             }
             descendantDeathCauses={this.props.relationLinkData.getDeathCauseDescendants(
@@ -425,20 +465,20 @@ class QuestionMenu extends React.Component<
             key={factorName + featured}
             name={factorName}
             placeholder={factor.placeholder}
-            factorAnswer={this.state.factorAnswers[factorName] as string}
+            factorAnswer={this.props.questionMenuStates.factorAnswers[factorName] as string}
             phrasing={factor.phrasing}
             options={(factor as StringFactorPermanent).options}
             handleChange={this.handleInputChange}
             handleIgnoreFactor={this.handleIgnoreFactor}
             helpText={this.getHelpText(factorName)}
-            inputvalidity={this.state.validities[factorName]}
+            inputvalidity={this.props.questionMenuStates.validities[factorName]}
             featured={featured}
             ignore={
-              factorName in this.state.activelyIgnored
-                ? this.state.activelyIgnored[factorName]
+              factorName in this.props.questionMenuStates.activelyIgnored
+                ? this.props.questionMenuStates.activelyIgnored[factorName]
                 : false
             }
-            windowWidth={this.state.windowWidth}
+            windowWidth={this.props.questionMenuStates.windowWidth}
             descendantDeathCauses={this.props.relationLinkData.getDeathCauseDescendants(
               factorName
             )}
@@ -453,8 +493,9 @@ class QuestionMenu extends React.Component<
   }
 
   startOverQuestionnaire() {
-    this.setState(
+    this.setQuestionMenuStateWithCallback(
       {
+        ...this.props.questionMenuStates,
         hasBeenAnswered: [],
         currentFactor: this.factorOrder[0],
         answeringProgress: AnswerProgress.ANSWERING,
@@ -464,41 +505,43 @@ class QuestionMenu extends React.Component<
   }
 
   previousQuestion() {
-    this.setState((previousState: QuestionMenuStates) => {
-      let i = 0;
-      if (previousState.hasBeenAnswered.includes(previousState.currentFactor)) {
-        i =
-          previousState.hasBeenAnswered.indexOf(previousState.currentFactor) -
-          1;
-      } else {
-        i = previousState.hasBeenAnswered.length - 1;
-      }
-      while (
-        previousState.hasBeenAnswered[i] in this.state.factorMaskings &&
-        i > 0
-      ) {
-        i = i - 1;
-      }
-      const newCurrentFactor = previousState.hasBeenAnswered[i];
-      return {
-        currentFactor: newCurrentFactor,
-        answeringProgress: AnswerProgress.ANSWERING,
-        validities: {
-          ...previousState.validities,
-          [newCurrentFactor]: this.factors.getInputValidity(
-            newCurrentFactor,
-            previousState.factorAnswers[newCurrentFactor] as string,
-            newCurrentFactor in previousState.factorAnswerScales
-              ? previousState.factorAnswerScales[newCurrentFactor].unitName
-              : undefined
-          ),
-        },
-      };
-    });
+    let previousState = this.props.questionMenuStates
+    let i = 0;
+    if (previousState.hasBeenAnswered.includes(previousState.currentFactor)) {
+      i =
+        previousState.hasBeenAnswered.indexOf(previousState.currentFactor) -
+        1;
+    } else {
+      i = previousState.hasBeenAnswered.length - 1;
+    }
+    while (
+      previousState.hasBeenAnswered[i] in this.props.questionMenuStates.factorMaskings &&
+      i > 0
+    ) {
+      i = i - 1;
+    }
+    const newCurrentFactor = previousState.hasBeenAnswered[i];
+
+    this.setQuestionMenuState({
+      ...previousState,
+      currentFactor: newCurrentFactor,
+      answeringProgress: AnswerProgress.ANSWERING,
+      validities: {
+        ...previousState.validities,
+        [newCurrentFactor]: this.factors.getInputValidity(
+          newCurrentFactor,
+          previousState.factorAnswers[newCurrentFactor] as string,
+          newCurrentFactor in previousState.factorAnswerScales
+            ? previousState.factorAnswerScales[newCurrentFactor].unitName
+            : undefined),
+      },
+    }
+    )
   }
 
   finishQuestionnaire() {
-    this.setState({
+    this.setQuestionMenuState({
+      ...this.props.questionMenuStates,
       answeringProgress: AnswerProgress.FINISHED,
       hasBeenAnswered: this.factorOrder,
       currentFactor: "",
@@ -510,8 +553,9 @@ class QuestionMenu extends React.Component<
       factorAnswers,
       factorMaskings,
     } = this.factors.simulateFactorAnswersAndMaskings();
-    this.setState(
+    this.setQuestionMenuStateWithCallback(
       {
+        ...this.props.questionMenuStates,
         answeringProgress: AnswerProgress.FINISHED,
         hasBeenAnswered: this.factorOrder,
         currentFactor: "",
@@ -524,13 +568,13 @@ class QuestionMenu extends React.Component<
 
   getCounter() {
     let denominator =
-      this.factorOrder.length - Object.keys(this.state.factorMaskings).length;
+      this.factorOrder.length - Object.keys(this.props.questionMenuStates.factorMaskings).length;
     let numerator =
       this.factorOrder
         .filter((factorAnswer) => {
-          return !(factorAnswer in this.state.factorMaskings);
+          return !(factorAnswer in this.props.questionMenuStates.factorMaskings);
         })
-        .indexOf(this.state.currentFactor) + 1;
+        .indexOf(this.props.questionMenuStates.currentFactor) + 1;
     if (numerator === 0) {
       //at the time of implementation it could happen if a property is changed in questionlist
       return "-/" + denominator;
@@ -542,20 +586,20 @@ class QuestionMenu extends React.Component<
   }
 
   getCurrentFactor() {
-    return Object.keys(this.state.factorAnswers).find((factorName: string) => {
-      return !(factorName in this.state.hasBeenAnswered);
+    return Object.keys(this.props.questionMenuStates.factorAnswers).find((factorName: string) => {
+      return !(factorName in this.props.questionMenuStates.hasBeenAnswered);
     });
   }
 
   getQuestionToAnswer() {
-    if (this.state.answeringProgress === AnswerProgress.FINISHED) {
+    if (this.props.questionMenuStates.answeringProgress === AnswerProgress.FINISHED) {
       return (
         <AskedQuestionFramed
           factorName={undefined}
           validity={undefined}
           onSubmit={this.handleSubmit}
           previousPossible={
-            this.factorOrder.indexOf(this.state.currentFactor) != 0
+            this.factorOrder.indexOf(this.props.questionMenuStates.currentFactor) != 0
           }
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
@@ -564,18 +608,18 @@ class QuestionMenu extends React.Component<
           leftCornerCounter={this.getCounter()}
           onSwitchView={this.switchView}
           finished={true}
-          isChanged={this.state.changedSinceLastCommit}
+          isChanged={this.props.questionMenuStates.changedSinceLastCommit}
         />
       );
     }
-    if (this.state.currentFactor) {
+    if (this.props.questionMenuStates.currentFactor) {
       return (
         <AskedQuestionFramed
-          factorName={this.state.currentFactor}
-          validity={this.state.validities[this.state.currentFactor]}
+          factorName={this.props.questionMenuStates.currentFactor}
+          validity={this.props.questionMenuStates.validities[this.props.questionMenuStates.currentFactor]}
           onSubmit={this.handleSubmit}
           previousPossible={
-            this.factorOrder.indexOf(this.state.currentFactor) !== 0
+            this.factorOrder.indexOf(this.props.questionMenuStates.currentFactor) !== 0
           }
           onPrevious={this.previousQuestion}
           onStartOver={this.startOverQuestionnaire}
@@ -584,11 +628,11 @@ class QuestionMenu extends React.Component<
           leftCornerCounter={this.getCounter()}
           onSwitchView={this.switchView}
           finished={false}
-          isChanged={this.state.changedSinceLastCommit}
+          isChanged={this.props.questionMenuStates.changedSinceLastCommit}
         >
           {this.getQuestion(
-            this.state.currentFactor,
-            this.factors.factorList[this.state.currentFactor],
+            this.props.questionMenuStates.currentFactor,
+            this.factors.factorList[this.props.questionMenuStates.currentFactor],
             true
           )}
         </AskedQuestionFramed>
@@ -601,8 +645,8 @@ class QuestionMenu extends React.Component<
     const submittable: boolean = this.isSubmittable();
     const questionList = this.factorOrder.map((factorName) => {
       if (
-        this.state.hasBeenAnswered.includes(factorName) &&
-        !(factorName in this.state.factorMaskings)
+        this.props.questionMenuStates.hasBeenAnswered.includes(factorName) &&
+        !(factorName in this.props.questionMenuStates.factorMaskings)
       ) {
         return this.getQuestion(
           factorName,
@@ -617,33 +661,33 @@ class QuestionMenu extends React.Component<
           Input risk factors to calculate probability of dying of most diseases
           and expected lifespan
         </p>
-          <Collapse
-            in={this.state.view === QuestionView.QUESTION_MANAGER}
-            onExited={() => {
-              setTimeout(
-                () => this.setState({ view: QuestionView.QUESTION_LIST }),
-                250
-              );
-            }}
-            timeout={500}
-          >
-            <Form onSubmit={this.handleSubmit}>
+        <Collapse
+          in={this.props.questionMenuStates.view === QuestionView.QUESTION_MANAGER}
+          onExited={() => {
+            setTimeout(
+              () => this.setQuestionMenuState({ ...this.props.questionMenuStates, view: QuestionView.QUESTION_LIST }),
+              250
+            );
+          }}
+          timeout={500}
+        >
+          <Form onSubmit={this.handleSubmit}>
             <div
               id="collapse-asked-question-frame"
               style={{ justifyContent: "center" }}
             >
               {this.getQuestionToAnswer()}
             </div>
-            </Form>
-          </Collapse>
-          <Collapse
-            in={this.state.view === QuestionView.QUESTION_LIST}
-            onExited={() => {
-              this.setState({ view: QuestionView.QUESTION_MANAGER });
-            }}
-            timeout={500}
-          >
-            <Form onSubmit={this.handleSubmit}>
+          </Form>
+        </Collapse>
+        <Collapse
+          in={this.props.questionMenuStates.view === QuestionView.QUESTION_LIST}
+          onExited={() => {
+            this.setQuestionMenuState({ ...this.props.questionMenuStates, view: QuestionView.QUESTION_MANAGER });
+          }}
+          timeout={500}
+        >
+          <Form onSubmit={this.handleSubmit}>
             <div
               id="collapse-question-list"
               style={{ justifyContent: "center" }}
@@ -653,19 +697,19 @@ class QuestionMenu extends React.Component<
                 onSwitchView={this.switchView}
                 onFinishRandomly={this.insertRandom}
                 hasError={!submittable}
-                isChanged={this.state.changedSinceLastCommit}
+                isChanged={this.props.questionMenuStates.changedSinceLastCommit}
               >
                 {questionList}
               </QuestionListFrame>
             </div>
-            </Form>
-          </Collapse>
+          </Form>
+        </Collapse>
       </div>
     );
   }
 
   render() {
-    if (Object.keys(this.state.validities).length === 0) {
+    if (Object.keys(this.props.questionMenuStates.validities).length === 0 || Object.keys(this.props.questionMenuStates.factorAnswers).length === 0) {
       return <Spinner animation="border"></Spinner>;
     }
     return (
