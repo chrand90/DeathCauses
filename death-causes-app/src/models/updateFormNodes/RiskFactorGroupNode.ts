@@ -85,7 +85,7 @@ export default class RiskRatioGroupNode extends FormUpdater {
   ) {
     let optimToSdics: OptimsToSDics={};
     let previouslyCountouredFactors: string[] = [];
-    if(Object.values(this.optimizabilityClasses).some((nodes) => { return nodes.includes("Age")})){
+    if(this.ageAsFactor){
       previouslyCountouredFactors.push("Age")
     }
     Object.entries(this.optimizabilityClasses).forEach(

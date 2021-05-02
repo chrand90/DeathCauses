@@ -259,5 +259,7 @@ export function locationAndValueSorter(
 export function addValueToLocation(location: Location, value: number): LocationAndValue{
   let res = new LocationAndValue(location.interpolationVariables, location.nonInterpolationVariables, value);
   res.variableToCoordinate= location.variableToCoordinate; //make it point to the same object. 
+  res.setInterpolationVariables=location.setInterpolationVariables;
+  res.setNonInterpolationVariables=location.setNonInterpolationVariables;
   return res;
 }
