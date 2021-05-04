@@ -1,6 +1,6 @@
 import { truncate } from "fs";
 import { CauseGrouping } from "../models/RelationLinks";
-import { mergeBestValues } from "./Calculations/ConsensusBestValue";
+import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -9,6 +9,7 @@ export interface SquareSection {
     x0: number,
     x: number,
     comparison?: string,
+    longComparison?: string,
 }
 
 interface ProbSums {
@@ -66,28 +67,46 @@ function makeRowSquare(
     }).reduce((a,b)=>a+b,0)/normalizer;
     const unexplained=1.0-total_explained
     let explainedSoFar=0;
+    const comparators:BestValues[]=datRows.map((datRow)=>{
+        return datRow.comparisonWithBestValues
+    }).filter((d): d is BestValues => {
+        return d!==undefined;
+    });
+    const combinedBestValues=comparators.length>0 ? mergeBestValues(comparators) : undefined;
     if(mergeAcross){
-        const comparators=datRows.map((datRow)=>{
-            return datRow.comparisonWithBestValues
-        })
-        const combinedBestValues=mergeBestValues(comparators);
+        
+        
         squares.push({
             name: parent,
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
-            x: zeroTruncater(unexplained*totalProb)*rescaler
+            x: zeroTruncater(unexplained*totalProb)*rescaler,
+            longComparison: getUnexplainedStatement(unexplained, parent)
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
+        let innerCauses=Object.keys(widthOfEachInnerCause)
+        if(combinedBestValues){
+            innerCauses.sort((a,b) => {
+                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+            })
+        }
         
-        Object.entries(widthOfEachInnerCause).forEach(([innerCause, width])=>{
+        
+        innerCauses.forEach((innerCause:string)=>{
+            let width=widthOfEachInnerCause[innerCause];
             const statement=combinedBestValues?.getConsensusStatement(innerCause)
+            const longStatement=combinedBestValues?.getLongConsensusStatement(
+                innerCause,
+                totalProb>1e-8 ? width/totalProb : 0,
+                parent );
             squares.push({
                 name: parent,
                 cause: innerCause,
                 x0: zeroTruncater(explainedSoFar)*rescaler,
                 x: zeroTruncater(explainedSoFar+width)*rescaler,
-                comparison: statement
+                comparison: statement,
+                longComparison: longStatement
             });
             explainedSoFar+=width;
         })
@@ -110,6 +129,12 @@ function makeRowSquare(
             explainedSoFar+=unexplainedByGroup
         })
         let widthOfEachInnerCause=getOccurences(datRows);
+        let innerCauses=Object.keys(widthOfEachInnerCause)
+        if(combinedBestValues){
+            innerCauses.sort((a,b) => {
+                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+            })
+        }
         Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
             Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) =>{
                 let contrib=0;
@@ -188,5 +213,10 @@ function make_squares(
     const allSquares = ([] as SquareSection[]).concat(...squareSections);
     return {allSquares, totalProbs};
 };
+
+function getUnexplainedStatement(prob: number, cause: string){
+    return "If you die from "+ cause + ", there is <strong>"+ +(prob*100).toFixed(1).replace(/\.?0+$/,"")+ "%</strong> probability that it is due to " + 
+    "unknown reasons."    
+}
 
 export default make_squares;

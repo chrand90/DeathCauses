@@ -88,11 +88,15 @@ function filterNullsFromFactorMaskings(fin: FactorMaskingsWithNulls): FactorMask
 class Factors {
   factorList: FactorList = {};
   reverseDerivables: DerivableOptionsSet = {};
+  factorOrder: string[];
 
   constructor(data: InputJson | null) {
     this.factorList = {};
+    this.factorOrder=[];
     if (data) {
-      Object.entries(data).forEach(([factorname, factorobject]) => {
+      data.forEach((factorobject) => {
+        const factorname=factorobject.factorname;
+        this.factorOrder.push(factorname);
         switch (factorobject.type) {
           case FactorTypes.NUMERIC: {
             this.factorList[factorname] = new NumericFactorPermanent(
@@ -270,33 +274,8 @@ class Factors {
     return res
   }
 
-  getSortedOrder(rdat: RelationLinks): string[] {
-    const parentList= this.makeParentList()
-    const maxDescendants= this.getMaxDescendants(rdat);
-    const compare = (factorname1: string, factorname2: string) => {
-      let topParent1=parentList[factorname1][0]
-      let topParent2=parentList[factorname2][0]
-      let count=0
-      while(topParent1===topParent2){
-        count=count+1
-        topParent1=parentList[factorname1][count]
-        topParent2=parentList[factorname2][count]
-      }
-      if(maxDescendants[topParent1]===maxDescendants[topParent2]){
-        return topParent1.localeCompare(topParent2);
-      }
-      else{
-        return maxDescendants[topParent2]-maxDescendants[topParent1]
-      }
-    }
-    let factornames=Object.keys(this.factorList)
-    const ageIndex= factornames.indexOf("Age")
-    if(ageIndex>-1){
-      factornames.splice(ageIndex, 1)
-      factornames.sort(compare).unshift("Age");
-      return factornames
-    }
-    return factornames.sort(compare) //not sure if ever needed
+  getSortedOrder(): string[] {
+    return this.factorOrder;
   }
 
   getHelpJson(factorname: string): string {

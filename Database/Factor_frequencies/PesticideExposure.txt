@@ -2,7 +2,7 @@
 #
 # Auto generated file
 #
-PesticideExposureDays	freq
+PesticideExposure	freq
 0.0	0.5396996
 0.0,45.0	0.1555794
 45.0,215.0	0.1738197

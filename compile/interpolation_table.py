@@ -47,18 +47,58 @@ class InterpolationTable(object):
         """
         minimum, maximum = RR.getMinAndMax()
         if 'min_bounded' in RR.get_bounding():
-            self.lower_truncation=minimum
+            min_codes= RR.get_bounding().split(",")[0].split(" ")
+            if "regionally" in min_codes:
+                self.set_regionally_bounds(RR, bound="min")
+            else:
+                self.lower_truncation=minimum
         if 'max_bounded' in RR.get_bounding():
-            self.upper_truncation=maximum
+            if "," in RR.get_bounding():
+                max_codes = RR.get_bounding().split(",")[1].split(" ")
+            else:
+                max_codes = RR.get_bounding().split(" ")
+            if "regionally" in max_codes:
+                self.set_regionally_bounds(RR, bound="max")
+            else:
+                self.upper_truncation=maximum
 
-    def enforce_truncation_and_compute_global_min(self,RR):
+
+    def set_regionally_bounds(self, RR, bound="min"):
+        RRs = RR.group_by(self.non_interpolation_variables)
+        variable_order = RR.get_group_by_factor_order(self.non_interpolation_variables)
+        remapping_indices = get_remap_indices(current_order=variable_order, target=self.non_interpolation_variables)
+        for factor_tuple, df in RRs.items():
+            reordered_tuple = [factor_tuple[i] for i in remapping_indices]
+            regional_minimum, regional_maximum = df.getMinAndMax()
+            for cell in self.cells:
+                if cell.fulfills_non_interpolation_values(reordered_tuple):
+                    if bound=="min" or bound=="both":
+                        cell.set_lower_truncation(regional_minimum)
+                    if bound=="max" or bound=="both":
+                        cell.set_upper_truncation(regional_maximum)
+
+    def read_global_min(self, RR):
+        determined_min = RR.get_determined_global_min()
+        min_location = determined_min["minLocation"]
+        for i, varname in enumerate(self.interpolation_variables):
+            min_location['x' + str(i)] = min_location[varname]
+            del min_location[varname]
+        self.global_min = determined_min
+
+    def enforce_truncation_and_compute_global_min(self, RR):
         self.enforce_truncation(RR)
-        self.compute_global_min()
+        if RR.has_determined_global_min():
+            self.read_global_min(RR)
+        else:
+            self.compute_global_min()
 
     def enforce_truncation_and_compute_global_min_and_fixed_mins(self,RR):
         self.enforce_truncation(RR)
         self.find_all_mins()
-        self.compute_global_min()
+        if RR.has_determined_global_min():
+            self.read_global_min(RR)
+        else:
+            self.compute_global_min()
 
     def as_json(self):
         res = {}
@@ -96,6 +136,10 @@ class InterpolationTableCell(object):
         self.lower_truncation = None
         self.upper_truncation = None
 
+    def fulfills_non_interpolation_values(self, values):
+        assert len(values)==len(self.non_interpolation_domains)
+        return all(values[i]==self.non_interpolation_domains[i] for i in range(len(values)))
+
     def is_essential(self):
         """
         Because of continuity property of the splines, there is no extra information on the boundary factorlevels.
@@ -128,7 +172,8 @@ class InterpolationTableCell(object):
                 bounds.append((float(lower), None))
                 all_bounds_finite = False
         if all_bounds_set:
-            interpolation_object = get_interpolation_object(self.interpolation_polynomial, bounds, lower_truncation)
+            used_lower_truncation=self.lower_truncation if lower_truncation is None else lower_truncation
+            interpolation_object = get_interpolation_object(self.interpolation_polynomial, bounds, used_lower_truncation)
             if 'min' in interpolation_object:  # there will not be a min if any of the bounds are infinite
                 self.min = interpolation_object['min']
             if 'fixed_mins' in interpolation_object:
@@ -154,6 +199,13 @@ class InterpolationTableCell(object):
             res['upper_truncation'] = self.upper_truncation
         return res
 
+    def set_lower_truncation(self, value):
+        self.lower_truncation=value
+
+    def set_upper_truncation(self, value):
+        self.upper_truncation=value
+
+
 
 def interpolation_table_from_riskratio(RR):
     factornames = RR.get_FactorNames()
@@ -165,3 +217,18 @@ def interpolation_table_from_riskratio(RR):
         interpolation_cell = InterpolationTableCell(value=y, non_interpolation_domains=facts)
         interpolation_table.add_cell(interpolation_cell)
     return interpolation_table
+
+def get_remap_indices(target, current_order):
+    res=[]
+    for t in target:
+        for n,c in enumerate(current_order):
+            if t==c:
+                res.append(n)
+    return res
+
+if __name__=="__main__":
+    target=["a","b","c","d","e"]
+    current_order=["a","d","e","c","b"]
+    i=get_remap_indices(target, current_order)
+    print(i)
+    print([current_order[indi] for indi in i])

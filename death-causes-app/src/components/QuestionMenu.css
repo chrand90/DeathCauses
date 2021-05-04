@@ -17,17 +17,17 @@
   color: red;
 }
 
-.collapse {
-  -webkit-transition: 1s;
-  transition: 1s;
+.questionlistcollapser.collapse {
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
 }
 
-.collapse.show {
-  -webkit-transition: 1s;
-  transition: 1s;
+.questionlistcollapser.collapse.show {
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
 }
 
-.collapsing {
-  -webkit-transition: 1s;
-  transition: 1s;
+.questionlistcollapser.collapsing {
+  -webkit-transition: 0.5s;
+  transition: 0.5s;
 }

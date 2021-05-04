@@ -7,14 +7,34 @@ this file contains functions to analyse and manipulate factor levels.
 '''
 
 NUMERICAL_FACTOR_TYPES=['y+','x-y','-x','x']
+INFINITE_INTERVALS_SIZE_FACTOR=0.5
 
+def replace_with_finite_versions(interval):
+    new_interval=[interval[0], interval[1]]
+    if interval[0] == -float('Inf'):
+        new_interval[0] = interval[1]-abs(interval[1])*INFINITE_INTERVALS_SIZE_FACTOR
+    if interval[1] == float('Inf'):
+        new_interval[1] = interval[0]+abs(interval[0])*INFINITE_INTERVALS_SIZE_FACTOR
+    return new_interval
 
 def getIntersectionAndSize(list1, list2):
-    if list1[1] == list2[1] == float('Inf'):
-        return 1, str(min(list1[0],list2[0]))+"+"
-    lower=max(list1[0], list2[0])
-    upper=min(list2[1], list1[1])
-    return max(0, upper-lower ), str(lower)+"-"+str(upper)
+    cleaned_interval1 = replace_with_finite_versions(list1)
+    cleaned_interval2 = replace_with_finite_versions(list2)
+    lower = max(cleaned_interval1[0], cleaned_interval2[0])
+    upper = min(cleaned_interval2[1], cleaned_interval1[1])
+    lower_dirty = max(list1[0], list2[0])
+    upper_dirty = min(list1[1], list2[1])
+    if(upper_dirty==float('Inf')):
+        return max(0, upper - lower), str(lower_dirty) + "+"
+    return max(0, upper-lower), str(lower_dirty)+","+str(upper_dirty)
+
+def getIntersectionAndSizeSecondIntervalNoEnd(list1, list2):
+    cleaned_interval1 = replace_with_finite_versions(list1)
+    lower = max(cleaned_interval1[0], list2[0])
+    upper = min(list2[1], cleaned_interval1[1])
+    lower_dirty = max(list1[0], list2[0])
+    upper_dirty = min(list1[1], list2[1])
+    return max(0, upper-lower ), str(lower_dirty)+","+str(upper_dirty)
     
 def isInInterval(point, interval, type_interval):
     if type_interval == 'x':
@@ -45,27 +65,46 @@ def intersect_of_one_coordinate(*factor):
             break
         size,fact= intersect_and_size_of_one_coordinate(fact, factors[i])
     return fact, size
-    
+
+
+def check_for_discretenes(factor1, factor2, discretes=[]):
+    type_1, values_1 = factor_type(factor1)
+    type_2, values_2 = factor_type(factor2)
+
+    # checking if both or one of them is a string
+    if type_1 == 'str' == type_2:
+        return values_1, values_2, (values_1 == values_2) * 1, values_1[0],True
+    if type_1 == 'str' or type_2 == 'str':
+        return values_1, values_2,0, None,True
+
+    # checking if one of them is a point
+    if type_1 == "x":
+        res, interval=isInInterval(values_1[0], values_2, type_2)
+        if type_2!="x" and any((abs(float(v)-values_1[0])<1e-8 for v in discretes)):
+            return values_1, values_2  ,0, interval,  True
+        return values_1, values_2  ,res, interval,  True  # , str(values_1[0])
+    if type_2 == 'x':
+        res, interval = isInInterval(values_2[0], values_1, type_1)
+        return values_1, values_2, 0, interval, True  # , str(values_1[0])
+    return values_1, values_2, None, None, False
     
 
 def intersect_and_size_of_one_coordinate(factor1, factor2):
-    type_1, values_1 = factor_type(factor1)
-    type_2, values_2 = factor_type(factor2)
-    
-    # checking if both or one of them is a string
-    if type_1 == 'str' == type_2:
-        return (values_1 == values_2) * 1, values_1[0]
-    if type_1 == 'str' or type_2 == 'str':
-        return 0, None
-    
-    # checking if one of them is a point
-    if type_1 == "x":
-        return isInInterval(values_1[0], values_2, type_2)#, str(values_1[0])
-    if type_2 == 'x':
-        return isInInterval(values_2[0], values_1, type_1)#, str(values_1[0])  #
-    
+
+    values_1,values_2,intersect, interval,discrete=check_for_discretenes(factor1,factor2)
+    if discrete:
+        return intersect, interval
     # if this point is reached, both are intervals
     return getIntersectionAndSize(values_1, values_2)
+
+
+def intersect_and_size_of_one_coordinate_second_interval_no_end(factor1, factor2, discretes):
+    values_1, values_2, intersect, interval, discrete = check_for_discretenes(factor1, factor2, discretes)
+    if discrete:
+        return intersect, interval
+    # if this point is reached, both are intervals
+    return getIntersectionAndSizeSecondIntervalNoEnd(values_1, values_2)
+
 
 def intersect_size(f1, f2):
     '''
@@ -76,6 +115,12 @@ def intersect_size(f1, f2):
     ans = 1
     for factor1, factor2 in zip(f1, f2):
         ans *= intersect_and_size_of_one_coordinate(factor1, factor2)[0]
+    return ans
+
+def intersect_size_second_interval_no_end(f1,f2, discrete_values):
+    ans = 1
+    for factor1, factor2,discretes in zip(f1,f2, discrete_values):
+        ans *= intersect_and_size_of_one_coordinate_second_interval_no_end(factor1, factor2,discretes)[0]
     return ans
       
     
@@ -90,9 +135,12 @@ def category_size(f1):  # svend
         if "," in factor:
             numbers = factor.split(",")
             if not numbers[0]:  # if numbers[0] is empty, it means that the factor category is of the form "-x", where x is a number
-                ans *= float(numbers[1])
+                ans *= abs(float(numbers[1]))*INFINITE_INTERVALS_SIZE_FACTOR
             else:
                 ans *= float(numbers[1]) - float(numbers[0])
+        elif '+' in factor:
+            numbers = factor.split("+")
+            ans *= abs(float(numbers[0]))*INFINITE_INTERVALS_SIZE_FACTOR
     return ans
 
 class factor_level(object):

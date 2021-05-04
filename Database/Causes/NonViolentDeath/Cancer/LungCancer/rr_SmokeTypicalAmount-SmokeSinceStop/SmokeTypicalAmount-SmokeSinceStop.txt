@@ -1,6 +1,6 @@
 #lambda=0.01
 SmokeTypicalAmount	SmokeSinceStop	RR
-0	0	0.081(0)
+0	0	0.081(0)[Global_min]
 0,8.5	0	0.333
 8.5,14.5	0	0.782
 14.5,19.5	0	0.916

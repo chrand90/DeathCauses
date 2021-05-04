@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import "./BarChart.css";
 import { DataRow, DataSet } from "./PlottingData";
-import make_squares, { SquareSection } from "./ComptutationEngine";
+import make_squares, { SquareSection } from "./ComputationEngine";
 import { ScaleBand, ScaleLinear } from "d3";
 import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
 import { CauseGrouping, CauseToParentMapping, NodeToColor, ParentToCausesMapping } from "../models/RelationLinks";
@@ -18,6 +18,7 @@ const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
 const NOT_CLICKABLE_GRAY = "#b8b8b8";
+const SELECTED_DISEASE_COLOR= "#a3e3f0"
 
 const BASE_COLORS: NodeToColor = {
   Unexplained: "#FFFFFF",
@@ -109,6 +110,7 @@ export default class BarChart {
   svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
   xAxisGroup: any | null;
   stip: any;
+  clicktip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
   colorDic: NodeToColor;
@@ -122,6 +124,7 @@ export default class BarChart {
   chainedTransitionInProgress: boolean;
   transitionsOrdered: number;
   transitionsFinished: number;
+  clickedSquareSection: SquareSection | null=null;
 
   constructor(
     element: HTMLElement | null,
@@ -136,7 +139,6 @@ export default class BarChart {
       collapsables: Set<string>;
       expandables: Set<string>;
     },
-	
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
@@ -185,6 +187,8 @@ export default class BarChart {
 
   clear() {
     d3.select("svg").remove();
+    d3.select(".stip").remove()
+    d3.select(".clicktip").remove()
   }
 
 
@@ -388,7 +392,7 @@ export default class BarChart {
     //Setting the mapping disease -> y value
     this.recalibrate_ybars(dataSortedTotal, designConstants);
 
-    this.instantUpdateOfRects(dataSortedTotal, designConstants);
+    this.instantUpdateOfRects(dataSortedTotal, designConstants, diseaseToWidth);
 
     const dtextGroups = vis.svg
       .selectAll("dtextGroups")
@@ -468,17 +472,55 @@ export default class BarChart {
         return d.name + "." + d.cause;
       });
 
-    d3.select(".d3-tip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".stip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
-    vis.stip = d3Tip()
-      .attr("class", "d3-tip")
+    
+
+    
+    
+    if(vis.width<501){
+      vis.stip = d3Tip()
+      .attr("class", "stip small")
       .html((d: SquareSection) => {
         return d.comparison ? d.comparison : d.cause;
       })
       .direction("s")
       .offset([10, 0]);
 
+      vis.clicktip = d3Tip()
+      .attr("class", "clicktip small")
+      .html((d: SquareSection) => {
+        return d.longComparison ? d.longComparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0])
+    }
+    else{
+      vis.clicktip = d3Tip()
+      .attr("class", "clicktip")
+      .html((d: SquareSection) => {
+        return d.longComparison ? d.longComparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0])
+
+      vis.stip = d3Tip()
+      .attr("class", "stip")
+      .html((d: SquareSection) => {
+        return d.comparison ? d.comparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0]);
+    }
+
     vis.svg.call(vis.stip);
+    vis.svg.call(vis.clicktip);
+
+    vis.svg.on("click", () => {
+      vis.clickedSquareSection=null
+      vis.clicktip.hide();
+    });
 
     const addedBars = gs.enter().append("rect").attr("class", "causebar");
 
@@ -497,12 +539,15 @@ export default class BarChart {
       .attr("width", (d) => Math.max(0,this.xscale(d.x) - this.xscale(d.x0)))
       .attr("fill", (d) => this.colorDic[d.cause])
       .attr("stroke", "#2378ae")
+      .style("cursor","pointer")
       .on("mouseenter", function (e: Event, d: SquareSection) {
-        d3.selectAll(".d3-tip").style(
+        d3.select(".stip").style(
           "background-color",
           vis.colorDic[d.cause]
         );
-        vis.stip.show(d, this);
+        if(vis.clickedSquareSection!==d){
+          vis.stip.show(d, this);
+        }
         d3.select(this)
           .raise()
           .style("stroke-width", 3)
@@ -515,7 +560,17 @@ export default class BarChart {
       .on("resize", function (e: Event, d: SquareSection) {
         vis.stip.hide(d, this);
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
-      });
+      })
+      .on("click", function(e: Event, d: SquareSection) {
+        d3.select(".clicktip").style(
+          "background-color",
+          vis.colorDic[d.cause]
+        );
+        vis.clicktip.show(d,this);
+        vis.clickedSquareSection=d;
+        vis.stip.hide();
+        e.stopPropagation();
+      })
   }
 
   createXAxisCall(newMax: number, designConstants: DesignConstants) {
@@ -529,7 +584,8 @@ export default class BarChart {
 
   instantUpdateOfRects(
     totalProbs: DataRow[],
-    designConstants: DesignConstants
+    designConstants: DesignConstants,
+    diseaseToWidth: string | null
   ) {
     const vis = this;
     const yRects = d3
@@ -552,6 +608,9 @@ export default class BarChart {
       .attr("width", designConstants.width)
       .attr("height", designConstants.barheight)
       .attr("fill", function (d: any, i: number) {
+        if(diseaseToWidth && d.name===diseaseToWidth){
+          return SELECTED_DISEASE_COLOR;
+        }
         return ALTERNATING_COLORS[i % 2];
       })
       .style("opacity", 0.5)
@@ -594,7 +653,7 @@ export default class BarChart {
 
     this.recalibrate_ybars(sortedTotalsWithRemovedCats, designConstants);
 
-    //this.instantUpdateOfRects(sortedTotalsWithRemovedCats, designConstants)
+    this.instantUpdateOfRects(sortedTotalsWithRemovedCats, designConstants,null)
     this.reArrangeBars(
       sortedTotalsWithRemovedCats,
       durationPerTransition,
@@ -658,7 +717,8 @@ export default class BarChart {
                     vis.svg.attr("height", designConstants.totalheightWithXBar);
                     this.instantUpdateOfRects(
                       sortedTotalsFinal,
-                      designConstants
+                      designConstants,
+                      diseaseToWidth
                     );
                     this.insertPercentageText(sortedTotalsFinal);
                     this.reMapFitScreenButtons(
@@ -759,7 +819,6 @@ export default class BarChart {
 		})
 		setTimeout(callback, durationPerTransition+delayBeforeTransition)
 	}
-    
   }
 
   setHeightAndGetDesignConstants(sortedTotals: DataRow[]) {
@@ -835,7 +894,7 @@ export default class BarChart {
 
     this.recalibrate_ybars(sortedTotalsWithRemovedCat, designConstants);
 
-    this.instantUpdateOfRects(sortedTotalsWithRemovedCat, designConstants);
+    this.instantUpdateOfRects(sortedTotalsWithRemovedCat, designConstants, null);
 
     this.reArrangeBars(
       sortedTotalsWithRemovedCat,
@@ -886,7 +945,6 @@ export default class BarChart {
                   sortedTotalsFinal
                 );
                 vis.recalibrate_ybars(sortedTotalsFinal, designConstants);
-                vis.instantUpdateOfRects(sortedTotalsFinal, designConstants);
                 vis.reArrangeBars(
                   sortedTotalsFinal,
                   durationPerTransition,
@@ -894,6 +952,7 @@ export default class BarChart {
 				  diseaseToWidth,
                   () => {
                     vis.insertPercentageText(sortedTotalsFinal);
+                    vis.instantUpdateOfRects(sortedTotalsFinal, designConstants, diseaseToWidth);
                     vis.reMapFitScreenButtons(
                       sortedTotalsFinal,
 					  sortedTotalsFinal.map((d,i)=>i),
@@ -961,8 +1020,10 @@ export default class BarChart {
     return { dataSortedTotal, dataSquares, dataIds };
   }
 
-  async update(dataset: DataSet, diseaseToWidth: string | null, durationPerTransition: number=500) {
+  async update(dataset: DataSet, diseaseToWidth: string | null, instantDiseaseToWidthColoring: boolean= false, durationPerTransition: number=500) {
 
+    this.stip.hide()
+    this.clicktip.hide()
 	  await this.waitForTransitionsToBeFree(0,0.5);
     const vis = this;
 
@@ -981,6 +1042,8 @@ export default class BarChart {
 
 	//Updating the disease-to-y mapping (this.yBars)
     this.recalibrate_ybars(dataSortedTotal, designConstants);
+
+    this.instantUpdateOfRects(dataSortedTotal, designConstants, instantDiseaseToWidthColoring ? diseaseToWidth : null);
 
     //Updating X-axis
     this.currentMax = this.transitionXAxis(dataSquares, designConstants, durationPerTransition)
@@ -1016,6 +1079,7 @@ export default class BarChart {
 	this.reArrangeBars(dataSortedTotal, durationPerTransition, designConstants,diseaseToWidth,
 		() =>{
 			this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
+      this.instantUpdateOfRects(dataSortedTotal, designConstants, diseaseToWidth);
 		},
 		durationPerTransition
 	)

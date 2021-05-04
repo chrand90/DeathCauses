@@ -1,4 +1,5 @@
-import { getEffectiveTypeRoots } from "typescript";
+export const a=0;
+/* import { getEffectiveTypeRoots } from "typescript";
 import { FactorAnswers } from "../../models/Factors";
 import { ProbabilityKeyValue } from "../../models/ProbabilityKeyValue";
 import DeathCause from "../database/Deathcause";
@@ -37,20 +38,7 @@ export class RiskRatioCalculationService {
 
     calculateSurvivalCurve(submittedFactorAnswers: FactorAnswers, deathcauses: DeathCause[]): SurvivalCurveData[] {
         let probabilitiesPerDeathCause = this.calculateProbabilitiesOfDeathCauses(submittedFactorAnswers, deathcauses)
-        let deathCauseProbabilities = probabilitiesPerDeathCause.probabilitiesOfAllDeathCauses.map(x => x.probabiltiesOfDeathCause)
-
-        let totalProbabilityOfNotDying: number[] = Array.from({ length: probabilitiesPerDeathCause.ages.length })
-        totalProbabilityOfNotDying = totalProbabilityOfNotDying.map((_, i) => deathCauseProbabilities.map(val => val[i]).reduce((sum, x) => sum + x, 0))
-            .map(x => 1 - x)
-
-        let res: SurvivalCurveData[] = []
-        let survivalCurve = Array.from({ length: totalProbabilityOfNotDying.length - 1 }, () => 1)
-        for (let i = 1; i < totalProbabilityOfNotDying.length; i++) {
-            survivalCurve[i] = survivalCurve[i - 1] * totalProbabilityOfNotDying[i]
-            res.push({ age: probabilitiesPerDeathCause.ages[i], prob: survivalCurve[i] })
-        }
-
-        return res
+        
     }
 
     calculateProbabilitiesOfDeathCauses(submittedFactorAnswers: FactorAnswers, deathcauses: DeathCause[]): ProbabilitiesOfAllDeathCauses {
@@ -141,7 +129,6 @@ export class RiskRatioCalculationService {
             innerCausesForAges.forEach(innerCause => {
                 innerCausesForAllAges[innerCause.name].push(innerCause)
             })
-
         })
 
         let res: DataRow[] = []
@@ -289,3 +276,4 @@ export class RiskRatioCalculationService {
     //     return res;
     // }
 }
+ */

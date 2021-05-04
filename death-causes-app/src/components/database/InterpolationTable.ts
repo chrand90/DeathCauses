@@ -1,10 +1,10 @@
-import { FactorAnswers } from "../../models/Factors";
 import InterpolationTableCell, {
   MinObject,
   InterpolationTableCellJson,
 } from "./InterpolationTableCell";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
 import Location, { LocationAndValue, locationAndValueSorter } from "./InterpolationLocation";
+import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 
 interface VariableToIndex {
   [key: string]: number;
@@ -61,14 +61,15 @@ export class InterpolationTable {
   }
 
   getMinimumRR(
-    submittedFactorAnswers: FactorAnswers,
-    fixedFactors: string[]
+    submittedFactorAnswers: UpdateDic,
+    fixedFactors: string[],
+    ageIndex:number
   ): LocationAndValue {
     if (fixedFactors.length === 0) {
       return this.globalMin;
     }
     let fixedLocation=new Location(this.interpolationVariables, this.nonInterpolationVariables);
-    fixedLocation.setWithVarNamesWhenMatch(submittedFactorAnswers, fixedFactors)
+    fixedLocation.setWithVarNamesWhenMatch(submittedFactorAnswers, ageIndex, fixedFactors)
     let filteredCells= this.cells
       .filter((cell: InterpolationTableCell) => {
         return cell.inCellAndSufficientlyInternal(

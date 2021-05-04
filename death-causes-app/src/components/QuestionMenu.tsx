@@ -18,7 +18,7 @@ import SimpleNumericQuestion from "./QuestionNumber";
 import SimpleStringQuestion from "./QuestionString";
 import AskedQuestionFramed from "./AskedQuestionFrame";
 import RelationLinks from "../models/RelationLinks";
-import { OrderVisualization } from "./Helpers";
+import { ComputationState, OrderVisualization } from "./Helpers";
 import QuestionListFrame from "./QuestionListFrame";
 import factorDatabase from "../resources/FactorDatabase.json";
 import DataPrivacyBox from "./DataPrivacyBox";
@@ -26,6 +26,8 @@ import DataPrivacyBox from "./DataPrivacyBox";
 interface QuestionMenuProps extends OrderVisualization {
   handleSuccessfulSubmit: (f: FactorAnswers) => void;
   relationLinkData: RelationLinks;
+  computationState: ComputationState;
+  reportChanges: ()=>void;
 }
 
 enum AnswerProgress {
@@ -50,7 +52,6 @@ interface QuestionMenuStates {
   windowWidth: number;
   factorMaskings: FactorMaskings;
   view: QuestionView;
-  changedSinceLastCommit: boolean;
 }
 
 interface InputValidities {
@@ -91,7 +92,6 @@ class QuestionMenu extends React.Component<
       windowWidth: getViewport(),
       factorMaskings: {},
       view: QuestionView.QUESTION_MANAGER,
-      changedSinceLastCommit: false,
     };
     this.factors = new Factors(null);
     this.helpjsons = {};
@@ -127,9 +127,7 @@ class QuestionMenu extends React.Component<
   loadFactorNames() {
     setTimeout(() => {
       this.factors = new Factors(factorDatabase as InputJson);
-      this.factorOrder = this.factors.getSortedOrder(
-        this.props.relationLinkData
-      );
+      this.factorOrder = this.factors.getSortedOrder();
       this.setState(
         {
           factorAnswers: this.factors.getFactorsAsStateObject(),
@@ -224,7 +222,6 @@ class QuestionMenu extends React.Component<
             hasBeenAnswered: newHasBeenAnswered,
             answeringProgress: newAnswerProgress,
             currentFactor: newCurrentFactor,
-            changedSinceLastCommit: false,
           };
         },
         () => {
@@ -318,10 +315,11 @@ class QuestionMenu extends React.Component<
               : undefined
           ),
         },
-        changedSinceLastCommit: true,
         factorAnswers: newFactorAnswers,
         ...newMasks,
       };
+    }, () => {
+      this.props.reportChanges()
     });
   }
 
@@ -349,9 +347,11 @@ class QuestionMenu extends React.Component<
           ...prevState.activelyIgnored,
           [factorname]: value,
         },
-        changedSinceLastCommit: true,
         ...newMasks,
       };
+    },
+    () => {
+      this.props.reportChanges()
     });
   }
 
@@ -373,8 +373,10 @@ class QuestionMenu extends React.Component<
             newUnitName
           ),
         },
-        changedSinceLastCommit: true,
       };
+    },
+    () => {
+      this.props.reportChanges()
     });
   }
 
@@ -565,7 +567,7 @@ class QuestionMenu extends React.Component<
           leftCornerCounter={this.getCounter()}
           onSwitchView={this.switchView}
           finished={true}
-          isChanged={this.state.changedSinceLastCommit}
+          computationState={this.props.computationState}
         />
       );
     }
@@ -585,7 +587,7 @@ class QuestionMenu extends React.Component<
           leftCornerCounter={this.getCounter()}
           onSwitchView={this.switchView}
           finished={false}
-          isChanged={this.state.changedSinceLastCommit}
+          computationState={this.props.computationState}
         >
           {this.getQuestion(
             this.state.currentFactor,
@@ -618,7 +620,7 @@ class QuestionMenu extends React.Component<
           Answer questions to get personalized risks of dying from different causes  
           <DataPrivacyBox></DataPrivacyBox>
         </p>
-          <Collapse
+          <Collapse className="questionlistcollapser"
             in={this.state.view === QuestionView.QUESTION_MANAGER}
             onExited={() => {
               setTimeout(
@@ -626,7 +628,6 @@ class QuestionMenu extends React.Component<
                 250
               );
             }}
-            timeout={500}
           >
             <Form onSubmit={this.handleSubmit}>
             <div
@@ -637,12 +638,14 @@ class QuestionMenu extends React.Component<
             </div>
             </Form>
           </Collapse>
-          <Collapse
+          <Collapse className="questionlistcollapser"
             in={this.state.view === QuestionView.QUESTION_LIST}
             onExited={() => {
-              this.setState({ view: QuestionView.QUESTION_MANAGER });
+              setTimeout(
+                () => this.setState({ view: QuestionView.QUESTION_MANAGER }),
+                250
+              );
             }}
-            timeout={500}
           >
             <Form onSubmit={this.handleSubmit}>
             <div
@@ -654,7 +657,7 @@ class QuestionMenu extends React.Component<
                 onSwitchView={this.switchView}
                 onFinishRandomly={this.insertRandom}
                 hasError={!submittable}
-                isChanged={this.state.changedSinceLastCommit}
+                computationState={this.props.computationState}
               >
                 {questionList}
               </QuestionListFrame>

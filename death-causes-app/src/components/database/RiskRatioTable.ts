@@ -23,28 +23,28 @@ class RiskRatioTable {
         this.interpolation=new InterpolationTable(json.interpolationTable)
     }
 
-    getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
-        let fixedFactors=[factorToMinimize]
-        const noMissing=fixedFactors.every((factorName) => {
-            return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
-        })
-        if(noMissing){
-            return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
-        }
-        return 1.0
-    }
+    // getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
+    //     let fixedFactors=[factorToMinimize]
+    //     const noMissing=fixedFactors.every((factorName) => {
+    //         return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
+    //     })
+    //     if(noMissing){
+    //         return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
+    //     }
+    //     return 1.0
+    // }
 
-    getMinimumRR() {
-        let fixedFactors:string[]=[]
-        return Math.max(0,this.interpolation.getMinimumRR({}, fixedFactors).getValue());
-    }
+    // getMinimumRR() {
+    //     let fixedFactors:string[]=[]
+    //     return Math.max(0,this.interpolation.getMinimumRR({}, fixedFactors).getValue());
+    // }
 
-    getMinimumRRFactors() {
-        let fixedFactors:string[]=[]
-        return this.interpolation.getMinimumRR({}, fixedFactors).getVariableToCoordinate()
-    }
+    // getMinimumRRFactors() {
+    //     let fixedFactors:string[]=[]
+    //     return this.interpolation.getMinimumRR({}, fixedFactors).getVariableToCoordinate()
+    // }
 
-    getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
+/*     getRiskRatio(submittedFactorAnswers: FactorAnswers): number {
         let fixedFactors:string[]= this.factorNames
         const noMissing=fixedFactors.every((factorName) => {
             return submittedFactorAnswers[factorName]!==undefined && submittedFactorAnswers[factorName]!==""
@@ -53,7 +53,7 @@ class RiskRatioTable {
             return Math.max(0,this.interpolation.getMinimumRR(submittedFactorAnswers, fixedFactors).getValue());
         }
         return 1.0
-    }
+    } */
 
     getFactorNames(){
         return this.factorNames;

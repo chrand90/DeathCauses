@@ -1,13 +1,21 @@
-import { ChangeStatus, UpdateDic, UpdateForm, FormUpdater, FormUpdaterDic, TypeStatus, DimensionStatus, StochasticStatus } from "./UpdateFormInitialize"
+import FormUpdater from "./FormUpdater";
+import { ChangeStatus, UpdateDic, UpdateForm,  TypeStatus, DimensionStatus, StochasticStatus } from "./UpdateForm"
 
 class SmokeSinceStop extends FormUpdater{
 
     compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
         const SmokingStopped= this.getNode(allPreviousUpdateForms, "SmokingStopped").value as number;
+        const SmokingStatus= this.getNode(allPreviousUpdateForms, "Smoking").value as string;
         const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
         const newValue: number[]=[];
         for(let i=0; i<ageTo-ageFrom+1; i++){
-            newValue.push(Math.max(0,i+SmokingStopped+(ageFrom-age)));
+            if(SmokingStatus==="Former smoker"){
+                newValue.push(Math.max(0,i+SmokingStopped+(ageFrom-age)));
+            }
+            else{
+                newValue.push(0);
+            }
+            
         }
         return {...this.ChangedAndMissing(),
             type: TypeStatus.NUMERIC,

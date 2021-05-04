@@ -1,4 +1,5 @@
-import { FactorAnswers } from "../../models/Factors";
+export const a=0; 
+/* import { FactorAnswers } from "../../models/Factors";
 import RelationLinks from "../../models/RelationLinks";
 import DeathCause from "../database/Deathcause";
 import { RiskRatioCalculationService } from "./CalculationService";
@@ -23,4 +24,4 @@ export class CalculationFacade {
     calculateSurvivalCurve = (submittedFactorAnswers: FactorAnswers) => {
         return this.probabilityOfDeathCauseCalculation.calculateSurvivalCurve(submittedFactorAnswers, this.deathCauses)
     }
-}
+} */ 
