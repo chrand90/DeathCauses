@@ -41,6 +41,7 @@ export enum ComputationState {
 
 
 export function hideAllToolTips(){
+  return 
   toolTipNamesShowHide.forEach((className) => {
     d3.selectAll(className).remove();
   })

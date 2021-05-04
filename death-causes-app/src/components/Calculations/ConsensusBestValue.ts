@@ -145,14 +145,9 @@ export class BestValues {
   getLongConsensusStatement(factorName:string, probability: number, causeName: string){
     const prob="<strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
     const {givens, subtracted, optimizability} = this.getGivensAndOptimizability(factorName);
-    let res= "If you die from "+causeName +", the reason is "
-    if(givens.length===0){
-      res+="only "
-    }
-    res+="your value of "
-    res+="<strong>" + factorName + "</strong> "
-
-    res+="with probability "+prob
+    let res= "If you die from "+causeName +", there is a " 
+    res+= prob + " probability that it is due to "
+    res+="<strong>" + factorName + "</strong>"
     
     if(givens.length>0){
       res=res+". This includes cases where other valid reasons were "+listFormatting(givens, "or")

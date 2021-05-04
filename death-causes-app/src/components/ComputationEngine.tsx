@@ -215,7 +215,8 @@ function make_squares(
 };
 
 function getUnexplainedStatement(prob: number, cause: string){
-    return "Given the data you have given to the program so far, there is a <strong>"+(prob*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong> probability that there is no explanation if you die from " +cause+"." 
+    return "If you die from "+ cause + ", there is <strong>"+ +(prob*100).toFixed(1).replace(/\.?0+$/,"")+ "%</strong> probability that it is due to " + 
+    "unknown reasons."    
 }
 
 export default make_squares;

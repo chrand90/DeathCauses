@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import d3Tip from "d3-tip";
 import "./BarChart.css";
 import { DataRow, DataSet } from "./PlottingData";
-import make_squares, { SquareSection } from "./ComptutationEngine";
+import make_squares, { SquareSection } from "./ComputationEngine";
 import { ScaleBand, ScaleLinear } from "d3";
 import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
 import { CauseGrouping, CauseToParentMapping, NodeToColor, ParentToCausesMapping } from "../models/RelationLinks";

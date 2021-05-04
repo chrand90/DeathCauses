@@ -2,7 +2,7 @@ import React from "react";
 import "./VizWindow.css";
 import BarChartWrapper from "./BarChartWrapper";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
-import { TEST_DATA, TEST_DATA2, DataSet, DataRow } from "./PlottingData";
+import { DataSet, DataRow } from "./PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import { hideAllToolTips, ComputationState, Visualization } from "./Helpers";
@@ -17,6 +17,7 @@ import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
 import AdvancedOptionsMenu, {
+  DEFAULT_ADVANCED_OPTIONS,
   AdvancedOptions,
   Threading,
 } from "./AdvancedOptions";
@@ -58,11 +59,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       database: null,
       survivalData: [],
       initializedDatabase: false,
-      advancedOptions: {
-        ageFrom: null,
-        ageTo: 120,
-        threading: Threading.MULTI,
-      },
+      advancedOptions: DEFAULT_ADVANCED_OPTIONS,
       advancedOptionsKey: false,
     };
     this.updateAdvancedOptions = this.updateAdvancedOptions.bind(this);

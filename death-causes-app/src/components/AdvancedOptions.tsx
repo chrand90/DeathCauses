@@ -31,6 +31,11 @@ export enum Threading {
 
 const ERROR_STYLE = { borderColor: ERROR_COLOR };
 const INPUT_NOT_WHOLE = "Input should be a whole number";
+export const DEFAULT_ADVANCED_OPTIONS: AdvancedOptions = {
+  ageFrom: null,
+  ageTo: 120,
+  threading: Threading.MULTI,
+};
 
 interface AdvancedOptionsWithoutNull extends AdvancedOptions {
   ageFrom: number;
@@ -62,19 +67,23 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
   AdvancedOptionsProps,
   AdvancedOptionsStates
 > {
+  defaultOptions: AdvancedOptionsWithoutNull;
+
   constructor(props: AdvancedOptionsProps) {
     super(props);
+
+    this.defaultOptions= {
+      ...DEFAULT_ADVANCED_OPTIONS,
+      ageFrom: this.convertNullAgeFromIfNecessary(
+        DEFAULT_ADVANCED_OPTIONS.ageFrom
+      )}
 
     this.state = {
       options: {
         ...props.optionsSubmitted,
-        ageFrom: props.optionsSubmitted.ageFrom
-          ? props.optionsSubmitted.ageFrom
-          : props.factorAnswers
-          ? props.factorAnswers["Age"] !== ""
-            ? (props.factorAnswers["Age"] as number)
-            : 0
-          : 0,
+        ageFrom: this.convertNullAgeFromIfNecessary(
+          props.optionsSubmitted.ageFrom
+        ),
       },
       validities: {},
       open: false,
@@ -84,8 +93,21 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     this.handleAgeChange = this.handleAgeChange.bind(this);
     this.handleAgeFromSetting = this.handleAgeFromSetting.bind(this);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.handleRadioChange=this.handleRadioChange.bind(this);
+    this.handleRadioChange = this.handleRadioChange.bind(this);
     this.abort = this.abort.bind(this);
+    this.setToDefault = this.setToDefault.bind(this);
+  }
+
+  convertNullAgeFromIfNecessary(ageFrom: number | null): number {
+    if (ageFrom) {
+      return ageFrom;
+    }
+    if (this.props.factorAnswers) {
+      if (this.props.factorAnswers["Age"] !== "") {
+        return this.props.factorAnswers["Age"] as number;
+      }
+    }
+    return 0;
   }
 
   handleAgeChange(ev: React.ChangeEvent<HTMLInputElement>): void {
@@ -103,22 +125,21 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       },
       () => {
         this.setAgeConsistencyValidity();
-        this.props.reportChangesToComputationState(ComputationState.CHANGED)
+        this.props.reportChangesToComputationState(ComputationState.CHANGED);
       }
     );
   }
 
-  handleRadioChange(ev: React.ChangeEvent<HTMLInputElement>){
+  handleRadioChange(ev: React.ChangeEvent<HTMLInputElement>) {
     const value = ev.currentTarget.value as Threading;
     this.setState(
       (prevState: AdvancedOptionsStates) => {
         return {
-          options: { ...prevState.options, 
-                    threading: value},
+          options: { ...prevState.options, threading: value },
         };
       },
       () => {
-        this.props.reportChangesToComputationState(ComputationState.CHANGED)
+        this.props.reportChangesToComputationState(ComputationState.CHANGED);
       }
     );
   }
@@ -196,20 +217,22 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     const factorname = name;
     const checked = e.currentTarget.checked;
     if (checked) {
-      this.setState((prevState: AdvancedOptionsStates) => {
-        return {
-          options: {
-            ...prevState.options,
-            ageFrom: this.getDefaultAgeFrom(),
-          },
-          disabledAgeFrom: checked,
-        };
-      },
-      () => {
-        this.props.reportChangesToComputationState(ComputationState.CHANGED)
-      });
+      this.setState(
+        (prevState: AdvancedOptionsStates) => {
+          return {
+            options: {
+              ...prevState.options,
+              ageFrom: this.getDefaultAgeFrom(),
+            },
+            disabledAgeFrom: checked,
+          };
+        },
+        () => {
+          this.props.reportChangesToComputationState(ComputationState.CHANGED);
+        }
+      );
     } else {
-      this.setState({ disabledAgeFrom: checked});
+      this.setState({ disabledAgeFrom: checked });
     }
   }
 
@@ -268,6 +291,22 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     }
   }
 
+  setToDefault() {
+    this.setState({
+      options: {
+        ...DEFAULT_ADVANCED_OPTIONS,
+        ageFrom: this.convertNullAgeFromIfNecessary(
+          DEFAULT_ADVANCED_OPTIONS.ageFrom
+        ),
+      },
+      validities: {},
+      disabledAgeFrom: DEFAULT_ADVANCED_OPTIONS.ageFrom ? false : true,
+    },
+    () => {
+      this.props.reportChangesToComputationState(ComputationState.CHANGED);
+    });
+  }
+
   abort() {
     this.props.reset();
   }
@@ -316,15 +355,26 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
     );
   }
 
+  optionsEqualToDefault(): boolean{
+    if(
+      this.state.options.ageFrom===this.defaultOptions.ageFrom &&
+      this.state.options.ageTo===this.defaultOptions.ageTo && 
+      this.state.options.threading===this.defaultOptions.threading
+    ){
+      return true;
+    }
+    return false;
+  }
+
   buttons(errorMessage: string) {
     const nextButtonStyle: FormControlStyle = {};
-    if (this.props.computationState!==ComputationState.READY) {
+    if (this.props.computationState !== ComputationState.READY) {
       nextButtonStyle["backgroundColor"] = CHANGED_COLOR;
     }
     return (
       <Row style={{ marginTop: "5px", marginBottom: "15px" }}>
         <Col style={{ textAlign: "right" }}>
-          <Button onClick={this.abort}>Abort changes</Button>
+          <Button onClick={this.setToDefault} disabled={this.optionsEqualToDefault()}>Default values</Button>
         </Col>
         <Col style={{ textAlign: "left" }}>
           <Button
@@ -333,10 +383,13 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
             disabled={errorMessage !== ""}
             onClick={this.handleSubmit}
           >
-            {this.props.computationState===ComputationState.CHANGED ? "Compute*" : 
-             this.props.computationState===ComputationState.RUNNING ? 
-             <Spinner animation="border" size="sm"></Spinner> :
-             "Compute"}
+            {this.props.computationState === ComputationState.CHANGED ? (
+              "Compute*"
+            ) : this.props.computationState === ComputationState.RUNNING ? (
+              <Spinner animation="border" size="sm"></Spinner>
+            ) : (
+              "Compute"
+            )}
           </Button>
           {errorMessage === "" ? (
             ""
@@ -356,27 +409,27 @@ export default class AdvancedOptionsMenu extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col md={6}>
-          <Form.Label>Threading </Form.Label>
+            <Form.Label>Threading </Form.Label>
           </Col>
           <Col md={6}>
-          <Form.Check
-                type="radio"
-                name="threading"
-                id={Threading.SINGLE}
-                label="One thread"
-                value={Threading.SINGLE}
-                onChange={this.handleRadioChange}
-                checked={this.state.options.threading===Threading.SINGLE}
-              />
-              <Form.Check
-                type="radio"
-                name="threading"
-                id={Threading.MULTI}
-                label="Two threads"
-                value={Threading.MULTI}
-                onChange={this.handleRadioChange}
-                checked={this.state.options.threading===Threading.MULTI}
-              />
+            <Form.Check
+              type="radio"
+              name="threading"
+              id={Threading.SINGLE}
+              label="One thread"
+              value={Threading.SINGLE}
+              onChange={this.handleRadioChange}
+              checked={this.state.options.threading === Threading.SINGLE}
+            />
+            <Form.Check
+              type="radio"
+              name="threading"
+              id={Threading.MULTI}
+              label="Two threads"
+              value={Threading.MULTI}
+              onChange={this.handleRadioChange}
+              checked={this.state.options.threading === Threading.MULTI}
+            />
           </Col>
         </Form.Row>
       </div>
