@@ -10,6 +10,8 @@ import { InputValidity } from "../models/FactorAbstract";
 import Dropdown from "react-bootstrap/Dropdown";
 import Label from "react-bootstrap/FormLabel";
 import { OrderVisualization, Visualization } from "./Helpers";
+import RootStore, { StoreContext } from "../stores/rootStore";
+import {observer} from "mobx-react";
 
 export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
 export const TEXTCOLOR_DISABLED = "#999";
@@ -54,10 +56,17 @@ interface QuestionContextProps extends OrderVisualization {
   windowWidth: number;
   descendantDeathCauses: string[];
 }
-
-export class QuestionContext extends React.PureComponent<QuestionContextProps> {
+class QuestionContextDefinition extends React.PureComponent<QuestionContextProps> {
+  static contextType = StoreContext;
+  store: RootStore| null=null;
+  
   constructor(props: QuestionContextProps) {
     super(props);
+    
+  }
+
+  componentDidMount(){
+    this.store=this.context;
   }
 
   helpBoxContent() {
@@ -327,18 +336,32 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 
+  componentDidUpdate(prevProps: QuestionContextProps){
+    if(prevProps.validityStatus !== this.props.validityStatus){
+      if (this.props.validityStatus === "Error") {
+        this.store?.setColor(ERROR_COLOR);
+      }
+      else if (this.props.validityStatus === "Warning") {
+        this.store?.setColor(WARNING_COLOR);
+      }
+      else{
+        this.store?.setColor("")
+      }   
+    }
+  }
+
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    if (this.props.validityStatus === "Error") {
-      errorMessageStyle["color"] = ERROR_COLOR;
-    }
-    if (this.props.validityStatus === "Warning") {
-      errorMessageStyle["color"] = WARNING_COLOR;
-    }
-    return errorMessageStyle;
+    console.log("store color before being used in error message color:")
+    console.log(this.store?.color);
+    console.log("full store");
+    console.log(this.store);
+    errorMessageStyle["color"] = this.store? this.store.color : "";
+    return errorMessageStyle
   }
 
   render() {
+    console.log("rendering question context"+ this.props.name)
     return (
       <Form.Row className={"formrow-narrow-"+(!this.props.featured).toString()}>
         <Col xs={this.props.featured ? 12 : 4}>
@@ -376,3 +399,5 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 }
+
+export const QuestionContext= observer(QuestionContextDefinition);

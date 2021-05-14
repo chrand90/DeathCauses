@@ -10,6 +10,7 @@ import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
 import { ComputationState, Visualization } from "./components/Helpers";
 import relationLinkFile from "./resources/Relations.json";
+import RootStore, {StoreContext} from "./stores/rootStore";
 
 
 
@@ -23,8 +24,15 @@ interface AppState {
 }
 
 class App extends React.Component<any, AppState> {
+
+  store: RootStore;
+
   constructor(props: any) {
     super(props);
+
+    this.store=new RootStore();
+    console.log("store color after initialization:")
+    console.log(this.store.color);
 
     this.state = {
       factorAnswersSubmitted: null,
@@ -109,6 +117,7 @@ class App extends React.Component<any, AppState> {
   render() {
     return (
       <div className="App">
+        <StoreContext.Provider value={this.store}>
         <Header />
         <Container fluid>
           <Row>
@@ -122,6 +131,7 @@ class App extends React.Component<any, AppState> {
             </Col>
           </Row>
         </Container>
+        </StoreContext.Provider >
       </div>
     );
   }
