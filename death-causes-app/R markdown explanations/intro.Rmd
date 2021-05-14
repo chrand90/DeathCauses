@@ -51,7 +51,7 @@ For completeness, the formula that we use to compute the probability of dying fr
 $$
 P(\text{die from }d)=\sum_{a=0}^{119} P(d|a) \prod_{b=0}^{a-1} \Bigl(1-\sum_{d\in D}^b P(d|a) \Bigr)
 $$
-where $P(d|a)$ is the probability of dying from the death cause $d$ between your $a$'th and $a+1$'th birthday. By $D$ we denote the set of all death causes. The sum goes to 119, because there is very little chance of living past 120 [skal vi tilføje det mere eksplicit? At vi regner frem til 120 som et slags teoretisk maksimum]. In the neutral model we use the proportions from the CDC as the $P(d|a)$ numbers, but when we start including risk factors we scale them using [risk ratios](#risk-ratios) or similar.
+where $P(d|a)$ is the probability of dying from the death cause $d$ between your $a$'th and $a+1$'th birthday. By $D$ we denote the set of all death causes. The sum goes to 119, because there is very little chance of living past 120. In the neutral model we use the proportions from the CDC as the $P(d|a)$ numbers, but when we start including risk factors we scale them using [risk ratios](#risk-ratios) or similar.
 </details>
 
 ### Including risk factors
@@ -98,14 +98,15 @@ Many results in health research are presented with *binned* categories. An examp
 For each category they computed an [odds ratio](#odds-ratio) (that we treat as [risk ratios](#risk-ratio)). Below is the input data to our program.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-source('../../Reportgeneration/DatabaseVisualization/readJsonAndPlot.R')
-make_plot_for_risk_factor('Alzheimers', 'Caffeine')
+devtools::load_all("../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
+dat=initialize_database("../../death-causes-app/src/resources/Causes.json")
+plotSpecificPlots(dat, "Alzheimers", "Caffeine", "raw")
 ```
 
 According to these numbers an average coffee consumption of 2.49 cups of coffees per day is more than twice as dangerous as drinking 2.51 cups of coffee per day. This is not realistic and only a result of the chosen binning. To get a more realistic and intuitive model, we fit a curve to binned categories.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-make_plot_for_interpolation('Alzheimers', 'Caffeine')
+plotSpecificPlots(dat, "Alzheimers", "Caffeine", "interpolated")
 ```
 
 This curve is computed as a trade-off between being smooth and reflecting the original data. We have decided that the above curve could not exceed 1, because there is no indication that extreme coffee consumption leads to more Alzheimer's than total coffee abstinence.
@@ -230,26 +231,26 @@ We use the [meta analysis](#meta-analysis) of cohort studies by @cho2004alcohol.
 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-make_plot_for_risk_factor('ColonCancer', 'Drinking')
-make_plot_for_interpolation('ColonCancer', 'Drinking')
+plotSpecificPlots(dat, 'ColonCancer', 'Drinking','raw')
+plotSpecificPlots(dat, 'ColonCancer', 'Drinking','interpolated')
 ```
 
-[hvorfor capper vi ved 1.858?]
 
 #### Colorectal cancer: Physical Activity
 It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar [@samad2005meta]. We therefore obtain the [risk ratios](#risk-ratio) from @Kyui2016physical, where they estimated a [dose-response](#dose-response) relationship based on total physical activity in a [meta analysis](#meta-analysis). They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-make_plot_for_risk_factor('ColonCancer', 'PhysicalTotal')
-make_plot_for_interpolation('ColonCancer', 'PhysicalTotal')
+
+plotSpecificPlots(dat, 'ColonCancer', 'PhysicalTotal','raw')
+plotSpecificPlots(dat, 'ColonCancer', 'PhysicalTotal','interpolated')
 ```
 
 #### Colorectal cancer: Red Meat Consumption
 Red meat is meat from pigs, cows, sheep or animals with similarly colored meat. Consequently, chicken is for example not classified as red meat. We use the risk ratios from @schwingshackl2018food, which is a big dose-response meta analysis. Not all, but most of the big included studies in the meta analysis adjusted for physical activity and alcohol consumption, so it is very reasonable to use it in combination with our other risk factors
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-make_plot_for_risk_factor('ColonCancer', 'RedMeat')
-make_plot_for_interpolation('ColonCancer', 'RedMeat')
+plotSpecificPlots(dat, 'ColonCancer', 'RedMeat','raw')
+plotSpecificPlots(dat, 'ColonCancer', 'RedMeat','interpolated')
 ```
 
 # Glossary

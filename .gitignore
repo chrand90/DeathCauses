@@ -53,3 +53,4 @@ npm-debug.log
 
 #the extra copy of causes.json and other similar files
 /compile/*.json
+.Rproj.user

@@ -1,16 +1,39 @@
+#data taken from Low cigarette consumption and risk of coronary heart disease and stroke: meta-analysis of 141 cohort studies in 55 study reports
+#Allan Hackshaw,1
+# Joan K Morris,2
+## Sadie Boniface,3
+# Jin-Ling Tang,4
+# Dušan Milenkovic5
+#
+#The data were reported stratified on sex, but the difference was not unignorable, so the numbers are simple averages of the men and women numbers
+#We normalize the risk ratios such that they are divided by the number from the 60,70-group. We do this because this risk ratio table is multiplied by
+# the risk ratio table in smoketypicalamount-smokesincestop
+#
+#lambd=0.001
+#tails=min_bounded,max_bounded
 SmokeTypicalAmount	Age	RR
-0	,50.0	1.0
-0,10.5	,50.0	1.678261
-10.5+	,50.0	3.328358
-0	50.0,60.0	1.0
-0,10.5	50.0,60.0	1.426087
-10.5+	50.0,60.0	2.291045
-0	60.0,70.0	1.0
-0,10.5	60.0,70.0	1.208696
-10.5+	60.0,70.0	1.328358
-0	70.0,80.0	1.0
-0,10.5	70.0,80.0	1.0
-10.5+	70.0,80.0	1.0
-0	80.0+	1.0
-0,10.5	80.0+	1.0
-10.5+	80.0+	1.0
+0	,40	1.0(0)
+0,2.5	,40	1.258
+2.5,12.5	,40	1.25
+12.5,30	,40	1.65
+30+	,40	1.65
+0	40,50.0	1.0(0)
+0,2.5	40,50.0	1.258
+2.5,12.5	40,50.0	1.25
+12.5,30	40,50.0	1.65
+30+	40,50.0	1.65
+0	50,60	1.0(0)
+0,2.5	50,60	1.13
+2.5,12.5	50,60	1.11
+12.5,30	50,60	1.28
+30+	50,60	1.28
+0	60,70	1.0(0)
+0,2.5	60,70	1
+2.5,12.5	60,70	1
+12.5,30	60,70	1
+30+	60,70	1
+0	70+	1.0(0)
+0,2.5	70+	1
+2.5,12.5	70+	1
+12.5,30	70+	1
+30+	70+	1
