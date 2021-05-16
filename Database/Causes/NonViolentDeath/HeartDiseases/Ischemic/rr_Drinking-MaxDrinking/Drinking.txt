@@ -1,0 +1,12 @@
+#
+#taken from Alcohol consumption, drinking patterns, and ischemic heart disease: a narrative review of meta-analyses and a systematic review and meta-analysis of the impact of heavy drinking occasions on risk for moderate drinkers
+#it is read from a graph and converted to us standard alcoholic units per week and not grams pure alcohol per day as in the paper. 
+#
+Drinking	RR
+0	1.0(0)
+0,1	0.89
+1,5	0.80
+5,12.5	0.733
+12.5,25	0.741
+25,50	1.0
+50+	1.0
