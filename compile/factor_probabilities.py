@@ -6,9 +6,10 @@ Created on 25/02/2016
 import itertools
 import operator
 import os
+import warnings
 from age_numbers import get_age_distribution
 from data_frame import data_frame
-from factor_levels import intersect_and_size_of_one_coordinate, category_size, intersect_size
+from factor_levels import intersect_and_size_of_one_coordinate, intersect_size_second_interval_no_end, category_size, intersect_size
 
 FACTOR_PROB_PATH = os.path.join(os.pardir, "Database", "Factor_frequencies")
 
@@ -27,7 +28,7 @@ def get_factor_probabilities_for_one_age_interval(writtenF, age_interval):
     '''
     # print writtenF
 
-    listOfDataframes, not_included = load_and_thin_out(writtenF.keys(), FACTOR_PROB_PATH)
+    listOfDataframes, not_included = load_and_thin_out(list(writtenF.keys()), FACTOR_PROB_PATH)
 
     age_dist = get_age_distribution()
 
@@ -47,17 +48,20 @@ def get_factor_probabilities_for_one_age_interval(writtenF, age_interval):
     listOfDataframes = [adjust_to_RR_categories(writtenF, dat_frame) for dat_frame in listOfDataframes]
 
     # print listOfDataframes
-
-
+    for df in listOfDataframes:
+        colsum=df.sum()
+        if abs(colsum-1.0)>0.001:
+            print('-'.join(df.get_FactorNames())+': '+str(colsum))
 
     # add the data frames corresponding to the factors that did not find a matching file
     listOfDataframes.extend([trivial_data_frame(writtenF[factor], factor) for factor in not_included])
 
-    print("listOfDataframes")
-    for d in listOfDataframes:
-        print(d.listOfRowsInTheDataFrame)
+    # print("listOfDataframes")
+    # for d in listOfDataframes:
+    #     print(d.listOfRowsInTheDataFrame)
 
     # get one big dataframe
+
     return make_simultane(listOfDataframes)
 
 
@@ -68,13 +72,25 @@ def trivial_data_frame(factor_levels, factor):
           factor: a string representing the name of the factor, f_1
     output: a data frame
     '''
-
+    warnings.warn("A trivial data frame was used for "+factor)
     df = data_frame([factor], 0)
     n = len(factor_levels)
     for f in factor_levels:
         df.addRow([f] + [float(1.0) / n])
     return df
 
+def insert_explicit_bounds(interval):
+    if ',' in interval:
+        numbers=interval.split(',')
+        if numbers[0]:
+            return interval
+        else:
+            return '0,'+str(numbers[1])
+    elif '+' in interval:
+        numbers = interval.split('+')
+        return  numbers[0]+',150'
+    else:
+        assert False, "unrecognized age interval type: "+interval
 
 def adjust_to_age_group(dataframe, age_interval, age_distribution):
     '''
@@ -91,7 +107,7 @@ def adjust_to_age_group(dataframe, age_interval, age_distribution):
 
     new_rows = {}
     for row in dataframe.listOfRowsInTheDataFrame:
-        age_category_of_row = row[index_of_age_column]
+        age_category_of_row = insert_explicit_bounds(row[index_of_age_column])
         factors = row[:index_of_age_column] + row[(index_of_age_column + 1):-1]
         intersect, _ = intersect_and_size_of_one_coordinate(age_category_of_row, age_interval)
         if intersect > 0:
@@ -171,7 +187,7 @@ def parse_cred_and_factornames(filpath):
     Output: a tuple (filpath,factorNames,cred), where filpath is the original file path, 
     factorNames is a list of the factors in the dataframe and cred is the credibility of the dataframe
     '''
-    print('filename', filpath)
+    #print('filename', filpath)
     with open(filpath) as f:
         for i, line in enumerate(f):
             if i == 0:
@@ -254,6 +270,9 @@ def marginalize(dataframe, factorsToKeep):
 
     return marginalized_df
 
+def get_discrete_values(vals):
+    return [v for v in vals if (',' not in v and '+' not in v)]
+
 
 def adjust_to_RR_categories(writtenF, dataframe):
     '''
@@ -265,9 +284,11 @@ def adjust_to_RR_categories(writtenF, dataframe):
     # A list containing lists of category divisions is made.
     # It is checked that all factors in the dataframe is specified in writtenF
     listOfCategories = []
+    discrete_values=[]
     for factorname in dataframe.get_FactorNames():
         assert factorname in writtenF, "A factor category in the dataframe is not specified by writtenF. Please fix"
         listOfCategories = listOfCategories + [writtenF[factorname]]
+        discrete_values.append(get_discrete_values(writtenF[factorname]))
 
     # A new dataframe which will contain the adjusted categories is made
     adjusted_df = data_frame(dataframe.get_FactorNames(), dataframe.get_credibility())
@@ -287,7 +308,7 @@ def adjust_to_RR_categories(writtenF, dataframe):
             #                               str(intersect_size(oldRow[:-1],row)),
             #                               "/",
             #                               str(category_size(oldRow[:-1]))])
-            newProb = newProb + oldRow[-1] * intersect_size(oldRow[:-1], row) / category_size(oldRow[:-1])
+            newProb = newProb + oldRow[-1] * intersect_size_second_interval_no_end(oldRow[:-1], row, discrete_values) / category_size(oldRow[:-1])
         adjusted_df.addRow(row + [newProb])
     return adjusted_df
 

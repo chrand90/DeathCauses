@@ -1,4 +1,6 @@
 import { FactorAnswers } from "../../models/Factors";
+import { OptimizabilityToNodes } from "../../models/RelationLinks";
+import { DimensionStatus, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 
 enum Flank {
@@ -15,19 +17,50 @@ enum FlankStability {
 
 export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
-  factorAnswers: FactorAnswers;
+  factorAnswers: UpdateDic;
+  optimClasses: OptimizabilityToNodes;
+  factorNameToOptimClass: {[k:string]:string}={}
 
   constructor(
-    optimDividedFactorNames: string[][],
-    factorAnswers: FactorAnswers
+    optimClasses: OptimizabilityToNodes,
+    allPreviousUpdateForms: UpdateDic,
   ) {
+    this.optimClasses=optimClasses;
     this.optimals = {};
-    optimDividedFactorNames.forEach((fnames) => {
+    Object.entries(optimClasses).forEach(([optimVal, fnames]) => {
       fnames.forEach((fname) => {
         this.optimals[fname] = [] as (number | string)[];
-      });
+        this.factorNameToOptimClass[fname]=optimVal
+      })
     });
-    this.factorAnswers = factorAnswers;
+    this.factorAnswers = allPreviousUpdateForms;
+  }
+
+  getOptimizability(factorName: string):number{
+    return parseInt(this.factorNameToOptimClass[factorName]);
+  }
+
+  getGivensAndOptimizability(factorName:string){
+    let factorOptimClass: number=-10;
+    if(factorName in this.factorNameToOptimClass){
+      factorOptimClass=parseInt(this.factorNameToOptimClass[factorName])
+    }
+    if(factorOptimClass<0){
+      return {givens: [], subtracted: [], sames: [], optimizability: factorOptimClass}
+    }
+    const numClasses=Object.keys(this.optimClasses).map(s=>+s)
+    let givens:string[]=[];
+    let subtracted: string[]=[];
+    numClasses.forEach((optimizability) => {
+      if(optimizability<factorOptimClass){
+        givens=givens.concat(this.optimClasses[optimizability.toString()])
+      }
+      else if(optimizability>factorOptimClass){
+        subtracted=subtracted.concat(this.optimClasses[optimizability.toString()])
+      }
+    })
+    const sames=this.optimClasses[factorOptimClass.toString()]
+    return {givens: givens.filter(d=>d!=="Age"), subtracted, sames, optimizability:factorOptimClass};
   }
 
   addContribution(loc: LocationAndValue, fixedFactors: string[]) {
@@ -55,6 +88,13 @@ export class BestValues {
     });
   }
 
+  getMinMaxOfFactorAnswers(factorAnswer: number | number[]){
+    if(Array.isArray(factorAnswer)){
+      return {min: Math.min(...factorAnswer), max: Math.max(...factorAnswer)}
+    }
+    return {min: factorAnswer, max: factorAnswer};
+  }
+
   getConsensusStatement(factorName: string) {
     if (
       !(factorName in this.optimals) ||
@@ -66,9 +106,10 @@ export class BestValues {
     const factorAnswer = this.factorAnswers[factorName];
     const firstEntry = this.optimals[factorName][0];
     if (typeof firstEntry === "number") {
+      const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
       const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
         this.optimals[factorName] as number[],
-        factorAnswer as number
+        min, max
       );
       switch (factorAnswerFlank) {
         case Flank.NEITHER: {
@@ -101,6 +142,69 @@ export class BestValues {
     }
   }
 
+  getLongConsensusStatement(factorName:string, probability: number, causeName: string){
+    const prob="<strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
+    const {givens, subtracted, optimizability} = this.getGivensAndOptimizability(factorName);
+    let res= "If you die from "+causeName +", there is a " 
+    res+= prob + " probability that it is due to "
+    res+="<strong>" + factorName + "</strong>"
+    
+    if(givens.length>0){
+      res=res+". This includes cases where other valid reasons were "+listFormatting(givens, "or")
+      if(subtracted.length>0){
+        res=res+" but exludes those where "+listFormatting(subtracted)+ " could also explain the death"
+      }
+    }
+    else if(subtracted.length>0){
+      res=res+". This excludes cases where other valid reasons were "+listFormatting(subtracted, "or");
+    }
+    const factorAnswer = this.factorAnswers[factorName];
+    if(factorAnswer.dimension===DimensionStatus.SINGLE){
+      res=res+". Your "+factorName+ " is "+factorAnswer.value
+    }
+    if (
+      !(factorName in this.optimals) ||
+      this.optimals[factorName].length === 0
+    ) {
+      return res
+    }    
+    const firstEntry = this.optimals[factorName][0];
+    if (typeof firstEntry === "number") {
+      const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
+      const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
+        this.optimals[factorName] as number[],
+        min, max
+      );
+      if(factorAnswer.dimension===DimensionStatus.YEARLY){
+        const minAnswer=min.toFixed(2).replace(/\.?0+$/,"")
+        const maxAnswer=max.toFixed(2).replace(/\.?0+$/,"")
+        if(minAnswer===maxAnswer){
+          res=res+". Your "+factorName+ " is "+minAnswer
+        }
+        else{
+          res=res+". Your "+factorName+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " in the computation period"
+        }
+      }
+      const minVal=Math.min(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")
+      const maxVal=Math.max(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")
+      if(factorAnswerFlank===Flank.NEITHER){
+        res=res+". That is extremely close to the optimal value"
+      }
+      else if (stability === FlankStability.STABLE) {
+        res=res+ ". The optimal value is <strong>" + minVal +"</strong>"
+      } else {
+        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on year, subcause, and/or other risk factors"
+      }
+    } else {
+      if (this.optimals[factorName].every((d) => d === firstEntry)) {
+        res=res+ ". The optimal value is " + firstEntry;
+      } else {
+        res=res+ ". The optimal values is one of {"+  removeDuplicates(this.optimals[factorName] as string[]).join(', ')+"}"+" depending on year, subcause and/or other risk factors";
+      }
+    }
+    return res+"."
+  }
+
   merge(otherStore: BestValues) {
     Object.entries(otherStore.optimals).forEach(([factorName, vals]) => {
       if (factorName in this.optimals) {
@@ -109,23 +213,33 @@ export class BestValues {
         this.optimals[factorName] = vals;
       }
     });
+    Object.entries(otherStore.optimClasses).forEach(([optimValue, nodes]) =>{
+      if (optimValue in this.optimClasses) {
+        this.optimClasses[optimValue] = [...Array.from(new Set<string>(this.optimClasses[optimValue].concat(nodes)))];
+      } else {
+        this.optimClasses[optimValue] = nodes;
+      }
+    })
+    this.factorNameToOptimClass={...this.factorNameToOptimClass, ...otherStore.factorNameToOptimClass};
   }
+}
+
+function removeDuplicates(l: string[]){
+  return Array.from(new Set<string>(l))
 }
 
 
 function computeFlankOfFactorAnswer(
   optimals: number[],
-  factorAnswer: number
+  minVal: number,
+  maxVal: number,
 ): { side: Flank; stability: FlankStability } {
-  if(typeof factorAnswer==="string"){
-      factorAnswer=parseFloat(factorAnswer);
-  }
   let side = Flank.NEITHER;
-
+  
   let stability = FlankStability.STABLE;
   let lastBestValue: number;
   optimals.forEach((d, i) => {
-    if (d < factorAnswer - 1e-10) {
+    if (d < maxVal - 1e-10) {
       if (side === Flank.MINUS_INFINITY) {
         side = Flank.BOTH;
       }
@@ -133,7 +247,7 @@ function computeFlankOfFactorAnswer(
         side = Flank.INFINITY;
       }
     }
-    if (d > factorAnswer + 1e-10) {
+    if (d > minVal + 1e-10) {
       if (side === Flank.INFINITY) {
         side = Flank.BOTH;
       }
@@ -155,22 +269,30 @@ function computeFlankOfFactorAnswer(
   return { side, stability };
 }
 
+function listFormatting(factors: string[], finalword:string="or"){
+  if(factors.length===1){
+    return "<i>"+factors[0]+"</i>"
+  }
+  else{
+    const lastElement=factors.pop()
+    let res=""
+    factors.forEach((d)=> {
+      res+="<i>"+d+"</i>, "
+    })
+    return res.slice(0,-2)+ " "+finalword+ " <i>"+lastElement+"</i>"
+  }
+}
+
 export function mergeBestValues(
-  bestValues: (BestValues | undefined)[]
-): BestValues | undefined {
+  bestValues: BestValues[]
+): BestValues  {
+  const firstBestValues=bestValues[0]
+  const shell= new BestValues({}, firstBestValues.factorAnswers);
   return bestValues.reduce(
-    (first: BestValues | undefined, second: BestValues | undefined) => {
-      if (!first) {
-        if (!second) {
-          return undefined;
-        }
-        return second;
-      }
-      if (!second) {
-        return first;
-      }
+    (first: BestValues , second: BestValues ) => {
       first.merge(second);
       return first;
-    }
+    },
+    shell
   );
 }

@@ -8,7 +8,7 @@ import VizWindow from "./components/VizWindow";
 import  { FactorAnswers } from "./models/Factors";
 import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
 import Spinner from "react-bootstrap/Spinner";
-import { Visualization } from "./components/Helpers";
+import { ComputationState, Visualization } from "./components/Helpers";
 import relationLinkFile from "./resources/Relations.json";
 
 
@@ -19,6 +19,7 @@ interface AppState {
   elementInFocus: string;
   relationLinkData: RelationLinks | null;
   visualization: Visualization;
+  computationState: ComputationState;
 }
 
 class App extends React.Component<any, AppState> {
@@ -29,11 +30,22 @@ class App extends React.Component<any, AppState> {
       factorAnswersSubmitted: null,
       elementInFocus: "BMI",
       relationLinkData: null,
-      visualization: Visualization.NO_GRAPH
+      visualization: Visualization.NO_GRAPH,
+      computationState: ComputationState.READY
     };
     
     this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
     this.orderVisualization = this.orderVisualization.bind(this);
+    this.reportChangesToInput = this.reportChangesToInput.bind(this);
+    this.reportChangesToComputationState=this.reportChangesToComputationState.bind(this);
+  }
+
+  reportChangesToInput(newState: ComputationState=ComputationState.CHANGED){
+    this.setState({computationState: newState});
+  }
+
+  reportChangesToComputationState(newState: ComputationState){
+    this.setState({computationState: newState});
   }
 
   handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
@@ -41,6 +53,7 @@ class App extends React.Component<any, AppState> {
     console.log(factorAnswers);
     this.setState({
       factorAnswersSubmitted: factorAnswers,
+      computationState: ComputationState.RUNNING
     }, () => {
       if((this.state.visualization!==Visualization.SURVIVAL_GRAPH && this.state.visualization!==Visualization.BAR_GRAPH)){
         this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
@@ -48,27 +61,13 @@ class App extends React.Component<any, AppState> {
     });
   }
 
-  // loadFactorAnswers() {
-  //   this.setState({
-  //     factorAnswers: new Factors()
-  //   })
-  //   // load_factor_answers.then((loaded_factor_answers)=> this.setState({hasLoadedFactorAnswers: false, factor_answers:loaded_factor_answers})).
-  //   // This will load the factor answers and then it will update the rendered view using setState.
-  // }
-
-  // loadDatabase() {
-  //   // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
-  //   // This will load the data and then it will update the rendered view using setState.
-  //   // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
-  // }
-
 
   loadRelationLinks() {
     setTimeout(
       () => {
         this.setState({ relationLinkData: new RelationLinks(relationLinkFile as RelationLinkJson)})
       },
-      300
+      200
     )
   }
 
@@ -85,7 +84,9 @@ class App extends React.Component<any, AppState> {
       <QuestionMenu 
         handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
         relationLinkData={this.state.relationLinkData!}
-        orderVisualization={this.orderVisualization}          
+        orderVisualization={this.orderVisualization}
+        reportChanges={this.reportChangesToInput}
+        computationState={this.state.computationState}          
     />
     );
   }
@@ -98,6 +99,9 @@ class App extends React.Component<any, AppState> {
         elementInFocus={this.state.elementInFocus}
         visualization={this.state.visualization}
         orderVisualization={this.orderVisualization}
+        relationLinkRaw={relationLinkFile as RelationLinkJson}
+        computationState={this.state.computationState}
+        reportChangesToComputationState={this.reportChangesToComputationState}
       />
     );
   }

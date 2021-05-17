@@ -7,6 +7,8 @@ import { InputValidity } from "../models/FactorAbstract";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FormControlStyle, CHANGED_COLOR } from "./Question";
+import { ComputationState } from "./Helpers";
+import Spinner from "react-bootstrap/Spinner";
 
 interface AskedQuestionProps {
   factorName: string | undefined;
@@ -20,13 +22,13 @@ interface AskedQuestionProps {
   leftCornerCounter: string;
   onSwitchView: () => void;
   finished: boolean;
-  isChanged: boolean;
+  computationState: ComputationState;
 }
 
 class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
 
   getMovingOnButton(){
-    const disabled=(this.props.validity !== undefined  && this.props.validity.status === "Error")
+    const disabled=(this.props.validity !== undefined  && this.props.validity.status === "Error") || this.props.computationState===ComputationState.RUNNING
     let buttonStyle: FormControlStyle={};
     let onClick: (ev: React.FormEvent) => void;
     let buttonText: string;
@@ -41,15 +43,19 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
       onClick=this.props.onSubmit
       buttonText="Next"
     }
-    if(this.props.isChanged && !this.props.finished){
+    if(this.props.computationState!==ComputationState.READY && !this.props.finished){
       buttonStyle["backgroundColor"]=CHANGED_COLOR
+      buttonText="Next*"
     }
     return (
-      <Button disabled={disabled} 
+      <Button
+      className="submitbutton" 
+      disabled={disabled} 
       onClick={onClick} 
       aria-contols="collapse-asked-question-frame"
       style={buttonStyle}>
-        {buttonText}
+
+        {this.props.computationState===ComputationState.RUNNING ? <Spinner animation="border" size="sm"></Spinner> : buttonText}
       </Button>
     )
   }

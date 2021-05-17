@@ -3,6 +3,16 @@ import RelationLinks, { NodeToColor } from '../models/RelationLinks';
 import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 
+enum LatestChange {
+	FITSCREEN="fit screen to disease width",
+	GROUPING= "collected categories to make grouping"
+}
+interface CategorizationState {
+	diseaseToWidth: string | null,
+	collectedCategories: string[],
+	latestChange: LatestChange
+}
+
 interface BarChartWrapperProps {
 	database: DataSet;
 	colorDic: NodeToColor;
@@ -14,10 +24,11 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	const chartArea = useRef(null);
 	const [chart, setChart] = useState<BarChart | null>(null);
 	const { width } = useWindowSize();
-	const [diseaseToWidth, setDiseaseToWidth] = useState<string | null>(null);
-	const [collectedCategories, setCollectedCategories] = useState<string[]>([]);
+	const [categorization, setCategorization] = useState<CategorizationState>({diseaseToWidth: null, collectedCategories:[], latestChange: LatestChange.FITSCREEN})
 	const collectedCategoriesRef=useRef([] as string[]);
-	collectedCategoriesRef.current=collectedCategories;
+	collectedCategoriesRef.current=categorization.collectedCategories;
+	const diseaseToWidthRef=useRef(null as null | string);
+	diseaseToWidthRef.current=categorization.diseaseToWidth;
 
 	const expandCategory= (category: string) => {
 		console.log("expands "+ category)
@@ -25,7 +36,7 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 		if(newCats.includes(category)){
 			newCats=newCats.filter(d => d!==category)
 			newCats=newCats.concat(props.rdat.getImmediateCauseCategoryDescendants(category))
-			setCollectedCategories(newCats);
+			setCategorization({collectedCategories: newCats, diseaseToWidth:diseaseToWidthRef.current, latestChange: LatestChange.GROUPING});
 		}
 		else{
 			console.log("Tried to remove a category that wasnt collapsed... Ignored.")
@@ -46,8 +57,18 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 		else{
 			noLongerNeedsToBeCollapsed=[]; 
 		}
+		let newDiseaseToWidth: string | null=diseaseToWidthRef.current;
+		if(diseaseToWidthRef.current && parent){
+			if(props.rdat.findCauseCategoryAncestors(diseaseToWidthRef.current).includes(parent)){
+				newDiseaseToWidth=null;
+			}
+		}
 		const newCollectedGroups=newCats.filter(d=>!noLongerNeedsToBeCollapsed.includes(d))
-		setCollectedCategories(newCollectedGroups);
+		setCategorization({collectedCategories: newCollectedGroups, diseaseToWidth:newDiseaseToWidth, latestChange: LatestChange.GROUPING});
+	}
+
+	const setDiseaseToWidth = (newDiseaseToWidth: null | string) => {
+		setCategorization({collectedCategories: collectedCategoriesRef.current, diseaseToWidth:newDiseaseToWidth, latestChange: LatestChange.FITSCREEN});
 	}
 
 
@@ -56,9 +77,9 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 			chartArea.current, 
 			database, 
 			props.colorDic, 
-			diseaseToWidth, 
+			categorization.diseaseToWidth, 
 			setDiseaseToWidth, 
-			props.rdat.makeCollectedGroups(collectedCategories), 
+			props.rdat.makeCollectedGroups(categorization.collectedCategories), 
 			expandCategory, 
 			collectParentCategory,
 			props.rdat.getPossibleExpansions()
@@ -66,11 +87,16 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 	}
 
 	useEffect(() => {
-		console.log("new expanded categories "+collectedCategories)
 		if (chart) {
-			chart.changeCats(database, diseaseToWidth, props.rdat.makeCollectedGroups(collectedCategories))
+			if(categorization.latestChange===LatestChange.GROUPING){
+				chart.changeCats(database, categorization.diseaseToWidth, props.rdat.makeCollectedGroups(categorization.collectedCategories))
+			}
+			else{
+				chart.update(database, categorization.diseaseToWidth, true);
+			}
+			
 		}
-	}, [collectedCategories])
+	}, [categorization])
 
 
 	useEffect(() => {
@@ -83,9 +109,9 @@ const BarChartWrapper = (props: BarChartWrapperProps) => { //class ChartWrapper 
 
 	useEffect(() => {
 		if (chart) {
-			chart.update(database, diseaseToWidth);
+			chart.update(database, categorization.diseaseToWidth);
 		}
-	}, [database, diseaseToWidth]);
+	}, [database]);
 
 	useEffect(() => {
 		createNewChart();

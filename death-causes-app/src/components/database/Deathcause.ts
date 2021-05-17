@@ -3,18 +3,16 @@ import FrequencyTable, { FrequencyJson } from "./FrequencyTable";
 import { RiskFactorGroup, RiskFactorGroupJson } from "./RickFactorGroup";
 
 export interface DeathCauseJson {
-    Age: FrequencyJson;
+    Age?: FrequencyJson;
     RiskFactorGroups: RiskFactorGroupJson[];
 }
 
-export class DeathCause {
-    ages: FrequencyTable;
+export class RiskFactorGroupsContainer {
     riskFactorGroups: RiskFactorGroup[];
     deathCauseName: string;
     optimizabilityClasses: string[][] | null=null;
 
     constructor(json: DeathCauseJson, name: string) {
-        this.ages = new FrequencyTable(json.Age);
         this.riskFactorGroups = json.RiskFactorGroups.map(element => {
             return new RiskFactorGroup(element)
         });
@@ -29,14 +27,24 @@ export class DeathCause {
         })
     }
 
-    getOptimizabilityClasses(rdat: RelationLinks){
-        if(this.optimizabilityClasses === null){
-            this.optimizabilityClasses= rdat.getOptimizabilityClasses(
-                this.getAllFactorNamesWithoutAge()
-            )
-        }
-        return this.optimizabilityClasses;
+    getAllFactorNames(){
+        return this.riskFactorGroups.flatMap((rfg: RiskFactorGroup) => {
+            return Array.from(rfg.getAllFactorsInGroup())
+        })
     }
+
 }
 
-export default DeathCause;
+export default class DeathCause extends RiskFactorGroupsContainer{
+    ages: FrequencyTable;
+
+    constructor(json: DeathCauseJson, name: string) {
+        super(json, name);
+        if(json.Age!==undefined){
+            this.ages = new FrequencyTable(json.Age);
+        }
+        else{
+            this.ages = new FrequencyTable({age_classification:[], age_prevalences:[]});
+        }
+    }
+}

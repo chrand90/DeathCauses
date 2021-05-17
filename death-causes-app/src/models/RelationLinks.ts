@@ -54,8 +54,8 @@ interface NodeToOptimizability {
   [nodeName: string]: number;
 }
 
-interface OptimizabilityToNodes {
-  [optim: number]: string[];
+export interface OptimizabilityToNodes {
+  [optim: string]: string[];
 }
 
 export interface NodeToColor {
@@ -165,13 +165,14 @@ export default class RelationLinks {
   sortedNodes: StratifiedTopologicalSorting = {};
   colorDic: NodeToColor = {};
   optimizabilities: NodeToOptimizability = {};
+  optimizabilityClasses: OptimizabilityToNodes = {};
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
     this.initializeInheritanceListsAndTypeAndColor(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
-    this.initializeOptimizabilities();
+    this.initializeOptimizabilityClasses();
   }
 
   initializeReverseNodeTypeOrder() {
@@ -233,7 +234,7 @@ export default class RelationLinks {
     });
   }
 
-  initializeOptimizabilities() {
+  initializeOptimizabilityClasses() {
     this.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((nodeName: string) => {
       this.optimizabilities[nodeName] = this.followMaximumOfSummary(
         nodeName,
@@ -250,25 +251,27 @@ export default class RelationLinks {
         }
       );
     });
+    this.sortedNodes[NodeType.INPUT]
+      .concat(this.sortedNodes[NodeType.COMPUTED_FACTOR])
+      .forEach((nodeName) => {
+        let optimValue = this.optimizabilities[nodeName];
+        if (!(optimValue in this.optimizabilityClasses)) {
+          let emptyStrings: string[] = [];
+          this.optimizabilityClasses[optimValue] = emptyStrings;
+        }
+        this.optimizabilityClasses[optimValue].push(nodeName);
+      });
   }
 
-  getOptimizabilityClasses(nodeNames: string[]) {
-    let valueToNodeName: OptimizabilityToNodes = {};
-    nodeNames.forEach((nodeName: string) => {
-      let optimValue = this.optimizabilities[nodeName];
-      if (!(optimValue in valueToNodeName)) {
-        let emptyStrings: string[] = [];
-        valueToNodeName[optimValue] = emptyStrings;
-      }
-      valueToNodeName[optimValue].push(nodeName);
-    });
-    let optims = Object.keys(valueToNodeName).map((optimAsString: string) => {
-      return parseInt(optimAsString);
-    });
-    optims.sort();
-    return optims.map((optimValue: number) => {
-      return valueToNodeName[optimValue];
-    });
+  getOptimizabilityClasses(nodeNames: string[]): OptimizabilityToNodes {
+    let resAsLists=Object.entries(this.optimizabilityClasses)
+      .map(([optimValue, nodes]) => {
+        return [optimValue, nodes.filter( (node:string) => nodeNames.includes(node))]
+      })
+      .filter( ([optimValue, nodes]) => {
+        return nodes.length>0;
+      })
+    return Object.fromEntries(resAsLists);
   }
 
   getParentCategory(nodeName: string) {
@@ -370,7 +373,7 @@ export default class RelationLinks {
     } else if (fromType === NodeType.CONDITION) {
       res += "The status of " + fromNode + " is used ";
     } else if (fromType === NodeType.CAUSE_CATEGORY) {
-      return toNode +" is a type of " + fromNode 
+      return toNode + " is a type of " + fromNode;
     }
     if (toType === NodeType.COMPUTED_FACTOR) {
       res += "to compute " + toNode;
@@ -414,6 +417,24 @@ export default class RelationLinks {
     }
   }
 
+  findCauseCategoryAncestors(nodeName: string): string[]{
+    if(!( this.nodeType[nodeName]=== NodeType.CAUSE || this.nodeType[nodeName]===NodeType.CAUSE_CATEGORY )){
+      return [];
+    }
+    if (
+      this.ancestorList[nodeName].length === 0
+    ) {
+      return [nodeName];
+    } else {
+      let causeCategoryAncestors = this.ancestorList[
+        nodeName
+      ].map((d: string) => {
+        return this.findCauseCategoryAncestors(d);
+      });
+      return ([nodeName]).concat(...causeCategoryAncestors);
+    }
+  }
+
   findAncestors(nodeName: string): string[] {
     if (this.ancestorList[nodeName].length === 0) {
       return [nodeName];
@@ -445,10 +466,10 @@ export default class RelationLinks {
     };
   }
 
-  getImmediateCauseCategoryDescendants(nodeName:string): string[]{
+  getImmediateCauseCategoryDescendants(nodeName: string): string[] {
     return this.descendantList[nodeName].filter((candidateNode: string) => {
-      return this.nodeType[candidateNode]===NodeType.CAUSE_CATEGORY;
-    })
+      return this.nodeType[candidateNode] === NodeType.CAUSE_CATEGORY;
+    });
   }
 
   computeXValueOfInitialNode(

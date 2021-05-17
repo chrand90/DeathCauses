@@ -16,6 +16,7 @@ FACTORQUESTIONS_FILE = "../death-causes-app/src/resources/FactorDatabase.json"
 COMPUTED_FACTORS_FILE = "../death-causes-app/src/resources/ComputedFactorsRelations.json"
 RELATIONFILE_DESTINATION = "../death-causes-app/src/resources/Relations.json"
 CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/Causes.json"
+CATEGORY_CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/CategoryCauses.json"
 
 
 def remove_duplicates_and_Age(listi):
@@ -27,8 +28,8 @@ def remove_duplicates_and_Age(listi):
 def combine_relations(relations):
     with open(FACTORQUESTIONS_FILE, "r") as f:
         factors = json.load(f)
-    for factor,factor_info in factors.items():
-        relations[factor] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
+    for factor_info in factors:
+        relations[factor_info["factorname"]] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     relations.update(computed_factors)
@@ -38,16 +39,20 @@ def combine_relations(relations):
 
 
 def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages):
+    if rr_dir.split(os.sep)[-1]=="rr_BMI-HCVStatus":
+        print("debug location")
     riskfactorgroup = {}
     normalizers, RRs, string_interaction_name = integrate_one(rr_dir, age_intervals, age_distribution)
 
     normalizer_age_object = initialize_data_frame_by_columns(Age=Ages, values_list=normalizers)
-    print('normalizer age object -----------------------------------------------------')
-    print(normalizer_age_object)
+    #print('normalizer age object -----------------------------------------------------')
+    #print(normalizer_age_object)
     riskfactorgroup['normalisingFactors'] = normalizer_age_object.get_as_standard_age_prevalences()
     riskfactorgroup['interactionFunction'] = string_interaction_name
     riskratiotables = []
     riskfactor_names = []
+
+
 
     for RR in RRs:
         RRlist = RR.get_as_list_of_lists()
@@ -71,8 +76,8 @@ def integrate_and_interpolate_all(age_intervals, folder):
     cause_dirs = search_for_causes(folder)
     rr_dirs = search_for_rrs(folder)
 
-    for disease, d_dic in relations.items():
-        print(disease, ": ", d_dic["type"])
+    # for disease, d_dic in relations.items():
+    #     print(disease, ": ", d_dic["type"])
 
     writtenF_dirs = search_for_writtenF_directories(folder)
 
@@ -94,7 +99,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
 
     for disease, rr_dirs in rr_dirs.items():
         for rr_dir in rr_dirs:
-            print(rr_dir)
+            #print(rr_dir)
             rr_norm, riskfactor_names = integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
             relations[disease]["ancestors"].extend(riskfactor_names)
             if disease in death_causes:
@@ -114,9 +119,8 @@ def run(age_intervals=None):
         age_intervals = get_age_totals()[0]
     relations, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
     transform_to_json(combine_relations(relations), RELATIONFILE_DESTINATION)
-    transform_to_json(death_causes, "Causes.json")
     transform_to_json(death_causes, CAUSES_DESTIONATION_FILE)
-    transform_to_json(death_cause_categories, "CauseCategories.json")
+    transform_to_json(death_cause_categories, CATEGORY_CAUSES_DESTIONATION_FILE)
     # transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
 
 
@@ -138,7 +142,9 @@ def integrate_one(writtenF_dir, age_intervals, age_distribution):
     RR = rr.make_simultane_and_get_writtenF(RRs, interaction)
     RRages = [factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in
               age_intervals]
-
+    folder=writtenF_dir.split(os.sep)[-1]
+    disease = writtenF_dir.split(os.sep)[-2]
+    print("Integrating: "+ folder)
     factor_prob_data_frames = factor_probabilities.get_factor_probabilities(RR.get_categories(RR.get_FactorNames()),
                                                                             age_intervals)
 
