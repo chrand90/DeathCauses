@@ -4,7 +4,7 @@ export const ALTERNATING_COLORS = ["#CFCFCF", "#E4E4E4"];
 export const CLICKED_COLOR = "#551A8B";
 export const LINK_COLOR = "#0000EE";
 
-const toolTipNamesShowHide=['.stip','.clicktip','.d3-tip']
+const toolTipNamesShowHide=['.stip','.clicktip','.d3-tip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
 
 export enum Visualization {
@@ -41,7 +41,6 @@ export enum ComputationState {
 
 
 export function hideAllToolTips(){
-  return 
   toolTipNamesShowHide.forEach((className) => {
     d3.selectAll(className).remove();
   })

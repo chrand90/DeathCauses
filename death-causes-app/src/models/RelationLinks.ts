@@ -213,7 +213,7 @@ export default class RelationLinks {
       this.superAncestorList[nodeName] = this.findAncestors(nodeName);
       this.superAncestorCount[nodeName] = this.superAncestorList[
         nodeName
-      ].length;
+      ].length+ this.superAncestorList[nodeName].filter(ancestorNode => this.nodeType[ancestorNode]===NodeType.CAUSE_CATEGORY).length*2;
       this.deathCauseDescendants[nodeName] = this.findDeathCauseDescendants(
         nodeName
       );
@@ -317,22 +317,23 @@ export default class RelationLinks {
   }
 
   getPossibleExpansions() {
-    let collapsables: string[] = [];
+    const collapsables: NodeDic = {};
+    const expandables: NodeDic={};
     this.sortedNodes[NodeType.CAUSE]
       .concat(this.sortedNodes[NodeType.CAUSE_CATEGORY])
       .forEach((nodeName: string) => {
-        if (
-          this.ancestorList[nodeName].some(
-            (ancestorName) =>
-              this.nodeType[ancestorName] === NodeType.CAUSE_CATEGORY
-          )
-        ) {
-          collapsables.push(nodeName);
+        this.ancestorList[nodeName].forEach(ancestorName => {
+          if(this.nodeType[ancestorName] === NodeType.CAUSE_CATEGORY){
+            collapsables[nodeName]=[ancestorName];
+          }
+        });
+        if(nodeName in this.descendantList && this.descendantList[nodeName].length>0){
+          expandables[nodeName]=this.descendantList[nodeName];
         }
       });
     return {
-      collapsables: new Set(collapsables),
-      expandables: new Set(this.sortedNodes[NodeType.CAUSE_CATEGORY]),
+      collapsables,
+      expandables
     }; //this.sortedNodes[NodeType.CAUSE_CATEGORY]}
   }
 
@@ -770,7 +771,7 @@ export default class RelationLinks {
         descendantAncestorList,
         (n: string) => true
       );
-      yval += 0.4 * (((distanceToEnd + 2) % 2) * 2 - 1); //adding 2 because distance to end could be -1
+      yval += (yto-yfrom)/2 * (((distanceToEnd + 2) % 2) * 2 - 1); //adding 2 because distance to end could be -1
     }
     return yval;
   }
