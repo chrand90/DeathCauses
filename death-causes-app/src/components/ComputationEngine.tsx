@@ -1,4 +1,3 @@
-import { truncate } from "fs";
 import { CauseGrouping } from "../models/RelationLinks";
 import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
@@ -135,7 +134,7 @@ function makeRowSquare(
                 return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
             })
         }
-        Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
+        innerCauses.forEach(innerCause=>{
             Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) =>{
                 let contrib=0;
                 let innerCauseInGroup=false;
