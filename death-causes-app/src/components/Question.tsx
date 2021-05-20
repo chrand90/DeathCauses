@@ -10,8 +10,8 @@ import { InputValidity } from "../models/FactorAbstract";
 import Dropdown from "react-bootstrap/Dropdown";
 import Label from "react-bootstrap/FormLabel";
 import { OrderVisualization, Visualization } from "./Helpers";
-import RootStore, { StoreContext } from "../stores/rootStore";
-import {observer} from "mobx-react";
+import RootStore, { StoreContext, withStore } from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
 export const TEXTCOLOR_DISABLED = "#999";
@@ -20,7 +20,7 @@ export const ERROR_COLOR = "#fc0303";
 export const WARNING_COLOR = "#bfa50d";
 export const WARNING_COLOR_STRONGER = "#806e09";
 export const SUCCESS_COLOR = "#3E713F";
-export const CHANGED_COLOR= "#630396";
+export const CHANGED_COLOR = "#630396";
 
 export interface QuestionProps<T> extends OrderVisualization {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -55,18 +55,12 @@ interface QuestionContextProps extends OrderVisualization {
   validityStatus: string;
   windowWidth: number;
   descendantDeathCauses: string[];
+  store: RootStore;
 }
-class QuestionContextDefinition extends React.PureComponent<QuestionContextProps> {
-  static contextType = StoreContext;
-  store: RootStore| null=null;
-  
+
+class QuestionContextWithoutStore extends React.PureComponent<QuestionContextProps> {
   constructor(props: QuestionContextProps) {
     super(props);
-    
-  }
-
-  componentDidMount(){
-    this.store=this.context;
   }
 
   helpBoxContent() {
@@ -74,7 +68,7 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
       return (
         <div>
           <MarkDown>{this.props.helpText}</MarkDown>
-          {this.props.name !== "Age" ? <hr></hr> :null}
+          {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
       );
@@ -84,7 +78,7 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
           {this.questionPhrasing()}
           <hr></hr>
           <MarkDown>{this.props.helpText}</MarkDown>
-          {this.props.name !== "Age" ? <hr></hr> :null}
+          {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
       );
@@ -232,8 +226,8 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
     } else if (widthOfArea >= 992) {
       widthOfArea = (widthOfArea * 5) / 12;
     }
-    widthOfArea = Math.min(600,(widthOfArea * 1) / 3);
-    return widthOfArea-20; //20 is to account for the extra padding
+    widthOfArea = Math.min(600, (widthOfArea * 1) / 3);
+    return widthOfArea - 20; //20 is to account for the extra padding
   }
 
   fontSizeForFactorNameHeader() {
@@ -307,13 +301,12 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
     );
   }
 
-  rightPluralOfCause(){
-    if(this.props.descendantDeathCauses.length===1){
-      return ""
+  rightPluralOfCause() {
+    if (this.props.descendantDeathCauses.length === 1) {
+      return "";
     }
-    return "s"
+    return "s";
   }
-
 
   descendantMessage() {
     return (
@@ -329,46 +322,53 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
             );
           }}
         >
-          {this.props.descendantDeathCauses.length} death cause{this.rightPluralOfCause()}
+          {this.props.descendantDeathCauses.length} death cause
+          {this.rightPluralOfCause()}
         </Button>
         .
       </div>
     );
   }
 
-  componentDidUpdate(prevProps: QuestionContextProps){
-    if(prevProps.validityStatus !== this.props.validityStatus){
+  componentDidUpdate(prevProps: QuestionContextProps) {
+    if (prevProps.validityStatus !== this.props.validityStatus) {
       if (this.props.validityStatus === "Error") {
-        this.store?.setColor(ERROR_COLOR);
+        this.props.store.setColor(ERROR_COLOR);
+      } else if (this.props.validityStatus === "Warning") {
+        this.props.store.setColor(WARNING_COLOR);
+      } else {
+        this.props.store.setColor("");
       }
-      else if (this.props.validityStatus === "Warning") {
-        this.store?.setColor(WARNING_COLOR);
-      }
-      else{
-        this.store?.setColor("")
-      }   
     }
   }
 
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    console.log("store color before being used in error message color:")
-    console.log(this.store?.color);
+    console.log("store color before being used in error message color:");
+    console.log(this.props.store.color);
     console.log("full store");
-    console.log(this.store);
-    errorMessageStyle["color"] = this.store? this.store.color : "";
-    return errorMessageStyle
+    console.log(this.props.store);
+    errorMessageStyle["color"] = this.props.store ? this.props.store.color : "";
+    return errorMessageStyle;
   }
 
   render() {
-    console.log("rendering question context"+ this.props.name)
+    console.log("rendering question context" + this.props.name);
     return (
-      <Form.Row className={"formrow-narrow-"+(!this.props.featured).toString()}>
+      <Form.Row
+        className={"formrow-narrow-" + (!this.props.featured).toString()}
+      >
         <Col xs={this.props.featured ? 12 : 4}>
           {this.props.featured ? (
             this.questionPhrasing()
           ) : (
-            <div style={{ height: "34px", lineHeight: "34px", overflow:"hidden" }}>
+            <div
+              style={{
+                height: "34px",
+                lineHeight: "34px",
+                overflow: "hidden",
+              }}
+            >
               {this.inLineFactorNameHeader()}
             </div>
           )}
@@ -400,4 +400,4 @@ class QuestionContextDefinition extends React.PureComponent<QuestionContextProps
   }
 }
 
-export const QuestionContext= observer(QuestionContextDefinition);
+export const QuestionContext = withStore(observer(QuestionContextWithoutStore));
