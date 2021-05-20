@@ -78,46 +78,4 @@
       word-wrap: break-word;
     }
     
-    .buttontip {
-      line-height: 1.5;
-      padding: 6px;
-      color: rgb(0, 0, 0);
-      background-color: #8fafd4d8;
-      border-radius: 3px;
-      border-style: solid;
-      border-width: 1px;
-      border-color: #535353;
-      position: absolute;
-      font-size: 14px;
-      font-weight: 400;
-      max-width: 250px;
-      z-index: 2;
-      }
-      
-      /* Creates a small triangle extender for the tooltip 
-      */
-      .buttontip:before {
-        height:14px;
-        box-sizing: border-box;
-        font-size: 14px;
-        width: 100%;
-        line-height: 1;
-        padding: 0px;
-        margin: 0px;
-        color:  #535353;
-        content: "\25BC";
-        position: absolute;
-        text-align: center;
-        z-index:1;
-      }
-      
-      .buttontip.n:before {
-        top: 31px;
-        left: 0;
-      }
   
-      .buttontip.small {
-        max-width: 100px;
-        word-wrap: break-word;
-      }
-        

@@ -111,7 +111,6 @@ export default class BarChart {
   xAxisGroup: any | null;
   stip: any;
   clicktip: any;
-  buttontip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
   colorDic: NodeToColor;
@@ -120,13 +119,12 @@ export default class BarChart {
   collectGroup: (causecategory: string) => void;
   grouping: CauseGrouping;
   currentMax: number;
-  expandables: {[key:string]:string[]};
-  collapsables:{[key:string]:string[]};
+  expandables: Set<string>;
+  collapsables: Set<string>;
   chainedTransitionInProgress: boolean;
   transitionsOrdered: number;
   transitionsFinished: number;
   clickedSquareSection: SquareSection | null=null;
-  buttonTipTimeOut: NodeJS.Timeout | undefined=undefined;
 
   constructor(
     element: HTMLElement | null,
@@ -138,8 +136,8 @@ export default class BarChart {
     expandCollectedGroup: (causecategory: string) => void,
     collectGroup: (causecategory: string) => void,
     collapseAndExpandables: {
-      collapsables: {[key:string]:string[]};
-      expandables: {[key:string]:string[]};
+      collapsables: Set<string>;
+      expandables: Set<string>;
     },
   ) {
     //Initializers
@@ -156,9 +154,6 @@ export default class BarChart {
 	this.chainedTransitionInProgress = false;
 	this.transitionsFinished=0;
 	this.transitionsOrdered=0;
-  this.buttonTipText=this.buttonTipText.bind(this);
-  console.log("expandables:")
-  console.log(this.expandables)
 
     const vis = this;
     vis.element = element;
@@ -188,12 +183,6 @@ export default class BarChart {
       .text("Probability of dying of cause");
 
     vis.make(database, diseaseToWidth);
-  }
-
-  hideAllToolTips(){
-    this.buttontip.hide();
-    this.clicktip.hide();
-    this.stip.hide();
   }
 
   clear() {
@@ -262,13 +251,13 @@ export default class BarChart {
         );
       })
       .style("cursor", function (d) {
-        if (d.name in vis.collapsables) {
+        if (vis.collapsables.has(d.name)) {
           return "pointer";
         }
         return "";
       })
       .each(function (d: any) {
-        d.collapsable = (d.name in vis.collapsables);
+        d.collapsable = vis.collapsables.has(d.name);
       });
 
     collectButtons
@@ -276,7 +265,7 @@ export default class BarChart {
       .attr("class", "ctext")
       .text("-")
       .style("font-weight", 800)
-      .style("font-size", "32px")
+      .style("font-size", "24px")
       .style("fill", function (d) {
         if (d.collapsable) {
           return TEXT_GRAY;
@@ -287,18 +276,11 @@ export default class BarChart {
       .on("mouseenter", function (e: Event, d: any) {
         if (d.collapsable) {
           d3.select(this).style("fill", LINK_COLOR);
-          vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"collapse"}, this)
-          ,300);
         }
       })
       .on("mouseleave", function (e: Event, d: any) {
         if (d.collapsable) {
           d3.select(this).style("fill", TEXT_GRAY);
-          if(vis.buttonTipTimeOut){
-            clearTimeout(vis.buttonTipTimeOut)
-          }
-          vis.buttontip.hide();
         }
       })
       .on("click", (e: Event, d: any) => {
@@ -320,13 +302,13 @@ export default class BarChart {
         );
       })
       .style("cursor", function (d) {
-        if (d.name in vis.expandables) {
+        if (vis.expandables.has(d.name)) {
           return "pointer";
         }
         return "";
       })
       .each(function (d: any) {
-        d.expandable = d.name in vis.expandables;
+        d.expandable = vis.expandables.has(d.name);
       });
 
     expandButtons
@@ -334,7 +316,7 @@ export default class BarChart {
       .attr("class", "ctext")
       .text("+")
       .style("font-weight", 800)
-      .style("font-size", "32px")
+      .style("font-size", "24px")
       .style("fill", function (d) {
         if (d.expandable) {
           return TEXT_GRAY;
@@ -344,18 +326,11 @@ export default class BarChart {
       })
       .on("mouseenter", function (e: Event, d: DataRow) {
         if ((d as any).expandable) {
-          vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"expand"}, this)
-          ,300);
           d3.select(this).style("fill", LINK_COLOR);
         }
       })
       .on("mouseleave", function (e: Event, d: DataRow) {
         if ((d as any).expandable) {
-          if(vis.buttonTipTimeOut){
-            clearTimeout(vis.buttonTipTimeOut)
-          }
-          vis.buttontip.hide()
           d3.select(this).style("fill", TEXT_GRAY);
         }
       })
@@ -484,18 +459,10 @@ export default class BarChart {
         return "\u27F7";
       })
       .on("mouseenter", function (d) {
-        vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"width"}, this),
-          300
-        );
         d3.select(this).style("fill", LINK_COLOR);
       })
       .on("mouseleave", function (d) {
-        if(vis.buttonTipTimeOut){
-          clearTimeout(vis.buttonTipTimeOut)
-        }
         d3.select(this).style("fill", TEXT_GRAY);
-        vis.buttontip.hide()
       });
 
     //The causes themselves are plotted by this.
@@ -507,7 +474,6 @@ export default class BarChart {
 
     d3.select(".stip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
     d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
-    d3.select(".buttontip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
     
 
@@ -515,27 +481,20 @@ export default class BarChart {
     
     if(vis.width<501){
       vis.stip = d3Tip()
-        .attr("class", "stip small")
-        .html((d: SquareSection) => {
-          return d.comparison ? d.comparison : d.cause;
-        })
-        .direction("s")
-        .offset([10, 0]);
+      .attr("class", "stip small")
+      .html((d: SquareSection) => {
+        return d.comparison ? d.comparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0]);
 
       vis.clicktip = d3Tip()
-        .attr("class", "clicktip small")
-        .html((d: SquareSection) => {
-          return d.longComparison ? d.longComparison : d.cause;
-        })
-        .direction("s")
-        .offset([10, 0])
-      vis.buttontip = d3Tip()
-        .attr("class", "buttontip small")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
-          return this.buttonTipText(d, buttonType);
-        })
-        .direction("n")
-        .offset([8, 0])
+      .attr("class", "clicktip small")
+      .html((d: SquareSection) => {
+        return d.longComparison ? d.longComparison : d.cause;
+      })
+      .direction("s")
+      .offset([10, 0])
     }
     else{
       vis.clicktip = d3Tip()
@@ -552,21 +511,11 @@ export default class BarChart {
         return d.comparison ? d.comparison : d.cause;
       })
       .direction("s")
-      .offset([8, 0]);
-
-      vis.buttontip = d3Tip()
-        .attr("class", "buttontip")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
-          return this.buttonTipText(d, buttonType);
-        })
-        .direction("n")
-        .offset([10, 0])
+      .offset([10, 0]);
     }
 
     vis.svg.call(vis.stip);
     vis.svg.call(vis.clicktip);
-    vis.svg.call(vis.buttontip);
-
 
     vis.svg.on("click", () => {
       vis.clickedSquareSection=null
@@ -576,24 +525,6 @@ export default class BarChart {
     const addedBars = gs.enter().append("rect").attr("class", "causebar");
 
     this.addAttributesToCauseBars(addedBars);
-  }
-
-  buttonTipText(d: string, buttonType: "expand" | "collapse" | "width"){
-    console.log(d);
-    if(buttonType==="expand"){
-      if(d in this.expandables){
-        return "Expand into " + this.expandables[d].length.toString()+" subcategories";
-      }
-    }
-    if(buttonType==="collapse"){
-      if(d in this.collapsables){
-        return "Merge all "+ this.collapsables[d][0]
-      }
-    }
-    if(buttonType==="width"){
-      return "adjust to width"
-    }
-    throw Error("The text for element "+ d +" - "+buttonType + " was not found.")
   }
 
   addAttributesToCauseBars(
@@ -771,7 +702,6 @@ export default class BarChart {
                     return d.name + "." + d.cause;
                   });
                 gsWithFinalData.exit().remove();
-                this.hideAllToolTips();
 
                 const enteredBars = gsWithFinalData
                   .enter()
@@ -851,7 +781,6 @@ export default class BarChart {
 	  
 
     dtexts.exit().remove();
-    this.hideAllToolTips();
 
 	if(dtexts.enter().size()>0){
 		dtexts
@@ -981,7 +910,6 @@ export default class BarChart {
             return d.name + "." + d.cause;
           });
         gsWithSplitData.exit().remove();
-        this.hideAllToolTips();
 
         const enteredBars = gsWithSplitData
           .enter()
