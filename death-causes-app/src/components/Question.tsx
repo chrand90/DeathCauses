@@ -330,25 +330,10 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
     );
   }
 
-  componentDidUpdate(prevProps: QuestionContextProps) {
-    if (prevProps.validityStatus !== this.props.validityStatus) {
-      if (this.props.validityStatus === "Error") {
-        this.props.store.setColor(ERROR_COLOR);
-      } else if (this.props.validityStatus === "Warning") {
-        this.props.store.setColor(WARNING_COLOR);
-      } else {
-        this.props.store.setColor("");
-      }
-    }
-  }
 
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    console.log("store color before being used in error message color:");
-    console.log(this.props.store.color);
-    console.log("full store");
-    console.log(this.props.store);
-    errorMessageStyle["color"] = this.props.store ? this.props.store.color : "";
+    errorMessageStyle["color"] =  "";
     return errorMessageStyle;
   }
 

@@ -3,9 +3,9 @@ import "./VizWindow.css";
 import BarChartWrapper from "./BarChartWrapper";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import { DataSet, DataRow } from "./PlottingData";
-import { FactorAnswers } from "../models/Factors";
+import { FactorAnswers, FactorAnswerUnitScalings } from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import { hideAllToolTips, ComputationState, Visualization } from "./Helpers";
+import { hideAllToolTips, Visualization } from "./Helpers";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
 import Deathcause, {
   DeathCauseJson,
@@ -16,163 +16,62 @@ import causesCategoryData from "../resources/CategoryCauses.json";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { Form } from "react-bootstrap";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import AdvancedOptionsMenu, {
-  DEFAULT_ADVANCED_OPTIONS,
-  AdvancedOptions,
-  Threading,
-} from "./AdvancedOptions";
+import AdvancedOptionsMenu from "./AdvancedOptions";
 import Worker from "../models/worker";
+import RootStore, {withStore} from "../stores/rootStore";
+import { observer } from "mobx-react";
+import { autorun, IReactionDisposer } from "mobx";
+import { ComputationState } from "../stores/ComputationStateStore";
 
 interface VizWindowProps {
-  factorAnswersSubmitted: FactorAnswers | null;
-  relationLinkData: RelationLinks;
-  relationLinkRaw: RelationLinkJson;
   elementInFocus: string;
   visualization: Visualization;
   orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
-  computationState: ComputationState;
-  reportChangesToComputationState: (newState:ComputationState) => void;
-}
-
-const worker = new Worker();
-
-export interface RawDataJson {
-  [deathCauseName: string]: DeathCauseJson;
+  store: RootStore;
 }
 
 interface VizWindowStates {
-  database: DataSet | null;
-  survivalData: SurvivalCurveData[];
-  initializedDatabase: boolean;
-  advancedOptions: AdvancedOptions;
-  advancedOptionsKey: boolean;
+  riskFactorContributions: DataRow[];
+  survivalCurveData: SurvivalCurveData[];
 }
 
-class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
-  computerController: ComputeController | null;
-  deathcauses: Deathcause[];
-  deathCauseCategories: RiskFactorGroupsContainer[];
+
+class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindowStates> {
+  removeFinishComputationListener: IReactionDisposer | null=null;
 
   constructor(props: any) {
     super(props);
     this.state = {
-      database: null,
-      survivalData: [],
-      initializedDatabase: false,
-      advancedOptions: DEFAULT_ADVANCED_OPTIONS,
-      advancedOptionsKey: false,
-    };
-    this.updateAdvancedOptions = this.updateAdvancedOptions.bind(this);
-    this.computerController = null; //new ComputeController(this.props.relationLinkData, null);
-    this.deathcauses = [];
-    this.deathCauseCategories = [];
-    this.resetAdvancedOptionsMenu = this.resetAdvancedOptionsMenu.bind(this);
+      riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
+      survivalCurveData: this.props.store.computationStore.survivalCurveData,
+    }
   }
 
-  componentDidUpdate(prevProps: VizWindowProps, prevStates: VizWindowStates) {
-    if (
-      prevProps.factorAnswersSubmitted !== this.props.factorAnswersSubmitted &&
-      this.props.factorAnswersSubmitted
-    ) {
-      this.updateComputerController();
-    }
-    if (prevStates.advancedOptions !== this.state.advancedOptions) {
-      if (this.state.advancedOptions.threading === Threading.SINGLE) {
-        this.computerController = new ComputeController(
-          this.props.relationLinkData,
-          this.state.advancedOptions.ageFrom,
-          this.state.advancedOptions.ageTo,
-          this.deathcauses,
-          this.deathCauseCategories
-        );
-      } else {
-        worker.initializeObject(
-          this.props.relationLinkRaw,
-          causesData as RawDataJson,
-          causesCategoryData as RawDataJson,
-          this.state.advancedOptions.ageFrom,
-          this.state.advancedOptions.ageTo
-        );
+  componentDidMount(){
+    this.removeFinishComputationListener = autorun(()=> {
+      if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
+        this.setState({
+          riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
+          survivalCurveData: this.props.store.computationStore.survivalCurveData
+        }, () => {
+          this.props.store.computationStateStore.setComputationState(ComputationState.READY);
+        })
       }
-      this.updateComputerController();
+    })
+  }
+
+  componentWillUnmount(){
+    if(this.removeFinishComputationListener){
+      this.removeFinishComputationListener();
     }
+  }
+
+  componentDidUpdate(prevProps: VizWindowProps) {
     if(prevProps.visualization!== this.props.visualization){
       hideAllToolTips();
     }
   }
 
-
-
-  updateComputerController() {
-    if (this.state.advancedOptions.threading === Threading.SINGLE) {
-      this.computerController?.compute(this.props.factorAnswersSubmitted!);
-      const a = this.computerController?.computeInnerProbabilities();
-      this.setState({ database: a! }, () => {
-        const b = this.computerController?.computeSurvivalData();
-        this.setState({ survivalData: b! },
-        () => {
-          this.props.reportChangesToComputationState(ComputationState.READY)
-        });
-      });
-    } else {
-      const promise: Promise<{
-        survivalData: SurvivalCurveData[];
-        innerCauses: DataRow[];
-      }> = worker.processData(this.props.factorAnswersSubmitted);
-      promise.then(({ survivalData, innerCauses }) => {
-        this.setState({ survivalData: survivalData, database: innerCauses },
-        () => {
-          this.props.reportChangesToComputationState(ComputationState.READY)
-        });
-      });
-    }
-  }
-
-  initializeCauses() {
-    const rawData: RawDataJson = causesData as RawDataJson;
-    Object.entries(rawData).forEach(([key, deathcause]) => {
-      this.deathcauses.push(new Deathcause(deathcause, key));
-    });
-    const rawCategoryData: RawDataJson = causesCategoryData as RawDataJson;
-    Object.entries(rawCategoryData).forEach(([key, deathcause]) => {
-      this.deathCauseCategories.push(
-        new RiskFactorGroupsContainer(deathcause, key)
-      );
-    });
-  }
-
-  loadFactorDatabase() {
-    setTimeout(() => {
-      this.initializeCauses();
-      if(this.state.advancedOptions.threading===Threading.SINGLE){
-        this.computerController = new ComputeController(
-          this.props.relationLinkData,
-          this.state.advancedOptions.ageFrom,
-          this.state.advancedOptions.ageTo,
-          this.deathcauses,
-          this.deathCauseCategories
-        );
-      }
-      else{
-        worker.initializeObject(
-          this.props.relationLinkRaw,
-          causesData as RawDataJson,
-          causesCategoryData as RawDataJson,
-          this.state.advancedOptions.ageFrom,
-          this.state.advancedOptions.ageTo
-        );
-      }
-      this.setState({ initializedDatabase: true });
-    }, 500);
-  }
-
-  componentDidMount() {
-    this.loadFactorDatabase();
-  }
-
-  renderVisualization() {
-    //uses this.state.selcted_visualization and this.props.database and this.props.factor_answers to make the relevant revisualization.
-  }
 
   handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const value: string = event.currentTarget.value;
@@ -203,39 +102,14 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
     }
   };
 
-  updateAdvancedOptions(newOptions: AdvancedOptions) {
-    this.setState({ advancedOptions: newOptions },() => {
-      this.props.reportChangesToComputationState(ComputationState.RUNNING);
-    });
-  }
-
   renderAdvancedOptionsMenu() {
     return (
-      <div
-        key={
-          "advancedoptionsinstate" + this.state.advancedOptionsKey.toString()
-        }
-      >
-        <AdvancedOptionsMenu
-          optionsSubmitted={this.state.advancedOptions}
-          updateAdvancedOptions={this.updateAdvancedOptions}
-          factorAnswers={this.props.factorAnswersSubmitted}
-          reset={this.resetAdvancedOptionsMenu}
-          computationState={this.props.computationState}
-          reportChangesToComputationState={this.props.reportChangesToComputationState}
-        ></AdvancedOptionsMenu>
+      <div>
+        <AdvancedOptionsMenu></AdvancedOptionsMenu>
       </div>
     );
   }
 
-  resetAdvancedOptionsMenu() {
-    //this changes the id of the div that contains the advancedoptionsmenu. This forces a full re-rendering of the component
-    this.setState((prevState: VizWindowStates) => {
-      return {
-        advancedOptionsKey: !prevState.advancedOptionsKey,
-      };
-    });
-  }
 
   renderDataBoundedGraph(
     visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH
@@ -244,11 +118,11 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       case Visualization.BAR_GRAPH: {
         return (
           <div>
-            {this.state.database ? (
+            {this.state.riskFactorContributions.length>0 ? (
               <BarChartWrapper
-                database={this.state.database}
-                colorDic={this.props.relationLinkData.getColorDic()}
-                rdat={this.props.relationLinkData}
+                database={this.state.riskFactorContributions}
+                colorDic={this.props.store.loadedDataStore.rdat.getColorDic()}
+                rdat={this.props.store.loadedDataStore.rdat}
               />
             ) : (
               "Input age to get started"
@@ -257,15 +131,12 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
         );
       }
       case Visualization.SURVIVAL_GRAPH: {
-        return <BarPlotWrapper data={this.state.survivalData} />;
+        return <BarPlotWrapper data={this.state.survivalCurveData} />;
       }
     }
   }
 
   renderChosenGraph() {
-    if (!this.state.initializedDatabase) {
-      return "Loading database...";
-    }
     switch (this.props.visualization) {
       case Visualization.BAR_GRAPH:
       case Visualization.SURVIVAL_GRAPH: {
@@ -279,7 +150,7 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
       case Visualization.RELATION_GRAPH: {
         return (
           <RelationLinkVizWrapper
-            rdat={this.props.relationLinkData}
+            rdat={this.props.store.loadedDataStore.rdat}
             elementInFocus={this.props.elementInFocus}
             changeElementInFocus={(newFocus: string) => {
               this.props.orderVisualization(
@@ -334,7 +205,6 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 
   render(): React.ReactNode {
-    console.log(this.state.database);
     return (
       <div className="vizwindow">
         <h4> Visualization Menu </h4>
@@ -346,4 +216,5 @@ class VizWindow extends React.PureComponent<VizWindowProps, VizWindowStates> {
   }
 }
 
+const VizWindow= withStore(observer(VizWindowWithoutStore)) 
 export default VizWindow;

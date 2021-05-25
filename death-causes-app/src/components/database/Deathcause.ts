@@ -7,6 +7,10 @@ export interface DeathCauseJson {
     RiskFactorGroups: RiskFactorGroupJson[];
 }
 
+export interface RawDeathCauseJson {
+    [deathCauseName: string]: DeathCauseJson;
+}
+
 export class RiskFactorGroupsContainer {
     riskFactorGroups: RiskFactorGroup[];
     deathCauseName: string;

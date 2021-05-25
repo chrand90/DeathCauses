@@ -33,12 +33,6 @@ export function getDivWidth(div: HTMLElement | null): number {
   return Math.round(Number(width));
 }
 
-export enum ComputationState {
-  CHANGED = "Changed",
-  RUNNING = "Running",
-  READY = "Ready",
-}
-
 
 export function hideAllToolTips(){
   return 

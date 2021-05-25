@@ -12,6 +12,8 @@ import React from "react";
 import { Form } from "react-bootstrap";
 import UnitPicker from "./UnitPicker";
 import { OrderVisualization } from "./Helpers";
+import RootStore, {withStore} from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 interface NumericQuestionProps extends QuestionProps<string> {
   placeholder: string;
@@ -20,7 +22,7 @@ interface NumericQuestionProps extends QuestionProps<string> {
   handleUnitChange: (fname: string, newUnitName: string) => void;
 }
 
-export default class SimpleNumericQuestion extends React.PureComponent<
+class SimpleNumericQuestionWithoutStore extends React.PureComponent<
   NumericQuestionProps,
   QuestionStates
 > {
@@ -111,3 +113,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     );
   }
 }
+
+const SimpleNumericQuestion= withStore(observer(SimpleNumericQuestionWithoutStore));
+export default SimpleNumericQuestion;
