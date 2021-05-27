@@ -1,12 +1,14 @@
+import { action, makeObservable, observable } from "mobx";
 import React from "react";
-import { makeObservable, observable, computed, action } from "mobx";
-import FactorInputStore from "./FactorInputStore";
-import QuestionProgressStore from "./QuestionProgressStore";
-import LoadedDataStore from "./LoadedDataStore";
-import UIStore from "./UIStore";
 import AdvancedOptionsStore from "./AdvancedOptionsStore";
-import ComputationStore from "./ComputationStore";
+import BarChartStore from "./BarChartOptionsStore";
 import ComputationStateStore from "./ComputationStateStore";
+import ComputationStore from "./ComputationStore";
+import FactorInputStore from "./FactorInputStore";
+import LoadedDataStore from "./LoadedDataStore";
+import QuestionProgressStore from "./QuestionProgressStore";
+import RelationLinkVizStore from "./RelationLinkVizStore";
+import UIStore from "./UIStore";
 
 export default class RootStore {
   factorInputStore: FactorInputStore;
@@ -17,6 +19,8 @@ export default class RootStore {
   advancedOptionsStore: AdvancedOptionsStore;
   computationStore: ComputationStore;
   computationStateStore: ComputationStateStore;
+  relationLinkVizStore: RelationLinkVizStore;
+  barChartStore: BarChartStore
   uIStore: UIStore;
 
   constructor() {
@@ -28,9 +32,11 @@ export default class RootStore {
     this.advancedOptionsStore= new AdvancedOptionsStore(this.computationStateStore);
     this.computationStore= new ComputationStore(this.loadedDataStore, this.advancedOptionsStore, this.computationStateStore);
     this.factorInputStore = new FactorInputStore(this.loadedDataStore, this.computationStateStore);
+    this.relationLinkVizStore = new RelationLinkVizStore();
     this.questionProgressStore = new QuestionProgressStore(
       this.loadedDataStore
     );
+    this.barChartStore = new BarChartStore(this.loadedDataStore);
     makeObservable(this, {
       loadedVizWindowData: observable,
       loadedQuestionMenuData: observable,
@@ -61,8 +67,10 @@ export default class RootStore {
 
 /* Store end */
 
+export const store = new RootStore();
+
 /* Store helpers */
-export const StoreContext = React.createContext<RootStore | null>(null);
+export const StoreContext = React.createContext<RootStore>(store);
 
 /* Hook to use store in any functional component */
 export const useStore = () => React.useContext(StoreContext);

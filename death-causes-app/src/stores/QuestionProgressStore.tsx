@@ -1,9 +1,5 @@
-import React from "react";
-import { makeObservable, observable, computed, action } from "mobx";
-import Factors, { FactorAnswers, FactorAnswerUnitScalings, FactorMaskings } from "../models/Factors";
-import { InputValidity } from "../models/FactorAbstract";
-import { LoadedFactors } from "./DataLoading";
-import InputJson from "../models/FactorJsonInput";
+import { action, makeObservable, observable } from "mobx";
+import { FactorMaskings } from "../models/Factors";
 import LoadedDataStore from "./LoadedDataStore";
 
 export enum AnswerProgress {
@@ -40,6 +36,7 @@ export default class QuestionProgressStore {
       nextQuestion:action,
       startOverQuestionnaire: action.bound,
       finishQuestionnaire: action.bound,
+      previousQuestion: action.bound,
     });
   }
 

@@ -1,32 +1,22 @@
-import { json } from "d3";
-import React, { ChangeEvent } from "react";
-import Spinner from "react-bootstrap/Spinner";
+import { observer } from "mobx-react";
+import React from "react";
 import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
-import StringFactorPermanent from "../models/FactorString";
+import Spinner from "react-bootstrap/Spinner";
+import GeneralFactor from "../models/FactorAbstract";
 import NumericFactorPermanent from "../models/FactorNumber";
-import GeneralFactor, { InputValidity } from "../models/FactorAbstract";
-import InputJson from "../models/FactorJsonInput";
-import Factors, {
-  FactorAnswers,
-  FactorAnswerUnitScalings,
-  FactorMaskings,
-} from "../models/Factors";
-import HelpJsons from "../models/HelpJsons";
+import StringFactorPermanent from "../models/FactorString";
+import { AnswerProgress, QuestionView } from "../stores/QuestionProgressStore";
+import RootStore, { withStore } from "../stores/rootStore";
+import { Visualization } from "../stores/UIStore";
+import AskedQuestionFramed from "./AskedQuestionFrame";
+import DataPrivacyBox from "./DataPrivacyBox";
+import QuestionListFrame from "./QuestionListFrame";
 import "./QuestionMenu.css";
 import SimpleNumericQuestion from "./QuestionNumber";
 import SimpleStringQuestion from "./QuestionString";
-import AskedQuestionFramed from "./AskedQuestionFrame";
-import RelationLinks from "../models/RelationLinks";
-import { OrderVisualization } from "./Helpers";
-import QuestionListFrame from "./QuestionListFrame";
-import factorDatabase from "../resources/FactorDatabase.json";
-import DataPrivacyBox from "./DataPrivacyBox";
-import { QuestionView, AnswerProgress } from "../stores/QuestionProgressStore";
-import RootStore, {withStore} from "../stores/rootStore";
-import { observer } from "mobx-react";
 
-interface QuestionMenuProps extends OrderVisualization {
+interface QuestionMenuProps {
   store: RootStore;
 }
 
@@ -51,6 +41,9 @@ class QuestionMenuWithoutStore extends React.Component<
     if (this.props.store.factorInputStore.submittable) {
       this.props.store.questionProgressStore.nextQuestion(this.props.store.factorInputStore.factorMaskings);
       this.props.store.computationStore.compute(this.props.store.factorInputStore.computeSubmittedAnswers());
+      if(this.props.store.uIStore.visualization===Visualization.NO_GRAPH){
+        this.props.store.uIStore.setVisualization(Visualization.BAR_GRAPH);
+      }
     }
   }
 
@@ -92,7 +85,6 @@ class QuestionMenuWithoutStore extends React.Component<
             descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
               factorName
             )}
-            orderVisualization={this.props.orderVisualization}
           />
         );
       }
@@ -119,7 +111,6 @@ class QuestionMenuWithoutStore extends React.Component<
             descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
               factorName
             )}
-            orderVisualization={this.props.orderVisualization}
           />
         );
       }

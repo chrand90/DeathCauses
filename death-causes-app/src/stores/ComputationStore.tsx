@@ -1,16 +1,14 @@
-import { makeObservable, observable, computed, action, toJS, flow } from "mobx";
-import { FactorAnswers } from "../models/Factors";
-import LoadedDataStore from "./LoadedDataStore";
-import Worker from "../models/worker";
-import { DataRow } from "../components/PlottingData";
+import { action, makeObservable, observable, toJS } from "mobx";
 import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData";
-import AdvancedOptionsStore from "./AdvancedOptionsStore";
+import { DataRow } from "../components/PlottingData";
+import { FactorAnswers } from "../models/Factors";
 import ComputeController from "../models/updateFormNodes/UpdateFormController";
-import { Threading } from "./AdvancedOptionsStore";
+import Worker from "../models/worker";
+import AdvancedOptionsStore, { Threading } from "./AdvancedOptionsStore";
 import ComputationStateStore, {
-  ComputationState,
+  ComputationState
 } from "./ComputationStateStore";
-import { UpdateDic } from "../models/updateFormNodes/UpdateForm";
+import LoadedDataStore from "./LoadedDataStore";
 
 const worker = new Worker();
 
@@ -41,14 +39,17 @@ export default class ComputationStore {
     this.advancedOptionsStore = advancedOptionsStore;
   }
 
-  compute(submittedFactorAnswers: FactorAnswers) {
-    this.submittedFactorAnswers = submittedFactorAnswers;
-    this.advancedOptionsStore.updateFactorAnswers(this.submittedFactorAnswers);
-    this.computationStateStore.setComputationState(ComputationState.RUNNING);
-    if (this.advancedOptionsStore.changedSetting) {
-      this.reset();
-      this.advancedOptionsStore.changesHasBeenReported();
+  compute(submittedFactorAnswers?: FactorAnswers) {
+    if(submittedFactorAnswers!==undefined){
+      this.submittedFactorAnswers = submittedFactorAnswers;
+      this.advancedOptionsStore.updateFactorAnswers(this.submittedFactorAnswers);
+      if(this.advancedOptionsStore.changedSetting && this.advancedOptionsStore.submittable){
+        this.advancedOptionsStore.submitOptions();
+        this.reset();
+      }
     }
+    this.computationStateStore.setComputationState(ComputationState.RUNNING);
+    
     console.log("ageFrom");
     console.log(this.advancedOptionsStore.submittedAgeFrom);
     console.log("ageTo");

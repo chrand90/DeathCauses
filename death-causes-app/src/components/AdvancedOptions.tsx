@@ -1,25 +1,23 @@
+import { observer } from "mobx-react";
 import React from "react";
+import { Spinner } from "react-bootstrap";
+import Button from "react-bootstrap/Button";
+import Col from "react-bootstrap/Col";
 import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
-import Button from "react-bootstrap/Button";
+import InputGroup from "react-bootstrap/InputGroup";
+import Row from "react-bootstrap/Row";
+import { Threading } from "../stores/AdvancedOptionsStore";
+import { ComputationState } from "../stores/ComputationStateStore";
+import RootStore, { withStore } from "../stores/rootStore";
 import "./AdvancedOptions.css";
 import {
   BACKGROUNDCOLOR_DISABLED,
   CHANGED_COLOR,
   ERROR_COLOR,
   FormControlStyle,
-  TEXTCOLOR_DISABLED,
+  TEXTCOLOR_DISABLED
 } from "./Question";
-import { FactorAnswers } from "../models/Factors";
-import Col from "react-bootstrap/Col";
-import Row from "react-bootstrap/Row";
-import InputGroup from "react-bootstrap/InputGroup";
-import { InputValidity } from "../models/FactorAbstract";
-import { Spinner } from "react-bootstrap";
-import RootStore, {withStore} from "../stores/rootStore";
-import { observer } from "mobx-react";
-import { ComputationState } from "../stores/ComputationStateStore";
-import { Threading } from "../stores/AdvancedOptionsStore";
 
 
 const ERROR_STYLE = { borderColor: ERROR_COLOR };
@@ -78,7 +76,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
 
   handleAgeFromSetting(e: React.ChangeEvent<HTMLInputElement>): void {
     const checked = e.currentTarget.checked;
-    this.props.store.advancedOptionsStore.setAgeFromSet(checked)
+    this.props.store.advancedOptionsStore.setAgeFromSet(!checked)
   }
 
   sameAsInputAgeFrom() {
@@ -128,6 +126,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   handleSubmit() {
     if(this.props.store.advancedOptionsStore.submittable){
       this.props.store.advancedOptionsStore.submitOptions();
+      this.props.store.computationStore.reset();
     }
     if(Object.keys(this.props.store.computationStore.submittedFactorAnswers).length>0){
       this.props.store.computationStore.compute(this.props.store.computationStore.submittedFactorAnswers);
@@ -196,17 +195,17 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
         </Col>
         <Col style={{ textAlign: "left" }}>
           <Button
-            className="submitbutton"
+            className="submitbutton wider"
             style={nextButtonStyle}
-            disabled={errorMessage !== ""}
+            disabled={!this.props.store.advancedOptionsStore.submittable || !this.props.store.advancedOptionsStore.changedSetting}
             onClick={this.handleSubmit}
           >
-            {this.props.store.computationStateStore.computationState === ComputationState.CHANGED ? (
-              "Compute*"
+            {this.props.store.advancedOptionsStore.changedSetting ? (
+              "Apply changes*"
             ) : this.props.store.computationStateStore.computationState === ComputationState.RUNNING ? (
               <Spinner animation="border" size="sm"></Spinner>
             ) : (
-              "Compute"
+              "Apply changes"
             )}
           </Button>
           {errorMessage === "" ? (
@@ -297,15 +296,6 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       </div>
     );
   }
-}
-
-function orderValidity(smallerInput: string, largerInput: string) {
-  return parseInt(smallerInput) <= parseInt(largerInput);
-}
-
-function wholeNumberValidity(input: string) {
-  const numberRegex = new RegExp("^[0-9]+$");
-  return numberRegex.test(input);
 }
 
 const AdvancedOptionsMenu= withStore(observer(AdvancedOptionsMenuWithoutStore)) 

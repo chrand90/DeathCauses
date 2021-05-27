@@ -1,32 +1,19 @@
-import React from "react";
-import "./VizWindow.css";
-import BarChartWrapper from "./BarChartWrapper";
-import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
-import { DataSet, DataRow } from "./PlottingData";
-import { FactorAnswers, FactorAnswerUnitScalings } from "../models/Factors";
-import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import { hideAllToolTips, Visualization } from "./Helpers";
-import ComputeController from "../models/updateFormNodes/UpdateFormController";
-import Deathcause, {
-  DeathCauseJson,
-  RiskFactorGroupsContainer,
-} from "./database/Deathcause";
-import causesData from "../resources/Causes.json";
-import causesCategoryData from "../resources/CategoryCauses.json";
-import BarPlotWrapper from "./BarPlotWrapper";
-import { Form } from "react-bootstrap";
-import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import AdvancedOptionsMenu from "./AdvancedOptions";
-import Worker from "../models/worker";
-import RootStore, {withStore} from "../stores/rootStore";
-import { observer } from "mobx-react";
 import { autorun, IReactionDisposer } from "mobx";
+import { observer } from "mobx-react";
+import React from "react";
+import { Form } from "react-bootstrap";
 import { ComputationState } from "../stores/ComputationStateStore";
+import RootStore, { withStore } from "../stores/rootStore";
+import { Visualization } from "../stores/UIStore";
+import AdvancedOptionsMenu from "./AdvancedOptions";
+import BarChartWrapper from "./BarChartWrapper";
+import BarPlotWrapper from "./BarPlotWrapper";
+import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
+import { DataRow } from "./PlottingData";
+import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
+import "./VizWindow.css";
 
 interface VizWindowProps {
-  elementInFocus: string;
-  visualization: Visualization;
-  orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
   store: RootStore;
 }
 
@@ -66,41 +53,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     }
   }
 
-  componentDidUpdate(prevProps: VizWindowProps) {
-    if(prevProps.visualization!== this.props.visualization){
-      hideAllToolTips();
-    }
-  }
-
-
-  handleChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    const value: string = event.currentTarget.value;
-    switch (value) {
-      case Visualization.BAR_GRAPH: {
-        this.props.orderVisualization(
-          this.props.elementInFocus,
-          Visualization.BAR_GRAPH
-        );
-        break;
-      }
-      case Visualization.RELATION_GRAPH: {
-        this.props.orderVisualization(
-          this.props.elementInFocus,
-          Visualization.RELATION_GRAPH
-        );
-        break;
-      }
-      case Visualization.SURVIVAL_GRAPH: {
-        this.props.orderVisualization(
-          this.props.elementInFocus,
-          Visualization.SURVIVAL_GRAPH
-        );
-        break;
-      }
-      default:
-        break;
-    }
-  };
 
   renderAdvancedOptionsMenu() {
     return (
@@ -121,8 +73,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
             {this.state.riskFactorContributions.length>0 ? (
               <BarChartWrapper
                 database={this.state.riskFactorContributions}
-                colorDic={this.props.store.loadedDataStore.rdat.getColorDic()}
-                rdat={this.props.store.loadedDataStore.rdat}
               />
             ) : (
               "Input age to get started"
@@ -137,28 +87,19 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   renderChosenGraph() {
-    switch (this.props.visualization) {
+    switch (this.props.store.uIStore.visualization) {
       case Visualization.BAR_GRAPH:
       case Visualization.SURVIVAL_GRAPH: {
         return (
           <div>
             {this.renderAdvancedOptionsMenu()}
-            {this.renderDataBoundedGraph(this.props.visualization)}
+            {this.renderDataBoundedGraph(this.props.store.uIStore.visualization)}
           </div>
         );
       }
       case Visualization.RELATION_GRAPH: {
         return (
-          <RelationLinkVizWrapper
-            rdat={this.props.store.loadedDataStore.rdat}
-            elementInFocus={this.props.elementInFocus}
-            changeElementInFocus={(newFocus: string) => {
-              this.props.orderVisualization(
-                newFocus,
-                Visualization.RELATION_GRAPH
-              );
-            }}
-          />
+          <RelationLinkVizWrapper/>
         );
       }
       case Visualization.NO_GRAPH: {
@@ -171,7 +112,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   renderSelectOption() {
-    const orgval = this.props.visualization;
+    const orgval = this.props.store.uIStore.visualization;
     return (
       <Form>
         <Form.Group className="visualisation">
@@ -180,8 +121,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
               value={orgval}
               onChange={(ev) => {
                 const val = ev.currentTarget.value;
-                this.props.orderVisualization(
-                  this.props.elementInFocus,
+                this.props.store.uIStore.setVisualization(
                   val as Visualization
                 );
               }}
