@@ -7,16 +7,7 @@ export const LINK_COLOR = "#0000EE";
 const toolTipNamesShowHide=['.stip','.clicktip','.d3-tip']
 const toolTipsOpacity=['.arrowexplanation']
 
-export enum Visualization {
-  RELATION_GRAPH = "Relation graph",
-  BAR_GRAPH = "Risk factor contributions",
-  NO_GRAPH = "Nothing",
-  SURVIVAL_GRAPH = "Survival curve",
-}
 
-export interface OrderVisualization {
-  orderVisualization: (elementInFocus: string, vizType: Visualization) => void;
-}
 
 export function getDivWidth(div: HTMLElement | null): number {
   console.log(div);
@@ -33,15 +24,8 @@ export function getDivWidth(div: HTMLElement | null): number {
   return Math.round(Number(width));
 }
 
-export enum ComputationState {
-  CHANGED = "Changed",
-  RUNNING = "Running",
-  READY = "Ready",
-}
 
-
-export function hideAllToolTips(){
-  return 
+export function hideAllToolTips(){ 
   toolTipNamesShowHide.forEach((className) => {
     d3.selectAll(className).remove();
   })

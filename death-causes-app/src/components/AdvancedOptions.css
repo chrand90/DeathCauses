@@ -26,3 +26,7 @@
 .collapsebutton:focus {
     background-color: rgb(200, 250, 239);
 }
+
+.submitbutton.wider {
+    width: 140px;
+}

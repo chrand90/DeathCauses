@@ -1,17 +1,17 @@
+import { observer } from "mobx-react";
 import React, { ChangeEvent, ReactElement } from "react";
-import Button from "react-bootstrap/Button";
-import Popover from "react-bootstrap/Popover";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import InputGroup from "react-bootstrap/InputGroup";
 import { Col, Form, Tooltip } from "react-bootstrap";
-import "./Question.css";
-import MarkDown from "react-markdown";
-import { InputValidity } from "../models/FactorAbstract";
+import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import Label from "react-bootstrap/FormLabel";
-import { OrderVisualization, Visualization } from "./Helpers";
-import RootStore, { StoreContext, withStore } from "../stores/rootStore";
-import { observer } from "mobx-react";
+import InputGroup from "react-bootstrap/InputGroup";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import MarkDown from "react-markdown";
+import { InputValidity } from "../models/FactorAbstract";
+import RootStore, { withStore } from "../stores/rootStore";
+import { Visualization } from "../stores/UIStore";
+import "./Question.css";
 
 export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
 export const TEXTCOLOR_DISABLED = "#999";
@@ -22,7 +22,7 @@ export const WARNING_COLOR_STRONGER = "#806e09";
 export const SUCCESS_COLOR = "#3E713F";
 export const CHANGED_COLOR = "#630396";
 
-export interface QuestionProps<T> extends OrderVisualization {
+export interface QuestionProps<T> {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
@@ -43,7 +43,7 @@ export interface FormControlStyle {
   [key: string]: string;
 }
 
-interface QuestionContextProps extends OrderVisualization {
+interface QuestionContextProps {
   name: string;
   ignore: boolean;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -316,10 +316,8 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
           variant="link"
           className="inline-text-button"
           onClick={() => {
-            this.props.orderVisualization(
-              this.props.name,
-              Visualization.RELATION_GRAPH
-            );
+            this.props.store.relationLinkVizStore.setElementInFocus(this.props.name)
+            this.props.store.uIStore.setVisualization(Visualization.RELATION_GRAPH)
           }}
         >
           {this.props.descendantDeathCauses.length} death cause
@@ -330,25 +328,10 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
     );
   }
 
-  componentDidUpdate(prevProps: QuestionContextProps) {
-    if (prevProps.validityStatus !== this.props.validityStatus) {
-      if (this.props.validityStatus === "Error") {
-        this.props.store.setColor(ERROR_COLOR);
-      } else if (this.props.validityStatus === "Warning") {
-        this.props.store.setColor(WARNING_COLOR);
-      } else {
-        this.props.store.setColor("");
-      }
-    }
-  }
 
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    console.log("store color before being used in error message color:");
-    console.log(this.props.store.color);
-    console.log("full store");
-    console.log(this.props.store);
-    errorMessageStyle["color"] = this.props.store ? this.props.store.color : "";
+    errorMessageStyle["color"] =  "";
     return errorMessageStyle;
   }
 

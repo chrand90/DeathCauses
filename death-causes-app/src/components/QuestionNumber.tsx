@@ -11,16 +11,18 @@ import { InputValidity } from "../models/FactorAbstract";
 import React from "react";
 import { Form } from "react-bootstrap";
 import UnitPicker from "./UnitPicker";
-import { OrderVisualization } from "./Helpers";
+import RootStore, {withStore} from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 interface NumericQuestionProps extends QuestionProps<string> {
   placeholder: string;
   inputvalidity: InputValidity;
   unitOptions: string[];
   handleUnitChange: (fname: string, newUnitName: string) => void;
+  store: RootStore;
 }
 
-export default class SimpleNumericQuestion extends React.PureComponent<
+class SimpleNumericQuestionWithoutStore extends React.PureComponent<
   NumericQuestionProps,
   QuestionStates
 > {
@@ -95,7 +97,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
         secondLine={showmessage ? this.props.inputvalidity.message : ""}
         windowWidth={this.props.windowWidth}
         descendantDeathCauses={this.props.descendantDeathCauses}
-        orderVisualization={this.props.orderVisualization}
       >
         <Form.Control
           type="text"
@@ -111,3 +112,6 @@ export default class SimpleNumericQuestion extends React.PureComponent<
     );
   }
 }
+
+const SimpleNumericQuestion= withStore(observer(SimpleNumericQuestionWithoutStore));
+export default SimpleNumericQuestion;
