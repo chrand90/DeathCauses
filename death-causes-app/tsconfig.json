@@ -6,8 +6,6 @@
       "dom.iterable",
       "esnext"
     ],
-    "useDefineForClassFields": true,
-    "experimentalDecorators":true,
     "allowJs": true,
     "skipLibCheck": true,
     "esModuleInterop": true,
