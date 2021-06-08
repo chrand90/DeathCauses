@@ -181,6 +181,9 @@ export default class Location {
       }
       else{
         value=dict[key].value as string | number;
+        if(key==="Age"){
+          value=(value as number)+ageIndex;
+        }
       }
       if (this.interpolationVariables.includesVarName(key)) {
         this.setInterpolationVariables.push(key);

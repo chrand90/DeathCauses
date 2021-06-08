@@ -1,25 +1,11 @@
-library(rjson)
-library(stringr)
-library(plotly)
-library(grid)
-library(gridExtra)
-source("adjust_ticks.R")
-source("truncate.R")
-source("smallHelpers.R")
-standard_ages=c(0,1,seq(5,105,5))
-standard_ages_string=as.character(standard_ages)
-standard_ages_string[length(standard_ages_string)]='Inf'
-barwidths=diff(standard_ages)
-dat=fromJSON(file = '../../death-causes-app/src/resources/Causes.json')
-
-
 ### Define classes -------
-setClass("Disease", slots = c(Age="AgeGroups", RiskFactorGroups="list"))
+
+
 
 setClass("AgeGroups", slots=c(age_classification="character", age_prevalences="numeric"))
 
-setClass("RiskFactorGroup", slots =c(normalisingFactors="AgeGroups", 
-                                     interactionFunction="character", 
+setClass("RiskFactorGroup", slots =c(normalisingFactors="AgeGroups",
+                                     interactionFunction="character",
                                      riskRatioTables="list"))
 
 setClass("Domain", slots=c(type="character",
@@ -49,7 +35,7 @@ setClass("InterpolationTable", slots=c(domainCollections="list",
                                        global_min="MinLocation",
                                        cells="list"))
 
-setClass("RawRiskRatioTable", slots=c(factorNames="character", 
+setClass("RawRiskRatioTable", slots=c(factorNames="character",
                                       riskRatioRows="list",
                                       domainCollections="list"))
 
@@ -74,13 +60,15 @@ setClass("RiskRatioTable", slots= c(riskFactorNames="character",
 
 setClass("Polynomial", slots= c(coefficients="numeric",
                                 exponents="list"))
+setClass("Disease", slots = c(Age="AgeGroups", RiskFactorGroups="list"))
+setClass("Database", slots=c(diseases="list"))
 
 de_null=function(val, res_initializer=character){
   if(is.null(val)){
     return(res_initializer())
   }
   return(val)
-  
+
 }
 
 ### formula parsing -------
@@ -89,7 +77,7 @@ formula_part=function(splitted_term){
   exponents=numeric()
   if(length(splitted_term)>1){
     for(i in 2:length(splitted_term)){
-      part=str_match(splitted_term[i], "x([0-9]+)\\^([0-9]+)")
+      part=stringr::str_match(splitted_term[i], "x([0-9]+)\\^([0-9]+)")
       index=as.numeric(part[1,2])+1
       if(index>length(exponents)){
         exponents=c(exponents, rep(0, index-length(exponents)))
@@ -115,7 +103,7 @@ formula_part=function(splitted_term){
 
 initialize_domain=function(raw_element){
   if(grepl(",", raw_element)){
-    lower_upper=str_split(raw_element, pattern=",")[[1]]
+    lower_upper=stringr::str_split(raw_element, pattern=",")[[1]]
     if(lower_upper[1]!=""){
       lower=as.numeric(lower_upper[1])
       type="x-y"
@@ -129,7 +117,7 @@ initialize_domain=function(raw_element){
     categorical=character()
   }
   else if(grepl("\\+", raw_element)){
-    lower=as.numeric(str_split(raw_element, pattern="\\+")[[1]][1])
+    lower=as.numeric(stringr::str_split(raw_element, pattern="\\+")[[1]][1])
     upper=Inf
     type="x+"
     value=numeric()
@@ -149,8 +137,8 @@ initialize_domain=function(raw_element){
     type="categorical"
     value=numeric()
   }
-  return(new("Domain", 
-             categorical=categorical, 
+  return(new("Domain",
+             categorical=categorical,
              lower=lower,
              upper=upper,
              type=type,
@@ -200,7 +188,7 @@ initialize_domain_collection=function(domains){
       else{
         numeric_midpoints=c(numeric_midpoints, extract_midpoint(domain@type, domain@lower, domain@upper,width))
       }
-    }  
+    }
     domain_order=order(numeric_midpoints)
     adjustments=compute_adjustments_numeric(dictionary, domain_order, width)
   }
@@ -216,7 +204,7 @@ initialize_domain_collection=function(domains){
   labels_to_index=1:length(labels)
   names(labels_to_index) <- labels
   plottingBetweenPoints=adjustments$plottingBetweenPoints
-  return(new("DomainCollection", 
+  return(new("DomainCollection",
              orderable=all_numeric,
              labels=labels,
              tickPositions=adjustments$tickPositions,
@@ -244,7 +232,7 @@ initialize_domain_collection_dictionary=function(riskRatioRows, factorNames){
 }
 
 initialize_polynomial=function(pol_string){
-  semi_parsed=str_split(str_split(pol_string, pattern="\\+")[[1]], pattern="\\*")
+  semi_parsed=stringr::str_split(stringr::str_split(pol_string, pattern="\\+")[[1]], pattern="\\*")
   part_functions=lapply(semi_parsed, formula_part)
   main_function=function(x){
     res=0
@@ -293,7 +281,7 @@ initialize_risk_ratio_table=function(raw_element){
   riskRatioRows=lapply(raw_element$riskRatioTable, initialize_risk_ratio_row)
   domainCollections=initialize_domain_collection_dictionary(riskRatioRows, raw_element$riskFactorNames)
   rawRiskRatios=new("RawRiskRatioTable", riskRatioRows=riskRatioRows, factorNames=raw_element$riskFactorNames, domainCollections=domainCollections)
-  global_min=new("MinLocation", 
+  global_min=new("MinLocation",
                  minValue=raw_element$interpolationTable$global_min$minValue,
                  minLocation=raw_element$interpolationTable$global_min$minLocation)
   cells=lapply(raw_element$interpolationTable$cells, initialize_cell)
@@ -305,7 +293,7 @@ initialize_risk_ratio_table=function(raw_element){
                          interpolation_variables=de_null(raw_element$interpolationTable$interpolation_variables),
                          global_min=global_min,
                          cells=cells)
-    return(new("RiskRatioTable", 
+    return(new("RiskRatioTable",
              riskFactorNames=raw_element$riskFactorNames,
              rawRiskRatios=rawRiskRatios,
              interpolationTable=interpolationTable))
@@ -316,7 +304,7 @@ initialize_risk_factor_group=function(raw_element){
   normalisingFactors=initialize_Age_object(raw_element$normalisingFactors)
   riskRatioTables=lapply(raw_element$riskRatioTables, initialize_risk_ratio_table)
   return(new("RiskFactorGroup", normalisingFactors=normalisingFactors,
-                              interactionFunction=raw_element$interactionFunction, 
+                              interactionFunction=raw_element$interactionFunction,
                               riskRatioTables=riskRatioTables))
 }
 
@@ -331,11 +319,25 @@ initialize_Age_object=function(raw_element){
   return(ageGroups)
 }
 
+
 initialize_disease=function(raw_element){
   ageGroups=initialize_Age_object(raw_element$Age)
   riskfactorgroups=lapply(raw_element$RiskFactorGroups, initialize_risk_factor_group)
   return(new("Disease", Age=ageGroups, RiskFactorGroups=riskfactorgroups))
 }
+
+#' Initializes the database
+#'
+#' This function reads the json file from the hard drive and returns a database object.
+#'
+#' @param json_filename path to the database
+#' @return a database object
+#' @export
+initialize_database=function(json_filename){
+  raw_element=rjson::fromJSON(file=json_filename)
+  return(new("Database", diseases=lapply(raw_element, initialize_disease)))
+}
+
 
 ### setting methods ----
 setMethod("dim",
@@ -385,7 +387,7 @@ setMethod("createPlottingDataframe",
                 upper1=dc1@plottingBetweenPoints[i1+1]
                 lower2=dc2@plottingBetweenPoints[i2]
                 upper2=dc2@plottingBetweenPoints[i2+1]
-                df=rbind(df, 
+                df=rbind(df,
                          c(lower1, lower2, upper1-lower1, upper2-lower2, RR))
               }
               df=data.frame(df)
@@ -401,7 +403,7 @@ setMethod("createPlottingDataframe",
                 i=dc@labelToIndex[factorlevel]
                 lower=dc@plottingBetweenPoints[i]
                 upper=dc@plottingBetweenPoints[i+1]
-                df=rbind(df, 
+                df=rbind(df,
                          c(lower, upper-lower, RR))
               }
               df=data.frame(df)
@@ -493,8 +495,8 @@ setMethod("createPlottingDataframe",
                     }
                   }
                 }
-                
-                
+
+
               }
               df=data.frame(dfmat)
               colnames(df) <- c(fnames,"RR","RR_untruncated")
@@ -508,25 +510,25 @@ setMethod("createPlottingDataframe",
             }
           })
 
-standard_ages=c(0,1,seq(5,105,5))
 setMethod("makePlot",
           signature=(x="AgeGroups"),
           function(x){
             if(length(x@age_classification)>0){
               stop("has not implemented age plot with non-standard age cagetories")
             }
+            standard_ages=c(0,1,seq(5,105,5))
             ages=standard_ages
             barwidths=diff(ages)
-            age_plot = ggplot(data=data.frame(y=x@age_prevalences, 
+            age_plot = ggplot2::ggplot(data=data.frame(y=x@age_prevalences,
                                               x=ages[-length(ages)]+barwidths/2,
                                               w=barwidths),
-                              aes(x=x,y=y,width=w*0.95, fill=y))+
-              geom_col()+scale_x_continuous(breaks=ages,
+                                       ggplot2::aes(x=x,y=y,width=w*0.95, fill=y))+
+              ggplot2::geom_col()+ggplot2::scale_x_continuous(breaks=ages,
                                             labels=ages)+
-              guides(fill=FALSE)+
-              xlab('Age')+
-              ylab("Base death rate")+
-              scale_fill_gradient(low = "blue", high = "purple", na.value = NA)
+              ggplot2::guides(fill=FALSE)+
+              ggplot2::xlab('Age')+
+              ggplot2::ylab("Base death rate")+
+              ggplot2::scale_fill_gradient(low = "blue", high = "purple", na.value = NA)
             return(list(age_plot))
           })
 
@@ -543,32 +545,32 @@ setMethod("makePlot",
                 non_interpolation_domains=strsplit(f, ":")[[1]]
                 fixed_val_string=paste(cnames,non_interpolation_domains, sep="=", collapse=",")
                 subtitle=paste("For ", fixed_val_string)
-                filtered_df=filter(p_df, non_interpolation_combinations==f)
+                filtered_df=dplyr::filter(p_df, non_interpolation_combinations==f)
                 if(dim(x)==2){
-                  p <- ggplot(filtered_df, aes(x=!!sym(fnames[1]), 
-                                                               y=!!sym(fnames[2]), 
-                                                               z=RR))+ 
-                    geom_contour_filled() + 
-                    geom_tile(data=filter(filtered_df, truncated==TRUE), 
-                              mapping=aes(x=!!sym(fnames[1]), 
-                                          y=!!sym(fnames[2]), 
+                  p <- ggplot2::ggplot(filtered_df, ggplot2::aes(x=!!dplyr::sym(fnames[1]),
+                                                               y=!!dplyr::sym(fnames[2]),
+                                                               z=RR))+
+                    ggplot2::geom_contour_filled() +
+                    ggplot2::geom_tile(data=dplyr::filter(filtered_df, truncated==TRUE),
+                              mapping=ggplot2::aes(x=!!dplyr::sym(fnames[1]),
+                                          y=!!dplyr::sym(fnames[2]),
                                           color=truncated,
                                           alpha=0))+
-                    ggtitle(label="Interpolated Risk Ratios", subtitle=subtitle)+
-                    guides(alpha=FALSE)
+                    ggplot2::ggtitle(label="Interpolated Risk Ratios", subtitle=subtitle)+
+                    ggplot2::guides(alpha=FALSE)
                   plist[[length(plist)+1]] <- p
                 }
                 else{
                   filtered_df$Riskratio="Actual"
-                  filtered_df %>% 
-                    filter(truncated==TRUE) %>% 
-                    mutate(RR=RR_untruncated) %>%
-                    mutate(Riskratio="Unbounded") %>%
+                  filtered_df %>%
+                    dplyr::filter(truncated==TRUE) %>%
+                    dplyr::mutate(RR=RR_untruncated) %>%
+                    dplyr::mutate(Riskratio="Unbounded") %>%
                     rbind(filtered_df) -> filtered_df
-                  p <- ggplot(filtered_df, aes(x=!!sym(fnames[1]), y=RR, linetype=Riskratio))+
-                    geom_line() + ylim(c(0,max(p_df$RR)))+
-                    scale_linetype_manual(values=c(Actual="solid", Unbounded="dashed"))+
-                    ggtitle(label="Interpolated Risk Ratios", subtitle=subtitle)
+                  p <- ggplot2::ggplot(filtered_df, ggplot2::aes(x=!!dplyr::sym(fnames[1]), y=RR, linetype=Riskratio))+
+                    ggplot2::geom_line() + ggplot2::ylim(c(0,max(p_df$RR)))+
+                    ggplot2::scale_linetype_manual(values=c(Actual="solid", Unbounded="dashed"))+
+                    ggplot2::ggtitle(label="Interpolated Risk Ratios", subtitle=subtitle)
                   plist[[length(plist)+1]] <- p
                 }
               }
@@ -577,30 +579,30 @@ setMethod("makePlot",
             else{
               if(dim(x)==1){
                 p_df$Riskratio="Actual"
-                p_df %>% 
-                  mutate(RR=ifelse(truncated==TRUE, RR_untruncated, NA)) %>%
-                  mutate(Riskratio="Unbounded") %>%
+                p_df %>%
+                  dplyr::mutate(RR=ifelse(truncated==TRUE, RR_untruncated, NA)) %>%
+                  dplyr::mutate(Riskratio="Unbounded") %>%
                   rbind(p_df) -> p_df
-                p <- ggplot(p_df, aes(x=!!sym(fnames[1]), y=RR, linetype=Riskratio))+
-                  geom_line() + ylim(c(0,max(p_df$RR)))+
-                  scale_linetype_manual(values=c(Actual="solid", Unbounded="dashed"))+
-                  ggtitle(label="Interpolated Risk Ratios")
+                p <- ggplot2::ggplot(p_df, ggplot2::aes(x=!!dplyr::sym(fnames[1]), y=RR, linetype=Riskratio))+
+                  ggplot2::geom_line() + ggplot2::ylim(c(0,max(p_df$RR)))+
+                  ggplot2::scale_linetype_manual(values=c(Actual="solid", Unbounded="dashed"))+
+                  ggplot2::ggtitle(label="Interpolated Risk Ratios")
                 return(list(p))
               }
               if(dim(x)==2){
-                truncated_df=filter(p_df, truncated==TRUE)
-                p <- ggplot(p_df, aes(x=!!sym(fnames[1]), 
-                                             y=!!sym(fnames[2]), 
-                                             z=RR))+ 
-                  geom_contour_filled() 
-                  ggtitle(label="Interpolated Risk Ratios")
+                truncated_df=dplyr::filter(p_df, truncated==TRUE)
+                p <- ggplot2::ggplot(p_df, ggplot2::aes(x=!!dplyr::sym(fnames[1]),
+                                             y=!!dplyr::sym(fnames[2]),
+                                             z=RR))+
+                  ggplot2::geom_contour_filled()
+                ggplot2::ggtitle(label="Interpolated Risk Ratios")
                 if(nrow(truncated_df)>0){
-                  p <- p + 
-                    geom_tile(data=truncated_df, 
-                              mapping=aes(x=!!sym(fnames[1]), 
-                                          y=!!sym(fnames[2]), 
+                  p <- p +
+                    ggplot2::geom_tile(data=truncated_df,
+                              mapping=ggplot2::aes(x=!!dplyr::sym(fnames[1]),
+                                          y=!!dplyr::sym(fnames[2]),
                                           color=truncated,
-                                          alpha=0))+guides(alpha=FALSE)
+                                          alpha=0))+ggplot2::guides(alpha=FALSE)
                 }
                 return(list(p))
               }
@@ -618,28 +620,28 @@ setMethod("makePlot",
             if(n==1){
               fname=x@factorNames[1]
               dc=x@domainCollections[[fname]]
-              p <- ggplot(df, aes(x=x+width/2,y=RR, width=width*0.95, fill=RR))+
-                geom_bar(stat='identity', orientation="x")+
-                scale_x_continuous(breaks=dc@tickPositions, labels = dc@tickLabels)+
-                scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
-                xlab(fname)+ylab('RR')+theme_bw()+guides(fill=FALSE)+
-                ggtitle('Risk ratio bar graph')
+              p <- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=RR, width=width*0.95, fill=RR))+
+                ggplot2::geom_bar(stat='identity', orientation="x")+
+                ggplot2::scale_x_continuous(breaks=dc@tickPositions, labels = dc@tickLabels)+
+                ggplot2::scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
+                ggplot2::xlab(fname)+ggplot2::ylab('RR')+ggplot2::theme_bw()+ggplot2::guides(fill=FALSE)+
+                ggplot2::ggtitle('Risk ratio bar graph')
               return(list(p))
             }
             if(n==2){
               fnames=x@factorNames
               dc1=x@domainCollections[[fnames[1]]]
               dc2=x@domainCollections[[fnames[2]]]
-              p<- ggplot(df, aes(x=x+width/2,y=y+height/2, height=height*0.95, width=width*0.95, fill=RR))+
-                geom_tile()+theme_bw()+
-                scale_x_continuous(breaks = dc1@tickPositions,
-                                   labels = dc1@tickLabels) + 
-                scale_y_continuous(breaks = dc2@tickPositions,
-                                   labels = dc2@tickLabels) + 
-                scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
-                ggtitle('Risk ratio matrix')+guides(fill=FALSE)+
-                xlab(fnames[1])+ylab(fnames[2])+
-                geom_text(aes(x=x+width/2,y=y+height/2, label=round(RR, digits=1)), color='black')
+              p<- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=y+height/2, height=height*0.95, width=width*0.95, fill=RR))+
+                ggplot2::geom_tile()+ggplot2::theme_bw()+
+                ggplot2::scale_x_continuous(breaks = dc1@tickPositions,
+                                   labels = dc1@tickLabels) +
+                ggplot2::scale_y_continuous(breaks = dc2@tickPositions,
+                                   labels = dc2@tickLabels) +
+                ggplot2::scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
+                ggplot2::ggtitle('Risk ratio matrix')+ggplot2::guides(fill=FALSE)+
+                ggplot2::xlab(fnames[1])+ggplot2::ylab(fnames[2])+
+                ggplot2::geom_text(ggplot2::aes(x=x+width/2,y=y+height/2, label=round(RR, digits=1)), color='black')
               return(list(p))
             }
           })
@@ -647,8 +649,7 @@ setMethod("makePlot",
 setMethod("plot",
           signature=(x="InterpolationTable"),
           function(x, fixed_height=F){
-            g <- do.call(grid.arrange, makePlot(x))
-            print(g)
+            do.call(gridExtra::grid.arrange, makePlot(x))
           }
           )
 
@@ -683,6 +684,13 @@ setMethod("makePlot",
             return(do.call(c, unflattened_plots))
           })
 
+#' Makes plots
+#'
+#' This function makes a list of all the plots that are relevant to the specified disease.
+#'
+#' @param x disease object which is any sub element of the database object.
+#' @return A list of plots.
+#' @export
 setMethod("makePlot",
           signature=(x="Disease"),
           function(x){
@@ -699,11 +707,19 @@ setMethod("makePlot",
 
 
 
-### Actually computing ------
-all_diseases=lapply(dat, initialize_disease)
 
-generateSpecificPlots=function(diseaseName, riskfactors, plot_type=c("raw","interpolated")){
-  disease=all_diseases[[diseaseName]]
+#' Make a specific plot
+#'
+#' This function makes the requested plot from the database
+#'
+#' @param all_diseases Database object initialized by initialize_database
+#' @param diseaseName the name of the disease that contains the requested plot. A string.
+#' @param riskfactors a vector of the riskfactornames for the plot you want
+#' @param plot_type the type of plot you want
+#' @return a list of plots that can later be combined to something
+#' @export
+generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated")){
+  disease=all_diseases@diseases[[diseaseName]]
   if(length(riskfactors)==0){
     return(makePlot(disease@Age))
   }
@@ -722,54 +738,66 @@ generateSpecificPlots=function(diseaseName, riskfactors, plot_type=c("raw","inte
   stop("couldnt find the requested plot")
 }
 
-plotSpecificPlots=function(diseaseName, riskfactors, plot_type=c("raw","interpolated")){
-  disease=all_diseases[[diseaseName]]
+#' Plot a specific plot
+#'
+#' This function plots the requested plot from the database
+#'
+#' @param all_diseases Database object initialized by initialize_database
+#' @param diseaseName the name of the disease that contains the requested plot. A string.
+#' @param riskfactors a vector of the riskfactornames for the plot you want
+#' @param plot_type the type of plot you want
+#' @return will simply plot the plot
+#' @export
+plotSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated")){
+  disease=all_diseases@diseases[[diseaseName]]
+  plotted_anything=F
   if(length(riskfactors)==0){
-    return(plot(disease@Age))
+    plot(disease@Age)
+    plotted_anything=T
   }
   for(riskfactorgroup in disease@RiskFactorGroups){
     for(riskratiotable in riskfactorgroup@riskRatioTables){
       if(paste(sort(riskfactors), collapse=".")==paste(sort(riskratiotable@riskFactorNames), collapse=".")){
         if(plot_type[1]=="raw"){
-          return(plot(riskratiotable@rawRiskRatios))
+          plot(riskratiotable@rawRiskRatios)
+          plotted_anything=T
         }
         else if(plot_type[1]=="interpolated"){
-          return(plot(riskratiotable@interpolationTable))
+          plot(riskratiotable@interpolationTable)
+          plotted_anything=T
         }
       }
     }
   }
-  stop("couldnt find the requested plot")
+  if(!plotted_anything){
+    stop("could not find the requested plot")
+  }
+
 }
 
-#makePlot(all_diseases$Alzheimers)
-
-p<- generateSpecificPlots( 
-                      "CervixCancer", 
-                      c("Sex"))
 
 
-# 
+#
 # View(all_diseases)
-# 
+#
 # plot(all_diseases$LiverCancer@RiskFactorGroups[[1]]@riskRatioTables[[1]]@interpolationTable)
-# 
+#
 # plot(all_diseases$BrainCancer@RiskFactorGroups[[1]]@riskRatioTables[[1]]@rawRiskRatios)
 # plot(all_diseases$BrainCancer@RiskFactorGroups[[1]]@riskRatioTables[[1]]@interpolationTable)
 # plot(all_diseases$LiverCancer@RiskFactorGroups[[1]]@riskRatioTables[[1]]@rawRiskRatios)
-# 
+#
 # plot(all_diseases$Ischemic@RiskFactorGroups[[2]]@riskRatioTables[[1]]@interpolationTable)
-# 
+#
 # plot(all_diseases$LungCancer@RiskFactorGroups[[1]]@riskRatioTables[[1]]@interpolationTable)
 # plot(p_df$SmokeTypicalAmount, p_df$SmokeSinceStop)
 # p_df %>% arrange(SmokeTypicalAmount, SmokeSinceStop) -> p_df
-# ggplot(p_df, aes(x=SmokeSinceStop, 
-#                  y=SmokeTypicalAmount, 
-#                  z=RR))+ 
+# ggplot(p_df, aes(x=SmokeSinceStop,
+#                  y=SmokeTypicalAmount,
+#                  z=RR))+
 #   geom_contour_filled() +
-#   geom_tile(data=filter(p_df, truncated==TRUE), 
-#             mapping=aes(x=SmokeSinceStop, 
-#                         y=SmokeTypicalAmount, 
+#   geom_tile(data=filter(p_df, truncated==TRUE),
+#             mapping=aes(x=SmokeSinceStop,
+#                         y=SmokeTypicalAmount,
 #                         color=truncated))
 # r=plot(all_diseases$Alzheimers@RiskFactorGroups[[1]]@riskRatioTables[[1]]@interpolationTable)
 # r= plot(all_diseases$Alzheimers@RiskFactorGroups[[2]]@riskRatioTables[[1]]@interpolationTable)
