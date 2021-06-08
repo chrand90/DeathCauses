@@ -55,9 +55,9 @@ export default class AdvancedOptionsStore {
       setAgeFrom: action,
       setAgeTo: action,
       setThreading: action,
-      setDefault: action,
+      setDefault: action.bound,
       submitOptions: action,
-      updateFactorAnswers: action,
+      updateFactorAnswers: action.bound,
     });
   }
 
