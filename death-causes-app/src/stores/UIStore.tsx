@@ -6,6 +6,7 @@ export enum Visualization {
   BAR_GRAPH = "Risk factor contributions",
   NO_GRAPH = "Nothing",
   SURVIVAL_GRAPH = "Survival curve",
+  SUMMARY_VIEW = "Summary"
 }
 
 

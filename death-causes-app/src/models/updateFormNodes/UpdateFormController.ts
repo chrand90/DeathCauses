@@ -14,6 +14,7 @@ import survivalCurve from "./FinalSummary/SurvivalCurve";
 import { UpdateDic } from "./UpdateForm";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
+import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
 
 export default class ComputeController {
   formUpdaters: FormUpdater[];
@@ -143,5 +144,17 @@ export default class ComputeController {
     // }).then((fAnswers: FactorAnswers) => {
     //     return this.calculationFacade.calculateSurvivalCurve(fAnswers);
     // })
+  }
+
+  computeSummaryViewData(): SummaryViewData {
+    if(this.allComputedNodes === null){
+      throw Error("It is not possible to compute survival data before calling compute()")
+    }
+    else{
+      const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
+        return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+      })
+      return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+    }
   }
 }
