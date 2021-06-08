@@ -1,13 +1,10 @@
-import React, { useRef, useState, useEffect } from 'react';
-import RelationLinks, { RelationLinkJson } from '../models/RelationLinks';
+import { observer } from 'mobx-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useStore } from '../stores/rootStore';
 import RelationLinkViz from './RelationLinkViz';
 import './RelationLinkVizWrapper.css';
-import DropdownButton from "react-bootstrap/DropdownButton";
 
 interface RelationLinkWrapperProps {
-	rdat: RelationLinks;
-	elementInFocus: string;
-	changeElementInFocus: (d:string) => void,
 }
 
 function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
@@ -21,14 +18,17 @@ function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (
 
 
 
-const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
+const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
 	const chartArea = useRef(null);
-	const elementInFocus= props.elementInFocus;
+	const store = useStore();
 	const [chart, setChart] = useState<RelationLinkViz | null>(null);
-	const { width } = useWindowSize();
 
 	const createNewChart = function () {
-		setChart(new RelationLinkViz(chartArea.current, props.rdat, props.elementInFocus, props.changeElementInFocus));
+		setChart(new RelationLinkViz(
+			chartArea.current, 
+			store.loadedDataStore.rdat, 
+			store.relationLinkVizStore.elementInFocus, 
+			store.relationLinkVizStore.setElementInFocus));
 	}
 
 	useEffect(() => {
@@ -37,7 +37,7 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 			chart.clear();
 			createNewChart();
 		}
-	}, [width])
+	}, [store.uIStore.windowWidth])
 
 	useEffect(() => {
 		createNewChart();
@@ -51,14 +51,14 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 	useEffect(() => {
 		console.log('dataset changed');
 		if (chart) {
-			chart.update(elementInFocus);
+			chart.update(store.relationLinkVizStore.elementInFocus);
 		}
-	}, [elementInFocus]);
+	}, [store.relationLinkVizStore.elementInFocus]);
 
 	return (
 		<div>
-			<p>Graph showing how we use <select value={elementInFocus} onChange={createHandleChangeFunction(props.changeElementInFocus)}>
-				{props.rdat.getAllPossibleNodes().map((d:string) => {
+			<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
+				{store.loadedDataStore.rdat.getAllPossibleNodes().map((d:string) => {
 					return <option value={d}>{d}</option>
 				})}
 				</select> in the model</p>
@@ -66,33 +66,7 @@ const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class Chart
 		</div>
 	)
 
-}
+});
 
-function useWindowSize() {
-	const [windowSize, setWindowSize] = useState({
-		width: window.innerWidth,
-	});
-
-	let resize_graphic = true;
-	function changeWindowSize() {
-		if (resize_graphic) {
-			resize_graphic = false;
-			setTimeout(() => {
-				setWindowSize({ width: window.innerWidth });
-				resize_graphic = true;
-			}, 400);
-		}
-	}
-
-	useEffect(() => {
-		window.addEventListener("resize", changeWindowSize);
-
-		return () => {
-			window.removeEventListener("resize", changeWindowSize);
-		};
-	}, []);
-
-	return windowSize;
-}
 
 export default RelationLinkWrapper;

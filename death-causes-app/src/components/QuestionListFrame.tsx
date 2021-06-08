@@ -5,7 +5,7 @@ import ButtonGroup from "react-bootstrap/ButtonGroup";
 import { ButtonToolbar } from "reactstrap";
 import "./QuestionMenu.css";
 import { ERROR_COLOR, FormControlStyle, CHANGED_COLOR } from "./Question";
-import { ComputationState } from "./Helpers";
+import { ComputationState } from "../stores/ComputationStateStore";
 import Spinner from "react-bootstrap/Spinner";
 
 interface QuestionListFrameProps {

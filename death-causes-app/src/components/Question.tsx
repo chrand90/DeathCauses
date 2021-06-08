@@ -1,15 +1,17 @@
+import { observer } from "mobx-react";
 import React, { ChangeEvent, ReactElement } from "react";
-import Button from "react-bootstrap/Button";
-import Popover from "react-bootstrap/Popover";
-import OverlayTrigger from "react-bootstrap/OverlayTrigger";
-import InputGroup from "react-bootstrap/InputGroup";
 import { Col, Form, Tooltip } from "react-bootstrap";
-import "./Question.css";
-import MarkDown from "react-markdown";
-import { InputValidity } from "../models/FactorAbstract";
+import Button from "react-bootstrap/Button";
 import Dropdown from "react-bootstrap/Dropdown";
 import Label from "react-bootstrap/FormLabel";
-import { OrderVisualization, Visualization } from "./Helpers";
+import InputGroup from "react-bootstrap/InputGroup";
+import OverlayTrigger from "react-bootstrap/OverlayTrigger";
+import Popover from "react-bootstrap/Popover";
+import MarkDown from "react-markdown";
+import { InputValidity } from "../models/FactorAbstract";
+import RootStore, { withStore } from "../stores/rootStore";
+import { Visualization } from "../stores/UIStore";
+import "./Question.css";
 
 export const BACKGROUNDCOLOR_DISABLED = "#c7c7c7";
 export const TEXTCOLOR_DISABLED = "#999";
@@ -18,9 +20,9 @@ export const ERROR_COLOR = "#fc0303";
 export const WARNING_COLOR = "#bfa50d";
 export const WARNING_COLOR_STRONGER = "#806e09";
 export const SUCCESS_COLOR = "#3E713F";
-export const CHANGED_COLOR= "#630396";
+export const CHANGED_COLOR = "#630396";
 
-export interface QuestionProps<T> extends OrderVisualization {
+export interface QuestionProps<T> {
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
@@ -41,7 +43,7 @@ export interface FormControlStyle {
   [key: string]: string;
 }
 
-interface QuestionContextProps extends OrderVisualization {
+interface QuestionContextProps {
   name: string;
   ignore: boolean;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -53,9 +55,10 @@ interface QuestionContextProps extends OrderVisualization {
   validityStatus: string;
   windowWidth: number;
   descendantDeathCauses: string[];
+  store: RootStore;
 }
 
-export class QuestionContext extends React.PureComponent<QuestionContextProps> {
+class QuestionContextWithoutStore extends React.PureComponent<QuestionContextProps> {
   constructor(props: QuestionContextProps) {
     super(props);
   }
@@ -65,7 +68,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
       return (
         <div>
           <MarkDown>{this.props.helpText}</MarkDown>
-          {this.props.name !== "Age" ? <hr></hr> :null}
+          {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
       );
@@ -75,7 +78,7 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
           {this.questionPhrasing()}
           <hr></hr>
           <MarkDown>{this.props.helpText}</MarkDown>
-          {this.props.name !== "Age" ? <hr></hr> :null}
+          {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
       );
@@ -223,8 +226,8 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     } else if (widthOfArea >= 992) {
       widthOfArea = (widthOfArea * 5) / 12;
     }
-    widthOfArea = Math.min(600,(widthOfArea * 1) / 3);
-    return widthOfArea-20; //20 is to account for the extra padding
+    widthOfArea = Math.min(600, (widthOfArea * 1) / 3);
+    return widthOfArea - 20; //20 is to account for the extra padding
   }
 
   fontSizeForFactorNameHeader() {
@@ -298,13 +301,12 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 
-  rightPluralOfCause(){
-    if(this.props.descendantDeathCauses.length===1){
-      return ""
+  rightPluralOfCause() {
+    if (this.props.descendantDeathCauses.length === 1) {
+      return "";
     }
-    return "s"
+    return "s";
   }
-
 
   descendantMessage() {
     return (
@@ -314,38 +316,42 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
           variant="link"
           className="inline-text-button"
           onClick={() => {
-            this.props.orderVisualization(
-              this.props.name,
-              Visualization.RELATION_GRAPH
-            );
+            this.props.store.relationLinkVizStore.setElementInFocus(this.props.name)
+            this.props.store.uIStore.setVisualization(Visualization.RELATION_GRAPH)
           }}
         >
-          {this.props.descendantDeathCauses.length} death cause{this.rightPluralOfCause()}
+          {this.props.descendantDeathCauses.length} death cause
+          {this.rightPluralOfCause()}
         </Button>
         .
       </div>
     );
   }
 
+
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    if (this.props.validityStatus === "Error") {
-      errorMessageStyle["color"] = ERROR_COLOR;
-    }
-    if (this.props.validityStatus === "Warning") {
-      errorMessageStyle["color"] = WARNING_COLOR;
-    }
+    errorMessageStyle["color"] =  "";
     return errorMessageStyle;
   }
 
   render() {
+    console.log("rendering question context" + this.props.name);
     return (
-      <Form.Row className={"formrow-narrow-"+(!this.props.featured).toString()}>
+      <Form.Row
+        className={"formrow-narrow-" + (!this.props.featured).toString()}
+      >
         <Col xs={this.props.featured ? 12 : 4}>
           {this.props.featured ? (
             this.questionPhrasing()
           ) : (
-            <div style={{ height: "34px", lineHeight: "34px", overflow:"hidden" }}>
+            <div
+              style={{
+                height: "34px",
+                lineHeight: "34px",
+                overflow: "hidden",
+              }}
+            >
               {this.inLineFactorNameHeader()}
             </div>
           )}
@@ -376,3 +382,5 @@ export class QuestionContext extends React.PureComponent<QuestionContextProps> {
     );
   }
 }
+
+export const QuestionContext = withStore(observer(QuestionContextWithoutStore));

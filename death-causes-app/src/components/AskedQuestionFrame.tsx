@@ -7,8 +7,10 @@ import { InputValidity } from "../models/FactorAbstract";
 import DropdownButton from "react-bootstrap/DropdownButton";
 import Dropdown from "react-bootstrap/Dropdown";
 import { FormControlStyle, CHANGED_COLOR } from "./Question";
-import { ComputationState } from "./Helpers";
+import { ComputationState } from "../stores/ComputationStateStore";
 import Spinner from "react-bootstrap/Spinner";
+import RootStore, { StoreContext, withStore } from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 interface AskedQuestionProps {
   factorName: string | undefined;
@@ -25,7 +27,7 @@ interface AskedQuestionProps {
   computationState: ComputationState;
 }
 
-class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
+class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps, any> {
 
   getMovingOnButton(){
     const disabled=(this.props.validity !== undefined  && this.props.validity.status === "Error") || this.props.computationState===ComputationState.RUNNING
@@ -107,5 +109,5 @@ class AskedQuestionFramed extends React.Component<AskedQuestionProps, any> {
     );
   }
 }
-
+const AskedQuestionFramed= observer(withStore(AskedQuestionFramedWithoutStore));
 export default AskedQuestionFramed;

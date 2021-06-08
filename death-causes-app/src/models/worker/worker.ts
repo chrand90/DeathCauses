@@ -2,7 +2,7 @@ import { thresholdFreedmanDiaconis } from "d3-array";
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import Deathcause, { RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
-import { RawDataJson } from "../../components/VizWindow";
+import { RawDeathCauseJson } from "../../components/database/Deathcause";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
 import ComputeController from "../updateFormNodes/UpdateFormController";
@@ -14,7 +14,7 @@ class computations {
     this.computer = null;
   }
 
-  initialize(json: RelationLinkJson, rawData: RawDataJson, rawCategoryData: RawDataJson, ageFrom: number | null, ageTo: number) {
+  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number) {
     const rlinks = new RelationLinks(json);
     const deathcauses: Deathcause[]=[];
     Object.entries(rawData).forEach(([key, deathcause]) => {
@@ -51,6 +51,6 @@ export function processData(data: FactorAnswers):{survivalData: SurvivalCurveDat
   return c.processData(data);
 }
 
-export function initializeObject(json: RelationLinkJson, rawData: RawDataJson, rawCategoryData: RawDataJson, ageFrom: number | null, ageTo: number) {
+export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number) {
   c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo);
 }
