@@ -9,6 +9,7 @@ import {
   CauseGrouping,
   CauseToParentMapping,
   NodeToColor,
+  NodeToOptimizability,
   ParentToCausesMapping,
 } from "../models/RelationLinks";
 
@@ -141,6 +142,7 @@ export default class BarChart {
   simpleVersion: boolean;
   clickedSquareSection: SquareSection | null=null;
   buttonTipTimeOut: NodeJS.Timeout | undefined=undefined;
+  optimizabilities: NodeToOptimizability
 
   constructor(
     element: HTMLElement | null,
@@ -155,6 +157,7 @@ export default class BarChart {
       collapsables: {[key:string]:string[]};
       expandables: {[key:string]:string[]};
     },
+    optimizabilities: NodeToOptimizability,
     simpleVersion: boolean = false
   ) {
     //Initializers
@@ -170,6 +173,7 @@ export default class BarChart {
     this.chainedTransitionInProgress = false;
     this.transitionsFinished = 0;
     this.transitionsOrdered = 0;
+    this.optimizabilities=optimizabilities;
     this.simpleVersion = simpleVersion;
     if (simpleVersion) {
       this.grouping = simplifyGrouping(collectedGroups);
@@ -603,7 +607,7 @@ export default class BarChart {
       .on("mouseenter", function (d) {
         vis.buttonTipTimeOut=setTimeout( () => 
             vis.buttontip.show({d:d.name, buttonType:"width"}, this),
-          800
+          500
         );
         d3.select(this).style("fill", LINK_COLOR);
       })
@@ -734,7 +738,8 @@ export default class BarChart {
     const { allSquares: dataSquares, totalProbs } = make_squares(
       dataset,
       diseaseToWidth,
-      this.grouping
+      this.grouping,
+      this.optimizabilities,
     );
     const notToBeMerged = getSubCollectGroup(
       oldCollectedGroups,
@@ -745,6 +750,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
+      this.optimizabilities,
       notToBeMerged
     );
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
@@ -973,7 +979,8 @@ export default class BarChart {
     const { allSquares: dataSquares, totalProbs } = make_squares(
       dataset,
       diseaseToWidth,
-      this.grouping
+      this.grouping,
+      this.optimizabilities
     );
     const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
     const {
@@ -983,6 +990,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       oldCollectedGroups,
+      this.optimizabilities,
       notToBeMerged
     );
     const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
@@ -1140,7 +1148,8 @@ export default class BarChart {
     const { allSquares: dataSquares, totalProbs } = make_squares(
       data,
       diseaseToWidth,
-      this.grouping
+      this.grouping,
+      this.optimizabilities
     );
     const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
     const dataIds = dataSortedTotal.map((v: any, index: number) => {

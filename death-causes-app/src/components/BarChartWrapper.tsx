@@ -44,6 +44,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			store.barChartStore.expandCategory, 
 			store.barChartStore.collectParentCategory,
 			store.loadedDataStore.rdat.getPossibleExpansions(),
+			store.loadedDataStore.rdat.optimizabilities,
 			props.simpleVersion ? props.simpleVersion : false
 		));
 	}

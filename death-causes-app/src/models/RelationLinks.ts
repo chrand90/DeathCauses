@@ -50,7 +50,7 @@ interface NodeToType {
   [nodeName: string]: NodeType;
 }
 
-interface NodeToOptimizability {
+export interface NodeToOptimizability {
   [nodeName: string]: number;
 }
 
@@ -603,6 +603,10 @@ export default class RelationLinks {
     }
 
     return { transformedLabels: resDat, xDivisions: xDivisions };
+  }
+
+  getOptimizabilities(){
+    return this.optimizabilities;
   }
 
   getAllPossibleNodes(): string[] {
