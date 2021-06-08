@@ -74,8 +74,8 @@ export const StoreContext = React.createContext<RootStore>(store);
 
 /* Hook to use store in any functional component */
 export const useStore = () => React.useContext(StoreContext);
-
+ 
 /* HOC to inject store to any functional or class component */
-export const withStore = (Component: any) => (props: any) => {
+export const withStore = (Component:any) => (props:any) => {
   return <Component {...props} store={useStore()} />;
 };

@@ -7,44 +7,15 @@
 #    http://shiny.rstudio.com/
 #
 
-source('plottingWithClasses.R')
+library(devtools)
+load_all('RRtablePlotting')
 
 library(shiny)
+library(ggplot2)
+library(gridExtra)
 
-
-#p <- plot_ly(data=res_df, x=res_df$xval, y=res_df$yval, z=res_df$zval, type="mesh3d" ) %>% add_trace()
-
-#testing
-if(F){
-  g=dat$Parkinsons$RiskFactorGroups[[4]]$riskRatioTables[[1]]
-  riskratio_names=g$riskFactorNames
-  riskratio_numbers=g$riskRatioTable
-  interpolation_table=g$interpolationTable
-  plot_risk_ratio_file(riskratio_numbers, riskratio_names)
-}
-
-if(F){
-  g=dat$BreastCancer$RiskFactorGroups[[2]]$riskRatioTables[[2]] # oral contraceptive
-  riskratio_names=g$riskFactorNames
-  interpolationtable=g$interpolationTable
-}
-
-if(F){
-  g=dat$BreastCancer$RiskFactorGroups[[2]]$riskRatioTables[[1]] #gender
-  riskratio_names=g$riskFactorNames
-  interpolationtable=g$interpolationTable
-}
-
-if(F){
-  g=dat$LiverCancer$RiskFactorGroups[[1]]$riskRatioTables[[1]]
-  interpolationtable=g$interpolationTable
-  riskratio_names=g$riskFactorNames
-}
-
-
-#r=
-#print(r)
-
+dat=initialize_database("../../death-causes-app/src/resources/Causes.json")
+all_diseases=dat@diseases
 # Define UI for application that draws a histogram
 
 Number_of_plot_slots=20
@@ -61,6 +32,7 @@ ui <- fluidPage(
    plotOutput('distPlot', height=theight)
    
 )
+
 
 
 

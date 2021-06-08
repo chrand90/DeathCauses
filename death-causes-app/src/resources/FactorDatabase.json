@@ -68,7 +68,7 @@
     },
     {"factorname":"MaxDrinking",
         "type":"number",
-        "longExplanation":"In a normal week what is the highest amount of alcohol drunk during a sinle day",
+        "longExplanation":"In a normal month what is the highest amount of alcohol drunk during a sinle day",
         "placeholder":"Drinks",
         "recommendedDomain":{"min":0, "max":30},
         "requiredDomain":{"min":0},
