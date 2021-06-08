@@ -184,7 +184,7 @@ export default class BarChart {
 
     const vis = this;
     vis.element = element;
-    vis.width = getDivWidth(element) * 0.9; //getDivWidth(element)*0.9;
+    vis.width = getDivWidth(element)*0.9;
 
     //width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
     vis.svg = d3

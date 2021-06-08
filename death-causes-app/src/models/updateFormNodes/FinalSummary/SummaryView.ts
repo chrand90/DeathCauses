@@ -1,5 +1,7 @@
+import { DataRow, DataSet } from "../../../components/PlottingData";
 import CauseNodeResult from "../CauseNodeResult"
 import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import riskFactorContributions from "./RiskFactorContributions";
 
 export default function computeSummaryView(causeNodeResults: CauseNodeResult[], ageFrom: number, ageTo: number): SummaryViewData {
     let ages: number[] = Array.from({ length: ageTo - ageFrom + 1 }, (_, i) => ageFrom + i)
@@ -22,22 +24,34 @@ export default function computeSummaryView(causeNodeResults: CauseNodeResult[], 
         probabiliiesOfDyingOfEachDeathCause.push({ name: cause.name, value: calculateProbOfDyingOfDeathcause(cause.probs, survivalProbs) })
     });
 
+    let innerCauses = riskFactorContributions(causeNodeResults, ageFrom, ageTo)
+    let ninetyPercentProbability = survivalProbs.filter(e => e >= 0.9).length - 1 + ageFrom
+    let probabilityOfTurning100 = ageFrom < 100 ? survivalProbs[(100-ageFrom)] : null
+
     return {
-        lifeExpentancy: lifeExpentancy,
-        yearsLostToDeathCauses: yearsLostToDeathCause,
-        probabiliiesOfDyingOfEachDeathCause: probabiliiesOfDyingOfEachDeathCause
+        lifeExpentancyData: { lifeExpentancy: lifeExpentancy, ninetyPercentProbability: ninetyPercentProbability, probabilityOfTurning100: probabilityOfTurning100 },
+        yearsLostToDeathCauses: findNLargestValues(yearsLostToDeathCause),
+        probabiliiesOfDyingOfEachDeathCause: findNLargestValues(probabiliiesOfDyingOfEachDeathCause),
+        dataSet: innerCauses
     };
 }
 
 export interface SummaryViewData {
-    lifeExpentancy: number,
-    yearsLostToDeathCauses: DataPoint[]
-    probabiliiesOfDyingOfEachDeathCause: DataPoint[]
+    lifeExpentancyData: LifeExpentancyData,
+    yearsLostToDeathCauses: DataPoint[],
+    probabiliiesOfDyingOfEachDeathCause: DataPoint[],
+    dataSet: DataRow[]
 }
 
 export interface DataPoint {
     name: string,
     value: number
+}
+
+export interface LifeExpentancyData {
+    lifeExpentancy: number
+    ninetyPercentProbability: number
+    probabilityOfTurning100: number | null
 }
 
 function calculateLifeExpentancy(causeNodeResults: CauseNodeResult[], ages: number[]): number {
@@ -65,4 +79,9 @@ function calculateProbOfDyingOfDeathcause(probs: number[], survivalProb: number[
         res += probs[i] * survivalProb[i]
     }
     return res;
+}
+
+function findNLargestValues(data: DataPoint[]) {
+    const N = 5
+    return data.sort((a, b) => b.value - a.value).slice(0, N)
 }

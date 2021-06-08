@@ -15,7 +15,6 @@ class AppWithoutObserver extends React.Component {
     super(props);
   }
 
-
   render() {
     return (
       <div className="App">

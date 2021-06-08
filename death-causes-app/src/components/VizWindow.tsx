@@ -65,7 +65,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     );
   }
 
-
   renderDataBoundedGraph(
     visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH
   ) {
@@ -113,7 +112,11 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
           return (<h3>Answer questions and compute to show results</h3>)
         }
         return (
+<<<<<<< HEAD
           <SummaryView data={this.state.summaryViewData} />
+=======
+          <SummaryView data={this.state.summaryViewData} rdat={this.props.relationLinkData} colorDic={this.props.relationLinkData.getColorDic()} orderVisualisationCB={this.orderVisualizationWithoutFocusElement}/>
+>>>>>>> 58f3de3 (tmp commit)
         )
       }
       default: {

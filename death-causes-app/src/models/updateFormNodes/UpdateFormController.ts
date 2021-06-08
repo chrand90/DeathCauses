@@ -49,7 +49,7 @@ export default class ComputeController {
     rdat.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((computedFactorName) => {
       let ancestors = rdat.getAncestors(computedFactorName);
       if (!(computedFactorName in ComputedFactorClasses)) {
-        throw (
+        throw Error(
           computedFactorName.toString() +
           " was not defined as a computed factor"
         );
@@ -114,12 +114,12 @@ export default class ComputeController {
   }
 
   compute(factorAnswers: FactorAnswers){
+    this.computeAverage(factorAnswers)
     let res: UpdateDic = this.inputFactorTreater.update(factorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
     });
     this.allComputedNodes=res;
-    console.log(this.allComputedNodes);
   }
 
   computeAll(factorAnswers: FactorAnswers){
@@ -127,34 +127,46 @@ export default class ComputeController {
       return {survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities()}
   }
 
-  computeSurvivalData(): SurvivalCurveData[] {
+  computeAverage(factorAnswers: FactorAnswers) {
+    let avgFactorAnswers: FactorAnswers = {}
+    Object.entries(factorAnswers).forEach(([factorName, factorObject]) => {
+      if(factorName === "Age" || factorName === "Sex") {
+        avgFactorAnswers[factorName] = factorAnswers[factorName]
+        return;
+      }
+      avgFactorAnswers[factorName] = ""
+    })
+    let avgRes: UpdateDic = this.inputFactorTreater.update(avgFactorAnswers);
+    this.formUpdaters.forEach((formUpdater, i) => {
+      avgRes[this.formUpdaterNames[i]] = formUpdater.update(avgRes);
+    });
+    this.allComputedNodes=avgRes;
+    const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
+      return (avgRes![deathcause.deathCauseName].value as CauseNodeResult)
+    })
+
+    let tmp = computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes!), this.ageTo)
+    console.log(tmp)
+  }
+
+  computeSurvivalData(): SurvivalCurveData[] {  
     //Promise<SurvivalCurveData[]>{
       if(this.allComputedNodes === null){
         throw Error("It is not possible to compute survival data before calling compute()")
       }
-      else{
-        const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
-          return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
-        })
-        return survivalCurve(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
-      }
-      
-    // return this.compute(factorAnswers).then((udic:UpdateDic) => {
-    //     return updateDicToFactorAnswers(udic);
-    // }).then((fAnswers: FactorAnswers) => {
-    //     return this.calculationFacade.calculateSurvivalCurve(fAnswers);
-    // })
+      const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
+        return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+      })
+      return survivalCurve(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
   }
 
   computeSummaryViewData(): SummaryViewData {
     if(this.allComputedNodes === null){
       throw Error("It is not possible to compute survival data before calling compute()")
     }
-    else{
-      const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
-        return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
-      })
-      return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
-    }
+    const finalNodeResults: CauseNodeResult[]= this.deathCauses.map((deathcause) => {
+      return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+    })
+    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
   }
 }
