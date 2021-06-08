@@ -40,7 +40,7 @@ export async function loadRelationLinks():Promise<LoadedRelationLinks> {
 }
 
 export async function loadCauseData():Promise<LoadedCauseData> {
-    const rawData: RawDeathCauseJson = causesData as RawDeathCauseJson;
+    const rawData: RawDeathCauseJson = causesData as unknown as RawDeathCauseJson;
     const rawCategoryData: RawDeathCauseJson = causesCategoryData as RawDeathCauseJson;
     let deathcauses: DeathCause[]=[];
     let deathcauseCategories: RiskFactorGroupsContainer[]=[];

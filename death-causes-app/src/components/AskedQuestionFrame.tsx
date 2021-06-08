@@ -9,6 +9,8 @@ import { FormControlStyle, CHANGED_COLOR } from "./Question";
 import ButtonToolbar from "react-bootstrap/esm/ButtonToolbar";
 import { ComputationState } from "../stores/ComputationStateStore";
 import { withStore } from "../stores/rootStore";
+import { Spinner } from "react-bootstrap";
+import { observer } from "mobx-react";
 
 interface AskedQuestionProps {
   factorName: string | undefined;

@@ -32,14 +32,6 @@ export class AboutPage extends React.Component<any, any> {
           this.state.mathjax.update();
       }
     
-      onIncrementClick(){
-        let initialValue = this.state.initialValue;
-        this.setState({
-          initialValue: initialValue + 1
-        })
-      }
-
-
     render() {
         return (
             <Container>
