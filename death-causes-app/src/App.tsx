@@ -25,15 +25,15 @@ class AppWithoutObserver extends React.Component {
               <Main />
             </Route>
             <Route exact path="/model">
-              <Navigation fullWidth={false} />
+              <Navigation fullWidth={true} />
               <AboutPage />
             </Route>
             <Route exact path="/contact">
-              <Navigation fullWidth={false} />
+              <Navigation fullWidth={true} />
               <ContactPage />
             </Route>
             <Route exact>
-              <Navigation fullWidth={false} />
+              <Navigation fullWidth={true} />
               <Error />
             </Route>
           </Switch>

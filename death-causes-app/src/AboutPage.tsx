@@ -12,23 +12,16 @@ export class AboutPage extends React.Component<any, any> {
         super(props);
         const mathjaxLoader = new MathJaxLoader();
         this.state = {
-            loaded: false,
-            mathjax: mathjaxLoader,
-            initialValue: 1
+            mathjax: mathjaxLoader
         };
       }
     
-      onFirstMathJax(){
-          this.setState({
-            loaded: true
-          });
-      }
     
       componentDidMount() {
-          this.state.mathjax.initiateMathJax(this.onFirstMathJax.bind(this)); 
+          this.state.mathjax.initiateMathJax(); 
       }
     
-      componentDidUpdate(prevProps: any, prevState: any, snapshot: any) {
+      componentDidUpdate() {
           this.state.mathjax.update();
       }
     
