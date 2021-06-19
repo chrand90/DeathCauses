@@ -18,20 +18,29 @@ function getWindowWidth(){
 
 export default class UIStore {
   windowWidth: number;
-  visualization: Visualization
+  visualization: Visualization;
+  tooltipHider: () => void;
 
   constructor() {
     this.visualization=Visualization.NO_GRAPH;
     this.windowWidth=getWindowWidth();
+    this.tooltipHider=() => {
+      console.log("calling empty tooltiphider")
+    };
     makeObservable(this, {
         windowWidth: observable,
         visualization: observable,
         setVisualization: action,
-        updateWindowWidth: action.bound
+        updateWindowWidth: action.bound,
     })
     window.addEventListener("resize", () => {
         this.updateWindowWidth()
     } );
+  }
+
+  setToolTipHider(tooltipHider: () => void){
+    console.log("set tooltiphider")
+    this.tooltipHider=tooltipHider;
   }
 
   setVisualization(newVisualization: Visualization){

@@ -49,6 +49,15 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		));
 	}
 
+	useEffect(()=> {
+		if(chart){
+			store.uIStore.setToolTipHider(chart.hideAllToolTips);
+		}
+		else{
+			store.uIStore.setToolTipHider(()=>{})
+		}
+	}, [chart])
+
 
 	useEffect(() => {
 		console.log('width changed');
