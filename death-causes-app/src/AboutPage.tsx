@@ -36,7 +36,7 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
       }
 
       updateTemplate(cb: ()=> void=()=>{}){
-        fetch("http://localhost:5000/model/"+this.props.match.params.subpage).then((response) => {
+        fetch("http://localhost:5005/model/"+this.props.match.params.subpage).then((response) => {
             return response.text();
           }).then(d => {
             this.setState({template: {__html: d}, status: LoadingStatus.READY},

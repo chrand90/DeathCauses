@@ -66,4 +66,4 @@ class MathJaxLoader{
     }
 }
 
-module.exports = MathJaxLoader;
+export default MathJaxLoader;

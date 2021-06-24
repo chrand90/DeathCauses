@@ -1,10 +1,10 @@
 const express = require('express')
 const path = require("path");
 const app = express()
-const port = 5000
+const port = 5005
 
 app.use(function(req,res, next){
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:5000');
   next();
 })
 app.use(express.json())
