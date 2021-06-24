@@ -11,11 +11,7 @@ link-citations: true
 <style type="text/css">
 
 body{   
-    margin: 10px !important;
-    padding: 10px !important;
-    padding-left: 20px;
-    background:#F0F0F0;
-    max-width:620px;}
+    background:#F0F0F0;}
     
 details{
     background:#e1f9fa;}

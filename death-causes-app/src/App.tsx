@@ -2,7 +2,7 @@ import { observer } from "mobx-react";
 import React from 'react';
 import { Container } from 'react-bootstrap';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { AboutPage } from "./AboutPage";
+import AboutPage from "./AboutPage";
 import { ContactPage } from './ContactPage';
 import Main from './Main';
 import Navigation from './NavBar';
@@ -24,7 +24,7 @@ class AppWithoutObserver extends React.Component {
               <Navigation fullWidth={true} />
               <Main />
             </Route>
-            <Route exact path="/model">
+            <Route exact path="/model/:subpage">
               <Navigation fullWidth={true} />
               <AboutPage />
             </Route>

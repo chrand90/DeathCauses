@@ -11,7 +11,7 @@ class MathJaxLoader{
 
     //load mathjax script
     loadMathJax(){
-        scriptLoader(this.script, () => {this.onScriptLoaded()});
+        scriptLoader(this.script, () => {this.onScriptLoaded()});  
     }
 
     onScriptLoaded(){
