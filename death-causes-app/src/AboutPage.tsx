@@ -42,7 +42,7 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
         else{
           urlStart+=""
         }
-        const link=urlStart+"/api/"+this.props.match.params.subpage
+        const link=urlStart+"/api/model/"+this.props.match.params.subpage
         console.log("fetching link: "+link)
         fetch(link).then((response) => {
             if(!response.ok){

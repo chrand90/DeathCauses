@@ -15,7 +15,7 @@ app.use(function(req,res, next){
 })
 app.use(express.json())
 
-app.get('/api/:subpage', (req, res) => {
+app.get('/api/model/:subpage', (req, res) => {
     const url=path.join(__dirname+'/../R\ markdown\ explanations/'+req.params.subpage+'.html')
     fs.access(url, fs.F_OK, (err) => {
       if (err) {
@@ -23,7 +23,16 @@ app.get('/api/:subpage', (req, res) => {
       }
       res.sendFile(url)
     })
-    
+})
+
+app.get('/api/data/:subpage', (req, res) => {
+  const url=path.join(__dirname+'/../src/resources/'+req.params.subpage)
+  fs.access(url, fs.F_OK, (err) => {
+    if (err) {
+      res.status(404).send()
+    }
+    res.sendFile(url)
+  })
 })
 
 app.listen(port, () => {
