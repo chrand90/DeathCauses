@@ -24,7 +24,6 @@ interface AboutPageStats {
     status: LoadingStatus
 }
 class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageStats> {
-
     constructor(props: any ){
         super(props);
         const mathjaxLoader = new MathJaxLoader();
@@ -41,9 +40,15 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
           urlStart+="http://localhost:5000"
         }
         else{
-          urlStart+="http://localhost"
+          urlStart+=""
         }
-        fetch(urlStart+"/api/"+this.props.match.params.subpage).then((response) => {
+        const link=urlStart+"/api/"+this.props.match.params.subpage
+        console.log("fetching link: "+link)
+        fetch(link).then((response) => {
+            if(!response.ok){
+              console.error(response.statusText)
+              throw response.statusText;
+            }
             return response.text();
           }).then(d => {
             this.setState({template: {__html: d}, status: LoadingStatus.READY},
@@ -52,7 +57,9 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
                     this.hashLinkScroll()
                     this.replaceLinks()
                 });
-        });
+        }).catch( () =>
+          this.setState({template: {__html: `<h3>404: Resource not found</h3><p>Requested URL: ${link}</p>`}, status: LoadingStatus.READY})
+        );
       }
 
       hashLinkScroll() {

@@ -44,6 +44,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "server": "node backend/index.js",
+    "server-production" : "cross-env NODE_ENV=production npm run server",
     "start-dev": "concurrently \" cross-env NODE_ENV=development npm run server \" \" npm start\" "
   },
   "eslintConfig": {
