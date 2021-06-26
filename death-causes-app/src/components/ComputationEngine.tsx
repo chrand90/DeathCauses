@@ -1,5 +1,4 @@
-import { truncate } from "fs";
-import { CauseGrouping } from "../models/RelationLinks";
+import { CauseGrouping, NodeToOptimizability } from "../models/RelationLinks";
 import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
@@ -51,6 +50,7 @@ function makeRowSquare(
     max: number | null,
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
+    optimizabilities: NodeToOptimizability
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -88,7 +88,7 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+                return optimizabilities[a]-optimizabilities[b]
             })
         }
         
@@ -132,10 +132,10 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return combinedBestValues.getOptimizability(a)-combinedBestValues.getOptimizability(b)
+                return optimizabilities[a]-optimizabilities[b]
             })
         }
-        Object.keys(widthOfEachInnerCause).forEach(innerCause=>{
+        innerCauses.forEach(innerCause=>{
             Object.entries(subParentsToRows).forEach( ([subParent, subDatRows]) =>{
                 let contrib=0;
                 let innerCauseInGroup=false;
@@ -182,6 +182,7 @@ function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
     grouping: CauseGrouping,
+    optimizabilities: NodeToOptimizability,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
 
@@ -201,7 +202,8 @@ function make_squares(
             parent, 
             max, 
             !(parent in noMergeAcross),
-            parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping)
+            parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
+            optimizabilities
         )
         squareSections.push(squares)
         totalProbs.push({

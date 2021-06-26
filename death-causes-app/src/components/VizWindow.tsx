@@ -9,6 +9,7 @@ import AdvancedOptionsMenu from "./AdvancedOptions";
 import BarChartWrapper from "./BarChartWrapper";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
+import { hideAllToolTips } from "./Helpers";
 import { DataRow } from "./PlottingData";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import "./VizWindow.css";
@@ -146,7 +147,9 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
 
   render(): React.ReactNode {
     return (
-      <div className="vizwindow">
+      <div className="vizwindow" onClick={() => {
+        this.props.store.uIStore.tooltipHider()
+      }}>
         <h4> Visualization Menu </h4>
         {this.renderSelectOption()}
         <hr></hr>

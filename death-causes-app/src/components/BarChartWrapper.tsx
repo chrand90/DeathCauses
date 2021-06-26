@@ -11,6 +11,7 @@ enum LatestChange {
 
 interface BarChartWrapperProps {
 	database: DataSet;
+	simpleVersion?: boolean;
 }
 
 const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
@@ -42,9 +43,20 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			store.barChartStore.explicitCollectedGroups, 
 			store.barChartStore.expandCategory, 
 			store.barChartStore.collectParentCategory,
-			store.loadedDataStore.rdat.getPossibleExpansions()
+			store.loadedDataStore.rdat.getPossibleExpansions(),
+			store.loadedDataStore.rdat.optimizabilities,
+			props.simpleVersion ? props.simpleVersion : false
 		));
 	}
+
+	useEffect(()=> {
+		if(chart){
+			store.uIStore.setToolTipHider(chart.hideAllToolTips);
+		}
+		else{
+			store.uIStore.setToolTipHider(()=>{})
+		}
+	}, [chart])
 
 
 	useEffect(() => {

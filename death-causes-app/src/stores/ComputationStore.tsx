@@ -43,10 +43,11 @@ export default class ComputationStore {
     if(submittedFactorAnswers!==undefined){
       this.submittedFactorAnswers = submittedFactorAnswers;
       this.advancedOptionsStore.updateFactorAnswers(this.submittedFactorAnswers);
-      if(this.advancedOptionsStore.changedSetting && this.advancedOptionsStore.submittable){
+
+    }      
+    if(this.advancedOptionsStore.changedSetting && this.advancedOptionsStore.submittable){
         this.advancedOptionsStore.submitOptions();
         this.reset();
-      }
     }
     this.computationStateStore.setComputationState(ComputationState.RUNNING);
     

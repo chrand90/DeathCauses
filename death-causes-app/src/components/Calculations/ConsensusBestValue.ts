@@ -182,7 +182,7 @@ export class BestValues {
           res=res+". Your "+factorName+ " is "+minAnswer
         }
         else{
-          res=res+". Your "+factorName+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " in the computation period"
+          res=res+". Your "+factorName+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " depending on your age"
         }
       }
       const minVal=Math.min(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")
@@ -193,13 +193,13 @@ export class BestValues {
       else if (stability === FlankStability.STABLE) {
         res=res+ ". The optimal value is <strong>" + minVal +"</strong>"
       } else {
-        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on year, subcause, and/or other risk factors"
+        res=res+". The optimal value varies between " + minVal + " and "+ maxVal + " depending on age, subcause, and/or other risk factors"
       }
     } else {
       if (this.optimals[factorName].every((d) => d === firstEntry)) {
         res=res+ ". The optimal value is " + firstEntry;
       } else {
-        res=res+ ". The optimal values is one of {"+  removeDuplicates(this.optimals[factorName] as string[]).join(', ')+"}"+" depending on year, subcause and/or other risk factors";
+        res=res+ ". The optimal values is one of {"+  removeDuplicates(this.optimals[factorName] as string[]).join(', ')+"}"+" depending on age, subcause and/or other risk factors";
       }
     }
     return res+"."

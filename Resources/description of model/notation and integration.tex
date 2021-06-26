@@ -357,6 +357,24 @@ Ens overlevelseskurve
 \end{align*}
 \end{itemize}
 
+\subsubsection{Praktisk udregning af forventet levetid}
+Ved at antage at funktionen $p(a, \psi)$ er konstant lig med en værdi $z$ efter 120 kan vi lave følgende udregning
+\begin{align*}
+E[L\mid \psi] &= \sum_{a=0}^\infty a \cdot p(a, \psi)\prod_{b=0}^{a-1} (1-p(b,\psi))\\
+&=\begin{lgathered}[t]\underbrace{\sum_{a=0}^{119} a p(a,\psi) \prod_{b=0}^{a-1} (1-p(b,\psi))}_{C}\\
++\sum_{a=120}^{\infty} a z \prod_{b=0}^{119} (1-p(b,\psi))\prod_{b=120}^{a-1}(1-z)
+\end{lgathered}\\
+&= C+ \underbrace{\prod_{b=0}^{119} (1-p(b,\psi))}_{C_2} \cdot z\cdot \sum_{k=0}^{\infty}(k+120)(1-z)^k
+\end{align*}cdot z
+Det sidste kan skrives om til en linearkombination af en geometrisk række på formen $\sum_{k=1}^{\infty}k\theta^k=\theta/(1-\theta)^2$ og en på formen $\sum_{k=0}^{\infty}\theta^k=1/(1-\theta)$. Altså er
+\begin{align*}
+E[L\mid\psi]&=C+C_2\cdot z\cdot \Bigl[  120 \sum_{k=0}^{\infty}(1-z)^k+\sum_{k=1}^{\infty}k(1-z)^k \Bigr]\\
+&=C+C_2\cdot z\cdot  \Bigl[      \frac{120}{z}+\frac{1-z}{z^2}     \Bigr]\\
+&=C+C_2(120+(1-z)/z)
+\end{align*}
+Vi ser at de første 120 led af summen betyder mest når $C_2$ er lille, dvs. når sandsynligheden for at overleve perioden 0-120 er lille. Givet man overlever den periode er ens forventede levetid 120 år plus ventetiden i en geometrisk fordeling. Derfor giver formlen god mening.
+
+
 \subsection{Forklare døden ved hjælp af ens faktorer}
 
 Vi vil nu også lave en optimal $\psi$-værdi som man kan måle brugerens $\psi$ op imod. Dette er dog en udfordring, fordi en faktor som forårsager en sygdom kan hæmme fremkomsten af en anden sygdom. Det gælder foreksempel rygning, lungekræft og Parkinson's. Vi definerer derfor $\psi_0$ så $\psi_0^{i,j,d}$ minimerer $R^{i,j,d}(\cdot)$. Det vil sige at i en lungekræftssammenhæng har $\psi_0$ rygning på 0, mens i en Parkinson's sammenhæng har $\psi_0$ rygning på 2 (cig/day). Antag af $\psi$ er gjort op af $n$ faktorer. Vi definerer nu for et $J\subseteq \{1,\dots, n\}$ faktorværdivektoren $\psi_{0,F_J}$. For en indang $i$ er
