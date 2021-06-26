@@ -11,8 +11,8 @@ export class ContactPage extends React.Component {
                 </div>
                 <Row>
                     <CardDeck className="justify-content-center mx-auto">
-                        <ContactCard description="Sole developer of the model and primary developer of the codebase." name="Svend V Nielsen" imageUrl="https://mdbootstrap.com/img/Photos/Avatars/img%20(31).jpg" />
-                        <ContactCard description="Co-developer of the codebase." name="Christian Andersen" imageUrl="https://mdbootstrap.com/img/Photos/Avatars/img%20(31).jpg" />
+                        <ContactCard description="Codebase. Model development. Database curation." name="Svend V Nielsen" imageUrl="https://mdbootstrap.com/img/Photos/Avatars/img%20(31).jpg" />
+                        <ContactCard description="Codebase." name="Christian Andersen" imageUrl="https://mdbootstrap.com/img/Photos/Avatars/img%20(31).jpg" />
                     </CardDeck>
                 </Row>
             </Container>

@@ -1,5 +1,4 @@
 {
-  "homepage": ".",
   "name": "death-causes-app",
   "version": "0.1.0",
   "private": true,
@@ -36,9 +35,9 @@
     "web-vitals": "^0.2.4"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "start-localhost": "%PUBLIC_URL%=/ react-scripts start",
-    "build": "react-scripts build",
+    "start": "cross-env PUBLIC_URL=. react-scripts start",
+    "start-localhost": "cross-env PUBLIC_URL=. react-scripts start",
+    "build": "cross-env PUBLIC_URL=http://161.35.19.16 react-scripts build",
     "build-localhost": "%PUBLIC_URL%=/ react-scripts build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",
@@ -47,7 +46,7 @@
     "deploy": "gh-pages -d build",
     "server": "node backend/index.js",
     "server-production": "cross-env NODE_ENV=production npm run server",
-    "start-dev": "concurrently \" cross-env NODE_ENV=development npm run server \" \" npm start\" "
+    "start-dev": "concurrently \" cross-env NODE_ENV=development PUBLIC_URL=. npm run server \" \" npm start\" "
   },
   "eslintConfig": {
     "extends": [
