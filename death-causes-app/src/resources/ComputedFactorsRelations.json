@@ -1,15 +1,18 @@
 {
   "SmokeSinceStop": {
     "type": "Computed factor",
-    "ancestors": ["Smoking", "SmokingStopped"]
+    "ancestors": ["Smoking", "SmokingStopped"],
+    "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."]
   },
   "PhysicalTotal": {
     "type": "Computed factor",
-    "ancestors": ["PhysicalMedium", "PhysicalHard"]
+    "ancestors": ["PhysicalMedium", "PhysicalHard"],
+    "descriptions":["Physical total","Total time doing physical activity", "Total physical activity time","Phys. total"]
   },
   "Greens": {
     "type": "Computed factor",
-    "ancestors": ["Fruits", "Vegetables"]
+    "ancestors": ["Fruits", "Vegetables"],
+    "descriptions": ["Greens consumption", "Fruits and vegetables consumption", "Greens"]
   },
   "SmokeCumulative": {
     "type": "Computed factor",
@@ -19,7 +22,8 @@
       "SmokePastAmount",
       "SmokeIntensity",
       "SmokeDuration"
-    ]
+    ],
+    "descriptions": ["Cummulative smoking", "Total amount smoked in life", "Smoke total"]
   },
   "SmokeTypicalAmount": {
     "type":"Computed factor",
@@ -29,7 +33,8 @@
       "SmokeDuration",
       "SmokeIntensity",
       "SmokingStopped"
-    ]
+    ],
+    "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."]
   },
   "OralContraceptiveEver": {
     "type":"Computed factor",
@@ -37,7 +42,8 @@
       "OralContraceptiveStatus",
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
-    ]
+    ],
+    "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"]
   },
   "OralContraceptiveSinceStop": {
     "type":"Computed factor",
@@ -45,6 +51,7 @@
       "OralContraceptiveStatus",
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
-    ]
+    ],
+    "descriptions": ["OCP stop duration", "Time since taking OCP per year", "Time since taking oral contraceptives per year", "OCP end a."]
   }
 }

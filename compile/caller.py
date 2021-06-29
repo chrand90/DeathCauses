@@ -29,7 +29,11 @@ def combine_relations(relations):
     with open(FACTORQUESTIONS_FILE, "r") as f:
         factors = json.load(f)
     for factor_info in factors:
-        relations[factor_info["factorname"]] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
+        relations[factor_info["factorname"]] = {
+            "type": "Input factor",
+            "ancestors": [],
+            "optimizability": factor_info["optimizability"],
+            "descriptions": factor_info["descriptions"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     relations.update(computed_factors)
@@ -75,6 +79,9 @@ def integrate_and_interpolate_all(age_intervals, folder):
     relations = get_cause_hierarchy(folder)
     cause_dirs = search_for_causes(folder)
     rr_dirs = search_for_rrs(folder)
+    descriptions = search_for_descriptions(folder)
+    for node in relations:
+        relations[node]["descriptions"]=descriptions[node]
 
     # for disease, d_dic in relations.items():
     #     print(disease, ": ", d_dic["type"])
@@ -186,10 +193,26 @@ def getAllCategories(listOfDataframes):
 # def similarize_rrs(rrs):
 #     return rrs
 
+def search_for_descriptions(folder):
+    descriptions = {}
+    list_of_files = os.walk(os.path.join(os.pardir, "Database", folder))
+    for path, dirs_within, files_within in list_of_files:
+        name = path.split(os.sep)[-1]
+        if not len(dirs_within) == 0:
+            if "descriptions.json" in files_within:
+                with open(os.path.join(path, "descriptions.json")) as f:
+                    descriptions[name]=json.load(f)
+            else:
+                descriptions[name]=[name]
+    if "Causes" in descriptions:
+        del descriptions["Causes"]
+    return descriptions
+
 def search_for_causes(folder):
     cause_dirs = []
     list_of_files = os.walk(os.path.join(os.pardir, "Database", folder))
     for path, dirs_within, _ in list_of_files:
+
         if "ICDfiles" in dirs_within:
             cause_dirs.append(path + os.sep + "ICDfiles")
     return cause_dirs
