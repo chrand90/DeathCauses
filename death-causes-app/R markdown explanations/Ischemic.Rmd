@@ -65,12 +65,13 @@ The raw age penalties ($\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}$) are shown 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 library(devtools)
 load_all("../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
-dat=initialize_database("../src/resources/Causes.json")
+dat=initialize_database("../src/resources/Causes.json",
+                        "../src/resources/Relations.json")
 plotSpecificPlots(dat, 'Ischemic', c("Age","SmokeTypicalAmount"),'raw')
 plotSpecificPlots(dat, 'Ischemic', c("Age", "SmokeTypicalAmount"),"interpolated")
 ```
 
-Below is the risk ratios for time since one stopped smoking (SmokeSinceStop) and the average amount smoked (number of cigarette, SmokeTypicalAmount). It is not age adjusted, so it is only for 65-year olds.
+Below is the risk ratios for time since one stopped smoking (Smokestop duration) and the average amount smoked (Smoking average). It is not age adjusted, so it is only for 65-year olds.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c("SmokeSinceStop","SmokeTypicalAmount"),'raw')
@@ -79,7 +80,7 @@ plotSpecificPlots(dat, 'Ischemic', c("SmokeSinceStop", "SmokeTypicalAmount"),"in
 
 #### Coronary Heart Disease: Drinking
 
-If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call MaxDrinking).  @roerecke2014alcohol have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from @malyutina2002relation, which is one of the studies included in the meta analysis of @roerecke2014alcohol. Because the study from @malyutina2002relation is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method. 
+If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call Peak alcohol consumption).  @roerecke2014alcohol have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from @malyutina2002relation, which is one of the studies included in the meta analysis of @roerecke2014alcohol. Because the study from @malyutina2002relation is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c("Drinking"),'raw')
