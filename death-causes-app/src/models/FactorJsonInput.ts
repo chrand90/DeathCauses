@@ -3,8 +3,9 @@ import { DerivableOptions } from "./FactorAbstract";
 
 interface FactorAsJson {
   factorname: string;
+  descriptions: string[];
   type: "string" | "number";
-  longExplanation: string;
+  question: string;
   placeholder: string;
   recommendedDomain?: Domain;
   requiredDomain?: Domain;

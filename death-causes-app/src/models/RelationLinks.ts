@@ -31,6 +31,7 @@ interface NodeValue {
   type: NodeType;
   color: string;
   ancestors: string[];
+  descriptions: string[];
   optimizability?: number;
 }
 
@@ -157,6 +158,7 @@ export default class RelationLinks {
   superAncestorCount: NumberOfDestinations = {};
   ancestorList: NodeDic = {};
   descendantList: NodeDic = {};
+  descriptions: NodeDic = {};
   nodeType: NodeToType = {};
   superAncestorList: NodeDic = {};
   superDescendantList: NodeDic = {};
@@ -169,7 +171,7 @@ export default class RelationLinks {
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
-    this.initializeInheritanceListsAndTypeAndColor(jsonObject);
+    this.initializeInheritanceListsAndTypeAndColorAndDescriptions(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
     this.initializeOptimizabilityClasses();
@@ -181,12 +183,14 @@ export default class RelationLinks {
     });
   }
 
-  initializeInheritanceListsAndTypeAndColor(jsonObject: RelationLinkJson) {
+  initializeInheritanceListsAndTypeAndColorAndDescriptions(jsonObject: RelationLinkJson) {
     //initializing  NodeType, ancestorList
     Object.keys(jsonObject).forEach((nodeName: string) => {
       this.descendantList[nodeName] = [];
     });
+    this.colorDic["Unexplained"]="#FFFFFF";
     Object.entries(jsonObject).forEach(([nodeName, node]) => {
+      this.descriptions[nodeName]=node.descriptions;
       this.colorDic[nodeName] = node.color;
       this.nodeType[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
@@ -335,6 +339,23 @@ export default class RelationLinks {
       collapsables,
       expandables
     }; //this.sortedNodes[NodeType.CAUSE_CATEGORY]}
+  }
+
+  getDescription(nodeName: string, maxSize:number=20): string{
+    let candidateLength=0;
+    let candidate=null;
+    this.descriptions[nodeName].forEach(desc => {
+      if(desc.length>= candidateLength && desc.length<=maxSize){
+        candidate=desc;
+        candidateLength=desc.length;
+      }
+    })
+    if(candidate){
+      console.log(nodeName+" -> "+ candidate)
+      return candidate
+    }
+    console.error(`No sufficiently short description(length<${maxSize}) was found for ${nodeName}`)
+    return nodeName;
   }
 
   makeCollectedGroups(groupCats: string[]): CauseGrouping {

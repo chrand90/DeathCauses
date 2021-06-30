@@ -59,6 +59,8 @@ export async function loadFactors():Promise<LoadedFactors> {
 export async function loadRelationLinks():Promise<LoadedRelationLinks> {
     const rawRelationLinks= await loadFromFile<RelationLinkJson>("Relations.json");
     const rdat= new RelationLinks(rawRelationLinks);
+    console.log("rdat")
+    console.log(rdat);
     return {rdat:rdat, rawRelationLinks: rawRelationLinks};
 }
 

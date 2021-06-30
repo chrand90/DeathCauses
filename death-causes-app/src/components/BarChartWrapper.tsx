@@ -37,14 +37,13 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		setChart(new BarChart(
 			chartArea.current, 
 			database, 
-			colorDic, 
+			store.loadedDataStore.rdat, 
 			store.barChartStore.diseaseToWidth, 
 			store.barChartStore.setDiseaseToWidth, 
 			store.barChartStore.explicitCollectedGroups, 
 			store.barChartStore.expandCategory, 
 			store.barChartStore.collectParentCategory,
 			store.loadedDataStore.rdat.getPossibleExpansions(),
-			store.loadedDataStore.rdat.optimizabilities,
 			props.simpleVersion ? props.simpleVersion : false
 		));
 	}

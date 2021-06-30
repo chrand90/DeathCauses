@@ -25,6 +25,7 @@ export default class ComputeController {
   deathCauseCategories: RiskFactorGroupsContainer[];
   riskFactorGroupNodes: RiskFactorGroupNode[] = [];
   allComputedNodes: UpdateDic | null;
+  rdat: RelationLinks;
 
   constructor(
     rdat: RelationLinks,
@@ -33,6 +34,7 @@ export default class ComputeController {
     deathCauses: DeathCause[],
     deathCauseCategories: RiskFactorGroupsContainer[]
   ) {
+    this.rdat=rdat;
     this.formUpdaters = [];
     this.formUpdaterNames = [];
     this.inputFactorTreater = new FactorAnswersToUpdateForm();

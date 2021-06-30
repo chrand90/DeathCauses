@@ -19,7 +19,7 @@ export enum FactorTypes {
 export default abstract class GeneralFactor {
   factorName: string;
   initialValue: string;
-  phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
+  phrasing: string; 
   placeholder: string;
   factorType: string = "abstract";
   helpJson: string | null;

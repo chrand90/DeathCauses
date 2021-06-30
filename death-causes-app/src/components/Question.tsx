@@ -88,7 +88,7 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   helpBox() {
     return (
       <Popover id="popover-basic">
-        <Popover.Title as="h3">{this.props.name}</Popover.Title>
+        <Popover.Title as="h3">{this.props.store.loadedDataStore.rdat.getDescription(this.props.name,30)}</Popover.Title>
         <Popover.Content>{this.helpBoxContent()}</Popover.Content>
       </Popover>
     );
@@ -250,7 +250,9 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   }
 
   inLineFactorNameHeader() {
-    const { fontSize, writtenName } = this.fontSizeForFactorNameHeader();
+    //const { fontSize, writtenName } = this.fontSizeForFactorNameHeader();
+    const fontSize=17;
+    const writtenName=this.props.store.loadedDataStore.rdat.getDescription(this.props.name, 14)
     return (
       <div>
         <p

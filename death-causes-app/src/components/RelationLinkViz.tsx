@@ -127,7 +127,7 @@ export default class RelationLinkViz {
       .attr("class", "linktext")
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) => d.nodeName);
+      .text((d: any) => rdat.getDescription(d.nodeName,20));
 
     this.addTextProperties(stext, elementInFocus, nodeExtremas);
 
@@ -392,7 +392,7 @@ export default class RelationLinkViz {
             .attr("class", "linktext")
             .attr("y", (d: any) => y(d.y) as number)
             .attr("x", (d: any) => x(d.x) as number)
-            .text((d: any) => d.nodeName)
+            .text((d: any) => this.rdat.getDescription(d.nodeName,20))
             .style("opacity", 0);
         },
         (exit) => {
@@ -409,7 +409,7 @@ export default class RelationLinkViz {
       .duration(500)
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) => d.nodeName)
+      .text((d: any) =>  this.rdat.getDescription(d.nodeName,20))
       .style("opacity", 1);
 
     stext

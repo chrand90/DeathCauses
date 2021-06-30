@@ -1,5 +1,5 @@
 import { FactorAnswers } from "../../models/Factors";
-import { OptimizabilityToNodes } from "../../models/RelationLinks";
+import RelationLinks, { OptimizabilityToNodes } from "../../models/RelationLinks";
 import { DimensionStatus, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 
@@ -19,7 +19,7 @@ export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
   factorAnswers: UpdateDic;
   optimClasses: OptimizabilityToNodes;
-  factorNameToOptimClass: {[k:string]:string}={}
+  factorNameToOptimClass: {[k:string]:string}={};
 
   constructor(
     optimClasses: OptimizabilityToNodes,
@@ -95,7 +95,7 @@ export class BestValues {
     return {min: factorAnswer, max: factorAnswer};
   }
 
-  getConsensusStatement(factorName: string) {
+  getConsensusStatement(factorName: string, rdat: RelationLinks) {
     if (
       !(factorName in this.optimals) ||
       this.optimals[factorName].length === 0
@@ -105,6 +105,7 @@ export class BestValues {
     }
     const factorAnswer = this.factorAnswers[factorName];
     const firstEntry = this.optimals[factorName][0];
+    const factorNameDescription= rdat.getDescription(factorName,20); 
     if (typeof firstEntry === "number") {
       const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
       const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
@@ -113,41 +114,43 @@ export class BestValues {
       );
       switch (factorAnswerFlank) {
         case Flank.NEITHER: {
-          return factorName + " perhaps only rounding error";
+          return factorNameDescription + " perhaps only rounding error";
         }
         case Flank.INFINITY: {
           if (stability === FlankStability.STABLE) {
-            return factorName + " is higher than " + firstEntry.toFixed(2).replace(/\.?0+$/,"")
+            return factorNameDescription + " is higher than " + firstEntry.toFixed(2).replace(/\.?0+$/,"")
           } else {
-            return factorName + " too high";
+            return factorNameDescription + " too high";
           }
         }
         case Flank.MINUS_INFINITY: {
           if (stability === FlankStability.STABLE) {
-            return factorName + " is lower than " + firstEntry.toFixed(2).replace(/\.?0+$/,"")
+            return factorNameDescription + " is lower than " + firstEntry.toFixed(2).replace(/\.?0+$/,"")
           } else {
-            return factorName + " too low";
+            return factorNameDescription + " too low";
           }
         }
         case Flank.BOTH: {
-          return factorName + "(complicated)";
+          return factorNameDescription + "(complicated)";
         }
       }
     } else {
       if (this.optimals[factorName].every((d) => d === firstEntry)) {
-        return factorName + " is not " + firstEntry;
+        return factorNameDescription + " is not " + firstEntry;
       } else {
-        return factorName + " (complicated)";
+        return factorNameDescription + " (complicated)";
       }
     }
   }
 
-  getLongConsensusStatement(factorName:string, probability: number, causeName: string){
+  getLongConsensusStatement(factorName:string, probability: number, causeName: string, rdat: RelationLinks){
+    const factorNameDescription = rdat.getDescription(factorName,30);
+    const causeDescription = rdat.getDescription(causeName, 30);
     const prob="<strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
     const {givens, subtracted, optimizability} = this.getGivensAndOptimizability(factorName);
-    let res= "If you die from "+causeName +", there is a " 
+    let res= "If you die from "+causeDescription +", there is a " 
     res+= prob + " probability that it is due to "
-    res+="<strong>" + factorName + "</strong>"
+    res+="<strong>" + factorNameDescription + "</strong>"
     
     if(givens.length>0){
       res=res+". This includes cases where other valid reasons were "+listFormatting(givens, "or")
@@ -160,7 +163,7 @@ export class BestValues {
     }
     const factorAnswer = this.factorAnswers[factorName];
     if(factorAnswer.dimension===DimensionStatus.SINGLE){
-      res=res+". Your "+factorName+ " is "+factorAnswer.value
+      res=res+". Your "+factorNameDescription+ " is "+factorAnswer.value
     }
     if (
       !(factorName in this.optimals) ||
@@ -179,10 +182,10 @@ export class BestValues {
         const minAnswer=min.toFixed(2).replace(/\.?0+$/,"")
         const maxAnswer=max.toFixed(2).replace(/\.?0+$/,"")
         if(minAnswer===maxAnswer){
-          res=res+". Your "+factorName+ " is "+minAnswer
+          res=res+". Your "+factorNameDescription+ " is "+minAnswer
         }
         else{
-          res=res+". Your "+factorName+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " depending on your age"
+          res=res+". Your "+factorNameDescription+ " varies between "+ minAnswer + ' and '+ maxAnswer+ " depending on your age"
         }
       }
       const minVal=Math.min(...(this.optimals[factorName] as number[])).toFixed(2).replace(/\.?0+$/,"")

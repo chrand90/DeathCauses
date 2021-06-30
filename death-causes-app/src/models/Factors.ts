@@ -104,7 +104,7 @@ class Factors {
               factorobject.initialValue
                 ? factorobject.initialValue
                 : "",
-              factorobject.longExplanation,
+              factorobject.question,
               factorobject.placeholder,
               factorobject.requiredDomain ? factorobject.requiredDomain : null,
               factorobject.recommendedDomain
@@ -120,7 +120,7 @@ class Factors {
             this.factorList[factorname] = new StringFactorPermanent(
               factorname,
               factorobject.initialValue ? factorobject.initialValue : "",
-              factorobject.longExplanation,
+              factorobject.question,
               factorobject.placeholder,
               factorobject.options ? factorobject.options : [],
               factorobject.helpJson ? factorobject.helpJson : null,
