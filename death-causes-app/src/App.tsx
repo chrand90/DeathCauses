@@ -1,12 +1,12 @@
-import React from "react";
-import { Col, Container, Row } from "reactstrap";
-import "./App.css";
-import Header from "./components/Header";
-import QuestionMenu from "./components/QuestionMenu";
-import VizWindow from "./components/VizWindow";
-import Spinner from "react-bootstrap/Spinner";
-import {StoreContext, store} from "./stores/rootStore";
-import {observer} from "mobx-react";
+import { observer } from "mobx-react";
+import React from 'react';
+import { Container } from 'react-bootstrap';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import { AboutPage } from "./AboutPage";
+import { ContactPage } from './ContactPage';
+import Main from './Main';
+import Navigation from './NavBar';
+import { store, StoreContext } from "./stores/rootStore";
 
 
 class AppWithoutObserver extends React.Component {
@@ -15,30 +15,43 @@ class AppWithoutObserver extends React.Component {
     super(props);
   }
 
-
   render() {
     return (
-      <div className="App">
-        <StoreContext.Provider value={store}>
-        <Header />
-        <Container fluid>
-          <Row>
-            <Col lg={5} xl={4} style={{ padding: "0px" }}>
-              {store.loadedQuestionMenuData ?  <QuestionMenu/> : <Spinner animation="grow" />}
-            </Col>
-            <Col lg={7} xl={8} style={{ padding: "0px" }}>
-              { store.loadedVizWindowData 
-                ? <VizWindow />
-                : <Spinner animation="grow" />}
-            </Col>
-          </Row>
-        </Container>
-        </StoreContext.Provider >
-      </div>
+      <StoreContext.Provider value={store}>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/">
+              <Navigation fullWidth={true} />
+              <Main />
+            </Route>
+            <Route exact path="/model">
+              <Navigation fullWidth={true} />
+              <AboutPage />
+            </Route>
+            <Route exact path="/contact">
+              <Navigation fullWidth={true} />
+              <ContactPage />
+            </Route>
+            <Route exact>
+              <Navigation fullWidth={true} />
+              <Error />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </StoreContext.Provider >
     );
   }
-
 }
 
-const App= observer(AppWithoutObserver);
+function Error() {
+  return (
+    <Container>
+      <div>
+        <h2>Error</h2>
+      </div>
+    </Container>
+  );
+}
+
+const App = observer(AppWithoutObserver);
 export default App;

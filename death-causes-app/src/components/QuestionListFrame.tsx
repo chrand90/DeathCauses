@@ -2,7 +2,7 @@ import React from "react";
 import Card from "react-bootstrap/Card";
 import Button from "react-bootstrap/Button";
 import ButtonGroup from "react-bootstrap/ButtonGroup";
-import { ButtonToolbar } from "reactstrap";
+import ButtonToolbar from "react-bootstrap/esm/ButtonToolbar";
 import "./QuestionMenu.css";
 import { ERROR_COLOR, FormControlStyle, CHANGED_COLOR } from "./Question";
 import { ComputationState } from "../stores/ComputationStateStore";
