@@ -129,7 +129,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       this.props.store.computationStore.reset();
     }
     if(Object.keys(this.props.store.computationStore.submittedFactorAnswers).length>0){
-      this.props.store.computationStore.compute(this.props.store.computationStore.submittedFactorAnswers);
+      this.props.store.computationStore.compute();
     }
   }
 

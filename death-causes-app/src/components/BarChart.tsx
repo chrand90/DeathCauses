@@ -17,7 +17,7 @@ const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
 let DESIGN = "LONG";
 const BARHEIGHT = 50;
-const XBARHEIGHT = 50;
+const XBARHEIGHT = 80;
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
@@ -126,6 +126,7 @@ export default class BarChart {
   stip: any;
   clicktip: any;
   buttontip: any;
+  widthbuttontip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
   colorDic: NodeToColor;
@@ -142,6 +143,7 @@ export default class BarChart {
   simpleVersion: boolean;
   clickedSquareSection: SquareSection | null=null;
   buttonTipTimeOut: NodeJS.Timeout | undefined=undefined;
+  widthButtonTipTimeOut: NodeJS.Timeout | undefined=undefined;
   optimizabilities: NodeToOptimizability
 
   constructor(
@@ -175,6 +177,7 @@ export default class BarChart {
     this.transitionsOrdered = 0;
     this.optimizabilities=optimizabilities;
     this.simpleVersion = simpleVersion;
+    this.hideAllToolTips=this.hideAllToolTips.bind(this);
     if (simpleVersion) {
       this.grouping = simplifyGrouping(collectedGroups);
     } else {
@@ -214,6 +217,7 @@ export default class BarChart {
   }
 
   hideAllToolTips(){
+    this.widthbuttontip.hide();
     this.buttontip.hide();
     this.clicktip.hide();
     this.stip.hide();
@@ -279,7 +283,7 @@ export default class BarChart {
           "translate(" +
           (d.bbox.width + designConstants.collapseButtonsWidth * 2.25) +
           ", " +
-          -30 +
+          -3 +
           ")"
         );
       })
@@ -299,7 +303,6 @@ export default class BarChart {
       .text("-")
       .style("font-weight", 800)
       .style("font-size", "32px")
-      .style('alignment-baseline', 'hanging')
       .style("fill", function (d) {
         if (d.collapsable) {
           return TEXT_GRAY;
@@ -313,6 +316,7 @@ export default class BarChart {
           vis.buttonTipTimeOut=setTimeout( () => 
             vis.buttontip.show({d:d.name, buttonType:"collapse"}, this)
           ,300);
+          vis.buttontip.offset([5,0])
         }
       })
       .on("mouseleave", function (e: Event, d: any) {
@@ -325,6 +329,7 @@ export default class BarChart {
         }
       })
       .on("click", (e: Event, d: any) => {
+        e.stopPropagation();
         if (d.collapsable) {
           this.collectGroup(d.name);
         }
@@ -338,7 +343,7 @@ export default class BarChart {
           "translate(" +
           (d.bbox.width + designConstants.collapseButtonsWidth * 1) +
           ", " +
-          -30 +
+          -3 +
           ")"
         );
       })
@@ -358,7 +363,6 @@ export default class BarChart {
       .text("+")
       .style("font-weight", 800)
       .style("font-size", "32px")
-      .style('alignment-baseline', 'hanging')
       .style("fill", function (d) {
         if (d.expandable) {
           return TEXT_GRAY;
@@ -371,6 +375,7 @@ export default class BarChart {
           vis.buttonTipTimeOut=setTimeout( () => 
             vis.buttontip.show({d:d.name, buttonType:"expand"}, this)
           ,300);
+          vis.buttontip.offset([5,0])
           d3.select(this).style("fill", LINK_COLOR);
         }
       })
@@ -384,6 +389,7 @@ export default class BarChart {
         }
       })
       .on("click", (e: Event, d: DataRow) => {
+        e.stopPropagation()
         if ((d as any).expandable) {
           this.expandCollectedGroup(d.name);
         }
@@ -490,8 +496,8 @@ export default class BarChart {
 
     d3.select(".stip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
     d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
-    d3.select(".buttontip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
-    
+    d3.selectAll(".buttontip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+
     if(vis.width<501){
       vis.stip = d3Tip()
         .attr("class", "stip small")
@@ -509,6 +515,13 @@ export default class BarChart {
         .direction("s")
         .offset([10, 0])
       vis.buttontip = d3Tip()
+        .attr("class", "buttontip small")
+        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+          return this.buttonTipText(d, buttonType);
+        })
+        .direction("n")
+        .offset([-2, 0])
+      vis.widthbuttontip = d3Tip()
         .attr("class", "buttontip small")
         .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
           return this.buttonTipText(d, buttonType);
@@ -540,14 +553,23 @@ export default class BarChart {
         })
         .direction("n")
         .offset([-2, 0])
+      vis.widthbuttontip = d3Tip()
+        .attr("class", "buttontip")
+        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+          return this.buttonTipText(d, buttonType);
+        })
+        .direction("n")
+        .offset([-2, 0])
     }
 
     vis.svg.call(vis.stip);
     vis.svg.call(vis.clicktip);
     vis.svg.call(vis.buttontip);
+    vis.svg.call(vis.widthbuttontip);
 
 
-    vis.svg.on("click", () => {
+    vis.svg.on("click", (e: Event) => {
+      e.stopPropagation();
       vis.clickedSquareSection=null
       vis.clicktip.hide();
     });
@@ -583,6 +605,7 @@ export default class BarChart {
       })
       .style("cursor", "pointer")
       .on("click", (e: Event, i: number) => {
+        e.stopPropagation();
         const clickedDisease = dataSortedTotal[i].name;
         if (clickedDisease === diseaseToWidth) {
           this.setDiseaseToWidth(null);
@@ -597,35 +620,33 @@ export default class BarChart {
       .style("font-size", "20px")
       .style("font-weight","800")
       .attr("x", (d: any) => 0)
-      .attr("y", (d: any) => BARHEIGHT/5)
+      .attr("y", (d: any) => BARHEIGHT/2)
       .attr("text-anchor", "central")
-      .attr("alignment-baseline", "hanging")
       .style("fill", TEXT_GRAY)
       .text(function (d: any, index: number) {
         return "\u27F7";
       })
       .on("mouseenter", function (d) {
-        vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"width"}, this),
+        vis.widthButtonTipTimeOut=setTimeout( () => 
+            vis.widthbuttontip.show({d:d.name, buttonType:"width"}, this),
           500
         );
         d3.select(this).style("fill", LINK_COLOR);
       })
       .on("mouseleave", function (d) {
-        if(vis.buttonTipTimeOut){
-          clearTimeout(vis.buttonTipTimeOut)
-          vis.buttonTipTimeOut=undefined;
-          vis.buttontip.hide({d:d.name, buttonType:"width"}, this)
+        if(vis.widthButtonTipTimeOut){
+          clearTimeout(vis.widthButtonTipTimeOut)
+          vis.widthButtonTipTimeOut=undefined;
+          vis.widthbuttontip.hide({d:d.name, buttonType:"width"}, this)
         }
         else{
-          vis.buttontip.hide({d:d.name, buttonType:"width"}, this)
+          vis.widthbuttontip.hide({d:d.name, buttonType:"width"}, this)
         }
         d3.select(this).style("fill", TEXT_GRAY);
       });
   }
 
   buttonTipText(d: string, buttonType: "expand" | "collapse" | "width"){
-    console.log(d);
     if(buttonType==="expand"){
       if(d in this.expandables){
         return "Expand into " + this.expandables[d].length.toString()+" subcategories";
@@ -1257,6 +1278,7 @@ export default class BarChart {
         return i;
       })
       .on("click", (e: Event, i: number) => {
+        e.stopPropagation();
         const clickedDisease = dataSortedTotal[i].name;
         if (clickedDisease === diseaseToWidth) {
           this.setDiseaseToWidth(null);

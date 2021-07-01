@@ -11,16 +11,14 @@ link-citations: true
 <style type="text/css">
 
 body{   
-    margin: 10px !important;
-    padding: 10px !important;
-    padding-left: 20px;
-    background:#F0F0F0;
-    max-width:620px;}
+    background:#F0F0F0;}
     
 details{
     background:#e1f9fa;}
 
 </style>
+
+[Link](/model/Ischemic)
 
 Humanity's ability to prevent death has improved tremendously in the last 150 years. Not only can we save many more sick and injured people but we also know more about preventing illness and accidents. For example, it is well known that both drinking and smoking increase the risk of an early death while eating vegetables and wearing seatbelts, likewise, decrease the risk. It is great that people know what is good and what is bad for their health, however there is a lot more to learn. How much does the bad habits increase one's risk of death? And what types of illness and tragedies are related to each habit? On this website you can based on your specific circumstances and habits, get an estimated age of death and a breakdown of how responsible each disease or habit is for your death. These numbers are computed by our mathematical model based on results from a compiled list of [scientific papers](#references).
 
