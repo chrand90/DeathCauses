@@ -69,7 +69,6 @@ export default class SimpleStringQuestion extends React.PureComponent<
         helpText={this.props.helpText}
         validityStatus={this.props.inputvalidity.status}
         secondLine={showmessage ? this.props.inputvalidity.message : ""}
-        windowWidth={this.props.windowWidth}
         descendantDeathCauses={this.props.descendantDeathCauses}
       >
         <Form.Control

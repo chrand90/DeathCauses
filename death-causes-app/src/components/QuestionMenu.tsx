@@ -107,7 +107,6 @@ class QuestionMenuWithoutStore extends React.Component<
                 ? this.props.store.factorInputStore.activelyIgnored[factorName]
                 : false
             }
-            windowWidth={this.props.store.uIStore.windowWidth}
             descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
               factorName
             )}

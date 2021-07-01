@@ -95,7 +95,6 @@ class SimpleNumericQuestionWithoutStore extends React.PureComponent<
         featured={this.props.featured}
         validityStatus={this.props.inputvalidity.status}
         secondLine={showmessage ? this.props.inputvalidity.message : ""}
-        windowWidth={this.props.windowWidth}
         descendantDeathCauses={this.props.descendantDeathCauses}
       >
         <Form.Control
