@@ -63,6 +63,9 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
     )
   }
 
+  onUploadFile(){
+  }
+
   render() {
     return (
       <Card style={{ marginBottom: "20px", minHeight: "300px", maxHeight:"300px",maxWidth:"500px",marginRight:"auto", marginLeft:"auto" }}>
@@ -99,6 +102,7 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
                 <Dropdown.Item onClick={this.props.onStartOver}>Start over</Dropdown.Item>
                 <Dropdown.Item onClick={this.props.onFinishNow}>Go to end</Dropdown.Item>
                 <Dropdown.Item onClick={this.props.onFinishRandomly}>Random</Dropdown.Item>
+                <Dropdown.Item onClick={() => this.onUploadFile()}>Upload data file</Dropdown.Item>
               </DropdownButton>
             </ButtonGroup>
             <ButtonGroup>

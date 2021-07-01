@@ -7,6 +7,8 @@ import "./QuestionMenu.css";
 import { ERROR_COLOR, FormControlStyle, CHANGED_COLOR } from "./Question";
 import { ComputationState } from "../stores/ComputationStateStore";
 import Spinner from "react-bootstrap/Spinner";
+import RootStore, { withStore } from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 interface QuestionListFrameProps {
   onSubmit: (event: React.FormEvent) => void;
@@ -14,6 +16,7 @@ interface QuestionListFrameProps {
   onFinishRandomly: () => void;
   computationState: ComputationState;
   hasError: boolean;
+  store: RootStore;
 }
 
 //the following is the minimum header width for the card. The variables are
@@ -25,7 +28,7 @@ interface QuestionListFrameProps {
 const MIN_HEADER_WIDTH = (1200 * 5) / 7 - 18 * 2 - 1 * 2 - 20 * 2;
 const MAX_BUTTON_WIDTH = (MIN_HEADER_WIDTH / 2 - 20).toPrecision() + "px";
 
-class QuestionListFrame extends React.Component<QuestionListFrameProps, any> {
+class QuestionListFrameWithoutStore extends React.Component<QuestionListFrameProps, any> {
   submitButtonMessage() {
     if (this.props.hasError) {
       return (
@@ -80,6 +83,24 @@ class QuestionListFrame extends React.Component<QuestionListFrameProps, any> {
     );
   }
 
+  download(){
+    if(!window.confirm("Are you sure you want to download your input data to your local machine?")){
+      return false;
+    }
+    const bigObject = {
+      factorMaskings: this.props.store.factorInputStore.factorMaskings,
+      factorAnswers: this.props.store.factorInputStore.factorAnswers,
+      factorAnswerScales: this.props.store.factorInputStore.factorAnswerScales,
+      activelyIgnored: this.props.store.factorInputStore.activelyIgnored,
+    }
+    const blob= new Blob([JSON.stringify(bigObject)], {type : 'application/json'});
+    const element = document.createElement("a");
+    element.href = URL.createObjectURL(blob);
+    element.download = "personal_data.json";
+    document.body.appendChild(element); // Required for this to work in FireFox
+    element.click();
+  }
+
   render() {
     return (
       <Card
@@ -104,7 +125,7 @@ class QuestionListFrame extends React.Component<QuestionListFrameProps, any> {
         <Card.Footer>
           <ButtonToolbar className="justify-content-between">
             <ButtonGroup>
-              <Button>Something</Button>
+              <Button onClick={() => this.download()}>Save personal data</Button>
             </ButtonGroup>
             <ButtonGroup>{this.makeSubmitButton()}</ButtonGroup>
           </ButtonToolbar>
@@ -114,4 +135,5 @@ class QuestionListFrame extends React.Component<QuestionListFrameProps, any> {
   }
 }
 
+const QuestionListFrame = withStore(observer(QuestionListFrameWithoutStore));
 export default QuestionListFrame;
