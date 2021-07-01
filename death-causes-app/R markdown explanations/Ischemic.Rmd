@@ -19,6 +19,9 @@ details{
 </style>
 
 ### Coronary Heart Disease
+
+[backlink](/model/intro)
+
 There are many minor [risk factors](#risk-factor) for ischemic heart disease (also called coronary heart disease). So far we have included the following
 
 * [Age-related smoking and cessation]("coronary-heart-disease-smoking).

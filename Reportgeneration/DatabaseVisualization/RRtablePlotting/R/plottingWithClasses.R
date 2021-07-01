@@ -62,7 +62,7 @@ setClass("Polynomial", slots= c(coefficients="numeric",
                                 exponents="list"))
 setClass("Disease", slots = c(Age="AgeGroups", RiskFactorGroups="list"))
 
-setClass("Description", slots=c(names="character", color="character"))
+setClass("Description", slots=c(names="character", color="character", baseUnit="character"))
 setClass("Database", slots=c(diseases="list"))
 
 de_null=function(val, res_initializer=character){
@@ -324,7 +324,8 @@ initialize_Age_object=function(raw_element){
 initialize_description=function(node, name){
   return(new("Description",
              names=node$descriptions,
-             color=node$color))
+             color=node$color,
+             baseUnit=node$baseUnit))
 }
 
 
@@ -384,14 +385,14 @@ setMethod("dim",
           })
 
 setGeneric(name="getDescription",
-           def=function(x,max_length)
+           def=function(x,max_length,add_unit)
            {
              standardGeneric("getDescription")
            })
 
 setMethod("getDescription",
-          signature=c(x="Description", max_length="numeric"),
-          function(x, max_length){
+          signature=c(x="Description", max_length="numeric", add_unit="logical"),
+          function(x, max_length, add_unit=FALSE){
             candidate_length=0
             candidate_description=x@names[1]
             for(desc in x@names){
@@ -400,16 +401,22 @@ setMethod("getDescription",
                 candidate_description=desc
               }
             }
+            if(add_unit){
+              if(nchar(x@baseUnit)>0){
+                candidate_description=paste(candidate_description,
+                                            paste0("(",x@baseUnit,")"))
+              }
+            }
             return(candidate_description)
           }
           )
 
-get_description=function(factorname, max_length=20){
+get_description=function(factorname, max_length=20, add_unit=F){
   if(!is.null(pkg.env$descriptions)){
     describs=pkg.env$descriptions
     if(!is.null(describs[[factorname]])){
       describ=describs[[factorname]]
-      return(getDescription(describ, max_length))
+      return(getDescription(describ, max_length, add_unit))
     }
   }
   return(substr(factorname,1,floor(max_length)))
@@ -597,7 +604,7 @@ setMethod("makePlot",
             p_df=createPlottingDataframe(x)
             fnames=x@interpolation_variables
             cnames=x@non_interpolation_variables
-            fnames_actual=sapply(fnames, get_description)
+            fnames_actual=sapply(fnames, get_description, add_unit=T)
             cnames_actual=sapply(cnames, get_description)
             if(length(cnames)>0){
               p_df$non_interpolation_combinations=interaction(p_df[,cnames], sep=":")
@@ -684,7 +691,7 @@ setMethod("makePlot",
             df=createPlottingDataframe(x)
             if(n==1){
               fname=x@factorNames[1]
-              fname_actual=get_description(fname)
+              fname_actual=get_description(fname, add_unit = T)
               dc=x@domainCollections[[fname]]
               p <- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=RR, width=width*0.95, fill=RR))+
                 ggplot2::geom_bar(stat='identity', orientation="x")+
@@ -696,7 +703,7 @@ setMethod("makePlot",
             }
             if(n==2){
               fnames=x@factorNames
-              fnames_actual=sapply(fnames, get_description)
+              fnames_actual=sapply(fnames, get_description, add_unit=T)
               dc1=x@domainCollections[[fnames[1]]]
               dc2=x@domainCollections[[fnames[2]]]
               p<- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=y+height/2, height=height*0.95, width=width*0.95, fill=RR))+

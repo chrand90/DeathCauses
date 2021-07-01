@@ -33,7 +33,8 @@ def combine_relations(relations):
             "type": "Input factor",
             "ancestors": [],
             "optimizability": factor_info["optimizability"],
-            "descriptions": factor_info["descriptions"]}
+            "descriptions": factor_info["descriptions"],
+            "baseUnit":factor_info["baseUnit"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     relations.update(computed_factors)
@@ -82,6 +83,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
     descriptions = search_for_descriptions(folder)
     for node in relations:
         relations[node]["descriptions"]=descriptions[node]
+        relations[node]["baseUnit"]=""
 
     # for disease, d_dic in relations.items():
     #     print(disease, ": ", d_dic["type"])

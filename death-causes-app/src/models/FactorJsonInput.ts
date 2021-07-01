@@ -4,6 +4,7 @@ import { DerivableOptions } from "./FactorAbstract";
 interface FactorAsJson {
   factorname: string;
   descriptions: string[];
+  baseUnit: string;
   type: "string" | "number";
   question: string;
   placeholder: string;

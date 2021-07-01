@@ -2,17 +2,20 @@
   "SmokeSinceStop": {
     "type": "Computed factor",
     "ancestors": ["Smoking", "SmokingStopped"],
-    "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."]
+    "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."],
+    "baseUnit":"years"
   },
   "PhysicalTotal": {
     "type": "Computed factor",
     "ancestors": ["PhysicalMedium", "PhysicalHard"],
-    "descriptions":["Physical total","Total time doing physical activity", "Total physical activity time","Phys. total"]
+    "descriptions":["Physical total","Total time doing physical activity", "Total physical activity time","Phys. total"],
+    "baseUnit":"MET minutes/week"
   },
   "Greens": {
     "type": "Computed factor",
     "ancestors": ["Fruits", "Vegetables"],
-    "descriptions": ["Greens consumption", "Fruits and vegetables consumption", "Greens"]
+    "descriptions": ["Greens consumption", "Fruits and vegetables consumption", "Greens"],
+    "baseUnit":"1 green=100 grams"
   },
   "SmokeCumulative": {
     "type": "Computed factor",
@@ -23,7 +26,8 @@
       "SmokeIntensity",
       "SmokeDuration"
     ],
-    "descriptions": ["Cummulative smoking", "Total amount smoked in life", "Smoke total"]
+    "descriptions": ["Cummulative smoking", "Total amount smoked in life", "Smoke total"],
+    "baseUnit":"cig-years"
   },
   "SmokeTypicalAmount": {
     "type":"Computed factor",
@@ -34,7 +38,8 @@
       "SmokeIntensity",
       "SmokingStopped"
     ],
-    "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."]
+    "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."],
+    "baseUnits":"cigarettes/day"
   },
   "OralContraceptiveEver": {
     "type":"Computed factor",
@@ -43,7 +48,8 @@
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
     ],
-    "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"]
+    "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"],
+    "baseUnit":""
   },
   "OralContraceptiveSinceStop": {
     "type":"Computed factor",
@@ -52,6 +58,7 @@
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
     ],
-    "descriptions": ["OCP stop duration", "Time since taking OCP per year", "Time since taking oral contraceptives per year", "OCP end a."]
+    "descriptions": ["OCP stop duration", "Time since taking OCP per year", "Time since taking oral contraceptives per year", "OCP end a."],
+    "baseUnit":"years"
   }
 }
