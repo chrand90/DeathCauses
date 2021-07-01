@@ -162,7 +162,7 @@ export default class FactorInputStore {
 
   setFactorAnswers(factorAnswers: FactorAnswers, factorMaskings?: FactorMaskings){
       if(factorMaskings!==undefined){
-          this.factorMaskings=this.factorMaskings
+          this.factorMaskings=factorMaskings
       }
       this.factorAnswers=factorAnswers;
       this.resetValidities();
