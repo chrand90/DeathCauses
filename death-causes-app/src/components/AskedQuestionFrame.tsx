@@ -75,7 +75,7 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
             {this.props.leftCornerCounter}
           </div>
           <Card.Title>
-            {this.props.factorName ? this.props.store.loadedDataStore.rdat.getDescription(this.props.factorName,25) : "No more questions"}
+            {this.props.factorName ? this.props.store.loadedDataStore.descriptions.getDescription(this.props.factorName,25) : "No more questions"}
           </Card.Title>
         <div>
           {""}

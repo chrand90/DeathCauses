@@ -29,10 +29,7 @@ interface ReverseNodeOrder {
 
 interface NodeValue {
   type: NodeType;
-  color: string;
   ancestors: string[];
-  descriptions: string[];
-  optimizability?: number;
 }
 
 export interface RelationLinkJson {
@@ -49,14 +46,6 @@ interface NodeDic {
 
 interface NodeToType {
   [nodeName: string]: NodeType;
-}
-
-export interface NodeToOptimizability {
-  [nodeName: string]: number;
-}
-
-export interface OptimizabilityToNodes {
-  [optim: string]: string[];
 }
 
 export interface NodeToColor {
@@ -158,23 +147,18 @@ export default class RelationLinks {
   superAncestorCount: NumberOfDestinations = {};
   ancestorList: NodeDic = {};
   descendantList: NodeDic = {};
-  descriptions: NodeDic = {};
   nodeType: NodeToType = {};
   superAncestorList: NodeDic = {};
   superDescendantList: NodeDic = {};
   nodeOrderReversed: ReverseNodeOrder = {};
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
-  colorDic: NodeToColor = {};
-  optimizabilities: NodeToOptimizability = {};
-  optimizabilityClasses: OptimizabilityToNodes = {};
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
-    this.initializeInheritanceListsAndTypeAndColorAndDescriptions(jsonObject);
+    this.initializeInheritanceListsAndType(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
-    this.initializeOptimizabilityClasses();
   }
 
   initializeReverseNodeTypeOrder() {
@@ -183,21 +167,15 @@ export default class RelationLinks {
     });
   }
 
-  initializeInheritanceListsAndTypeAndColorAndDescriptions(jsonObject: RelationLinkJson) {
+  initializeInheritanceListsAndType(jsonObject: RelationLinkJson) {
     //initializing  NodeType, ancestorList
     Object.keys(jsonObject).forEach((nodeName: string) => {
       this.descendantList[nodeName] = [];
     });
-    this.colorDic["Unexplained"]="#FFFFFF";
+    
     Object.entries(jsonObject).forEach(([nodeName, node]) => {
-      this.descriptions[nodeName]=node.descriptions;
-      this.colorDic[nodeName] = node.color;
       this.nodeType[nodeName] = node.type;
       this.ancestorList[nodeName] = node.ancestors;
-      if (node.optimizability) {
-        this.optimizabilities[nodeName] = node.optimizability;
-      }
-
       this.ancestorList[nodeName].forEach((ancestor: string) => {
         try {
           return this.descendantList[ancestor].push(nodeName);
@@ -238,45 +216,6 @@ export default class RelationLinks {
     });
   }
 
-  initializeOptimizabilityClasses() {
-    this.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((nodeName: string) => {
-      this.optimizabilities[nodeName] = this.followMaximumOfSummary(
-        nodeName,
-        this.ancestorList,
-        () => true,
-        (nodename: string) => {
-          if (this.optimizabilities[nodename]) {
-            return this.optimizabilities[nodename];
-          }
-          return 0;
-        },
-        (previous: number[], thisNodeContribution: number) => {
-          return Math.max(...previous, thisNodeContribution);
-        }
-      );
-    });
-    this.sortedNodes[NodeType.INPUT]
-      .concat(this.sortedNodes[NodeType.COMPUTED_FACTOR])
-      .forEach((nodeName) => {
-        let optimValue = this.optimizabilities[nodeName];
-        if (!(optimValue in this.optimizabilityClasses)) {
-          let emptyStrings: string[] = [];
-          this.optimizabilityClasses[optimValue] = emptyStrings;
-        }
-        this.optimizabilityClasses[optimValue].push(nodeName);
-      });
-  }
-
-  getOptimizabilityClasses(nodeNames: string[]): OptimizabilityToNodes {
-    let resAsLists=Object.entries(this.optimizabilityClasses)
-      .map(([optimValue, nodes]) => {
-        return [optimValue, nodes.filter( (node:string) => nodeNames.includes(node))]
-      })
-      .filter( ([optimValue, nodes]) => {
-        return nodes.length>0;
-      })
-    return Object.fromEntries(resAsLists);
-  }
 
   getParentCategory(nodeName: string) {
     let candidates = this.ancestorList[nodeName].filter(
@@ -341,22 +280,7 @@ export default class RelationLinks {
     }; //this.sortedNodes[NodeType.CAUSE_CATEGORY]}
   }
 
-  getDescription(nodeName: string, maxSize:number=20): string{
-    let candidateLength=0;
-    let candidate=null;
-    this.descriptions[nodeName].forEach(desc => {
-      if(desc.length>= candidateLength && desc.length<=maxSize){
-        candidate=desc;
-        candidateLength=desc.length;
-      }
-    })
-    if(candidate){
-      console.log(nodeName+" -> "+ candidate)
-      return candidate
-    }
-    console.error(`No sufficiently short description(length<${maxSize}) was found for ${nodeName}`)
-    return nodeName;
-  }
+  
 
   makeCollectedGroups(groupCats: string[]): CauseGrouping {
     let causeToParent: CauseToParentMapping = {};
@@ -626,9 +550,6 @@ export default class RelationLinks {
     return { transformedLabels: resDat, xDivisions: xDivisions };
   }
 
-  getOptimizabilities(){
-    return this.optimizabilities;
-  }
 
   getAllPossibleNodes(): string[] {
     return Object.keys(this.nodeType).sort();
@@ -925,7 +846,4 @@ export default class RelationLinks {
     return res;
   }
 
-  getColorDic() {
-    return this.colorDic;
-  }
 }

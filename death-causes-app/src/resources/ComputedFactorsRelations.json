@@ -39,7 +39,7 @@
       "SmokingStopped"
     ],
     "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."],
-    "baseUnits":"cigarettes/day"
+    "baseUnit":"cigarettes/day"
   },
   "OralContraceptiveEver": {
     "type":"Computed factor",

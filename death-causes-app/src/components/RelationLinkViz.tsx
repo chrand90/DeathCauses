@@ -1,5 +1,6 @@
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
+import Descriptions from "../models/Descriptions";
 import RelationLinks, {
   Arrow,
   NodeType,
@@ -37,6 +38,7 @@ interface ArrowPlottingObject extends Arrow, ArrowExtender {}
 
 export default class RelationLinkViz {
   rdat: RelationLinks;
+  descriptions: Descriptions;
   changeElementInFocus: (d: string) => void;
   width: number = 0;
   svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>;
@@ -44,6 +46,7 @@ export default class RelationLinkViz {
   constructor(
     canvas: HTMLElement | null,
     rdat: RelationLinks,
+    descriptions: Descriptions,
     elementInFocus: string,
     changeElementInFocus: (d: string) => void
   ) {
@@ -51,6 +54,7 @@ export default class RelationLinkViz {
     console.log("wdth");
     console.log(this.width);
     this.rdat = rdat;
+    this.descriptions=descriptions;
     this.changeElementInFocus = changeElementInFocus;
 
     this.svg = d3
@@ -127,7 +131,7 @@ export default class RelationLinkViz {
       .attr("class", "linktext")
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) => rdat.getDescription(d.nodeName,20));
+      .text((d: any) => this.descriptions.getDescription(d.nodeName,20));
 
     this.addTextProperties(stext, elementInFocus, nodeExtremas);
 
@@ -392,7 +396,7 @@ export default class RelationLinkViz {
             .attr("class", "linktext")
             .attr("y", (d: any) => y(d.y) as number)
             .attr("x", (d: any) => x(d.x) as number)
-            .text((d: any) => this.rdat.getDescription(d.nodeName,20))
+            .text((d: any) => this.descriptions.getDescription(d.nodeName,20))
             .style("opacity", 0);
         },
         (exit) => {
@@ -409,7 +413,7 @@ export default class RelationLinkViz {
       .duration(500)
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) =>  this.rdat.getDescription(d.nodeName,20))
+      .text((d: any) =>  this.descriptions.getDescription(d.nodeName,20))
       .style("opacity", 1);
 
     stext

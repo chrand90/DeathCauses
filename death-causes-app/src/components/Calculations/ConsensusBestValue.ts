@@ -1,5 +1,6 @@
+import Descriptions, {OptimizabilityToNodes} from "../../models/Descriptions";
 import { FactorAnswers } from "../../models/Factors";
-import RelationLinks, { OptimizabilityToNodes } from "../../models/RelationLinks";
+import RelationLinks from "../../models/RelationLinks";
 import { DimensionStatus, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 
@@ -95,7 +96,7 @@ export class BestValues {
     return {min: factorAnswer, max: factorAnswer};
   }
 
-  getConsensusStatement(factorName: string, rdat: RelationLinks) {
+  getConsensusStatement(factorName: string, descriptions: Descriptions) {
     if (
       !(factorName in this.optimals) ||
       this.optimals[factorName].length === 0
@@ -105,7 +106,7 @@ export class BestValues {
     }
     const factorAnswer = this.factorAnswers[factorName];
     const firstEntry = this.optimals[factorName][0];
-    const factorNameDescription= rdat.getDescription(factorName,20); 
+    const factorNameDescription= descriptions.getDescription(factorName,20); 
     if (typeof firstEntry === "number") {
       const {min, max}=this.getMinMaxOfFactorAnswers(factorAnswer.value as number | number[]);
       const { side: factorAnswerFlank, stability } = computeFlankOfFactorAnswer(
@@ -143,9 +144,9 @@ export class BestValues {
     }
   }
 
-  getLongConsensusStatement(factorName:string, probability: number, causeName: string, rdat: RelationLinks){
-    const factorNameDescription = rdat.getDescription(factorName,30);
-    const causeDescription = rdat.getDescription(causeName, 30);
+  getLongConsensusStatement(factorName:string, probability: number, causeName: string, descriptions: Descriptions){
+    const factorNameDescription = descriptions.getDescription(factorName,30);
+    const causeDescription = descriptions.getDescription(causeName, 30);
     const prob="<strong>"+(probability*100).toFixed(1).replace(/\.?0+$/,"")+"%</strong>"
     const {givens, subtracted, optimizability} = this.getGivensAndOptimizability(factorName);
     let res= "If you die from "+causeDescription +", there is a " 

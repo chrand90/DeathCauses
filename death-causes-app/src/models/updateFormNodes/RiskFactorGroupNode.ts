@@ -4,7 +4,7 @@ import {
   SetToNumber,
 } from "../../components/Calculations/DebtInheritance";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
-import RelationLinks, { OptimizabilityToNodes } from "../RelationLinks";
+import { OptimizabilityToNodes } from "../Descriptions";
 import { OptimsToSDics, RiskRatioResult } from "./RiskFactorGroupResult";
 import { ChangeStatus, DimensionStatus, MissingStatus, StochasticStatus, TypeStatus, UpdateDic, UpdateForm } from "./UpdateForm";
 import FormUpdater from "./FormUpdater";

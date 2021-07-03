@@ -8,10 +8,9 @@ import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
 import RelationLinks, {
   CauseGrouping,
   CauseToParentMapping,
-  NodeToColor,
-  NodeToOptimizability,
-  ParentToCausesMapping,
+  ParentToCausesMapping
 } from "../models/RelationLinks";
+import Descriptions from "../models/Descriptions";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
@@ -125,7 +124,7 @@ export default class BarChart {
   widthbuttontip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
-  rdat: RelationLinks;
+  descriptions: Descriptions;
   setDiseaseToWidth: (newDiseaseToWidth: string | null) => void;
   expandCollectedGroup: (causecategory: string) => void;
   collectGroup: (causecategory: string) => void;
@@ -144,7 +143,7 @@ export default class BarChart {
   constructor(
     element: HTMLElement | null,
     database: DataSet,
-    rdat: RelationLinks,
+    descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
     collectedGroups: CauseGrouping,
@@ -159,7 +158,7 @@ export default class BarChart {
     //Initializers
     this.yBars = d3.scaleBand();
     this.xscale = d3.scaleLinear();
-    this.rdat = rdat;
+    this.descriptions = descriptions;
     this.setDiseaseToWidth = setDiseaseToWidth;
     this.expandCollectedGroup = expandCollectedGroup;
     this.collectGroup = collectGroup;
@@ -262,7 +261,7 @@ export default class BarChart {
       .attr("y", 0)
       .attr("x", 0)
       .text(function (d: any) {
-        return vis.rdat.getDescription(d.name,100);
+        return vis.descriptions.getDescription(d.name,100);
       })
       .style("text-anchor", designConstants.textAnchor)
       .attr("transform", designConstants.textTranslation)
@@ -647,7 +646,7 @@ export default class BarChart {
     }
     if(buttonType==="collapse"){
       if(d in this.collapsables){
-        return "Merge all "+ this.rdat.getDescription(this.collapsables[d][0],20)
+        return "Merge all "+ this.descriptions.getDescription(this.collapsables[d][0],20)
       }
     }
     if(buttonType==="width"){
@@ -666,11 +665,11 @@ export default class BarChart {
       .attr("x", (d) => this.xscale(d.x0))
       .attr("height", this.yBars.bandwidth)
       .attr("width", (d) => Math.max(0, this.xscale(d.x) - this.xscale(d.x0)))
-      .attr("fill", (d) => this.rdat.colorDic[d.cause])
+      .attr("fill", (d) => this.descriptions.getColor(d.cause))
       .attr("stroke", "#2378ae")
       .style("cursor", "pointer")
       .on("mouseenter", function (e: Event, d: SquareSection) {
-        d3.select(".stip").style("background-color", vis.rdat.colorDic[d.cause]);
+        d3.select(".stip").style("background-color", vis.descriptions.getColor(d.cause));
         if (vis.clickedSquareSection !== d) {
           vis.stip.show(d, this);
         }
@@ -688,7 +687,7 @@ export default class BarChart {
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
       })
       .on("click", function (e: Event, d: SquareSection) {
-        d3.select(".clicktip").style("background-color", vis.rdat.colorDic[d.cause]);
+        d3.select(".clicktip").style("background-color", vis.descriptions.getColor(d.cause));
         vis.clicktip.show(d, this);
         vis.clickedSquareSection = d;
         vis.stip.hide();
@@ -753,7 +752,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.rdat,
+      this.descriptions,
     );
     const notToBeMerged = getSubCollectGroup(
       oldCollectedGroups,
@@ -764,7 +763,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.rdat,
+      this.descriptions,
       notToBeMerged
     );
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
@@ -994,7 +993,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.rdat
+      this.descriptions
     );
     const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
     const {
@@ -1004,7 +1003,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       oldCollectedGroups,
-      this.rdat,
+      this.descriptions,
       notToBeMerged
     );
     const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
@@ -1163,7 +1162,7 @@ export default class BarChart {
       data,
       diseaseToWidth,
       this.grouping,
-      this.rdat
+      this.descriptions
     );
     const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
     const dataIds = dataSortedTotal.map((v: any, index: number) => {

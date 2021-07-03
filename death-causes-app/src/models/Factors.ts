@@ -112,7 +112,8 @@ class Factors {
                 : null,
               factorobject.units ? factorobject.units : {},
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -124,7 +125,8 @@ class Factors {
               factorobject.placeholder,
               factorobject.options ? factorobject.options : [],
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -175,6 +177,10 @@ class Factors {
     } else {
       return [];
     }
+  }
+
+  getDeathCauseDescendants(nodeName: string){
+    return this.factorList[nodeName].getDeathCauseDescendants();
   }
 
   updateMasked(
