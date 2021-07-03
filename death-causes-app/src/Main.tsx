@@ -24,10 +24,10 @@ class MainWithoutObserver extends React.Component<MainProps> {
         <Container fluid>
           <Row>
             <Col lg={5} xl={4} style={{ padding: "0px" }}>
-              {this.props.store.loadedQuestionMenuData ? <QuestionMenu /> : <Spinner animation="grow" />}
+              {this.props.store.loadedDataStore.loadedQuestionMenuData ? <QuestionMenu /> : <Spinner animation="grow" />}
             </Col>
             <Col lg={7} xl={8} style={{ padding: "0px" }}>
-              {this.props.store.loadedVizWindowData
+              {this.props.store.loadedDataStore.loadedVizWindowData && this.props.store.loadedDataStore.loadedQuestionMenuData 
                 ? <VizWindow />
                 : <Spinner animation="grow" />}
             </Col>

@@ -1,4 +1,3 @@
-import { thresholdFreedmanDiaconis } from "d3-array";
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import Deathcause, { RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
@@ -6,6 +5,7 @@ import { RawDeathCauseJson } from "../../components/database/Deathcause";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
 import ComputeController from "../updateFormNodes/UpdateFormController";
+import Descriptions, { DescriptionsJson } from "../Descriptions";
 
 class computations {
   computer: ComputeController | null;
@@ -14,7 +14,7 @@ class computations {
     this.computer = null;
   }
 
-  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number) {
+  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number, rawDescriptions: DescriptionsJson) {
     const rlinks = new RelationLinks(json);
     const deathcauses: Deathcause[]=[];
     Object.entries(rawData).forEach(([key, deathcause]) => {
@@ -26,12 +26,14 @@ class computations {
         new RiskFactorGroupsContainer(deathcause, key)
       );
     });
+    const descriptions= new Descriptions(rawDescriptions);
     this.computer = new ComputeController(
       rlinks,
       ageFrom,
       ageTo,
       deathcauses,
-      deathCauseCategories
+      deathCauseCategories,
+      descriptions
     );
   }
 
@@ -51,6 +53,6 @@ export function processData(data: FactorAnswers):{survivalData: SurvivalCurveDat
   return c.processData(data);
 }
 
-export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number) {
-  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo);
+export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, ageFrom: number | null, ageTo: number) {
+  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo, rawDescriptions);
 }

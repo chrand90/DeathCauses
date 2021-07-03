@@ -12,8 +12,6 @@ import UIStore from "./UIStore";
 
 export default class RootStore {
   factorInputStore: FactorInputStore;
-  loadedQuestionMenuData: boolean;
-  loadedVizWindowData: boolean;
   questionProgressStore: QuestionProgressStore;
   loadedDataStore: LoadedDataStore;
   advancedOptionsStore: AdvancedOptionsStore;
@@ -24,8 +22,6 @@ export default class RootStore {
   uIStore: UIStore;
 
   constructor() {
-    this.loadedQuestionMenuData = false;
-    this.loadedVizWindowData = false;
     this.loadedDataStore = new LoadedDataStore();
     this.uIStore = new UIStore();
     this.computationStateStore= new ComputationStateStore();
@@ -37,32 +33,10 @@ export default class RootStore {
       this.loadedDataStore
     );
     this.barChartStore = new BarChartStore(this.loadedDataStore);
-    makeObservable(this, {
-      loadedVizWindowData: observable,
-      loadedQuestionMenuData: observable,
-      loadAllData: action.bound,
-    });
-    this.loadAllData();
+    this.loadedDataStore.loadAllData(this.factorInputStore, this.computationStore, this.questionProgressStore);
   }
 
-  loadAllData() {
-    this.loadedDataStore
-      .loadQuestionMenuContent()
-      .then(action(() => {
-        this.factorInputStore.attachLoadedData();
-        this.questionProgressStore.attachLoadedData();
-        this.loadedQuestionMenuData = true;
-        return 
-      }))
-      .then(()=>{
-        return this.loadedDataStore.loadDeathCauses()
-      })
-      .then(action(() => {
-        this.computationStore.attachLoadedData();
-        this.loadedVizWindowData=true;
-        return
-      }));
-  }
+
 }
 
 /* Store end */

@@ -19,7 +19,6 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	const database = props.database;
 	const chartArea = useRef(null);
 	const [chart, setChart] = useState<BarChart | null>(null);
-	const colorDic = store.loadedDataStore.rdat.getColorDic();
 
 
 	useEffect(() => {
@@ -37,7 +36,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		setChart(new BarChart(
 			chartArea.current, 
 			database, 
-			store.loadedDataStore.rdat, 
+			store.loadedDataStore.descriptions, 
 			store.barChartStore.diseaseToWidth, 
 			store.barChartStore.setDiseaseToWidth, 
 			store.barChartStore.explicitCollectedGroups, 

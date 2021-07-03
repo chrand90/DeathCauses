@@ -10,7 +10,8 @@ export default class StringFactorPermanent extends GeneralFactor {
       placeholder: string = "",
       options: string[] = [],
       helpJson: string | null = null,
-      derivableStatesInitializer: DerivableOptions
+      derivableStatesInitializer: DerivableOptions,
+      descendants: string[]
     ) {
       super(
         factorName,
@@ -18,7 +19,8 @@ export default class StringFactorPermanent extends GeneralFactor {
         phrasing,
         placeholder,
         derivableStatesInitializer,
-        helpJson
+        helpJson,
+        descendants
       );
       this.factorType = "string";
       this.options = options;

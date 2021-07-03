@@ -26,7 +26,8 @@ const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //cl
 	const createNewChart = function () {
 		setChart(new RelationLinkViz(
 			chartArea.current, 
-			store.loadedDataStore.rdat, 
+			store.loadedDataStore.rdat,
+			store.loadedDataStore.descriptions,
 			store.relationLinkVizStore.elementInFocus, 
 			store.relationLinkVizStore.setElementInFocus));
 	}
@@ -59,7 +60,7 @@ const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //cl
 		<div>
 			<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
 				{store.loadedDataStore.rdat.getAllPossibleNodes().map((d:string) => {
-					return <option value={d}>{store.loadedDataStore.rdat.getDescription(d,20)}</option>
+					return <option value={d}>{store.loadedDataStore.descriptions.getDescription(d,20)}</option>
 				})}
 				</select> in the model</p>
 		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>

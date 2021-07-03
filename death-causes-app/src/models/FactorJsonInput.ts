@@ -3,8 +3,6 @@ import { DerivableOptions } from "./FactorAbstract";
 
 interface FactorAsJson {
   factorname: string;
-  descriptions: string[];
-  baseUnit: string;
   type: "string" | "number";
   question: string;
   placeholder: string;
@@ -15,6 +13,7 @@ interface FactorAsJson {
   options?: string[];
   units?: UnitOptions;
   derivables?: DerivableOptions;
+  descendants?: string[];
 }
 
 type InputJson = FactorAsJson[];
