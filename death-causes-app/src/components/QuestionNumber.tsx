@@ -45,8 +45,6 @@ class SimpleNumericQuestionWithoutStore extends React.PureComponent<
       formControlStyle["borderColor"] = ERROR_COLOR;
       formControlStyle["color"] = ERROR_COLOR;
     }
-    console.log("this.state.ignore");
-    console.log(this.props.ignore);
     if (this.props.inputvalidity.status === "Warning") {
       showmessage = true;
       formControlStyle["borderColor"] = WARNING_COLOR;

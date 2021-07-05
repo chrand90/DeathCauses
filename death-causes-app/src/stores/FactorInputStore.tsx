@@ -12,15 +12,22 @@ interface InputValidities {
   [key: string]: InputValidity;
 }
 
-interface ignoreList {
+interface IgnoreList {
   [key: string]: boolean;
+}
+
+export interface AllNecessaryInputs {
+  factorAnswers: FactorAnswers;
+  factorMaskings: FactorMaskings;
+  factorAnswerUnitScalings: FactorAnswerUnitScalings;
+  activelyIgnored: IgnoreList
 }
 
 export default class FactorInputStore {
   validities: InputValidities;
   factorAnswers: FactorAnswers;
   factorAnswerScales: FactorAnswerUnitScalings;
-  activelyIgnored: ignoreList;
+  activelyIgnored: IgnoreList;
   loadedDataStore: LoadedDataStore;
   computationStateStore: ComputationStateStore;
   factorMaskings: FactorMaskings;
@@ -47,8 +54,28 @@ export default class FactorInputStore {
       changeUnit: action.bound,
       updateMissingValidities: action.bound,
       updateSpecificValidity: action.bound,
-      setFactorAnswers: action.bound
+      setFactorAnswers: action.bound,
+      insertData: action.bound,
     });
+  }
+
+  getAllNecessaryInputs(): AllNecessaryInputs{
+    return {
+      factorAnswers: this.factorAnswers,
+      factorMaskings: this.factorMaskings,
+      factorAnswerUnitScalings: this.factorAnswerScales,
+      activelyIgnored: this.activelyIgnored
+    }
+  }
+
+  insertData(data: AllNecessaryInputs){
+    //we may want to make this 
+    this.factorAnswers={...this.factorAnswers, ...data.factorAnswers};
+    this.factorMaskings=data.factorMaskings;
+    this.factorAnswerScales=data.factorAnswerUnitScalings;
+    this.activelyIgnored=data.activelyIgnored;
+    this.resetValidities();
+    this.computationStateStore.setComputationState(ComputationState.CHANGED)
   }
 
   attachLoadedData() {

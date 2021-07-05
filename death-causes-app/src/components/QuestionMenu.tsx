@@ -15,21 +15,45 @@ import QuestionListFrame from "./QuestionListFrame";
 import "./QuestionMenu.css";
 import SimpleNumericQuestion from "./QuestionNumber";
 import SimpleStringQuestion from "./QuestionString";
+import { withRouter, RouteComponentProps } from "react-router";
+import { QUERY_STRING_START } from "./Helpers";
+import { AllNecessaryInputs } from "../stores/FactorInputStore";
 
-interface QuestionMenuProps {
+interface QuestionMenuProps extends RouteComponentProps{
   store: RootStore;
 }
 
-class QuestionMenuWithoutStore extends React.Component<
+class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
   QuestionMenuProps
 > {
 
   constructor(props: QuestionMenuProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-    this.previousQuestion = this.previousQuestion.bind(this);
-    this.startOverQuestionnaire = this.startOverQuestionnaire.bind(this);
-    this.insertRandom = this.insertRandom.bind(this);
+
+
+  }
+
+  componentDidMount(){
+    const queryString=this.props.location.search;
+    if(queryString.startsWith(QUERY_STRING_START)){
+      const afterStart = queryString.slice(QUERY_STRING_START.length)
+      try {
+        const urlJSON=JSON.parse(decodeURIComponent(afterStart)) as AllNecessaryInputs
+        //Waiting for the next update cycle to apply the changes:
+        setTimeout( 
+          () => {
+            this.props.store.factorInputStore.insertData(urlJSON);
+            this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
+          },
+          0
+        )
+              }
+      catch(e: any){
+        console.error("Could not decode the URL query string")
+      }
+      
+    }
   }
 
   handleSubmit(event: React.FormEvent) {
@@ -119,43 +143,13 @@ class QuestionMenuWithoutStore extends React.Component<
     }
   }
 
-  startOverQuestionnaire() {
-    this.props.store.questionProgressStore.startOverQuestionnaire();
-    this.props.store.factorInputStore.resetValidities();
-  }
 
-  previousQuestion() {
-    this.props.store.questionProgressStore.previousQuestion(this.props.store.factorInputStore.factorMaskings);
-    this.props.store.factorInputStore.updateSpecificValidity(this.props.store.questionProgressStore.currentFactor);
-  }
 
-  insertRandom() {
-    const {
-      factorAnswers,
-      factorMaskings,
-    } = this.props.store.loadedDataStore.factors.simulateFactorAnswersAndMaskings();
-    this.props.store.factorInputStore.setFactorAnswers(factorAnswers, factorMaskings)
-    this.props.store.questionProgressStore.finishQuestionnaire();
-  }
 
-  getCounter() { //computed value that depends on two different stores and therefore easier just to put it here. 
-    let denominator =
-      this.props.store.loadedDataStore.factorOrder.length - Object.keys(this.props.store.factorInputStore.factorMaskings).length;
-    let numerator =
-      this.props.store.loadedDataStore.factorOrder
-        .filter((factorAnswer) => {
-          return !(factorAnswer in this.props.store.factorInputStore.factorMaskings);
-        })
-        .indexOf(this.props.store.questionProgressStore.currentFactor) + 1;
-    if (numerator === 0) {
-      //at the time of implementation it could happen if a property is changed in questionlist
-      return "-/" + denominator;
-    }
-    if (numerator > denominator) {
-      return denominator + "/" + denominator;
-    }
-    return numerator + "/" + denominator;
-  }
+
+
+
+
 
   getQuestionToAnswer() {
     if (this.props.store.questionProgressStore.answeringProgress === AnswerProgress.FINISHED) {
@@ -164,20 +158,8 @@ class QuestionMenuWithoutStore extends React.Component<
           factorName={undefined}
           validity={undefined}
           onSubmit={this.handleSubmit}
-          previousPossible={
-            this.props.store.loadedDataStore.factorOrder.indexOf(this.props.store.questionProgressStore.currentFactor) !== 0
-          }
-          onPrevious={this.previousQuestion}
-          onStartOver={this.startOverQuestionnaire}
-          onFinishNow={this.props.store.questionProgressStore.finishQuestionnaire}
-          onFinishRandomly={this.insertRandom}
-          leftCornerCounter={this.getCounter()}
-          onSwitchView={() => {
-            this.props.store.questionProgressStore.switchView(QuestionView.NOTHING);
-          }}
           finished={true}
-          computationState={this.props.store.computationStateStore.computationState}
-        />
+          />
       );
     }
     if (this.props.store.questionProgressStore.currentFactor) {
@@ -186,20 +168,8 @@ class QuestionMenuWithoutStore extends React.Component<
           factorName={this.props.store.questionProgressStore.currentFactor}
           validity={this.props.store.factorInputStore.validities[this.props.store.questionProgressStore.currentFactor]}
           onSubmit={this.handleSubmit}
-          previousPossible={
-            this.props.store.loadedDataStore.factorOrder.indexOf(this.props.store.questionProgressStore.currentFactor) !== 0
-          }
-          onPrevious={this.previousQuestion}
-          onStartOver={this.startOverQuestionnaire}
-          onFinishNow={this.props.store.questionProgressStore.finishQuestionnaire}
-          onFinishRandomly={this.insertRandom}
-          leftCornerCounter={this.getCounter()}
-          onSwitchView={() => {
-            this.props.store.questionProgressStore.switchView(QuestionView.NOTHING);
-          }}
           finished={false}
-          computationState={this.props.store.computationStateStore.computationState}
-        >
+                 >
           {this.getQuestion(
             this.props.store.questionProgressStore.currentFactor,
             this.props.store.loadedDataStore.factors.factorList[this.props.store.questionProgressStore.currentFactor],
@@ -254,11 +224,7 @@ class QuestionMenuWithoutStore extends React.Component<
             >
               <QuestionListFrame
                 onSubmit={this.handleSubmit}
-                onSwitchView={() => this.props.store.questionProgressStore.switchView(QuestionView.NOTHING)}
-                onFinishRandomly={this.insertRandom}
-                hasError={!this.props.store.factorInputStore.submittable}
-                computationState={this.props.store.computationStateStore.computationState}
-              >
+                              >
                 {questionList}
               </QuestionListFrame>
             </div>
@@ -281,5 +247,5 @@ class QuestionMenuWithoutStore extends React.Component<
   }
 }
 
-const QuestionMenu = withStore(observer(QuestionMenuWithoutStore));
+const QuestionMenu = withRouter(withStore(observer(QuestionMenuWithoutStoreWithoutRouter)));
 export default QuestionMenu;
