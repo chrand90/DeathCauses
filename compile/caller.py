@@ -86,7 +86,7 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
 
 
     for RR in RRs:
-        RRlist = RR.get_as_list_of_lists()
+        RRlist = RR.get_as_list_of_lists_with_freqs()
         factor_names = RR.get_FactorNames()
         interpolated_RR = interpolate_one_spline(RR).as_json()
         riskratiotable = {'riskRatioTable': RRlist,
@@ -150,7 +150,7 @@ def run(age_intervals=None):
     if age_intervals is None:
         age_intervals = get_age_totals()[0]
     relations, descriptions, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
-    compiled_relations, compiled_descriptions, compiled_factors= combine_relations(relations, descriptions)
+    compiled_relations, compiled_descriptions, compiled_factors = combine_relations(relations, descriptions)
     transform_to_json(compiled_relations, RELATIONFILE_DESTINATION)
     transform_to_json(compiled_descriptions, DESCRIPTIONS_DESTINATION_FILE)
     transform_to_json(compiled_factors, FACTORQUESTIONS_COMPILED_FILE)
@@ -173,7 +173,6 @@ def integrate_one(writtenF_dir, age_intervals, age_distribution):
     '''
     RRs = rr.loadRRs(writtenF_dir)
     interaction, string_interaction_name = rr.read_interaction(writtenF_dir)
-    tmp = str(RRs[0])
     RR = rr.make_simultane_and_get_writtenF(RRs, interaction)
     RRages = [factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in
               age_intervals]
@@ -182,7 +181,32 @@ def integrate_one(writtenF_dir, age_intervals, age_distribution):
     print("Integrating: "+ folder)
     factor_prob_data_frames = factor_probabilities.get_factor_probabilities(RR.get_categories(RR.get_FactorNames()),
                                                                             age_intervals)
+    for RRpart in RRs:
+        if not "Age" in RRpart.get_FactorNames():
+            freqs=factor_probabilities.get_factor_probabilities_for_one_age_interval(
+                RRpart.get_categories(RRpart.get_FactorNames()),
+                "0,90"
+            )
+        else:
+            age_values=RRpart.get_categories(["Age"])["Age"]
+            freqs=factor_probabilities.get_factor_probabilities_for_one_age_interval(
+                RRpart.get_categories(RRpart.get_FactorNames()),
+                age_values[0]
+            )
+            freqs.insert_column("Age", [age_values[0]]*len(freqs))
+            for i in range(1,len(age_values)):
+                extra_freqs=factor_probabilities.get_factor_probabilities_for_one_age_interval(
+                    RRpart.get_categories(RRpart.get_FactorNames()),
+                    age_values[i]
+                )
+                extra_freqs.insert_column("Age",[age_values[i]]*len(extra_freqs))
+                freqs.join(extra_freqs)
 
+        print("freqs")
+        print(freqs)
+        print("RRpart")
+        print(RRpart)
+        RRpart.set_freqs(freqs)
     normalizers = []
 
     for RRage, factor_prob_data_frame in zip(RRages, factor_prob_data_frames):

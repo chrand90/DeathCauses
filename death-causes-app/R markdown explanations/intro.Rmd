@@ -98,7 +98,7 @@ For each category they computed an [odds ratio](#odds-ratio) (that we treat as [
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 devtools::load_all("../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
 dat=initialize_database("../../death-causes-app/src/resources/Causes.json",
-                        "../../death-causes-app/src/resources/Relations.json")
+                        "../../death-causes-app/src/resources/Descriptions.json")
 plotSpecificPlots(dat, "Alzheimers", "Caffeine", "raw")
 ```
 

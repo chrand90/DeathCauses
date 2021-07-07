@@ -20,6 +20,7 @@ class RiskRatioTable(data_frame):
         self.bounding_method = bounding_method
         self.variances=[]
         self.global_min_index=-1
+        self.freqs=[]
         super().__init__(factornames, 0)
 
     def subcopy(self, factornames):
@@ -33,6 +34,18 @@ class RiskRatioTable(data_frame):
 
     def addVariance(self, variance):
         self.variances.append(variance)
+
+    def set_freqs(self, freqs_df):
+        # print self.factornames, other.factornames
+        assert set(self.factornames) == set(
+            freqs_df.factornames), "the two dataframes are not compatible because of different factor categories."
+        factornames = self.factornames  # arbritrary that it is not other.factornames - only the order matters here.
+        freqs_dic = freqs_df.getDataframeAsDictionary(factornames)
+        indices = self.getDictionaryToIndex(factornames)
+        self.freqs=[0]*len(freqs_dic)
+        for factorvalues, freq in freqs_dic.items():
+            index=indices[factorvalues]
+            self.freqs[index]=freq
 
     def get_determined_global_min(self):
         min_row = self.listOfRowsInTheDataFrame[self.global_min_index]
@@ -57,22 +70,39 @@ class RiskRatioTable(data_frame):
         This function returns the string that should be printed when an instance is printed
         '''
         str1=''
-        str1 += "\t".join(self.factornames) + "\t" + "Value" + "\n"
-        for row,var in zip(self.listOfRowsInTheDataFrame, self.variances):
-            str1 += "\t".join(map(str, row)) + "(VAR="+ str(var) +")" +"\n"
-        str1+= 'lambda='+str(self.lambd)+"\n"
-        str1+= 'tails='+self.bounding_method
+        str1+="\t".join(self.factornames) + "\t" + "Value" + "\n"
+        for n,(row,var) in enumerate(zip(self.listOfRowsInTheDataFrame, self.variances)):
+            if len(self.freqs)>0:
+                freq_part=self.freqs[n]
+            else:
+                freq_part="U"
+            str1+= "\t".join(map(str, row)) + "(VAR="+ str(var) +")(FREQ="+str(freq_part)+")" +"\n"
+        str1+='lambda='+str(self.lambd)+"\n"
+        str1+='tails='+self.bounding_method
         return str1
 
     def getMinAndMax(self):
         vals=[r[-1] for r in self.listOfRowsInTheDataFrame]
         return min(vals), max(vals)
 
-    def get_as_list_of_lists(self, includeVariances=False):
+    def get_as_list_of_lists(self, includeVariances=False, includeFreqs=False):
         res = []
         if includeVariances:
             for r,v in zip(self.listOfRowsInTheDataFrame, self.variances):
                 res.append([r[:-1], r[-1],v])
+        elif includeFreqs:
+            for r,v in zip(self.listOfRowsInTheDataFrame, self.freqs):
+                res.append([r[:-1], r[-1],v])
+        else:
+            for r in self.listOfRowsInTheDataFrame:
+                res.append([r[:-1], r[-1]])
+        return res
+
+    def get_as_list_of_lists_with_freqs(self):
+        res=[]
+        if len(self.freqs)>0:
+            for r, v in zip(self.listOfRowsInTheDataFrame, self.freqs):
+                res.append([r[:-1], r[-1], v])
         else:
             for r in self.listOfRowsInTheDataFrame:
                 res.append([r[:-1], r[-1]])

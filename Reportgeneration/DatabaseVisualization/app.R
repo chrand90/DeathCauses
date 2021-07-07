@@ -15,7 +15,7 @@ library(ggplot2)
 library(gridExtra)
 
 dat=initialize_database("../../death-causes-app/src/resources/Causes.json",
-                        "../../death-causes-app/src/resources/Relations.json")
+                        "../../death-causes-app/src/resources/Descriptions.json")
 all_diseases=dat@diseases
 # Define UI for application that draws a histogram
 
@@ -64,7 +64,7 @@ server <- function(input, output) {
       # generate bins based on input$bins from ui.R
      print("printing names of outp")
      print(names(outp()))
-     list_of_plots=makePlot(outp())
+     list_of_plots=makePlot(outp(), plotFrequencies = T)
      ln=length(list_of_plots)
      if(ln<Number_of_plot_slots){
        number_of_remaining=Number_of_plot_slots-ln
