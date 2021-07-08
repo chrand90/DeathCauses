@@ -1,4 +1,5 @@
 import { FactorAnswers } from "../../models/Factors";
+import { DimensionStatus, MissingStatus, UpdateDic, UpdateForm } from "../../models/updateFormNodes/UpdateForm";
 import { InterpolationTable, InterpolationTableJson } from "./InterpolationTable";
 import { RiskRatioTableEntry } from "./RiskRatioTableEntry";
 
@@ -19,7 +20,7 @@ class RiskRatioTable {
 
     constructor(json: RiskRatioTableJson) {
         this.factorNames = json.riskFactorNames;
-        this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number))
+        this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number, element[2] as number))
         this.interpolation=new InterpolationTable(json.interpolationTable)
     }
 
@@ -70,6 +71,7 @@ class RiskRatioTable {
         this.factorNames.forEach(factor => res.push(sumbittedFactorAnswers[factor]))
         return res;
     }
+
 
 }
 

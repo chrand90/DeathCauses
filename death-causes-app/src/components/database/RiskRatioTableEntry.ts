@@ -4,9 +4,11 @@ import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTable
 export class RiskRatioTableEntry {
     factorValues: RiskRatioTableCellInterface[];
     riskRatioValue: number;
+    frequency: number;
 
-    constructor(factorValues: string[], riskRatioValue: number) {
+    constructor(factorValues: string[], riskRatioValue: number, frequency: number) {
         this.riskRatioValue = riskRatioValue;
+        this.frequency = frequency;
         this.factorValues = factorValues.map(element => parseStringToInputType(element))
     }
 

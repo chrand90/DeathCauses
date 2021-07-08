@@ -4,7 +4,7 @@ import InterpolationTableCell, {
 } from "./InterpolationTableCell";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
 import Location, { LocationAndValue, locationAndValueSorter } from "./InterpolationLocation";
-import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
+import { DimensionStatus, ProbabilityObject, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 
 interface VariableToIndex {
   [key: string]: number;
@@ -17,6 +17,11 @@ export interface InterpolationTableJson {
   global_min: MinObject;
   interpolation_variables?: string[];
   non_interpolation_variables?: string[];
+}
+
+interface WeightedPoints {
+  weight:number;
+  locs: (string | number)[];
 }
 
 export class InterpolationTable {
@@ -58,6 +63,28 @@ export class InterpolationTable {
         )
       )
     );
+  }
+
+  createFixedLocations(submittedFactorAnswers: UpdateDic, ageIndex:number, fixedFactors:string[]){
+    let res=[{weight:1, locs:[]}]
+    fixedFactors.forEach(fixedFactor => {
+      if(submittedFactorAnswers[fixedFactor].random===StochasticStatus.RANDOM){
+        let extra_res:=[]
+        res.forEach(resObject=> {
+          let probObject: ProbabilityObject;
+          if(submittedFactorAnswers[fixedFactor].dimension===DimensionStatus.YEARLY){
+            probObject=(submittedFactorAnswers[fixedFactor].value as ProbabilityObject[])[ageIndex]
+          }
+          else{
+            probObject=submittedFactorAnswers[fixedFactor].value as ProbabilityObject
+          }
+          Object.entries(probObject).forEach(([value, prob]) =>{
+
+          } )
+        })
+      }
+      submittedFactorAnswers[fixedFactor]
+    })
   }
 
   getMinimumRR(
