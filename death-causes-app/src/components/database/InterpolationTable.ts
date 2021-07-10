@@ -3,8 +3,16 @@ import InterpolationTableCell, {
   InterpolationTableCellJson,
 } from "./InterpolationTableCell";
 import InterpolationVariableMapping from "./InterpolationVariableMapping";
-import Location, { LocationAndValue, locationAndValueSorter } from "./InterpolationLocation";
-import { DimensionStatus, ProbabilityObject, StochasticStatus, UpdateDic } from "../../models/updateFormNodes/UpdateForm";
+import Location, {
+  LocationAndValue,
+  locationAndValueSorter,
+} from "./InterpolationLocation";
+import {
+  DimensionStatus,
+  ProbabilityObject,
+  StochasticStatus,
+  UpdateDic,
+} from "../../models/updateFormNodes/UpdateForm";
 
 interface VariableToIndex {
   [key: string]: number;
@@ -20,8 +28,18 @@ export interface InterpolationTableJson {
 }
 
 interface WeightedPoints {
-  weight:number;
-  locs: (string | number)[];
+  weight: number;
+  locs: { [factorName: string]: number | string };
+}
+
+interface WeightedLocations {
+  weight: number;
+  fixedLocation: Location;
+}
+
+export interface WeightedLocationAndValue {
+  weight: number;
+  locationAndValue: LocationAndValue;
 }
 
 export class InterpolationTable {
@@ -40,11 +58,13 @@ export class InterpolationTable {
       inputJson.interpolation_variables ? inputJson.interpolation_variables : []
     );
     this.globalMin = new LocationAndValue(
-        this.interpolationVariables, 
-        this.nonInterpolationVariables,
-        inputJson.global_min.minValue
+      this.interpolationVariables,
+      this.nonInterpolationVariables,
+      inputJson.global_min.minValue
     );
-    this.globalMin.setWithVarNameButInterpolationX(inputJson.global_min.minLocation)
+    this.globalMin.setWithVarNameButInterpolationX(
+      inputJson.global_min.minLocation
+    );
     this.lowerTruncation = inputJson.lower_truncation
       ? inputJson.lower_truncation
       : null;
@@ -65,53 +85,114 @@ export class InterpolationTable {
     );
   }
 
-  createFixedLocations(submittedFactorAnswers: UpdateDic, ageIndex:number, fixedFactors:string[]){
-    let res=[{weight:1, locs:[]}]
-    fixedFactors.forEach(fixedFactor => {
-      if(submittedFactorAnswers[fixedFactor].random===StochasticStatus.RANDOM){
-        let extra_res:=[]
-        res.forEach(resObject=> {
+  createFixedLocations(
+    submittedFactorAnswers: UpdateDic,
+    ageIndex: number,
+    fixedFactors: string[]
+  ) {
+    let res: WeightedPoints[] = [{ weight: 1, locs: {} }];
+    fixedFactors.forEach((fixedFactor) => {
+      if (
+        submittedFactorAnswers[fixedFactor].random === StochasticStatus.RANDOM
+      ) {
+        let extraRes: WeightedPoints[] = [];
+        res.forEach((resObject) => {
           let probObject: ProbabilityObject;
-          if(submittedFactorAnswers[fixedFactor].dimension===DimensionStatus.YEARLY){
-            probObject=(submittedFactorAnswers[fixedFactor].value as ProbabilityObject[])[ageIndex]
+          if (
+            submittedFactorAnswers[fixedFactor].dimension ===
+            DimensionStatus.YEARLY
+          ) {
+            probObject = (submittedFactorAnswers[fixedFactor]
+              .value as ProbabilityObject[])[ageIndex];
+          } else {
+            probObject = submittedFactorAnswers[fixedFactor]
+              .value as ProbabilityObject;
           }
-          else{
-            probObject=submittedFactorAnswers[fixedFactor].value as ProbabilityObject
+          Object.entries(probObject).forEach(([value, prob]) => {
+            extraRes.push({
+              weight: resObject.weight * prob,
+              locs: { ...resObject.locs, [fixedFactor]: value },
+            });
+          });
+        });
+        res = extraRes;
+      } else {
+        let value: number | string;
+        if (
+          submittedFactorAnswers[fixedFactor].dimension ===
+          DimensionStatus.YEARLY
+        ) {
+          value = (submittedFactorAnswers[fixedFactor].value as
+            | string[]
+            | number[])[ageIndex];
+        } else {
+          value = submittedFactorAnswers[fixedFactor].value as string | number;
+          if(fixedFactor==="Age"){
+            if(typeof value==="number"){
+              value+=ageIndex
+            }
+            else{
+              value=parseInt(value)+ageIndex
+            }
           }
-          Object.entries(probObject).forEach(([value, prob]) =>{
-
-          } )
-        })
+        }
+        for (let i = 0; i < res.length; i++) {
+          res[i].locs[fixedFactor] = value;
+        }
       }
-      submittedFactorAnswers[fixedFactor]
-    })
+    });
+    return res.map(({ weight, locs }) => {
+      let fixedLocation = new Location(
+        this.interpolationVariables,
+        this.nonInterpolationVariables
+      );
+      fixedLocation.setWithVarNamesWhenMatch(locs, fixedFactors);
+      return {
+        weight: weight,
+        fixedLocation: fixedLocation,
+      };
+    });
+  }
+
+  getMinimumForFixedLocation(fixedLocation: Location){
+    let filteredCells = this.cells.filter((cell: InterpolationTableCell) => {
+      return cell.inCellAndSufficientlyInternal(fixedLocation);
+    });
+    let mins = filteredCells.map((cell: InterpolationTableCell) => {
+      return cell.getMin(fixedLocation);
+    });
+    mins.sort(locationAndValueSorter);
+    if (mins.length === 0 || mins[0] === undefined) {
+      throw Error(
+        "The mins list was unexpectedly empty meaning no minRR was computed for " +
+          fixedLocation.setInterpolationVariables.toString()
+      );
+    }
+    mins[0].truncateValue(this.lowerTruncation, this.upperTruncation);
+    return mins[0]
   }
 
   getMinimumRR(
     submittedFactorAnswers: UpdateDic,
     fixedFactors: string[],
-    ageIndex:number
-  ): LocationAndValue {
+    ageIndex: number
+  ): WeightedLocationAndValue[] {
     if (fixedFactors.length === 0) {
-      return this.globalMin;
+      return [{weight:1, locationAndValue: this.globalMin}];
     }
-    let fixedLocation=new Location(this.interpolationVariables, this.nonInterpolationVariables);
-    fixedLocation.setWithVarNamesWhenMatch(submittedFactorAnswers, ageIndex, fixedFactors)
-    let filteredCells= this.cells
-      .filter((cell: InterpolationTableCell) => {
-        return cell.inCellAndSufficientlyInternal(
-          fixedLocation
-        );
-      })
-    let mins=filteredCells.map((cell: InterpolationTableCell) => {
-        return cell.getMin(fixedLocation);
-      });
-    mins.sort(locationAndValueSorter);
-    if(mins.length===0 || mins[0]===undefined){
-      throw Error("The mins list was unexpectedly empty meaning no minRR was computed for "+fixedFactors.toString());
+    let fixedLocations = this.createFixedLocations(
+      submittedFactorAnswers,
+      ageIndex,
+      fixedFactors
+    );
+    if(fixedLocations.length>1){
+      console.log("debug location")
     }
-    mins[0].truncateValue(this.lowerTruncation, this.upperTruncation);
-    return mins[0];
+    return fixedLocations.map(({weight, fixedLocation}) => {
+      return {
+        weight:weight,
+        locationAndValue: this.getMinimumForFixedLocation(fixedLocation)
+      }
+    });
   }
-
 }

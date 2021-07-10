@@ -92,7 +92,6 @@ export default class Descriptions {
           }
         })
         if(candidate){
-          console.log(nodeName+" -> "+ candidate)
           return candidate
         }
         console.error(`No sufficiently short description(length<${maxSize}) was found for ${nodeName}`)

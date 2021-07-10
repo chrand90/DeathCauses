@@ -1,4 +1,4 @@
-import {UpdateForm, UpdateDic, MissingStatus, ChangeStatus, TypeStatus, DimensionStatus, StochasticStatus} from "./UpdateForm";
+import {UpdateForm, UpdateDic, MissingStatus, ChangeStatus, TypeStatus, DimensionStatus, StochasticStatus, ProbabilityObject} from "./UpdateForm";
 
 export default abstract class FormUpdater {
     lastOutput: UpdateForm | null;
@@ -77,6 +77,23 @@ export default abstract class FormUpdater {
           allPreviousUpdateForms[nodeName].dimension === DimensionStatus.SINGLE
         );
       });
+    }
+
+    getFactorAnswerValue(allPreviousUpdateForms: UpdateDic, nodeName: string, ageIndex: number): number | string | ProbabilityObject{
+      if(allPreviousUpdateForms[nodeName].dimension===DimensionStatus.YEARLY){
+        return (allPreviousUpdateForms[nodeName].value as (number[] | string[] | ProbabilityObject[]))[ageIndex]
+      }
+      else{
+        if(nodeName==="Age"){
+          if(typeof allPreviousUpdateForms[nodeName].value === "number"){
+            return (allPreviousUpdateForms[nodeName].value as number)+ageIndex
+          }
+          else{
+            return (parseInt(allPreviousUpdateForms[nodeName].value as string))+ageIndex
+          }
+        }
+        return allPreviousUpdateForms[nodeName].value as number | string | ProbabilityObject
+      }
     }
 
     ChangedAndMissing(){

@@ -1,5 +1,6 @@
 import { FactorAnswers } from "../../models/Factors";
-import { DimensionStatus, MissingStatus, UpdateDic, UpdateForm } from "../../models/updateFormNodes/UpdateForm";
+import { DimensionStatus, MissingStatus, TypeStatus, UpdateDic, UpdateForm } from "../../models/updateFormNodes/UpdateForm";
+import { ERROR_COLOR } from "../Question";
 import { InterpolationTable, InterpolationTableJson } from "./InterpolationTable";
 import { RiskRatioTableEntry } from "./RiskRatioTableEntry";
 
@@ -55,6 +56,24 @@ class RiskRatioTable {
         }
         return 1.0
     } */
+
+    getFactorNameToIndex(){
+        return Object.fromEntries(
+            this.factorNames.map((f,i) => {
+                return [f,i]
+            })
+        )
+    }
+
+    getType(factorName:string):TypeStatus{
+        for(let i=0; i<this.factorNames.length; i++){
+            if(this.factorNames[i]===factorName){
+                //we can ask any row in the riskratiotable because either can give the type
+                return this.riskRatioTable[0].getType(i);
+            }
+        }
+        throw Error("The factorName: "+factorName+ " was not found")
+    }
 
     getFactorNames(){
         return this.factorNames;

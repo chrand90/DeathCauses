@@ -167,24 +167,25 @@ export default class Location {
       } else if (this.nonInterpolationVariables.includes(key)) {
         this.setNonInterpolationVariables.push(key);
       } else {
-        throw Error("An unrecognized key was unexpectedly tried initialized");
+        console.error("An unrecognized key("+key+") was unexpectedly tried initialized. Available was "+this.interpolationVariables.indexToName.join("-")+ " and "+this.nonInterpolationVariables.join("-"))
+        throw Error("An unrecognized key("+key+") was unexpectedly tried initialized.");
       }
       this.variableToCoordinate[key] = value;
     });
   }
 
-  setWithVarNamesWhenMatch(dict: UpdateDic, ageIndex:number, matchList: string[]) {
+  setWithVarNamesWhenMatch(dict: VarNameToCoordinate, matchList: string[]) {
     matchList.forEach((key) => {
-      let value: string | number;
-      if(dict[key].dimension===DimensionStatus.YEARLY){
-        value=(dict[key].value as string[] | number[])[ageIndex];
-      }
-      else{
-        value=dict[key].value as string | number;
-        if(key==="Age"){
-          value=(value as number)+ageIndex;
-        }
-      }
+      let value: string | number=dict[key];
+      // if(dict[key].dimension===DimensionStatus.YEARLY){
+      //   value=(dict[key].value as string[] | number[])[ageIndex];
+      // }
+      // else{
+      //   value=dict[key].value as string | number;
+      //   if(key==="Age"){
+      //     value=(value as number)+ageIndex;
+      //   }
+      // }
       if (this.interpolationVariables.includesVarName(key)) {
         this.setInterpolationVariables.push(key);
         this.variableToCoordinate[key] = value;

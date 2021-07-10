@@ -1,3 +1,4 @@
+import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
 import { parseStringToInputType } from "./ParsingFunctions";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCell/RiskRatioTableCellInterface";
 
@@ -10,6 +11,10 @@ export class RiskRatioTableEntry {
         this.riskRatioValue = riskRatioValue;
         this.frequency = frequency;
         this.factorValues = factorValues.map(element => parseStringToInputType(element))
+    }
+
+    getType(factorIndex: number){
+        return this.factorValues[factorIndex].getType()
     }
 
     isFactorAnswersInDomain(relevantFactorAnswers: (string | number)[]) {

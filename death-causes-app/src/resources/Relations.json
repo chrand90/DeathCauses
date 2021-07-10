@@ -1,1 +1,304 @@
-{"Alzheimers": {"type": "Death cause", "ancestors": ["NonViolentDeath", "Caffeine", "Fish", "Vegetables"]}, "NonViolentDeath": {"type": "Death cause category", "ancestors": []}, "Anemia": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Appendix_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "BornWith": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "BladderCancer": {"type": "Death cause", "ancestors": ["Cancer", "Fluids", "SmokeCumulative"]}, "Cancer": {"type": "Death cause category", "ancestors": ["NonViolentDeath"]}, "BrainCancer": {"type": "Death cause", "ancestors": ["Cancer", "HeadTrauma"]}, "BreastCancer": {"type": "Death cause", "ancestors": ["Cancer", "Drinking", "OralContraceptiveSinceStop", "OralContraceptiveEver", "Sex"]}, "CancerInSitu": {"type": "Death cause", "ancestors": ["Cancer"]}, "CervixCancer": {"type": "Death cause", "ancestors": ["Cancer", "HPVVaccine", "Sex"]}, "ColonCancer": {"type": "Death cause", "ancestors": ["Cancer", "Drinking", "PhysicalTotal", "RedMeat"]}, "EatingTubeCancer": {"type": "Death cause", "ancestors": ["Cancer", "Drinking"]}, "KidneyCancer": {"type": "Death cause", "ancestors": ["Cancer", "BMI"]}, "LarynxCancer": {"type": "Death cause", "ancestors": ["Cancer", "Drinking"]}, "Leukemia": {"type": "Death cause", "ancestors": ["Cancer"]}, "LiverCancer": {"type": "Death cause", "ancestors": ["Cancer", "BMI", "HCVStatus", "Caffeine", "DiabetesStatus", "Drinking", "Sex"]}, "LungCancer": {"type": "Death cause", "ancestors": ["Cancer", "SmokeSinceStop", "SmokeTypicalAmount"]}, "MouthCancer": {"type": "Death cause", "ancestors": ["Cancer", "SmokeIntensity", "Drinking"]}, "OtherCancer": {"type": "Death cause", "ancestors": ["Cancer"]}, "OvaryCancer": {"type": "Death cause", "ancestors": ["Cancer", "Sex"]}, "PancreasCancer": {"type": "Death cause", "ancestors": ["Cancer", "Caffeine", "DiabetesStatus"]}, "ProstateCancer": {"type": "Death cause", "ancestors": ["Cancer", "Sex"]}, "SkinCancer": {"type": "Death cause", "ancestors": ["Cancer", "IndoorTanning", "Race"]}, "StomachCancer": {"type": "Death cause", "ancestors": ["Cancer", "Drinking"]}, "UterusCancer": {"type": "Death cause", "ancestors": ["Cancer", "BMI", "Caffeine", "Sex"]}, "Childbirth": {"type": "Death cause", "ancestors": ["NonViolentDeath", "Sex"]}, "Chronic_Liver_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath", "BMI", "HCVStatus", "Drinking"]}, "Diabetes": {"type": "Death cause", "ancestors": ["NonViolentDeath", "DiabetesStatus"]}, "DoctorError": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Gallbladder_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Ischemic": {"type": "Death cause", "ancestors": ["HeartDiseases", "Caffeine", "MaxDrinking", "Drinking", "PhysicalHard", "PhysicalTotal", "SmokeSinceStop", "SmokeTypicalAmount"]}, "HeartDiseases": {"type": "Death cause category", "ancestors": ["NonViolentDeath", "Greens"]}, "OtherHeartDiseases": {"type": "Death cause", "ancestors": ["HeartDiseases"]}, "Stroke": {"type": "Death cause", "ancestors": ["HeartDiseases", "PhysicalTotal", "SmokeIntensity"]}, "Hernia": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Flu": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "InfectiousDisease": {"type": "Death cause category", "ancestors": ["NonViolentDeath"]}, "Hepatitis": {"type": "Death cause", "ancestors": ["InfectiousDisease", "HCVStatus"]}, "HIV": {"type": "Death cause", "ancestors": ["InfectiousDisease", "HIVStatus"]}, "Malaria": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Menigitis": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Pneumonia": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Salmonella": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Syphilis": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Tubercolosis": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Whooping_Cough": {"type": "Death cause", "ancestors": ["InfectiousDisease"]}, "Kidney_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Malnutrition": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "OtherDiseases": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Parkinsons": {"type": "Death cause", "ancestors": ["NonViolentDeath", "Caffeine", "FamilyHistoryParkinson", "PesticideExposure"]}, "Peptic_ulcer": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Prostate_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Asthma": {"type": "Death cause", "ancestors": ["RespiratoryDiseases"]}, "RespiratoryDiseases": {"type": "Death cause category", "ancestors": ["NonViolentDeath"]}, "Bronchitis": {"type": "Death cause", "ancestors": ["RespiratoryDiseases", "SmokeCumulative"]}, "COPD": {"type": "Death cause", "ancestors": ["RespiratoryDiseases", "SmokeSinceStop", "SmokeTypicalAmount"]}, "Emphysema": {"type": "Death cause", "ancestors": ["RespiratoryDiseases", "SmokeIntensity"]}, "Other_Respiratory_Diseases": {"type": "Death cause", "ancestors": ["RespiratoryDiseases"]}, "Pneumonitis": {"type": "Death cause", "ancestors": ["RespiratoryDiseases"]}, "Sepsis": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "Unknown_Disease": {"type": "Death cause", "ancestors": ["NonViolentDeath"]}, "OtherAccidents": {"type": "Death cause", "ancestors": ["Accidents"]}, "Accidents": {"type": "Death cause category", "ancestors": ["ViolentDeath"]}, "ViolentDeath": {"type": "Death cause category", "ancestors": []}, "Transport": {"type": "Death cause", "ancestors": ["Accidents"]}, "Homicide": {"type": "Death cause", "ancestors": ["ViolentDeath"]}, "Police": {"type": "Death cause", "ancestors": ["ViolentDeath"]}, "Suicide": {"type": "Death cause", "ancestors": ["ViolentDeath", "Depression"]}, "UndeterminedIntent": {"type": "Death cause", "ancestors": ["ViolentDeath"]}, "War": {"type": "Death cause", "ancestors": ["ViolentDeath"]}, "Age": {"type": "Input factor", "ancestors": []}, "Smoking": {"type": "Input factor", "ancestors": []}, "SmokingStopped": {"type": "Input factor", "ancestors": []}, "SmokeIntensity": {"type": "Input factor", "ancestors": []}, "SmokeDuration": {"type": "Input factor", "ancestors": []}, "SmokePastAmount": {"type": "Input factor", "ancestors": []}, "Drinking": {"type": "Input factor", "ancestors": []}, "MaxDrinking": {"type": "Input factor", "ancestors": []}, "Fluids": {"type": "Input factor", "ancestors": []}, "Caffeine": {"type": "Input factor", "ancestors": []}, "Sex": {"type": "Input factor", "ancestors": []}, "OralContraceptiveStatus": {"type": "Input factor", "ancestors": []}, "OralContraceptiveStopped": {"type": "Input factor", "ancestors": []}, "OralContraceptiveTillStop": {"type": "Input factor", "ancestors": []}, "HPVVaccine": {"type": "Input factor", "ancestors": []}, "BMI": {"type": "Input factor", "ancestors": []}, "Waist": {"type": "Input factor", "ancestors": []}, "PhysicalMedium": {"type": "Input factor", "ancestors": []}, "PhysicalHard": {"type": "Input factor", "ancestors": []}, "Fish": {"type": "Input factor", "ancestors": []}, "Fruits": {"type": "Input factor", "ancestors": []}, "Vegetables": {"type": "Input factor", "ancestors": []}, "RedMeat": {"type": "Input factor", "ancestors": []}, "Race": {"type": "Input factor", "ancestors": []}, "IndoorTanning": {"type": "Input factor", "ancestors": []}, "HeadTrauma": {"type": "Input factor", "ancestors": []}, "PesticideExposure": {"type": "Input factor", "ancestors": []}, "HCVStatus": {"type": "Input factor", "ancestors": []}, "HIVStatus": {"type": "Input factor", "ancestors": []}, "DiabetesStatus": {"type": "Input factor", "ancestors": []}, "FamilyHistoryParkinson": {"type": "Input factor", "ancestors": []}, "Depression": {"type": "Input factor", "ancestors": []}, "SmokeSinceStop": {"ancestors": ["Smoking", "SmokingStopped"], "type": "Computed factor"}, "PhysicalTotal": {"ancestors": ["PhysicalMedium", "PhysicalHard"], "type": "Computed factor"}, "Greens": {"ancestors": ["Fruits", "Vegetables"], "type": "Computed factor"}, "SmokeCumulative": {"ancestors": ["Smoking", "SmokingStopped", "SmokePastAmount", "SmokeIntensity", "SmokeDuration"], "type": "Computed factor"}, "SmokeTypicalAmount": {"ancestors": ["Smoking", "SmokePastAmount", "SmokeDuration", "SmokeIntensity", "SmokingStopped"], "type": "Computed factor"}, "OralContraceptiveEver": {"ancestors": ["OralContraceptiveStatus", "OralContraceptiveStopped", "OralContraceptiveTillStop"], "type": "Computed factor"}, "OralContraceptiveSinceStop": {"ancestors": ["OralContraceptiveStatus", "OralContraceptiveStopped", "OralContraceptiveTillStop"], "type": "Computed factor"}}
+{
+  "Alzheimers": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath", "Caffeine", "Fish", "Vegetables"]
+  },
+  "NonViolentDeath": { "type": "Death cause category", "ancestors": [] },
+  "Anemia": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Appendix_Disease": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "BornWith": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "BladderCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Fluids", "SmokeCumulative"]
+  },
+  "Cancer": {
+    "type": "Death cause category",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "BrainCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "HeadTrauma"]
+  },
+  "BreastCancer": {
+    "type": "Death cause",
+    "ancestors": [
+      "Cancer",
+      "Drinking",
+      "OralContraceptiveSinceStop",
+      "OralContraceptiveEver",
+      "Sex"
+    ]
+  },
+  "CancerInSitu": { "type": "Death cause", "ancestors": ["Cancer"] },
+  "CervixCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "HPVVaccine", "Sex"]
+  },
+  "ColonCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Drinking", "PhysicalTotal", "RedMeat"]
+  },
+  "EatingTubeCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Drinking"]
+  },
+  "KidneyCancer": { "type": "Death cause", "ancestors": ["Cancer", "BMI"] },
+  "LarynxCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Drinking"]
+  },
+  "Leukemia": { "type": "Death cause", "ancestors": ["Cancer"] },
+  "LiverCancer": {
+    "type": "Death cause",
+    "ancestors": [
+      "Cancer",
+      "BMI",
+      "HCVStatus",
+      "Caffeine",
+      "DiabetesStatus",
+      "Drinking",
+      "Sex"
+    ]
+  },
+  "LungCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "SmokeSinceStop", "SmokeTypicalAmount"]
+  },
+  "MouthCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "SmokeIntensity", "Drinking"]
+  },
+  "OtherCancer": { "type": "Death cause", "ancestors": ["Cancer"] },
+  "OvaryCancer": { "type": "Death cause", "ancestors": ["Cancer", "Sex"] },
+  "PancreasCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Caffeine", "DiabetesStatus"]
+  },
+  "ProstateCancer": { "type": "Death cause", "ancestors": ["Cancer", "Sex"] },
+  "SkinCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "IndoorTanning", "Race"]
+  },
+  "StomachCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "Drinking"]
+  },
+  "UterusCancer": {
+    "type": "Death cause",
+    "ancestors": ["Cancer", "BMI", "Caffeine", "Sex"]
+  },
+  "Childbirth": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath", "Sex"]
+  },
+  "Chronic_Liver_Disease": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath", "BMI", "HCVStatus", "Drinking"]
+  },
+  "Diabetes": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath", "DiabetesStatus"]
+  },
+  "DoctorError": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Gallbladder_Disease": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "Ischemic": {
+    "type": "Death cause",
+    "ancestors": [
+      "HeartDiseases",
+      "Caffeine",
+      "MaxDrinking",
+      "Drinking",
+      "PhysicalHard",
+      "PhysicalTotal",
+      "SmokeSinceStop",
+      "SmokeTypicalAmount"
+    ]
+  },
+  "HeartDiseases": {
+    "type": "Death cause category",
+    "ancestors": ["NonViolentDeath", "Greens"]
+  },
+  "OtherHeartDiseases": {
+    "type": "Death cause",
+    "ancestors": ["HeartDiseases"]
+  },
+  "Stroke": {
+    "type": "Death cause",
+    "ancestors": ["HeartDiseases", "PhysicalTotal", "SmokeIntensity"]
+  },
+  "Hernia": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Flu": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "InfectiousDisease": {
+    "type": "Death cause category",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "Hepatitis": {
+    "type": "Death cause",
+    "ancestors": ["InfectiousDisease", "HCVStatus"]
+  },
+  "HIV": {
+    "type": "Death cause",
+    "ancestors": ["InfectiousDisease", "HIVStatus"]
+  },
+  "Malaria": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Menigitis": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Pneumonia": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Salmonella": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Syphilis": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Tubercolosis": { "type": "Death cause", "ancestors": ["InfectiousDisease"] },
+  "Whooping_Cough": {
+    "type": "Death cause",
+    "ancestors": ["InfectiousDisease"]
+  },
+  "Kidney_Disease": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Malnutrition": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "OtherDiseases": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Parkinsons": {
+    "type": "Death cause",
+    "ancestors": [
+      "NonViolentDeath",
+      "Caffeine",
+      "FamilyHistoryParkinson",
+      "PesticideExposure"
+    ]
+  },
+  "Peptic_ulcer": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Prostate_Disease": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "Asthma": { "type": "Death cause", "ancestors": ["RespiratoryDiseases"] },
+  "RespiratoryDiseases": {
+    "type": "Death cause category",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "Bronchitis": {
+    "type": "Death cause",
+    "ancestors": ["RespiratoryDiseases", "SmokeCumulative"]
+  },
+  "COPD": {
+    "type": "Death cause",
+    "ancestors": ["RespiratoryDiseases", "SmokeSinceStop", "SmokeTypicalAmount"]
+  },
+  "Emphysema": {
+    "type": "Death cause",
+    "ancestors": ["RespiratoryDiseases", "SmokeIntensity"]
+  },
+  "Other_Respiratory_Diseases": {
+    "type": "Death cause",
+    "ancestors": ["RespiratoryDiseases"]
+  },
+  "Pneumonitis": {
+    "type": "Death cause",
+    "ancestors": ["RespiratoryDiseases"]
+  },
+  "Sepsis": { "type": "Death cause", "ancestors": ["NonViolentDeath"] },
+  "Unknown_Disease": {
+    "type": "Death cause",
+    "ancestors": ["NonViolentDeath"]
+  },
+  "OtherAccidents": { "type": "Death cause", "ancestors": ["Accidents"] },
+  "Accidents": {
+    "type": "Death cause category",
+    "ancestors": ["ViolentDeath"]
+  },
+  "ViolentDeath": { "type": "Death cause category", "ancestors": [] },
+  "Transport": { "type": "Death cause", "ancestors": ["Accidents"] },
+  "Homicide": { "type": "Death cause", "ancestors": ["ViolentDeath"] },
+  "Police": { "type": "Death cause", "ancestors": ["ViolentDeath"] },
+  "Suicide": {
+    "type": "Death cause",
+    "ancestors": ["ViolentDeath", "Depression"]
+  },
+  "UndeterminedIntent": {
+    "type": "Death cause",
+    "ancestors": ["ViolentDeath"]
+  },
+  "War": { "type": "Death cause", "ancestors": ["ViolentDeath"] },
+  "Age": { "type": "Input factor", "ancestors": [] },
+  "Smoking": { "type": "Input factor", "ancestors": [] },
+  "SmokingStopped": { "type": "Input factor", "ancestors": [] },
+  "SmokeIntensity": { "type": "Input factor", "ancestors": [] },
+  "SmokeDuration": { "type": "Input factor", "ancestors": [] },
+  "SmokePastAmount": { "type": "Input factor", "ancestors": [] },
+  "Drinking": { "type": "Input factor", "ancestors": [] },
+  "MaxDrinking": { "type": "Input factor", "ancestors": [] },
+  "Fluids": { "type": "Input factor", "ancestors": [] },
+  "Caffeine": { "type": "Input factor", "ancestors": [] },
+  "Sex": { "type": "Input factor", "ancestors": [] },
+  "OralContraceptiveStatus": { "type": "Input factor", "ancestors": [] },
+  "OralContraceptiveStopped": { "type": "Input factor", "ancestors": [] },
+  "OralContraceptiveTillStop": { "type": "Input factor", "ancestors": [] },
+  "HPVVaccine": { "type": "Input factor", "ancestors": [] },
+  "BMI": { "type": "Input factor", "ancestors": [] },
+  "Waist": { "type": "Input factor", "ancestors": [] },
+  "PhysicalMedium": { "type": "Input factor", "ancestors": [] },
+  "PhysicalHard": { "type": "Input factor", "ancestors": [] },
+  "Fish": { "type": "Input factor", "ancestors": [] },
+  "Fruits": { "type": "Input factor", "ancestors": [] },
+  "Vegetables": { "type": "Input factor", "ancestors": [] },
+  "RedMeat": { "type": "Input factor", "ancestors": [] },
+  "Race": { "type": "Input factor", "ancestors": [] },
+  "IndoorTanning": { "type": "Input factor", "ancestors": [] },
+  "HeadTrauma": { "type": "Input factor", "ancestors": [] },
+  "PesticideExposure": { "type": "Input factor", "ancestors": [] },
+  "HCVStatus": { "type": "Input factor", "ancestors": [] },
+  "HIVStatus": { "type": "Input factor", "ancestors": [] },
+  "DiabetesStatus": { "type": "Input factor", "ancestors": [] },
+  "FamilyHistoryParkinson": { "type": "Input factor", "ancestors": [] },
+  "Depression": { "type": "Input factor", "ancestors": [] },
+  "SmokeSinceStop": {
+    "ancestors": ["Smoking", "SmokingStopped"],
+    "type": "Computed factor"
+  },
+  "PhysicalTotal": {
+    "ancestors": ["PhysicalMedium", "PhysicalHard"],
+    "type": "Computed factor"
+  },
+  "Greens": {
+    "ancestors": ["Fruits", "Vegetables"],
+    "type": "Computed factor"
+  },
+  "SmokeCumulative": {
+    "ancestors": [
+      "Smoking",
+      "SmokingStopped",
+      "SmokePastAmount",
+      "SmokeIntensity",
+      "SmokeDuration"
+    ],
+    "type": "Computed factor"
+  },
+  "SmokeTypicalAmount": {
+    "ancestors": [
+      "Smoking",
+      "SmokePastAmount",
+      "SmokeDuration",
+      "SmokeIntensity",
+      "SmokingStopped"
+    ],
+    "type": "Computed factor"
+  },
+  "OralContraceptiveEver": {
+    "ancestors": [
+      "OralContraceptiveStatus",
+      "OralContraceptiveStopped",
+      "OralContraceptiveTillStop"
+    ],
+    "type": "Computed factor"
+  },
+  "OralContraceptiveSinceStop": {
+    "ancestors": [
+      "OralContraceptiveStatus",
+      "OralContraceptiveStopped",
+      "OralContraceptiveTillStop"
+    ],
+    "type": "Computed factor"
+  }
+}
