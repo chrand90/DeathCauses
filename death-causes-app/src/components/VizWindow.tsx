@@ -12,7 +12,7 @@ import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
 import { DataRow } from "./PlottingData";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import "./VizWindow.css";
-import { SummaryView, SummaryViewProps } from "./SummaryView";
+import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 
 interface VizWindowProps {
@@ -42,7 +42,8 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
         this.setState({
           riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-          survivalCurveData: this.props.store.computationStore.survivalCurveData
+          survivalCurveData: this.props.store.computationStore.survivalCurveData,
+          summaryViewData: this.props.store.computationStore.summaryView
         }, () => {
           this.props.store.computationStateStore.setComputationState(ComputationState.READY);
         })
@@ -112,11 +113,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
           return (<h3>Answer questions and compute to show results</h3>)
         }
         return (
-<<<<<<< HEAD
-          <SummaryView data={this.state.summaryViewData} />
-=======
-          <SummaryView data={this.state.summaryViewData} rdat={this.props.relationLinkData} colorDic={this.props.relationLinkData.getColorDic()} orderVisualisationCB={this.orderVisualizationWithoutFocusElement}/>
->>>>>>> 58f3de3 (tmp commit)
+          <SummaryView data={this.state.summaryViewData}/>
         )
       }
       default: {

@@ -5,10 +5,11 @@ import { DataRow } from "../../components/PlottingData";
 import { RawDeathCauseJson } from "../../components/database/Deathcause";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
-import ComputeController from "../updateFormNodes/UpdateFormController";
+import UpdateFormController from "../updateFormNodes/UpdateFormController";
+import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
 
 class computations {
-  computer: ComputeController | null;
+  computer: UpdateFormController | null;
 
   constructor() {
     this.computer = null;
@@ -26,7 +27,7 @@ class computations {
         new RiskFactorGroupsContainer(deathcause, key)
       );
     });
-    this.computer = new ComputeController(
+    this.computer = new UpdateFormController(
       rlinks,
       ageFrom,
       ageTo,
@@ -37,7 +38,7 @@ class computations {
 
   processData(data: FactorAnswers) {
     if(this.computer===null){
-      return {survivalData: [], innerCauses: []};
+      return {survivalData: [], innerCauses: [], summaryView: null};
     }
     else{
       return this.computer.computeAll(data);
@@ -47,7 +48,7 @@ class computations {
 
 let c = new computations();
 
-export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[]} {
+export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[], summaryView: SummaryViewData | null} {
   return c.processData(data);
 }
 

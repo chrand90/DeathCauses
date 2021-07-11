@@ -2,7 +2,8 @@ import { action, makeObservable, observable, toJS } from "mobx";
 import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData";
 import { DataRow } from "../components/PlottingData";
 import { FactorAnswers } from "../models/Factors";
-import ComputeController from "../models/updateFormNodes/UpdateFormController";
+import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
+import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
 import AdvancedOptionsStore, { Threading } from "./AdvancedOptionsStore";
 import ComputationStateStore, {
@@ -18,8 +19,9 @@ export default class ComputationStore {
   advancedOptionsStore: AdvancedOptionsStore;
   riskFactorContributions: DataRow[];
   survivalCurveData: SurvivalCurveData[];
-  singeThreadComputeController: ComputeController | null;
+  singeThreadComputeController: UpdateFormController | null;
   computationStateStore: ComputationStateStore;
+  summaryView: SummaryViewData | null;
 
   constructor(
     loadedDataStore: LoadedDataStore,
@@ -30,6 +32,7 @@ export default class ComputationStore {
     this.submittedFactorAnswers = {};
     this.riskFactorContributions = [];
     this.survivalCurveData = [];
+    this.summaryView = null;
     this.singeThreadComputeController = null;
     makeObservable(this, {
       submittedFactorAnswers: observable,
@@ -71,9 +74,10 @@ export default class ComputationStore {
     } else {
       worker.processData(
         toJS(this.submittedFactorAnswers)
-      ).then( action("INserting results", ({ survivalData, innerCauses}) => {
+      ).then( action("INserting results", ({ survivalData, innerCauses, summaryView}) => {
         this.survivalCurveData = survivalData;
         this.riskFactorContributions = innerCauses;
+        this.summaryView = summaryView
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));
     }
@@ -81,7 +85,7 @@ export default class ComputationStore {
 
   reset() {
     if (this.advancedOptionsStore.submittedThreading === Threading.SINGLE) {
-      this.singeThreadComputeController = new ComputeController(
+      this.singeThreadComputeController = new UpdateFormController(
         this.loadedDataStore.rdat,
         this.advancedOptionsStore.submittedAgeFrom,
         this.advancedOptionsStore.submittedAgeTo,

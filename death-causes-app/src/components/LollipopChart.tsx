@@ -11,7 +11,7 @@ export interface PieChartProps {
 const LollipopChart = (props: PieChartProps) => {
     const chartArea = useRef(null);
     const margin = { top: 40, right: 10, bottom: 40, left: 120 },
-        width = 500 - margin.left - margin.right,
+        width = 400 - margin.left - margin.right,
         height = 300 - margin.top - margin.bottom;
 
 
@@ -42,8 +42,9 @@ const LollipopChart = (props: PieChartProps) => {
             .attr("transform", "translate(0," + height + ")")
             .call(d3.axisBottom(x))
             .selectAll("text")
-            .attr("transform", "translate(-10,0)rotate(-45)")
-            .style("text-anchor", "end");
+            .attr("transform", "translate(10)")
+            .style("text-anchor", "end")
+            .style("font-size", "12px");
 
         var y = d3.scaleBand()
             .range([0, height])
@@ -51,6 +52,10 @@ const LollipopChart = (props: PieChartProps) => {
             .padding(1);
         svg.append("g")
             .call(d3.axisLeft(y))
+            .selectAll("text")
+            // .attr("transform", "translate(-10)rotate(-45)")
+            .style("text-anchor", "end")
+            .style("font-size", "12px");
 
         svg.selectAll("myline")
             .data(data)
@@ -60,7 +65,8 @@ const LollipopChart = (props: PieChartProps) => {
             .attr("x2", x(0))
             .attr("y1", function (d: any) { return y(d.name) as number; })
             .attr("y2", function (d: any) { return y(d.name) as number; })
-            .attr("stroke", "grey")
+            .attr("stroke", "black")
+            .attr("stroke-width",2)
 
         // Circles -> start at X=0
         svg.selectAll("mycircle")

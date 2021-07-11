@@ -9,7 +9,7 @@ import {
   CauseGrouping,
   CauseToParentMapping,
   NodeToColor,
-  NodeToOptimizability,
+  NodeToOptimizability, 
   ParentToCausesMapping,
 } from "../models/RelationLinks";
 
@@ -79,18 +79,18 @@ function longDesignConstants(
   width: number,
   simplifiedVersion: boolean
 ): DesignConstants {
-  const heightScale = simplifiedVersion ? 2 : 1;
+  const heightScale = simplifiedVersion ? 1.25 : 1;
   const xbarheightScale = simplifiedVersion ? 0 : 1;
   return {
     ...sameConstants,
-    barheight: 1.5 * BARHEIGHT * heightScale,
+    barheight: 1.5 * BARHEIGHT * heightScale * (simplifiedVersion ? 1 : 1),
     totalheight: n * 1.5 * BARHEIGHT * heightScale,
     totalheightWithXBar:
-      n * 1.5 * BARHEIGHT * heightScale + XBARHEIGHT * xbarheightScale,
+      (n * 1.5 * BARHEIGHT * heightScale + XBARHEIGHT * xbarheightScale) * (simplifiedVersion ? 1 : 1),
     startXScale: 10,
     yListStart: XBARHEIGHT * xbarheightScale,
-    yListInnerPadding: 0.48,
-    yListOuterPadding: 0.24,
+    yListInnerPadding: 0.48 * (simplifiedVersion ? 0.3 : 1),
+    yListOuterPadding: 0.24 * (simplifiedVersion ? 0.3 : 1),
     yListAlign: 0.8,
     middleOfChart: width / 2,
     width: width,
@@ -208,7 +208,7 @@ export default class BarChart {
       vis.xAxisGroup = vis.svg
         .append("g")
         .attr("transform", `translate(0,${XBARHEIGHT})`);
-    }
+    }  
 
     vis.make(database, diseaseToWidth);
   }

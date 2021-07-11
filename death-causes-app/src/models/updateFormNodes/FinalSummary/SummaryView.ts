@@ -1,5 +1,5 @@
-import { DataRow, DataSet } from "../../../components/PlottingData";
-import CauseNodeResult from "../CauseNodeResult"
+import { DataRow } from "../../../components/PlottingData";
+import CauseNodeResult from "../CauseNodeResult";
 import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 import riskFactorContributions from "./RiskFactorContributions";
 
@@ -25,12 +25,10 @@ export default function computeSummaryView(causeNodeResults: CauseNodeResult[], 
     });
 
     let innerCauses = riskFactorContributions(causeNodeResults, ageFrom, ageTo)
-    let ninetyPercentProbability = survivalProbs.filter(e => e >= 0.9).length - 1 + ageFrom
-    let probabilityOfTurning100 = ageFrom < 100 ? survivalProbs[(100-ageFrom)] : null
 
     return {
-        lifeExpentancyData: { lifeExpentancy: lifeExpentancy, ninetyPercentProbability: ninetyPercentProbability, probabilityOfTurning100: probabilityOfTurning100 },
-        yearsLostToDeathCauses: findNLargestValues(yearsLostToDeathCause),
+        lifeExpentancyData: { lifeExpentancy: lifeExpentancy, ages: ages, probabilities: survivalProbs },
+        yearsLostToDeathCauses: yearsLostToDeathCause,
         probabiliiesOfDyingOfEachDeathCause: findNLargestValues(probabiliiesOfDyingOfEachDeathCause),
         dataSet: innerCauses
     };
@@ -50,8 +48,8 @@ export interface DataPoint {
 
 export interface LifeExpentancyData {
     lifeExpentancy: number
-    ninetyPercentProbability: number
-    probabilityOfTurning100: number | null
+    ages: number[]
+    probabilities: number[]
 }
 
 function calculateLifeExpentancy(causeNodeResults: CauseNodeResult[], ages: number[]): number {
@@ -65,12 +63,16 @@ function calculateLifeExpentancy(causeNodeResults: CauseNodeResult[], ages: numb
         .map(x => Math.min(x, 1))
 
     const survivalProb = probOfStillBeingAlive(causeNodeResults); //contains a 1 in the first entry. 
-    let res: number = 0
+    let C: number = 0
 
     for (let i = 0; i < ages.length; i++) {
-        res += ages[i] * summedProbabilityOfDyingEachYear[i] * survivalProb[i]
+        C += ages[i] * summedProbabilityOfDyingEachYear[i] * survivalProb[i]
     }
-    return res;
+
+    let C2: number = survivalProb[survivalProb.length-1]
+    let z: number = summedProbabilityOfDyingEachYear[summedProbabilityOfDyingEachYear.length-1]
+
+    return C + C2*(120+(1-z)/z);
 }
 
 function calculateProbOfDyingOfDeathcause(probs: number[], survivalProb: number[]) {
