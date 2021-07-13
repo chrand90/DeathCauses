@@ -136,9 +136,9 @@ export default class UpdateFormController {
       }
       avgFactorAnswers[factorName] = ""
     })
-    let avgRes: UpdateDic = new FactorAnswersToUpdateForm().update(avgFactorAnswers, false);
+    let avgRes: UpdateDic = new FactorAnswersToUpdateForm().update(avgFactorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
-      avgRes[this.formUpdaterNames[i]] = formUpdater.update(avgRes, false);
+      avgRes[this.formUpdaterNames[i]] = formUpdater.update(avgRes);
     });
     const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
       return (avgRes![deathcause.deathCauseName].value as CauseNodeResult)

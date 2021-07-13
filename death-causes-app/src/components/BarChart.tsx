@@ -1198,13 +1198,14 @@ export default class BarChart {
         return d.name + "." + d.cause;
       });
 
+    this.currentMax = this.transitionXAxis(
+      dataSquares,
+      designConstants,
+      durationPerTransition
+    );
+
     if (!this.simpleVersion) {
       //Updating X-axis
-      this.currentMax = this.transitionXAxis(
-        dataSquares,
-        designConstants,
-        durationPerTransition
-      );
 
       vis.svg
         .selectAll<any, any>(".ptext")
