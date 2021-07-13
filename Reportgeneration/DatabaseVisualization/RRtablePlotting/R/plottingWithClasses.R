@@ -327,7 +327,7 @@ initialize_description=function(node, name){
   return(new("Description",
              names=node$descriptions,
              color=node$color,
-             baseUnit=ifelse("baseUnit" %in% node, node$baseUnit,"")))
+             baseUnit=ifelse("baseUnit" %in% names(node), node$baseUnit,"")))
 }
 
 
@@ -360,12 +360,16 @@ initialize_descriptions=function(json_filename){
 #' @param relation_json_filename if supplied a path to the relation json file and it will save the variable for use in later functions.
 #' @return a database object
 #' @export
-initialize_database=function(json_filename, relation_json_filename=NULL){
+initialize_database=function(json_filenames, relation_json_filename=NULL){
   if(!is.null(relation_json_filename)){
     initialize_descriptions(relation_json_filename)
   }
-  raw_element=rjson::fromJSON(file=json_filename)
-  return(new("Database", diseases=lapply(raw_element, initialize_disease)))
+  disease_list=list()
+  for(json_filename in json_filenames){
+    raw_element=rjson::fromJSON(file=json_filename)
+    disease_list=c(disease_list,lapply(raw_element, initialize_disease))
+  }
+  return(new("Database", diseases=disease_list))
 }
 
 
@@ -387,14 +391,15 @@ setMethod("dim",
           })
 
 setGeneric(name="getDescription",
-           def=function(x,max_length,add_unit)
+           def=function(x,...)
            {
              standardGeneric("getDescription")
-           })
+           },
+           signature = c("x"))
 
 setMethod("getDescription",
-          signature=c(x="Description", max_length="numeric", add_unit="logical"),
-          function(x, max_length, add_unit=FALSE){
+          signature=c(x="Description"),
+          function(x, max_length=0, add_unit=F){
             candidate_length=0
             candidate_description=x@names[1]
             for(desc in x@names){

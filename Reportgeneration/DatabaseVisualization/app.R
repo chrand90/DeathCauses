@@ -14,7 +14,9 @@ library(shiny)
 library(ggplot2)
 library(gridExtra)
 
-dat=initialize_database("../../death-causes-app/src/resources/Causes.json",
+dat=initialize_database(c("../../death-causes-app/src/resources/Causes.json",
+                          "../../death-causes-app/src/resources/Conditions.json"
+                          ),
                         "../../death-causes-app/src/resources/Descriptions.json")
 all_diseases=dat@diseases
 # Define UI for application that draws a histogram
