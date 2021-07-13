@@ -20,6 +20,7 @@ DESCRIPTIONS_DESTINATION_FILE = "../death-causes-app/src/resources/Descriptions.
 RELATIONFILE_DESTINATION = "../death-causes-app/src/resources/Relations.json"
 CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/Causes.json"
 CATEGORY_CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/CategoryCauses.json"
+CONDITIONS_DESTINATION="../death-causes-app/src/resources/Conditions.json"
 
 
 def remove_duplicates_and_Age(listi):
@@ -97,6 +98,28 @@ def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages)
     riskfactorgroup['riskRatioTables'] = riskratiotables
     return riskfactorgroup, remove_duplicates_and_Age(riskfactor_names)
 
+def add_all_special_factors(age_intervals, folder, death_causes, relations):
+    special_factor_dirs = search_for_riskfactors(folder, prefix="special_factor_")
+    for disease, dirs in special_factor_dirs.items():
+        for speical_factor_dir in dirs:
+            RRs = rr.loadRRs(speical_factor_dir)
+            attach_freqs_to_rr(RRs)
+            riskratiotables=[]
+            riskfactor_names=[]
+            for RR in RRs:
+                RRlist = RR.get_as_list_of_lists_with_freqs()
+                factor_names = RR.get_FactorNames()
+                riskratiotable = {'riskRatioTable': RRlist,
+                                  'riskFactorNames': factor_names}
+                riskratiotables.append(riskratiotable)
+                riskfactor_names.extend(factor_names)
+
+            if "SpecialFactorGroups" not in death_causes[disease]:
+                death_causes[disease]["SpecialFactorGroups"]=[]
+            death_causes[disease]["SpecialFactorGroups"].append(riskratiotables)
+            relations[disease]["ancestors"].extend(riskfactor_names)
+
+
 
 def integrate_and_interpolate_all(age_intervals, folder):
     '''
@@ -105,13 +128,11 @@ def integrate_and_interpolate_all(age_intervals, folder):
 
     relations = get_cause_hierarchy(folder)
     cause_dirs = search_for_causes(folder)
-    rr_dirs = search_for_rrs(folder)
+    rr_dirs = search_for_riskfactors(folder)
     descriptions = search_for_descriptions(folder)
 
     # for disease, d_dic in relations.items():
     #     print(disease, ": ", d_dic["type"])
-
-    writtenF_dirs = search_for_writtenF_directories(folder)
 
     age_distribution = get_age_distribution()
 
@@ -146,11 +167,32 @@ def extract_cause_name(ICD_dir):
     return ICD_dir.split(os.sep)[-2]
 
 
+def replace_cause_with_condition(relations):
+    for nodeName in relations.keys():
+        if relations[nodeName]["type"] == "Death cause":
+            relations[nodeName]["type"] = "Condition"
+    return relations
+
+def set_optimizability_for_conditions(descriptions):
+    for nodeName, node in descriptions.items():
+        descriptions[nodeName]["optimizability"] = 50
+
 def run(age_intervals=None):
     if age_intervals is None:
         age_intervals = get_age_totals()[0]
+    relations_conditions, descriptions_conditions, conditions, _ = integrate_and_interpolate_all(age_intervals,
+                                                                                                 "Conditions")
+    set_optimizability_for_conditions(descriptions_conditions)
+    add_all_special_factors(age_intervals,"Conditions",conditions, relations_conditions)
+    relations_conditions= replace_cause_with_condition(relations_conditions)
     relations, descriptions, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
+    relations.update(relations_conditions)
+    print("all relations")
+    for k,v in relations.items():
+        print(k,":", v)
+    descriptions.update(descriptions_conditions)
     compiled_relations, compiled_descriptions, compiled_factors = combine_relations(relations, descriptions)
+    transform_to_json(conditions, CONDITIONS_DESTINATION)
     transform_to_json(compiled_relations, RELATIONFILE_DESTINATION)
     transform_to_json(compiled_descriptions, DESCRIPTIONS_DESTINATION_FILE)
     transform_to_json(compiled_factors, FACTORQUESTIONS_COMPILED_FILE)
@@ -164,23 +206,7 @@ def transform_to_json(inp, filename):
     with open(filename, 'w') as f:
         f.write(json.dumps(inp, default=lambda formula: str(formula)))
 
-
-def integrate_one(writtenF_dir, age_intervals, age_distribution):
-    '''
-        input: writtenF_dir: a string directory to the folder of risk ratio files. 
-               age_intervals: a list of list/tuples of numbers that give the age intervals to integrate separately.
-        output: a list of normalizing constants. 
-    '''
-    RRs = rr.loadRRs(writtenF_dir)
-    interaction, string_interaction_name = rr.read_interaction(writtenF_dir)
-    RR = rr.make_simultane_and_get_writtenF(RRs, interaction)
-    RRages = [factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in
-              age_intervals]
-    folder=writtenF_dir.split(os.sep)[-1]
-    disease = writtenF_dir.split(os.sep)[-2]
-    print("Integrating: "+ folder)
-    factor_prob_data_frames = factor_probabilities.get_factor_probabilities(RR.get_categories(RR.get_FactorNames()),
-                                                                            age_intervals)
+def attach_freqs_to_rr(RRs):
     for RRpart in RRs:
         if not "Age" in RRpart.get_FactorNames():
             freqs=factor_probabilities.get_factor_probabilities_for_one_age_interval(
@@ -201,12 +227,25 @@ def integrate_one(writtenF_dir, age_intervals, age_distribution):
                 )
                 extra_freqs.insert_column("Age",[age_values[i]]*len(extra_freqs))
                 freqs.join(extra_freqs)
-
-        print("freqs")
-        print(freqs)
-        print("RRpart")
-        print(RRpart)
         RRpart.set_freqs(freqs)
+
+def integrate_one(writtenF_dir, age_intervals, age_distribution):
+    '''
+        input: writtenF_dir: a string directory to the folder of risk ratio files. 
+               age_intervals: a list of list/tuples of numbers that give the age intervals to integrate separately.
+        output: a list of normalizing constants. 
+    '''
+    RRs = rr.loadRRs(writtenF_dir)
+    interaction, string_interaction_name = rr.read_interaction(writtenF_dir)
+    RR = rr.make_simultane_and_get_writtenF(RRs, interaction)
+    RRages = [factor_probabilities.adjust_to_age_group(RR, age_interval, age_distribution) for age_interval in
+              age_intervals]
+    folder=writtenF_dir.split(os.sep)[-1]
+    disease = writtenF_dir.split(os.sep)[-2]
+    print("Integrating: "+ folder)
+    factor_prob_data_frames = factor_probabilities.get_factor_probabilities(RR.get_categories(RR.get_FactorNames()),
+                                                                            age_intervals)
+    attach_freqs_to_rr(RRs)
     normalizers = []
 
     for RRage, factor_prob_data_frame in zip(RRages, factor_prob_data_frames):
@@ -270,12 +309,12 @@ def search_for_causes(folder):
     return cause_dirs
 
 
-def search_for_rrs(folder):
+def search_for_riskfactors(folder, prefix="rr_"):
     rr_dirs = {}
     list_of_files = os.walk(os.path.join(os.pardir, "Database", folder))
     for path, dirs_within, _ in list_of_files:
         for potential_rr in dirs_within:
-            if potential_rr.startswith('rr_'):
+            if potential_rr.startswith(prefix):
                 disease = path.split(os.sep)[-1]
                 if disease in rr_dirs:
                     rr_dirs[disease].append(os.path.join(path, potential_rr))

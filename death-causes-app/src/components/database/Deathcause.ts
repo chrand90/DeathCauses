@@ -1,15 +1,23 @@
 import RelationLinks from "../../models/RelationLinks";
 import FrequencyTable, { FrequencyJson } from "./FrequencyTable";
 import { RiskFactorGroup, RiskFactorGroupJson } from "./RickFactorGroup";
+import { SpecialFactorTable, SpecialFactorTableJson } from "./RiskRatioTable";
 
 export interface DeathCauseJson {
     Age?: FrequencyJson;
     RiskFactorGroups: RiskFactorGroupJson[];
 }
 
+
+export interface ConditionJson extends DeathCauseJson {
+    SpecialFactorGroups: SpecialFactorTableJson[][];
+}
+
 export interface RawDeathCauseJson {
     [deathCauseName: string]: DeathCauseJson;
 }
+
+
 
 export class RiskFactorGroupsContainer {
     riskFactorGroups: RiskFactorGroup[];
@@ -52,3 +60,20 @@ export default class DeathCause extends RiskFactorGroupsContainer{
         }
     }
 }
+
+export class Condition extends DeathCause {
+    specialFactorTables: SpecialFactorTable[]
+
+    constructor(json: ConditionJson, name: string){
+        super(json, name)
+        this.specialFactorTables=[]
+        json.SpecialFactorGroups.forEach(listOfSpecialFactorTables => {
+            listOfSpecialFactorTables.forEach((specialFactorTableJSON: SpecialFactorTableJson) => {
+                this.specialFactorTables.push(new SpecialFactorTable(specialFactorTableJSON))
+            })
+        })
+    }
+
+    
+}
+

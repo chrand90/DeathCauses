@@ -4,6 +4,11 @@ import { ERROR_COLOR } from "../Question";
 import { InterpolationTable, InterpolationTableJson } from "./InterpolationTable";
 import { RiskRatioTableEntry } from "./RiskRatioTableEntry";
 
+export interface SpecialFactorTableJson {
+    riskRatioTable: (string[] | number)[][];
+    riskFactorNames: string[];
+}
+
 export interface RiskRatioTableJson {
     riskFactorNames: string[];
     interpolationTable: InterpolationTableJson;
@@ -14,15 +19,13 @@ export interface MinimumRiskRatios {
     [key: string]: number
 }
 
-class RiskRatioTable {
+class SpecialFactorTable {
     factorNames: string[];
     riskRatioTable: RiskRatioTableEntry[];
-    interpolation: InterpolationTable;
 
-    constructor(json: RiskRatioTableJson) {
+    constructor(json: SpecialFactorTableJson) {
         this.factorNames = json.riskFactorNames;
         this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number, element[2] as number))
-        this.interpolation=new InterpolationTable(json.interpolationTable)
     }
 
     // getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
@@ -94,5 +97,14 @@ class RiskRatioTable {
 
 }
 
-export { RiskRatioTable };
+class RiskRatioTable extends SpecialFactorTable {
+
+    interpolation: InterpolationTable;
+    constructor(json: RiskRatioTableJson){
+        super(json);  
+        this.interpolation=new InterpolationTable(json.interpolationTable)
+    }
+}
+
+export { RiskRatioTable, SpecialFactorTable };
 

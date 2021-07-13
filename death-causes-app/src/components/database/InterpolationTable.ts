@@ -185,9 +185,6 @@ export class InterpolationTable {
       ageIndex,
       fixedFactors
     );
-    if(fixedLocations.length>1){
-      console.log("debug location")
-    }
     return fixedLocations.map(({weight, fixedLocation}) => {
       return {
         weight:weight,

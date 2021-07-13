@@ -71,6 +71,20 @@ export default abstract class FormUpdater {
       }
     }
 
+    missingAncestors(allPreviousUpdateForms: UpdateDic): string[] {
+      return this.ancestors.filter(ancestor => {
+          return allPreviousUpdateForms[ancestor].missing===MissingStatus.MISSING
+      })
+    }
+
+    isAllButAgeMissing(allPreviousUpdateForms: UpdateDic): boolean{
+      const missed=this.missingAncestors(allPreviousUpdateForms)
+      if(missed.length===this.ancestors.length || (this.ancestors.length-1===missed.length && !missed.includes("Age") && this.ancestors.includes("Age"))){
+          return true;
+      }
+      return false;
+    }
+
     inputDependsOnAge(allPreviousUpdateForms: UpdateDic): boolean {
       return !this.ancestors.every((nodeName) => {
         return (

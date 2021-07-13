@@ -1,0 +1,8 @@
+# see BMI.txt in the same folder for explanation
+#
+WaistMale	RR
+,70	1
+70,94	1
+94,102	2.78
+102,140	4.16
+140+	4.16
