@@ -33,21 +33,6 @@ export interface ProbabilityObject {
   [factorlevel: string]: number;
 }
 
-export interface UpdateFormSimple {
-  change: ChangeStatus;
-  type: TypeStatus;
-  missing: MissingStatus;
-  dimension: DimensionStatus;
-  random: StochasticStatus;
-  value:
-    | ""
-    | string
-    | number
-    | string[]
-    | number[]
-    | ProbabilityObject
-    | ProbabilityObject[];
-}
 
 export interface UpdateForm {
   change: ChangeStatus;
@@ -65,7 +50,7 @@ export interface UpdateForm {
     | ProbabilityObject[]
     | RiskFactorGroupResult
     | CauseNodeResult
-    | {[factor: string]:UpdateFormSimple}
+
 }
 
 export interface UpdateDic {
