@@ -1,9 +1,10 @@
 import { DataRow } from "../../../components/PlottingData";
 import CauseNodeResult from "../CauseNodeResult";
+import { FactorAnswerChanges } from "../FactorAnswersToUpdateForm";
 import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 import riskFactorContributions from "./RiskFactorContributions";
 
-export default function computeSummaryView(causeNodeResults: CauseNodeResult[], ageFrom: number, ageTo: number): SummaryViewData {
+export default function computeSummaryView(causeNodeResults: CauseNodeResult[], ageFrom: number, ageTo: number, changes: FactorAnswerChanges): SummaryViewData {
     let ages: number[] = Array.from({ length: ageTo - ageFrom + 1 }, (_, i) => ageFrom + i)
 
     const lifeExpentancy = calculateLifeExpentancy(causeNodeResults, ages)
@@ -30,7 +31,8 @@ export default function computeSummaryView(causeNodeResults: CauseNodeResult[], 
         lifeExpentancyData: { lifeExpentancy: lifeExpentancy, ages: ages, probabilities: survivalProbs },
         yearsLostToDeathCauses: yearsLostToDeathCause,
         probabiliiesOfDyingOfEachDeathCause: findNLargestValues(probabiliiesOfDyingOfEachDeathCause),
-        dataSet: innerCauses
+        dataSet: innerCauses,
+        changes: changes
     };
 }
 
@@ -38,7 +40,8 @@ export interface SummaryViewData {
     lifeExpentancyData: LifeExpentancyData,
     yearsLostToDeathCauses: DataPoint[],
     probabiliiesOfDyingOfEachDeathCause: DataPoint[],
-    dataSet: DataRow[]
+    dataSet: DataRow[],
+    changes: FactorAnswerChanges
 }
 
 export interface DataPoint {

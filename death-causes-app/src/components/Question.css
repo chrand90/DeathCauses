@@ -157,9 +157,7 @@
   vertical-align: baseline;
 }
 
-.text-with-button {
-  font-size: small;
-  line-height: 20px;
-  height: 20px;
+.text-link-button {
+  padding: 0px 0px 0px 2px;
   vertical-align: baseline;
 }

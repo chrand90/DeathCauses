@@ -959,10 +959,12 @@ export default class BarChart {
   ) {
     const newMaxX = getMaxX(dataSquares);
     const xAxisCall = this.createXAxisCall(newMaxX, designConstants);
-    this.xAxisGroup
+    if(!this.simpleVersion){
+      this.xAxisGroup
       .transition("x_axis_change")
       .duration(durationPerTransition)
       .call(xAxisCall);
+    }
     return newMaxX;
   }
 

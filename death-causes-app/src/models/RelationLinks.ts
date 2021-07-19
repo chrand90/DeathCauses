@@ -337,6 +337,16 @@ export default class RelationLinks {
     }; //this.sortedNodes[NodeType.CAUSE_CATEGORY]}
   }
 
+  /* computes which other input factors are necessary to compute the full effect of the input factors in inputFactors. 
+  That is, which input factors share computed factors with the factors of inputFactors
+  */
+  getDependentFactors(inputFactor: string): string[][]{
+    const affectedComputedFactors=this.findComputedFactorDescendants(inputFactor)
+    return affectedComputedFactors.map(compFactor => {
+      return this.superAncestorList[compFactor];
+    })
+  }
+
   makeCollectedGroups(groupCats: string[]): CauseGrouping {
     let causeToParent: CauseToParentMapping = {};
     let parentToCauses: ParentToCausesMapping = {};
@@ -415,6 +425,31 @@ export default class RelationLinks {
         return this.findDeathCauseDescendants(d);
       });
       return ([] as string[]).concat(...descendantsListsOfCauseDescendants);
+    }
+  }
+
+  findComputedFactorDescendants(nodeName: string): string[] {
+    if (
+      this.descendantList[nodeName].length === 0
+    ){
+      if(this.nodeType[nodeName]===NodeType.COMPUTED_FACTOR){
+        return [nodeName];
+      }
+      else{
+        return [];
+      }
+    } else if(this.nodeType[nodeName]===NodeType.INPUT){
+      return this.descendantList[nodeName].flatMap(descendant => {
+        return this.findComputedFactorDescendants(descendant);
+      })
+    } else if(this.nodeType[nodeName]===NodeType.COMPUTED_FACTOR){
+      let res= this.descendantList[nodeName].flatMap(descendant => {
+        return this.findComputedFactorDescendants(descendant);
+      })
+      res.push(nodeName)
+      return res;
+    } else{
+     return [] 
     }
   }
 

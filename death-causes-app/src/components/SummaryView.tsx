@@ -4,6 +4,7 @@ import { Card, Col, Row } from "react-bootstrap";
 import { CardBody, CardHeader } from "reactstrap";
 import RootStore, { withStore } from "../stores/rootStore";
 import BarChartWrapper from "./BarChartWrapper";
+import ChangeView from "./ChangeView";
 import LollipopChart from "./LollipopChart";
 import RangeSliders from "./RangerSlidersSummaryView";
 
@@ -34,6 +35,12 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                             <p></p>
                             <h5>The average life expentancy is: 70</h5>
                             <RangeSliders/>
+                        </CardBody>
+                    </Card>
+                    <Card className="my-1 mx-auto bg-light " style={{}}>
+                        <CardBody>
+                            <p>Effect of your change of input</p>
+                            <ChangeView></ChangeView>
                         </CardBody>
                     </Card>
                 </Col>

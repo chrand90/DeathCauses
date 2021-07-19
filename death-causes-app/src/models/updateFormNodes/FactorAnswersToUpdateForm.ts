@@ -9,10 +9,22 @@ import {
   UpdateForm,
 } from "./UpdateForm";
 
+export const UNKNOWNLABEL="Unknown"
+export interface FactorAnswerChange {
+  fromVal: number | string;
+  toVal: number | string;
+}
+export interface FactorAnswerChanges {
+  [factorName:string]: FactorAnswerChange
+}
+
 export class FactorAnswersToUpdateForm {
   lastInputFactorAnswers: FactorAnswers;
   lastOutputNodeValues: UpdateDic;
+  changes: FactorAnswerChanges;
+
   constructor() {
+    this.changes={};
     this.lastInputFactorAnswers = {};
     this.lastOutputNodeValues = {};
   }
@@ -66,7 +78,41 @@ export class FactorAnswersToUpdateForm {
     };
   }
 
+  getStringValueOfNode(node: UpdateForm | undefined):string{
+    if(!node){
+      return UNKNOWNLABEL
+    }
+    if(node.missing===MissingStatus.MISSING){
+      return UNKNOWNLABEL
+    }
+    else if(node.type===TypeStatus.NUMERIC){
+      if(typeof node.value==="string"){
+        return parseFloat(node.value).toPrecision(4).replace(/\.0+$/,"");
+      }
+      else if(typeof node.value==="number"){
+        return node.value.toPrecision(4).replace(/\.0+$/,"")
+      }
+    }
+    else if(node.type===TypeStatus.STRING){
+      return node.value as string
+    }
+    throw Error("Unknown output type to input factor")
+  }
+
+  getRecentChanges(){
+    return this.changes;
+  }
+
+  addToChangeObject(factorname: string, newNode: UpdateForm): void{
+    const fromVal= this.getStringValueOfNode(this.lastOutputNodeValues[factorname])
+    const toVal= this.getStringValueOfNode(newNode)
+    if(fromVal!==toVal){
+      this.changes[factorname]={fromVal, toVal}
+    }
+  }
+
   update(newFactorAnswers: FactorAnswers) {
+    this.changes={};
     let defaultChangeStatus = ChangeStatus.UNCHANGED;
     if (
       !("Age" in this.lastInputFactorAnswers) ||
@@ -81,10 +127,12 @@ export class FactorAnswersToUpdateForm {
       ) {
         this.lastOutputNodeValues[factorname].change = defaultChangeStatus;
       } else {
-        this.lastOutputNodeValues[factorname] = this.createNewFactorVal(
+        const newNode= this.createNewFactorVal(
           factorname,
           factorval
         );
+        this.addToChangeObject(factorname, newNode)
+        this.lastOutputNodeValues[factorname] = newNode
       }
     });
     this.lastInputFactorAnswers = newFactorAnswers;
