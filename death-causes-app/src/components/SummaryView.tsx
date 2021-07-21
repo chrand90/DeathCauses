@@ -47,10 +47,10 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                     </Card>
                 </Col>
                 <Row className="mx-auto my-1" style={{ width: "70%" }}>
-                    <Col className="pr-1 ">
+                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
                         <Card className="bg-light " style={{}} >
                             <CardHeader><h5 style={{ fontWeight: 600 }}>Years lost per cause</h5></CardHeader>
-                            <LollipopChart data={summaryViewData.yearsLostToDeathCauses} />
+                            {/* <LollipopChart data={summaryViewData.yearsLostToDeathCauses} /> */}
                             {/* <table style={{ width: "60%", margin: "auto" }}>
                                 <thead>
                                     <th style={{ textAlign: "left" }}>Death cause</th>
@@ -67,7 +67,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                             </table> */}
                         </Card>
                     </Col>
-                    <Col className="pl-1">
+                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
                         <Card className="bg-light" style={{}}> {/*backgroundColor: 'rgba(50, 50, 200, 0.1)'*/}
                             <CardHeader><h5 style={{ fontWeight: 600 }}>Most likely cause of death</h5></CardHeader>
                             <LollipopChart data={summaryViewData.probabiliiesOfDyingOfEachDeathCause} />
