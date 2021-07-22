@@ -1,0 +1,78 @@
+---
+title: "Tubercolosis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Tubercolosis is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Tubercolosis is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Tubercolosis has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Tubercolosis was responsible for 0.0189% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../death-causes-app/src/resources/Causes.json"),
+"../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Tubercolosis')
+```
+
+
+#### Definition
+
+The definition of dying from Tubercolosis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Tubercolosis who falls under the ICD code 
+
+* <details><summary> A1 (100.0%)</summary>
+    * A16 (69.0%)
+        * A162 (43.0%)
+        * A164 (0.2%)
+        * A165 (0.4%)
+        * A169 (25.0%)
+    * A17: Tuberculosis of nervous system (2.8%)
+        * A170: Tuberculous meningitis (2.0%)
+        * A178: Other tuberculosis of nervous system (0.4%)
+        * A179: Tuberculosis of nervous system, unspecified (0.4%)
+    * A18: Tuberculosis of other organs (23.0%)
+        * A180: Tuberculosis of bones and joints (20.0%)
+        * A181: Tuberculosis of genitourinary system (0.2%)
+        * A183: 0 Tuberculosis of intestines, peritoneum and mesenteric glands Tuberculosis of intestines, peritoneum and mesenteric glands (0.8%)
+        * A188: Tuberculosis of other specified organs (1.2%)
+    * A19: Miliary tuberculosis (5.8%)
+        * A199: Miliary tuberculosis, unspecified (5.8%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

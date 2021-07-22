@@ -1,0 +1,210 @@
+---
+title: "Unkown disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Unkown disease is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Unknown dis.
+* Unkown disease
+* Unknown_Disease
+
+#### Categories
+
+Unkown disease is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Unkown disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Unkown disease was responsible for 1.23% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../death-causes-app/src/resources/Causes.json"),
+"../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Unknown_Disease')
+```
+
+
+#### Definition
+
+The definition of dying from Unkown disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Unkown disease who falls under the ICD code 
+
+* <details><summary> R (100.0%)</summary>
+    * R0 (11.0%)
+        * R00: Abnormalities of heart beat (0.44%)
+            * R000: Tachycardia, unspecified (0.034%)
+            * R001: Bradycardia, unspecified (0.4%)
+            * R002: Palpitations (0.0031%)
+            * R008: Other abnormalities of heart beat (0.0062%)
+        * R01: Cardiac murmurs and other cardiac sounds (0.0093%)
+            * R011: Cardiac murmur, unspecified (0.0093%)
+        * R02 (0.28%)
+        * R04: Hemorrhage from respiratory passages (0.39%)
+            * R040: Epistaxis (0.012%)
+            * R041: Hemorrhage from throat (0.0031%)
+            * R042: Hemoptysis (0.11%)
+            * R048: Hemorrhage from other sites in respiratory passages (0.26%)
+            * R049: Hemorrhage from respiratory passages, unspecified (0.0031%)
+        * R05: Cough (0.0062%)
+        * R06: Abnormalities of breathing (1.5%)
+            * R060: Dyspnea (0.8%)
+            * R061: Stridor (0.0031%)
+            * R064: Hyperventilation (0.12%)
+            * R068: Other abnormalities of breathing (0.55%)
+        * R07: Pain in throat and chest (0.071%)
+            * R074 (0.071%)
+        * **R09: Other symptoms and signs involving the circulatory and respiratory system (8.1%)**
+            * R090: Asphyxia and hypoxemia (0.79%)
+            * R091: Pleurisy (0.0031%)
+            * R092: Respiratory arrest (7.2%)
+            * R098: Other specified symptoms and signs involving the circulatory and respiratory systems (0.031%)
+    * R1 (1.4%)
+        * R10: Abdominal and pelvic pain (0.12%)
+            * R100: Acute abdomen (0.046%)
+            * R101: Pain localized to upper abdomen (0.0031%)
+            * R104 (0.071%)
+        * R11: Nausea and vomiting (0.031%)
+        * R13: Aphagia and dysphagia (0.64%)
+        * R14: Flatulence and related conditions (0.0031%)
+        * R16: Hepatomegaly and splenomegaly, not elsewhere classified (0.0093%)
+            * R160: Hepatomegaly, not elsewhere classified (0.0031%)
+            * R161: Splenomegaly, not elsewhere classified (0.0062%)
+        * R17: Unspecified jaundice (0.012%)
+        * R18: Ascites (0.025%)
+        * R19: Other symptoms and signs involving the digestive system and abdomen (0.58%)
+            * R190: Intra-abdominal and pelvic swelling, mass and lump (0.2%)
+            * R198: Other specified symptoms and signs involving the digestive system and abdomen (0.37%)
+    * R2 (0.33%)
+        * R22: Localized swelling, mass and lump of skin and subcutaneous tissue (0.11%)
+            * R220: Localized swelling, mass and lump, head (0.0062%)
+            * R221: Localized swelling, mass and lump, neck (0.028%)
+            * R222: Localized swelling, mass and lump, trunk (0.071%)
+            * R229: Localized swelling, mass and lump, unspecified (0.0031%)
+        * R25: Abnormal involuntary movements (0.0031%)
+            * R252: Cramp and spasm (0.0031%)
+        * R26: Abnormalities of gait and mobility (0.037%)
+            * R263 (0.037%)
+        * R27: Other lack of coordination (0.0093%)
+            * R270: Ataxia, unspecified (0.0062%)
+            * R278: Other lack of coordination (0.0031%)
+        * R29: Other symptoms and signs involving the nervous and musculoskeletal systems (0.18%)
+            * R298: Other symptoms and signs involving the nervous and musculoskeletal systems (0.18%)
+    * R3 (0.028%)
+        * R31: Hematuria (0.025%)
+        * R33: Retention of urine (0.0031%)
+    * R4 (0.36%)
+        * R40: Somnolence, stupor and coma (0.037%)
+            * R402: Coma (0.037%)
+        * R41: Other symptoms and signs involving cognitive functions and awareness (0.23%)
+            * R410: Disorientation, unspecified (0.0031%)
+            * R413: Other amnesia (0.022%)
+            * R418: Other symptoms and signs involving cognitive functions and awareness (0.2%)
+        * R43: Disturbances of smell and taste (0.0031%)
+            * R432: Parageusia (0.0031%)
+        * R45: Symptoms and signs involving emotional state (0.0031%)
+            * R456: Violent behavior (0.0031%)
+        * R46: Symptoms and signs involving appearance and behavior (0.0031%)
+            * R461: Bizarre personal appearance (0.0031%)
+        * R47: Speech disturbances, not elsewhere classified (0.087%)
+            * R470: Dysphasia and aphasia (0.087%)
+    * **R5 (25.0%)**
+        * R50: Fever of other and unknown origin (0.077%)
+            * R509: Fever, unspecified (0.077%)
+        * R52: Pain, unspecified (0.065%)
+            * R520 (0.0031%)
+            * R522 (0.053%)
+            * R529 (0.0093%)
+        * R53: Malaise and fatigue (2.5%)
+        * **R54: Age-related physical debility (14.0%)**
+        * R55: Syncope and collapse (0.14%)
+        * R56: Convulsions, not elsewhere classified (3.4%)
+            * R560: Febrile convulsions (0.0031%)
+            * R568 (3.4%)
+        * R57: Shock, not elsewhere classified (3.1%)
+            * R570: Cardiogenic shock (1.8%)
+            * R571: Hypovolemic shock (0.15%)
+            * R578: Other shock (0.26%)
+            * R579: Shock, unspecified (0.9%)
+        * R58: Hemorrhage, not elsewhere classified (1.6%)
+        * R59: Enlarged lymph nodes (0.025%)
+            * R590: Localized enlarged lymph nodes (0.0031%)
+            * R591: Generalized enlarged lymph nodes (0.012%)
+            * R599: Enlarged lymph nodes, unspecified (0.0093%)
+    * **R6 (19.0%)**
+        * R60: Edema, not elsewhere classified (0.037%)
+            * R600: Localized edema (0.0031%)
+            * R601: Generalized edema (0.0093%)
+            * R609: Edema, unspecified (0.025%)
+        * **R62: Lack of expected normal physiological development in childhood and adults (13.0%)**
+            * R628 (13.0%)
+            * R629 (0.025%)
+        * R63: Symptoms and signs concerning food and fluid intake (0.57%)
+            * R630: Anorexia (0.35%)
+            * R633: Feeding difficulties (0.0093%)
+            * R634: Abnormal weight loss (0.13%)
+            * R636: Underweight (0.083%)
+            * R638: Other symptoms and signs concerning food and fluid intake (0.0062%)
+        * R64: Cachexia (0.7%)
+        * R68: Other general symptoms and signs (5.3%)
+            * R680: Hypothermia, not associated with low environmental temperature (0.012%)
+            * R688: Other general symptoms and signs (5.3%)
+    * R7 (0.083%)
+        * R70: Elevated erythrocyte sedimentation rate and abnormality of plasma viscosity (0.0031%)
+            * R701: Abnormal plasma viscosity (0.0031%)
+        * R73: Elevated blood glucose level (0.046%)
+            * R730: Abnormal glucose (0.0031%)
+            * R739: Hyperglycemia, unspecified (0.043%)
+        * R75: Inconclusive laboratory evidence of human immunodeficiency virus [HIV] (0.012%)
+        * R76: Other abnormal immunological findings in serum (0.0093%)
+            * R768: Other specified abnormal immunological findings in serum (0.0093%)
+        * R78: Findings of drugs and other substances, not normally found in blood (0.0031%)
+            * R788: Finding of other specified substances, not normally found in blood (0.0031%)
+        * R79: Other abnormal findings of blood chemistry (0.0093%)
+            * R798: Other specified abnormal findings of blood chemistry (0.0093%)
+    * **R9 (42.0%)**
+        * R90: Abnormal findings on diagnostic imaging of central nervous system (0.043%)
+            * R900: Intracranial space-occupying lesion found on diagnostic imaging of central nervous system (0.04%)
+            * R908: Other abnormal findings on diagnostic imaging of central nervous system (0.0031%)
+        * R91: Abnormal findings on diagnostic imaging of lung (1.0%)
+        * R94: Abnormal results of function studies (0.0031%)
+            * R943: Abnormal results of cardiovascular function studies (0.0031%)
+        * R95 (4.8%)
+        * R96 (0.56%)
+            * R960 (0.56%)
+        * R98 (0.049%)
+        * **R99: Ill-defined and unknown cause of mortality (36.0%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

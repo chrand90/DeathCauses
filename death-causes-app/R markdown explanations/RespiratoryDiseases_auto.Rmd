@@ -1,0 +1,53 @@
+---
+title: "Respiratory disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Respiratory disease is a **death cause category**. It means that it is a collection of **death causes** and so we can compute the probability of dying from this death cause category by adding up all of its death causes. 
+
+#### Alternative names:
+* Lung disease
+* Respiratory disease
+* RespiratoryDiseases
+
+#### Death causes
+
+Respiratory disease consists of the following causes
+
+* [Asthma](/model/Asthma)
+* [Bronchitis](/model/Bronchitis)
+* [COPD](/model/COPD)
+* [Emphysema](/model/Emphysema)
+* [Other respiratory disease](/model/Other_Respiratory_Diseases)
+* [Pneumonitis](/model/Pneumonitis)
+
+#### Categories
+
+Respiratory disease is itself part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Respiratory disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+
+## References

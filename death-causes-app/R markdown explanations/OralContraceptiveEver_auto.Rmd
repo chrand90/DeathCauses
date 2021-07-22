@@ -1,0 +1,52 @@
+---
+title: "Ever used oral contraceptives"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Ever used oral contraceptives is a **computed factor**. It means that it can be determined with total certainty from the user input.
+
+#### Alternative names:
+* OCP ever
+* Ever used OCP
+* Ever used oral contraceptives
+* OralContraceptiveEver
+
+#### Input
+
+Ever used oral contraceptives is computed with the following factors
+
+* [Oral contraceptives](/model/OralContraceptiveStatus)
+* [Time since OCP](/model/OralContraceptiveStopped)
+* [Time till OCP stop](/model/OralContraceptiveTillStop)
+
+#### Uses
+
+Ever used oral contraceptives is used by the model in the following places
+
+* [Breast cancer](/model/BreastCancer)
+
+#### Computation
+
+[Place explanation for how Ever used oral contraceptives is computed here]
+
+
+
+## References

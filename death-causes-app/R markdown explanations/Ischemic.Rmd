@@ -3,6 +3,9 @@ title: "Coronary Heart Disease"
 output: 
     html_document:
         theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
 bibliography: references.bib
 link-citations: true
 ---
@@ -21,6 +24,8 @@ details{
 ### Coronary Heart Disease
 
 [backlink](/model/intro)
+
+test
 
 There are many minor [risk factors](#risk-factor) for ischemic heart disease (also called coronary heart disease). So far we have included the following
 

@@ -3,6 +3,9 @@ title: "Death causes"
 output: 
     html_document:
         theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
 bibliography: references.bib
 link-citations: true
 ---
