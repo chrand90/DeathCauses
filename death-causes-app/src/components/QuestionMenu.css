@@ -7,7 +7,6 @@
 }
 
 .questionmenu{
-    min-height: 600px;
     background: var(--background);
     padding: 18px;
 }

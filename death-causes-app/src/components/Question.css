@@ -108,6 +108,8 @@
 
 .popover {
   white-space: pre-wrap;
+  max-height: 350px;
+  overflow-y: auto;
 }
 
 .form-control::-moz-placeholder {

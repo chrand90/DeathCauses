@@ -16,13 +16,19 @@ class AppWithoutObserver extends React.Component {
   }
 
   render() {
+    if(store.uIStore.verticalStacked){
+      document.body.style.overflow="auto"
+    }
+    else{
+      document.body.style.overflow="hidden"
+    }
     return (
-      <div className="App">
+      <div className="App" style={{}}>
         <StoreContext.Provider value={store}>
         <Header />
-        <Container fluid>
+        <Container fluid >
           <Row>
-            <Col lg={5} xl={4} style={{ padding: "0px" }}>
+            <Col lg={5} xl={4} style={{ padding: "0px"}}>
               {store.loadedQuestionMenuData ?  <QuestionMenu/> : <Spinner animation="grow" />}
             </Col>
             <Col lg={7} xl={8} style={{ padding: "0px" }}>
