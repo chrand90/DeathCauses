@@ -8,6 +8,7 @@ import {
   UpdateDic,
   UpdateForm,
 } from "./UpdateForm";
+import { customPrecision }  from "../../components/Helpers"
 
 export const UNKNOWNLABEL="Unknown"
 export interface FactorAnswerChange {
@@ -78,23 +79,21 @@ export class FactorAnswersToUpdateForm {
     };
   }
 
-  getStringValueOfNode(node: UpdateForm | undefined):string{
+  getStringValueOfNode(node: UpdateForm | undefined):string[]{
     if(!node){
-      return UNKNOWNLABEL
+      return [UNKNOWNLABEL, UNKNOWNLABEL]
     }
     if(node.missing===MissingStatus.MISSING){
-      return UNKNOWNLABEL
+      return [UNKNOWNLABEL, UNKNOWNLABEL]
     }
     else if(node.type===TypeStatus.NUMERIC){
-      if(typeof node.value==="string"){
-        return parseFloat(node.value).toPrecision(4).replace(/\.0+$/,"");
-      }
-      else if(typeof node.value==="number"){
-        return node.value.toPrecision(4).replace(/\.0+$/,"")
-      }
+      return [
+        customPrecision(node.value as string | number,4),
+        customPrecision(node.value as string | number,14)
+      ];
     }
     else if(node.type===TypeStatus.STRING){
-      return node.value as string
+      return [node.value as string , node.value as string]
     }
     throw Error("Unknown output type to input factor")
   }
@@ -104,10 +103,13 @@ export class FactorAnswersToUpdateForm {
   }
 
   addToChangeObject(factorname: string, newNode: UpdateForm): void{
-    const fromVal= this.getStringValueOfNode(this.lastOutputNodeValues[factorname])
-    const toVal= this.getStringValueOfNode(newNode)
+    const [fromVal, fromValPrecise]= this.getStringValueOfNode(this.lastOutputNodeValues[factorname])
+    const [toVal, toValPrecise]= this.getStringValueOfNode(newNode)
     if(fromVal!==toVal){
       this.changes[factorname]={fromVal, toVal}
+    }
+    else if(fromValPrecise!==toValPrecise){
+      this.changes[factorname]={fromVal:fromValPrecise, toVal:toValPrecise}
     }
   }
 

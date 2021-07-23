@@ -51,22 +51,26 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
     }
     if(absDiff>1/365/24/60){
         return {
-            describ: prefix+(valInYears*24*365*60).toFixed(1)+ " minutes",
+            describ: prefix+(valInYears*24*365*60).toFixed(0)+ " minutes",
             sign:sign
         }
     }
-    if(absDiff>1/365/24/60/60){
+    if(absDiff>1/365/24/60/60*6){
         return {
-            describ: prefix+(valInYears*24*365*60*60).toFixed(1)+ " seconds",
+            describ: prefix+parseFloat((valInYears*24*365*60*60).toPrecision(1)).toFixed(0)+ " seconds",
             sign: sign
         }
     }
     return {
-        describ: "Undetectable",
+        describ: "Very small or none",
         sign:0}
   };
   const shadowing= props.store.computationStore.factorShadowing
-  const showShadowing = shadowing.shadowsTheChange.length>0 || shadowing.unshadowedByTheChange.length>0
+  const showShadowing = (
+    shadowing.shadowsTheChange.length>0 || 
+    shadowing.unshadowedByTheChange.length>0 || 
+    shadowing.shadowedByTheChange.length>0
+  )
   const lifeExpentancy=getLifeExpectancyEffect(index);
   let textColor= lifeExpentancy.sign ===0 ? NEUTRAL_COLOR : 
     ( lifeExpentancy.sign<0 ? NEGATIVE_COLOR : POSITIVE_COLOR) 
@@ -162,10 +166,23 @@ const shadowingMessage = (shadowing: Shadowing) => {
       {shadowing.unshadowedByTheChange.length>0 ? 
       <div>
         <p>
-        The computed effect also contains your answers to
+        The computed effect contains previously hidden effects from
         </p>
         <ul>
           {shadowing.unshadowedByTheChange.map((shadowedFactor) => {
+            return <li>{shadowedFactor}</li>
+          })}
+      </ul>
+      </div>
+      :
+      null}
+      {shadowing.shadowedByTheChange.length>0 ? 
+      <div>
+        <p>
+        Due to new missing answers, the computed effect contains the effect of hiding the factors
+        </p>
+        <ul>
+          {shadowing.shadowedByTheChange.map((shadowedFactor) => {
             return <li>{shadowedFactor}</li>
           })}
       </ul>

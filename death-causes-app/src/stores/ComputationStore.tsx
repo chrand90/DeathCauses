@@ -15,6 +15,7 @@ import LoadedDataStore from "./LoadedDataStore";
 export interface Shadowing {
   shadowsTheChange: string[];
   unshadowedByTheChange: string[];
+  shadowedByTheChange: string[];
 }
 
 const worker = new Worker();
@@ -59,28 +60,42 @@ export default class ComputationStore {
   get factorShadowing(): Shadowing{
     let unshadowedByTheChange= new Set<string>();
     let shadowsTheChange= new Set<string>();
+    let shadowedByTheChange= new Set<string>();
     Object.entries(this.allChanges[0]).forEach(([factorName, {fromVal, toVal}]) => {
       const siblingGroups= this.loadedDataStore.rdat.getDependentFactors(factorName)
       siblingGroups.forEach(siblingGroup => {
         let missings=siblingGroup.filter(siblingName => {
           return this.submittedFactorAnswers[siblingName]==="";
         })
+        let notChangedThisRound=siblingGroup.filter(siblingName => {
+          return !(siblingName in this.allChanges[0])
+        })
         if(missings.length===0){
-          let previouslyShadowed=siblingGroup.filter(siblingName => {
-            return !(siblingName in this.allChanges[0])
-          })
+          //Now that there are no missing we know then toVal can't be missing 
           if(fromVal===UNKNOWNLABEL){
-            previouslyShadowed.forEach(sibling => unshadowedByTheChange.add(sibling));
+            notChangedThisRound.forEach(sibling => unshadowedByTheChange.add(sibling));
           }
         }
-        if(toVal!==UNKNOWNLABEL){
-          missings.forEach(missing => shadowsTheChange.add(missing))
+        else {
+          const previousNonMissing=missings.every(missing => {
+            return missing in this.allChanges[0] && this.allChanges[0][missing].fromVal!==UNKNOWNLABEL
+          })
+          if(previousNonMissing && missings.length<siblingGroup.length){
+            notChangedThisRound.forEach(newlyShadowed => shadowedByTheChange.add(newlyShadowed))
+          }
         }
+        missings.forEach(missing => {
+          if(notChangedThisRound.includes(missing)){
+            shadowsTheChange.add(missing)
+          }
+        })
       })
     })
     return {
       shadowsTheChange:Array.from(shadowsTheChange).sort(), 
-      unshadowedByTheChange: Array.from(unshadowedByTheChange).sort()};
+      unshadowedByTheChange: Array.from(unshadowedByTheChange).sort(),
+      shadowedByTheChange: Array.from(shadowedByTheChange).sort()
+    }
   }
 
   compute(submittedFactorAnswers?: FactorAnswers) {
