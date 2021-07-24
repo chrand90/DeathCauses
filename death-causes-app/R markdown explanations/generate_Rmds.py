@@ -52,15 +52,12 @@ def get_all_descriptions(name):
     else:
         return all_descriptions_of_node + [name]
 
+def get_optimizability(node_name):
+    return descriptions[node_name]["optimizability"]
+
 
 def get_text(node_name, element, beforeafter="before"):
     if node_name in texts:
-        print("request")
-        print("node_name=", node_name)
-        print("element=", element)
-        print("beforeafter=", beforeafter)
-        print("searching in the following object:")
-        print(texts)
         if element in texts[node_name]:
             if beforeafter in texts[node_name][element]:
                 return texts[node_name][element][beforeafter]
@@ -103,6 +100,11 @@ def get_children(node_name):
             res.append((key, node["type"]))
     return res
 
+def get_input_factor(node_name):
+    for f in factors:
+        if f["factorname"]==node_name:
+            return f
+
 
 def get_description(name, maxlength=20):
     if name in descriptions:
@@ -119,7 +121,7 @@ def get_description(name, maxlength=20):
 
 def createRMD(node_name):
     title = get_description(node_name, 40)
-    with open(node_name + "_auto.Rmd", "w") as f:
+    with open(os.path.join("resources",node_name + "_auto.Rmd"), "w") as f:
         f.write('---\n')
         f.write('title: "' + title + '"\n')
         f.write('output:\n\
@@ -306,14 +308,14 @@ def make_number_of_deaths_section(title, node_name, f, condition=False):
 def load_R(f, use_conditions=False, use_cause_categories=False):
     f.write(BEGINNING_OF_RCODE)
     f.write("library(devtools)\n")
-    f.write("devtools::load_all('../../Reportgeneration/DatabaseVisualization/RRtablePlotting')\n")
-    f.write('dat=initialize_database(c("../../death-causes-app/src/resources/Causes.json"')
+    f.write("devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')\n")
+    f.write('dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"')
     if use_conditions:
-        f.write(',\n"../../death-causes-app/src/resources/Conditions.json"')
+        f.write(',\n"../../../death-causes-app/src/resources/Conditions.json"')
     if use_cause_categories:
-        f.write(',\n"../../death-causes-app/src/resources/CategoryCauses.json"')
+        f.write(',\n"../../../death-causes-app/src/resources/CategoryCauses.json"')
     f.write("),\n")
-    f.write('"../../death-causes-app/src/resources/Descriptions.json")\n')
+    f.write('"../../../death-causes-app/src/resources/Descriptions.json")\n')
     f.write(END_OF_RCODE)
 
 
@@ -457,8 +459,102 @@ def make_computation_section(node_name, title, f):
     else:
         f.write("[Place explanation for how "+ title +" is computed here]\n\n")
 
+def make_units_table(factor_node, f):
+    for unit_name, conversion in factor_node["units"].items():
+        if unit_name != factor_node["placeholder"]:
+            if conversion>1:
+                conversion_string= "1 "+unit_name+" = "+str(round(conversion,2))+ " "+factor_node["placeholder"]
+            else:
+                conversion_string = "1 "+factor_node["placeholder"]+ " = "+str(round(1/conversion,2))+ " "+ unit_name
+            f.write("* "+unit_name+" ("+conversion_string+")\n")
+
+def make_options_section(factor_node, node_name, f):
+    text_available=get_text(node_name,"options","before")
+    if text_available:
+        f.write(text_available)
+    else:
+        f.write("The user has the following answer options\n\n")
+    for option in factor_node["options"]:
+        f.write("* "+option+"\n")
+    add_text_if_there(f,node_name, "options", "after")
+
+def write_domain(factor_node, domain, f):
+    if "min" in factor_node[domain]:
+        f.write(" larger than "+str(factor_node[domain]["min"])+" "+factor_node["placeholder"])
+        if "max" in factor_node[domain]:
+            f.write(" and")
+    if "max" in factor_node[domain]:
+        f.write(" smaller than "+str(factor_node[domain]["max"])+" "+factor_node["placeholder"])
+    f.write(". ")
+
+def make_limits_section(factor_node, node_name, f):
+    text_available = get_text(node_name, "limits")
+    if text_available:
+        f.write(text_available)
+    else:
+        if "requiredDomain" in factor_node:
+            f.write("The answer has to be")
+            write_domain(factor_node, "requiredDomain",f)
+        if "recommendedDomain" in factor_node:
+             f.write("The answer is recommended to be")
+             write_domain(factor_node, "recommendedDomain", f)
+    add_text_if_there(f, node_name, "limits", "after")
+
+def make_helpjson_section(factor_node, node_name, f):
+    text_available = get_text(node_name, "helpjson")
+    if text_available:
+        f.write(text_available)
+    elif "helpJson" in factor_node:
+        f.write(factor_node["helpJson"]+"\n")
+    add_text_if_there(f, node_name, "helpjson",beforeafter="after")
+
+def make_optimizability_section(node_name, title, f):
+    optim=get_optimizability(node_name)
+    f.write("\n\n### Optimizability\n\n")
+    f.write("Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. ")
+    text_available=get_text(node_name, "optimizability")
+    if text_available: 
+        f.write(text_available)
+    else:
+        f.write("The optimizability of "+title+ " is "+str(optim)+". This means that it can be interpreted as\n\n")
+    f.write("> ")
+    if optim==10:
+        f.write("It is impossible to change and it has never been in your control")
+    if optim==20:
+        f.write("It is impossible to change, but it could have been the consequence of your actions")
+    if optim==30:
+        f.write("It is impossible to change now, but it has once definitely been in your control")
+    if optim==80:
+        f.write("It is possible to change, but it will take a lot of time.")
+    if optim==90:
+        f.write("It is possible to change, and it can be changed now or very soon.")
+    f.write("\n\n")
+    add_text_if_there(f,node_name, "optimizability", "after")
+
 def make_guidance_section(node_name, title, f):
     f.write("\n#### Guidance\n\n")
+    factor_node=get_input_factor(node_name)
+    add_text_if_there(f, node_name, "guidance", beforeafter="before")
+    if factor_node["type"] == "string":
+        f.write("The user input is chosen from a list and should answer the question\n\n")
+    elif factor_node["type"] == "number":
+        f.write("The user input is a typed number and should answer the question\n\n")
+    f.write("> "+factor_node["question"]+"?\n\n")
+    if factor_node["type"]=="number":
+        f.write("The unit of the input is **"+factor_node["placeholder"]+"**")
+        if "units" in factor_node:
+            f.write(", but can be changed to any of the units below\n\n")
+            make_units_table(factor_node,f)
+            f.write("\n")
+        else:
+            f.write(".\n\n")
+        make_limits_section(factor_node, node_name, f)
+    elif factor_node["type"] == "string":
+        make_options_section(factor_node, node_name, f)
+    make_helpjson_section(factor_node, node_name, f)
+    add_text_if_there(f,node_name,"guidance","after")
+
+
 
 def make_interaction_description(node_name, title, rfgs, f):
     f.write("\n\n#### Interaction\n\n")
@@ -500,7 +596,8 @@ def fill_out_input_factor(node_name, title, f):
     add_text_if_there(f, node_name, "introduction", "after")
     alternative_names(node_name, f)
     make_list_of_descendants(node_name, title, f)
-    #make_guidance_section(node_name, title, f)
+    make_guidance_section(node_name, title, f)
+    make_optimizability_section(node_name,title,f)
 
 def fill_out_compted_factor(node_name, title,f):
     f.write(title + " is a **computed factor**. It means that it can be determined with")
@@ -509,6 +606,7 @@ def fill_out_compted_factor(node_name, title,f):
     alternative_names(node_name, f)
     make_list_of_input_factors(node_name,title, f)
     make_list_of_descendants(node_name, title, f)
+    make_optimizability_section(node_name,title,f)
     make_computation_section(node_name, title, f)
 
 def fill_out_condition(node_name, title, f):

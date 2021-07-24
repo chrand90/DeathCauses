@@ -1,0 +1,56 @@
+---
+title: "Peak Alcohol consumption"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Peak Alcohol consumption is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Peak alcohol
+* Peak Alcohol consumption
+* MaxDrinking
+
+#### Uses
+
+Peak Alcohol consumption is used by the model in the following places
+
+* [Coronary heart disease](/model/Ischemic)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> In a normal month what is the highest amount of alcohol drunk during a single day?
+
+The unit of the input is **Drinks**.
+
+The answer has to be larger than 0 Drinks. The answer is recommended to be larger than 0 Drinks and smaller than 30 Drinks. A drink is defined as a US standard drink containing 14 grams of pure alcohol.
+
+
+### Optimizability
+
+Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Peak Alcohol consumption is 90. This means that it can be interpreted as
+
+> It is possible to change, and it can be changed now or very soon.
+
+
+
+## References

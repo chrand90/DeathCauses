@@ -1,0 +1,58 @@
+---
+title: "Waist circumference"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Waist circumference is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Waist size
+* Waist circumference
+* Waist
+
+#### Uses
+
+Waist circumference is used by the model in the following places
+
+* [Waist circumference as male](/model/WaistMale)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> What is the circumference of your waist?
+
+The unit of the input is **cm**, but can be changed to any of the units below
+
+* Inches (1 Inches = 2.54 cm)
+
+The answer has to be larger than 0 cm. The answer is recommended to be larger than 60 cm and smaller than 170 cm. The waist circumference is measured above the belly button and around your body. If you are slim, it is the narrowest part.
+
+
+### Optimizability
+
+Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Waist circumference is 80. This means that it can be interpreted as
+
+> It is possible to change, but it will take a lot of time.
+
+
+
+## References

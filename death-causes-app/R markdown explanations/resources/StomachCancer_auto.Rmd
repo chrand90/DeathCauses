@@ -1,0 +1,110 @@
+---
+title: "Stomach cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Stomach cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Stomach ca.
+* Stomach cancer
+* StomachCancer
+
+#### Categories
+
+Stomach cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Stomach cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [Alcohol consumption](/model/Drinking) (Alcohol)
+
+#### Number of deaths
+
+In 2014 Stomach cancer was responsible for 0.431% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'StomachCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Stomach cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Stomach cancer who falls under the ICD code 
+
+* <details><summary> C16: Malignant neoplasm of stomach (100.0%)</summary>
+    * C160: Malignant neoplasm of cardia (7.4%)
+    * C161: Malignant neoplasm of fundus of stomach (0.018%)
+    * C162: Malignant neoplasm of body of stomach (0.018%)
+    * C163: Malignant neoplasm of pyloric antrum (0.16%)
+    * C164: Malignant neoplasm of pylorus (0.018%)
+    * C166: Malignant neoplasm of greater curvature of stomach, unspecified (0.0088%)
+    * C168: Malignant neoplasm of overlapping sites of stomach (0.0088%)
+    * **C169: Malignant neoplasm of stomach, unspecified (92.0%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{Alcohol}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Alcohol}}
+$$
+
+
+#### Alcohol consumption
+
+Alcohol consumption is a risk factor for Stomach cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'StomachCancer', c('Drinking'),'raw')
+```
+
+
+Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'StomachCancer', c('Drinking'),'interpolated')
+```
+
+
+
+## References

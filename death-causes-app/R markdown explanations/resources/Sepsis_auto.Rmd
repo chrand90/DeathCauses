@@ -1,0 +1,78 @@
+---
+title: "Sepsis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Sepsis is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Sepsis is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Sepsis has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Sepsis was responsible for 1.48% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Sepsis')
+```
+
+
+#### Definition
+
+The definition of dying from Sepsis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Sepsis who falls under the ICD code 
+
+* <details><summary> A40: Streptococcal sepsis (1.1%)</summary>
+    * A400: Sepsis due to streptococcus, group A (0.085%)
+    * A401: Sepsis due to streptococcus, group B (0.067%)
+    * A402 (0.22%)
+    * A403: Sepsis due to Streptococcus pneumoniae (0.3%)
+    * A408: Other streptococcal sepsis (0.044%)
+    * A409: Streptococcal sepsis, unspecified (0.35%)
+</details>
+* <details><summary> A41: Other sepsis (99.0%)</summary>
+    * A410: Sepsis due to Staphylococcus aureus (1.8%)
+    * A411: Sepsis due to other specified staphylococcus (0.015%)
+    * A412: Sepsis due to unspecified staphylococcus (0.68%)
+    * A413: Sepsis due to Hemophilus influenzae (0.018%)
+    * A414: Sepsis due to anaerobes (0.35%)
+    * A415: Sepsis due to other Gram-negative organisms (2.6%)
+    * A418: Other specified sepsis (0.17%)
+    * **A419: Sepsis, unspecified organism (93.0%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

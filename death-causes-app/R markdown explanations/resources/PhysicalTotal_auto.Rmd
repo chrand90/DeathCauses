@@ -1,0 +1,62 @@
+---
+title: "Total time doing physical activity"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Total time doing physical activity is a **computed factor**. It means that it can be determined with total certainty from the user input.
+
+#### Alternative names:
+* Phys. total
+* Physical total
+* Total physical activity time
+* Total time doing physical activity
+* PhysicalTotal
+
+#### Input
+
+Total time doing physical activity is computed with the following factors
+
+* [Medium physical activity time](/model/PhysicalMedium)
+* [Hard physical activity time](/model/PhysicalHard)
+
+#### Uses
+
+Total time doing physical activity is used by the model in the following places
+
+* [Colon cancer](/model/ColonCancer)
+* [Coronary heart disease](/model/Ischemic)
+* [Stroke](/model/Stroke)
+
+
+### Optimizability
+
+Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time doing physical activity is 90. This means that it can be interpreted as
+
+> It is possible to change, and it can be changed now or very soon.
+
+
+#### Computation
+
+[Place explanation for how Total time doing physical activity is computed here]
+
+
+
+## References

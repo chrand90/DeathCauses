@@ -1,0 +1,110 @@
+---
+title: "Anemia"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Anemia is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Anemia is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Anemia has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Anemia was responsible for 0.198% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Anemia')
+```
+
+
+#### Definition
+
+The definition of dying from Anemia is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Anemia who falls under the ICD code 
+
+* <details><summary> D61: 0 Oth aplastic anemias and other bone marrow failure syndromes Other aplastic anemias and other bone marrow failure syndromes (19.0%)</summary>
+    * D610: Constitutional aplastic anemia (0.19%)
+    * D612: Aplastic anemia due to other external agents (0.019%)
+    * D613: Idiopathic aplastic anemia (0.12%)
+    * D619: Aplastic anemia, unspecified (19.0%)
+</details>
+* D62: Acute posthemorrhagic anemia (5.9%)
+* <details><summary> D64: Other anemias (53.0%)</summary>
+    * D643: Other sideroblastic anemias (0.23%)
+    * D648: Other specified anemias (0.65%)
+    * D649: Anemia, unspecified (53.0%)
+</details>
+* <details><summary> D5 (22.0%)</summary>
+    * **D50: Iron deficiency anemia (4.8%)**
+        * D500: Iron deficiency anemia secondary to blood loss (chronic) (3.1%)
+        * D508: Other iron deficiency anemias (0.17%)
+        * D509: Iron deficiency anemia, unspecified (1.5%)
+    * D51: Vitamin B12 deficiency anemia (0.52%)
+        * D510: Vitamin B12 deficiency anemia due to intrinsic factor deficiency (0.48%)
+        * D511: Vitamin B12 deficiency anemia due to selective vitamin B12 malabsorption with proteinuria (0.019%)
+        * D519: Vitamin B12 deficiency anemia, unspecified (0.019%)
+    * D52: Folate deficiency anemia (0.23%)
+        * D529: Folate deficiency anemia, unspecified (0.23%)
+    * D53: Other nutritional anemias (0.67%)
+        * D530: Protein deficiency anemia (0.21%)
+        * D531: Other megaloblastic anemias, not elsewhere classified (0.019%)
+        * D539: Nutritional anemia, unspecified (0.44%)
+    * D55: Anemia due to enzyme disorders (0.038%)
+        * D550: Anemia due to glucose-6-phosphate dehydrogenase [G6PD] deficiency (0.019%)
+        * D552: Anemia due to disorders of glycolytic enzymes (0.019%)
+    * D56: Thalassemia (0.38%)
+        * D560: Alpha thalassemia (0.019%)
+        * D561: Beta thalassemia (0.17%)
+        * D569: Thalassemia, unspecified (0.19%)
+    * **D57: Sickle-cell disorders (9.7%)**
+        * D570: Hb-SS disease with crisis (2.1%)
+        * D571: Sickle-cell disease without crisis (7.2%)
+        * D572: Sickle-cell/Hb-C disease (0.21%)
+        * D573: Sickle-cell trait (0.17%)
+    * D58: Other hereditary hemolytic anemias (2.4%)
+        * D580: Hereditary spherocytosis (0.058%)
+        * D582: Other hemoglobinopathies (0.12%)
+        * D589: Hereditary hemolytic anemia, unspecified (2.2%)
+    * **D59: Acquired hemolytic anemia (2.9%)**
+        * **D591: Other autoimmune hemolytic anemias (1.8%)**
+        * D593: Hemolytic-uremic syndrome (0.73%)
+        * D594: Other nonautoimmune hemolytic anemias (0.13%)
+        * D595: Paroxysmal nocturnal hemoglobinuria [Marchiafava-Micheli] (0.15%)
+        * D599: Acquired hemolytic anemia, unspecified (0.12%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

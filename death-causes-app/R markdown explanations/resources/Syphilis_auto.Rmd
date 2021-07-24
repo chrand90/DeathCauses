@@ -1,0 +1,74 @@
+---
+title: "Syphilis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Syphilis is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Syphilis is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Syphilis has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Syphilis was responsible for 0.00163% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Syphilis')
+```
+
+
+#### Definition
+
+The definition of dying from Syphilis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Syphilis who falls under the ICD code 
+
+* <details><summary> A50: Congenital syphilis (9.3%)</summary>
+    * A504: Late congenital neurosyphilis [juvenile neurosyphilis] (2.3%)
+    * A509: Congenital syphilis, unspecified (7.0%)
+</details>
+* <details><summary> A52: Late syphilis (86.0%)</summary>
+    * A520: Cardiovascular and cerebrovascular syphilis (2.3%)
+    * A521: Symptomatic neurosyphilis (33.0%)
+    * A523: Neurosyphilis, unspecified (47.0%)
+    * A529: Late syphilis, unspecified (4.7%)
+</details>
+* <details><summary> A53: Other and unspecified syphilis (4.7%)</summary>
+    * A530: Latent syphilis, unspecified as early or late (2.3%)
+    * A539: Syphilis, unspecified (2.3%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

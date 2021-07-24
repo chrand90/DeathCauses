@@ -1,0 +1,59 @@
+---
+title: "HCV diagnosis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+HCV diagnosis is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* HCV
+* HCV diagnosis
+* HCVStatus
+
+#### Uses
+
+HCV diagnosis is used by the model in the following places
+
+* [Liver cancer](/model/LiverCancer)
+* [Chronic liver disease](/model/Chronic_Liver_Disease)
+* [Hepatitis](/model/Hepatitis)
+
+#### Guidance
+
+The user input is chosen from a list and should answer the question
+
+> Are you infected with Hepatitis C?
+
+The user has the following answer options
+
+* Yes
+* No
+
+
+### Optimizability
+
+Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of HCV diagnosis is 20. This means that it can be interpreted as
+
+> It is impossible to change, but it could have been the consequence of your actions
+
+
+
+## References

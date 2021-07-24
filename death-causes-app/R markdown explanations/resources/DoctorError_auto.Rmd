@@ -1,0 +1,181 @@
+---
+title: "Death caused by doctors' errors"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Death caused by doctors' errors is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Doctor error
+* Death caused by doctors' errors
+* DoctorError
+
+#### Categories
+
+Death caused by doctors' errors is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Death caused by doctors' errors has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Death caused by doctors' errors was responsible for 0.0967% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DoctorError')
+```
+
+
+#### Definition
+
+The definition of dying from Death caused by doctors' errors is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Death caused by doctors' errors who falls under the ICD code 
+
+* <details><summary> **Y83: Surgical operation and other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (60.0%)**</summary>
+    * Y830: Surgical operation with transplant of whole organ as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (2.0%)
+    * **Y831: Surgical operation with implant of artificial internal device as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (11.0%)**
+    * Y832: 1 Anastomos,bypass or grft cause abn react/compl, w/o misadvnt Surgical operation with anastomosis, bypass or graft as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (5.5%)
+    * Y833: Surgical operation with formation of external stoma as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (5.2%)
+    * Y834: Other reconstructive surgery as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (4.6%)
+    * Y835: Amputation of limb(s) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.0%)
+    * Y836: Removal of other organ (partial) (total) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.0%)
+    * Y838: Other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.1%)
+    * **Y839: Surgical procedure, unspecified as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (23.0%)**
+</details>
+* <details><summary> Y84: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (18.0%)</summary>
+    * Y840: Cardiac catheterization as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.039%)
+    * Y841: Kidney dialysis as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (1.7%)
+    * Y842: 1 Radiolog proc/radiothrpy cause abn react/compl, w/o misadvnt Radiological procedure and radiotherapy as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.79%)
+    * Y844: Aspiration of fluid as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.16%)
+    * Y846: Urinary catheterization as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (2.4%)
+    * **Y848: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (12.0%)**
+    * Y849: Medical procedure, unspecified as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.43%)
+</details>
+* <details><summary> Y88 (3.0%)</summary>
+    * Y880 (0.039%)
+    * Y881 (0.039%)
+    * Y883 (2.9%)
+</details>
+* <details><summary> Y4 (7.1%)</summary>
+    * Y40 (0.67%)
+        * Y400 (0.079%)
+        * Y401 (0.24%)
+        * Y408 (0.16%)
+        * Y409 (0.2%)
+    * Y41 (0.079%)
+        * Y410 (0.039%)
+        * Y411 (0.039%)
+    * Y42 (0.59%)
+        * Y420 (0.039%)
+        * Y423 (0.12%)
+        * Y426 (0.039%)
+        * Y427 (0.31%)
+        * Y428 (0.079%)
+    * **Y43 (1.7%)**
+        * Y430 (0.12%)
+        * Y431 (0.079%)
+        * Y433 (0.51%)
+        * Y434 (0.94%)
+    * **Y44 (2.9%)**
+        * Y440 (0.039%)
+        * **Y442 (2.5%)**
+        * Y443 (0.2%)
+        * Y445 (0.079%)
+        * Y449 (0.079%)
+    * Y45 (0.79%)
+        * Y450 (0.47%)
+        * Y452 (0.079%)
+        * Y453 (0.16%)
+        * Y454 (0.039%)
+        * Y459 (0.039%)
+    * Y46 (0.039%)
+        * Y464 (0.039%)
+    * Y47 (0.079%)
+        * Y471 (0.039%)
+        * Y479 (0.039%)
+    * Y48 (0.24%)
+        * Y480 (0.039%)
+        * Y482 (0.039%)
+        * Y483 (0.039%)
+        * Y484 (0.12%)
+    * Y49 (0.12%)
+        * Y495 (0.039%)
+        * Y497 (0.079%)
+</details>
+* <details><summary> Y5 (7.9%)</summary>
+    * Y51 (0.039%)
+        * Y515 (0.039%)
+    * Y52 (0.31%)
+        * Y522 (0.079%)
+        * Y524 (0.24%)
+    * Y53 (0.039%)
+        * Y535 (0.039%)
+    * Y54 (0.12%)
+        * Y545 (0.079%)
+        * Y546 (0.039%)
+    * Y55 (0.079%)
+        * Y551 (0.039%)
+        * Y552 (0.039%)
+    * Y56 (0.039%)
+        * Y560 (0.039%)
+    * **Y57 (7.3%)**
+        * Y575 (0.39%)
+        * Y576 (0.16%)
+        * Y578 (0.039%)
+        * Y579 (6.7%)
+    * Y59 (0.039%)
+        * Y590 (0.039%)
+</details>
+* <details><summary> Y6 (3.7%)</summary>
+    * **Y60 (2.9%)**
+        * **Y600 (1.1%)**
+        * Y601 (0.039%)
+        * Y602 (0.12%)
+        * Y604 (0.47%)
+        * Y606 (0.2%)
+        * Y608 (0.9%)
+        * Y609 (0.12%)
+    * Y61 (0.039%)
+        * Y616 (0.039%)
+    * Y62: Failure of sterile precautions during surgical and medical care (0.039%)
+        * Y626: 1 Failure of steril precaut during aspirat, pnctr and oth cath Failure of sterile precautions during aspiration, puncture and other catheterization (0.039%)
+    * Y63: Failure in dosage during surgical and medical care (0.039%)
+        * Y639: Failure in dosage during unspecified surgical and medical care (0.039%)
+    * Y64: Contaminated medical or biological substances (0.039%)
+        * Y648: Contaminated medical or biological substance administered by other means (0.039%)
+    * Y65: Other misadventures during surgical and medical care (0.55%)
+        * Y658: Other specified misadventures during surgical and medical care (0.55%)
+    * Y69: Unspecified misadventure during surgical and medical care (0.079%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

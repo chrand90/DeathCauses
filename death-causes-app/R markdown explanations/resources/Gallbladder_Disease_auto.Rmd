@@ -1,0 +1,88 @@
+---
+title: "Gallbladder disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Gallbladder disease is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Gallbladder
+* Gallbladder disease
+* Gallbladder_Disease
+
+#### Categories
+
+Gallbladder disease is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Gallbladder disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Gallbladder disease was responsible for 0.132% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Gallbladder_Disease')
+```
+
+
+#### Definition
+
+The definition of dying from Gallbladder disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Gallbladder disease who falls under the ICD code 
+
+* <details><summary> K80: Cholelithiasis (29.0%)</summary>
+    * K800: Calculus of gallbladder with acute cholecystitis (3.9%)
+    * K801: Calculus of gallbladder with other cholecystitis (3.4%)
+    * **K802: Calculus of gallbladder without cholecystitis (14.0%)**
+    * K803: Calculus of bile duct with cholangitis (2.0%)
+    * K804: Calculus of bile duct with cholecystitis (1.2%)
+    * K805: Calculus of bile duct without cholangitis or cholecystitis (4.0%)
+    * K808: Other cholelithiasis (0.086%)
+</details>
+* <details><summary> K81: Cholecystitis (64.0%)</summary>
+    * K810: Acute cholecystitis (32.0%)
+    * K811: Chronic cholecystitis (2.0%)
+    * K818 (0.32%)
+    * K819: Cholecystitis, unspecified (29.0%)
+</details>
+* <details><summary> K82: Other diseases of gallbladder (7.7%)</summary>
+    * K820: Obstruction of gallbladder (0.14%)
+    * K821: Hydrops of gallbladder (0.029%)
+    * K822: Perforation of gallbladder (0.92%)
+    * K823: Fistula of gallbladder (0.29%)
+    * K828: Other specified diseases of gallbladder (0.29%)
+    * **K829: Disease of gallbladder, unspecified (6.0%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

@@ -1,0 +1,75 @@
+---
+title: "Appendix Disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Appendix Disease is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Appendix dis.
+* Appendix Disease
+* Appendix_Disease
+
+#### Categories
+
+Appendix Disease is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Appendix Disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Appendix Disease was responsible for 0.0149% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Appendix_Disease')
+```
+
+
+#### Definition
+
+The definition of dying from Appendix Disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Appendix Disease who falls under the ICD code 
+
+* <details><summary> K35: Acute appendicitis (77.0%)</summary>
+    * K352: Acute appendicitis with generalized peritonitis (6.4%)
+    * K353: Acute appendicitis with localized peritonitis (6.4%)
+    * K358: Other and unspecified acute appendicitis (64.0%)
+</details>
+* K36: Other appendicitis (0.77%)
+* K37: Unspecified appendicitis (22.0%)
+* <details><summary> K38: Other diseases of appendix (0.26%)</summary>
+    * K388: Other specified diseases of appendix (0.26%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

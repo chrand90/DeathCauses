@@ -1,0 +1,57 @@
+---
+title: "Fluids intake"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Fluids intake is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Fluids
+* Fluids intake
+
+#### Uses
+
+Fluids intake is used by the model in the following places
+
+* [Bladder cancer](/model/BladderCancer)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much liquid do you drink in a normal day?
+
+The unit of the input is **Liters**, but can be changed to any of the units below
+
+* US Cups (1 US Cups = 4.23 Liters)
+
+The answer has to be larger than 0 Liters. The answer is recommended to be larger than 0 Liters. Anything that is drunk counts as liquid, including alcoholic beverages.
+
+
+### Optimizability
+
+Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Fluids intake is 90. This means that it can be interpreted as
+
+> It is possible to change, and it can be changed now or very soon.
+
+
+
+## References

@@ -1,0 +1,97 @@
+---
+title: "Leukemia"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Leukemia is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Leukemia is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+Leukemia has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Leukemia was responsible for 0.818% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Leukemia')
+```
+
+
+#### Definition
+
+The definition of dying from Leukemia is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Leukemia who falls under the ICD code 
+
+* <details><summary> C81: Hodgkin lymphoma (5.0%)</summary>
+    * C811: Nodular sclerosis classical Hodgkin lymphoma (0.06%)
+    * C812: Mixed cellularity classical Hodgkin lymphoma (0.0046%)
+    * C817: Other classical Hodgkin lymphoma (0.023%)
+    * C819: Hodgkin lymphoma, unspecified (4.9%)
+</details>
+* <details><summary> C82: Follicular lymphoma (2.4%)</summary>
+    * C820: Follicular lymphoma grade I (0.0093%)
+    * C821: Follicular lymphoma grade II (0.0093%)
+    * C822: Follicular lymphoma grade III, unspecified (0.028%)
+    * C827 (0.0093%)
+    * **C829: Follicular lymphoma, unspecified (2.3%)**
+</details>
+* <details><summary> C83: Non-follicular lymphoma (19.0%)</summary>
+    * C830: Small cell B-cell lymphoma (0.82%)
+    * **C831: Mantle cell lymphoma (4.3%)**
+    * C832 (0.019%)
+    * **C833: Diffuse large B-cell lymphoma (12.0%)**
+    * C834 (0.033%)
+    * C835: Lymphoblastic (diffuse) lymphoma (0.27%)
+    * C836 (0.0093%)
+    * C837: Burkitt lymphoma (1.1%)
+    * C838: Other non-follicular lymphoma (0.34%)
+    * C839: Non-follicular (diffuse) lymphoma, unspecified (0.17%)
+</details>
+* <details><summary> C84: Mature T/NK-cell lymphomas (5.8%)</summary>
+    * C840: Mycosis fungoides (0.41%)
+    * C841: Sezary disease (0.079%)
+    * C844: Peripheral T-cell lymphoma, not classified (0.73%)
+    * C845 (4.6%)
+</details>
+* <details><summary> **C85: Other specified and unspecified types of non-Hodgkin lymphoma (67.0%)**</summary>
+    * C850 (0.26%)
+    * C851: Unspecified B-cell lymphoma (11.0%)
+    * C857 (0.028%)
+    * C859: Non-Hodgkin lymphoma, unspecified (56.0%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

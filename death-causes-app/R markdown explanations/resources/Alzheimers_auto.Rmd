@@ -1,0 +1,137 @@
+---
+title: "Alzheimers"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Alzheimers is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Alzheimers is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+In the model Alzheimers has the following [risk factors](/model/intro#risk-factor)
+
+* [Coffee consumption](/model/Caffeine) (Coffee)
+* [Fish consumption](/model/Fish) (Fish)
+* [Vegetable consumption](/model/Vegetables) (Vegetables)
+
+#### Number of deaths
+
+In 2014 Alzheimers was responsible for 3.56% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers')
+```
+
+
+#### Definition
+
+The definition of dying from Alzheimers is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Alzheimers who falls under the ICD code 
+
+* <details><summary> G30: Alzheimer's disease (100.0%)</summary>
+    * G300: Alzheimer's disease with early onset (0.028%)
+    * G301: Alzheimer's disease with late onset (2.3%)
+    * G308: Other Alzheimer's disease (0.0086%)
+    * G309: Alzheimer's disease, unspecified (98.0%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{Coffee}} \cdot RR_{\text{Fish}} \cdot RR_{\text{Vegetables}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Coffee}} \cdot P_{\text{Fish}} \cdot P_{\text{Vegetables}}
+$$
+
+
+#### Coffee consumption
+
+Coffee consumption is a risk factor for Alzheimers.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Caffeine'),'raw')
+```
+
+
+Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Caffeine'),'interpolated')
+```
+
+
+#### Fish consumption
+
+Fish consumption is a risk factor for Alzheimers.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'raw')
+```
+
+
+Because the variable Fish consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'interpolated')
+```
+
+
+#### Vegetable consumption
+
+Vegetable consumption is a risk factor for Alzheimers.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Vegetables'),'raw')
+```
+
+
+Because the variable Vegetable consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Vegetables'),'interpolated')
+```
+
+
+
+## References

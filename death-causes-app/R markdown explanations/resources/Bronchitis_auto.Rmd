@@ -1,0 +1,100 @@
+---
+title: "Bronchitis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+details{
+    background:#e1f9fa;}
+
+</style>
+_[auto-generated file]_
+
+Bronchitis is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Bronchitis is part of the following death cause categories
+
+* [Respiratory disease](/model/RespiratoryDiseases)
+
+#### Risk factors
+
+In the model Bronchitis has the following [risk factors](/model/intro#risk-factor)
+
+* [Total amount smoked in life](/model/SmokeCumulative) (Smoke total)
+
+#### Number of deaths
+
+In 2014 Bronchitis was responsible for 0.0214% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Bronchitis')
+```
+
+
+#### Definition
+
+The definition of dying from Bronchitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Bronchitis who falls under the ICD code 
+
+* J40: Bronchitis, not specified as acute or chronic (58.0%)
+* <details><summary> J41: Simple and mucopurulent chronic bronchitis (0.71%)</summary>
+    * J411: Mucopurulent chronic bronchitis (0.71%)
+</details>
+* J42: Unspecified chronic bronchitis (42.0%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{Smoke total}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Smoke total}}
+$$
+
+
+#### Total amount smoked in life
+
+Total amount smoked in life is a risk factor for Bronchitis.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Bronchitis', c('SmokeCumulative'),'raw')
+```
+
+
+Because the variable Total amount smoked in life is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Bronchitis', c('SmokeCumulative'),'interpolated')
+```
+
+
+
+## References

@@ -16,11 +16,11 @@ app.use(function(req,res, next){
 app.use(express.json())
 
 app.get('/api/model/:subpage', (req, res) => {
-    const url=path.join(__dirname+'/../R\ markdown\ explanations/'+req.params.subpage+'.html')
+    const url=path.join(__dirname+'/../R\ markdown\ explanations/resources/'+req.params.subpage+'.html')
     fs.access(url, fs.F_OK, (err) => {
       if (err) {
         console.warn("could not locate "+url)
-        const url_auto=path.join(__dirname+'/../R\ markdown\ explanations/'+req.params.subpage+'_auto.html')
+        const url_auto=path.join(__dirname+'/../R\ markdown\ explanations/resources/'+req.params.subpage+'_auto.html')
         fs.access(url_auto, fs.F_OK, (err2) => {
           if (err2) {
             console.error("could not locate "+url_auto)
@@ -38,7 +38,7 @@ app.get('/api/model/:subpage', (req, res) => {
 })
 
 app.get('/api/figures/:resourceFolder/figure-html/:filename', (req, res) => {
-  const url=path.join(__dirname+'/../R\ markdown\ explanations/'+req.params.resourceFolder+'/figure-html/'+req.params.filename)
+  const url=path.join(__dirname+'/../R\ markdown\ explanations/resources/'+req.params.resourceFolder+'/figure-html/'+req.params.filename)
   fs.access(url, fs.F_OK, (err) => {
     if (err) {
       console.error("could not locate "+url)
