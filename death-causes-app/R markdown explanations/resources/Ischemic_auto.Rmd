@@ -43,9 +43,9 @@ In the model Coronary heart disease has the following [risk factors](/model/intr
 * [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
 * [Total physical activity time](/model/PhysicalTotal) (Phys. total)
 * [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
-* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
-* [Age](/model/Age)
 * [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+* [Age](/model/Age)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
 
 #### Number of deaths
@@ -87,7 +87,7 @@ The definition of dying from Coronary heart disease is to get any of the followi
     * I248: Other forms of acute ischemic heart disease (0.42%)
     * I249: Acute ischemic heart disease, unspecified (0.68%)
 </details>
-* <details><summary> **I25: Chronic ischemic heart disease (68.0%)**</summary>
+* <details><summary> **I25: Chronic ischemic heart disease (67.6%)**</summary>
     * **I250 (17.0%)**
     * **I251: Atherosclerotic heart disease of native coronary artery (44.0%)**
     * I253: Aneurysm of heart (0.017%)
@@ -112,7 +112,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke end a.,Age,Smoke avg.}} \cdot P_{\text{Greens}}
 $$
 
 

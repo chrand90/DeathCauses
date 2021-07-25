@@ -54,7 +54,7 @@ The definition of dying from Salmonella is to get any of the following ICD codes
 
 * <details><summary> A02: Other salmonella infections (100.0%)</summary>
     * A020: Salmonella enteritis (24.0%)
-    * A021: Salmonella sepsis (51.0%)
+    * A021: Salmonella sepsis (51.1%)
     * A022: Localized salmonella infections (4.4%)
     * A029: Salmonella infection, unspecified (20.0%)
 </details>

@@ -163,7 +163,7 @@ The definition of dying from Other respiratory disease is to get any of the foll
         * J704: Drug-induced interstitial lung disorders, unspecified (0.0027%)
         * J709: Respiratory conditions due to unspecified external agent (0.0054%)
 </details>
-* <details><summary> **J8 (57.0%)**</summary>
+* <details><summary> **J8 (57.3%)**</summary>
     * J80: Acute respiratory distress syndrome (4.6%)
     * J81: Pulmonary edema (1.6%)
     * J82: Pulmonary eosinophilia, not elsewhere classified (0.42%)

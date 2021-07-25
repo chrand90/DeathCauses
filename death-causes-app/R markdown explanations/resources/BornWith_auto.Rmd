@@ -58,7 +58,7 @@ plotSpecificPlots(dat, 'BornWith')
 
 The definition of dying from Infant condition is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Infant condition who falls under the ICD code 
 
-* <details><summary> P (55.0%)</summary>
+* <details><summary> P (55.1%)</summary>
     * **P0 (33.0%)**
         * P00: Newborn (suspected to be) affected by maternal conditions that may be unrelated to present pregnancy (0.73%)
             * P000: Newborn (suspected to be) affected by maternal hypertensive disorders (0.3%)

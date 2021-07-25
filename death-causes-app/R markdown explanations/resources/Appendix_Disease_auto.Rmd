@@ -60,7 +60,7 @@ The definition of dying from Appendix Disease is to get any of the following ICD
 * <details><summary> K35: Acute appendicitis (77.0%)</summary>
     * K352: Acute appendicitis with generalized peritonitis (6.4%)
     * K353: Acute appendicitis with localized peritonitis (6.4%)
-    * K358: Other and unspecified acute appendicitis (64.0%)
+    * K358: Other and unspecified acute appendicitis (64.2%)
 </details>
 * K36: Other appendicitis (0.77%)
 * K37: Unspecified appendicitis (22.0%)

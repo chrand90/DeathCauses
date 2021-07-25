@@ -53,7 +53,7 @@ plotSpecificPlots(dat, 'Tubercolosis')
 The definition of dying from Tubercolosis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Tubercolosis who falls under the ICD code 
 
 * <details><summary> A1 (100.0%)</summary>
-    * A16 (69.0%)
+    * A16 (68.7%)
         * A162 (43.0%)
         * A164 (0.2%)
         * A165 (0.4%)

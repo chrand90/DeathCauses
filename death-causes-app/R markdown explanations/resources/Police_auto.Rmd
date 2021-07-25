@@ -56,7 +56,7 @@ plotSpecificPlots(dat, 'Police')
 
 The definition of dying from Killed by police is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Killed by police who falls under the ICD code 
 
-* <details><summary> Y35: Legal intervention (99.0%)</summary>
+* <details><summary> Y35: Legal intervention (99.42%)</summary>
     * Y350: Legal intervention involving firearm discharge (90.0%)
     * Y355 (6.6%)
     * Y356 (2.5%)

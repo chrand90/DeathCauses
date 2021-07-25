@@ -68,7 +68,7 @@ The definition of dying from Pancreas cancer is to get any of the following ICD 
     * C254: Malignant neoplasm of endocrine pancreas (0.099%)
     * C257: Malignant neoplasm of other parts of pancreas (0.0025%)
     * C258: Malignant neoplasm of overlapping sites of pancreas (0.03%)
-    * **C259: Malignant neoplasm of pancreas, unspecified (99.0%)**
+    * **C259: Malignant neoplasm of pancreas, unspecified (99.41%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

@@ -56,7 +56,7 @@ plotSpecificPlots(dat, 'Parkinsons')
 
 The definition of dying from Parkinsons is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Parkinsons who falls under the ICD code 
 
-* G20: Parkinson's disease (99.0%)
+* G20: Parkinson's disease (99.32%)
 * <details><summary> G21: Secondary parkinsonism (0.68%)</summary>
     * G210: Malignant neuroleptic syndrome (0.24%)
     * G211: Other drug-induced secondary parkinsonism (0.011%)

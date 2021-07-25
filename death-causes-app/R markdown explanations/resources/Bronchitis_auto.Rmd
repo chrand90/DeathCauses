@@ -54,7 +54,7 @@ plotSpecificPlots(dat, 'Bronchitis')
 
 The definition of dying from Bronchitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Bronchitis who falls under the ICD code 
 
-* J40: Bronchitis, not specified as acute or chronic (58.0%)
+* J40: Bronchitis, not specified as acute or chronic (57.7%)
 * <details><summary> J41: Simple and mucopurulent chronic bronchitis (0.71%)</summary>
     * J411: Mucopurulent chronic bronchitis (0.71%)
 </details>

@@ -57,7 +57,7 @@ The definition of dying from Flu is to get any of the following ICD codes as the
     * J101: Influenza due to other identified influenza virus with other respiratory manifestations (15.0%)
     * J108: Influenza due to other identified influenza virus with other manifestations (0.41%)
 </details>
-* <details><summary> J11: Influenza due to unidentified influenza virus (54.0%)</summary>
+* <details><summary> J11: Influenza due to unidentified influenza virus (54.5%)</summary>
     * J110: 0 Influenza due to unidentified influenza virus with pneumonia Influenza due to unidentified influenza virus with pneumonia (31.0%)
     * J111: Influenza due to unidentified influenza virus with other respiratory manifestations (23.0%)
     * J118: 0 Influenza due to unidentified influenza virus w oth manifest Influenza due to unidentified influenza virus with other manifestations (0.87%)

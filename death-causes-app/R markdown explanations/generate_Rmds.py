@@ -207,7 +207,12 @@ def write_icd_group(icd_object, f, spaces=0):
         for ICD in ICDgroup:
             node=icd_object[ICD]
             proportion=float(node[1])*100
-            rounded_proportion = '%s' % float('%.2g' % proportion)
+            if proportion>=50:
+                rounded_proportion = '%s' % float('%.2g' % (100-proportion))
+                digits=len(rounded_proportion.split(".")[1])
+                rounded_proportion='{0:.{1}f}'.format(proportion, digits)
+            else:
+                rounded_proportion = '%s' % float('%.2g' % proportion)                    
             f.write(indent+"* ")
             if node[2]=="Parent" and spaces==0 :
                 f.write("<details><summary> ")

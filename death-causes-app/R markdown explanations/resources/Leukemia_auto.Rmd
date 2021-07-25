@@ -83,11 +83,11 @@ The definition of dying from Leukemia is to get any of the following ICD codes a
     * C844: Peripheral T-cell lymphoma, not classified (0.73%)
     * C845 (4.6%)
 </details>
-* <details><summary> **C85: Other specified and unspecified types of non-Hodgkin lymphoma (67.0%)**</summary>
+* <details><summary> **C85: Other specified and unspecified types of non-Hodgkin lymphoma (67.4%)**</summary>
     * C850 (0.26%)
     * C851: Unspecified B-cell lymphoma (11.0%)
     * C857 (0.028%)
-    * C859: Non-Hodgkin lymphoma, unspecified (56.0%)
+    * C859: Non-Hodgkin lymphoma, unspecified (56.2%)
 </details>
 
  Source: @CDCreport, @ICDcodes

@@ -66,7 +66,7 @@ The definition of dying from Bladder cancer is to get any of the following ICD c
     * C674: Malignant neoplasm of posterior wall of bladder (0.0063%)
     * C675: Malignant neoplasm of bladder neck (0.032%)
     * C677: Malignant neoplasm of urachus (0.2%)
-    * **C679: Malignant neoplasm of bladder, unspecified (100.0%)**
+    * **C679: Malignant neoplasm of bladder, unspecified (99.75%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

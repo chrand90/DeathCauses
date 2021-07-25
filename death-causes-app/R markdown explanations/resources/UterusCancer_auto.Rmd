@@ -66,7 +66,7 @@ The definition of dying from Uterus cancer is to get any of the following ICD co
     * C541: Malignant neoplasm of endometrium (42.0%)
     * C549: Malignant neoplasm of corpus uteri, unspecified (0.7%)
 </details>
-* C55: Malignant neoplasm of uterus, part unspecified (57.0%)
+* C55: Malignant neoplasm of uterus, part unspecified (57.2%)
 
  Source: @CDCreport, @ICDcodes
 

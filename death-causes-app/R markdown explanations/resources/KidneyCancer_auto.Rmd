@@ -59,7 +59,7 @@ plotSpecificPlots(dat, 'KidneyCancer')
 
 The definition of dying from Kidney cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Kidney cancer who falls under the ICD code 
 
-* C64: Malignant neoplasm of kidney, except renal pelvis (99.0%)
+* C64: Malignant neoplasm of kidney, except renal pelvis (98.8%)
 * C65: Malignant neoplasm of renal pelvis (1.2%)
 
  Source: @CDCreport, @ICDcodes

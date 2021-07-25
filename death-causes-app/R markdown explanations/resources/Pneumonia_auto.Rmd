@@ -78,12 +78,12 @@ The definition of dying from Pneumonia is to get any of the following ICD codes 
     * J160: Chlamydial pneumonia (0.002%)
     * J168: Pneumonia due to other specified infectious organisms (0.002%)
 </details>
-* <details><summary> **J18: Pneumonia, unspecified organism (93.0%)**</summary>
+* <details><summary> **J18: Pneumonia, unspecified organism (92.8%)**</summary>
     * J180: Bronchopneumonia, unspecified organism (1.5%)
     * J181: Lobar pneumonia, unspecified organism (3.1%)
     * J182: Hypostatic pneumonia, unspecified organism (0.079%)
     * J188: Other pneumonia, unspecified organism (0.0059%)
-    * **J189: Pneumonia, unspecified organism (88.0%)**
+    * **J189: Pneumonia, unspecified organism (88.1%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

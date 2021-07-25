@@ -62,7 +62,7 @@ plotSpecificPlots(dat, 'Chronic_Liver_Disease')
 
 The definition of dying from Chronic liver disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Chronic liver disease who falls under the ICD code 
 
-* <details><summary> K70: Alcoholic liver disease (51.0%)</summary>
+* <details><summary> K70: Alcoholic liver disease (50.8%)</summary>
     * K700: Alcoholic fatty liver (0.99%)
     * K701: Alcoholic hepatitis (3.1%)
     * K702: Alcoholic fibrosis and sclerosis of liver (0.0052%)

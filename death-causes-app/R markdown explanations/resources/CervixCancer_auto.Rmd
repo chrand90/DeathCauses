@@ -62,7 +62,7 @@ The definition of dying from Cervix cancer is to get any of the following ICD co
 
 * <details><summary> C53: Malignant neoplasm of cervix uteri (100.0%)</summary>
     * C530: Malignant neoplasm of endocervix (0.7%)
-    * C539: Malignant neoplasm of cervix uteri, unspecified (99.0%)
+    * C539: Malignant neoplasm of cervix uteri, unspecified (99.3%)
 </details>
 
  Source: @CDCreport, @ICDcodes

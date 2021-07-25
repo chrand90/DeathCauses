@@ -52,7 +52,7 @@ plotSpecificPlots(dat, 'Menigitis')
 
 The definition of dying from Menigitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Menigitis who falls under the ICD code 
 
-* <details><summary> G00: Bacterial meningitis, not elsewhere classified (51.0%)</summary>
+* <details><summary> G00: Bacterial meningitis, not elsewhere classified (50.6%)</summary>
     * G000: Hemophilus meningitis (0.56%)
     * G001: Pneumococcal meningitis (6.5%)
     * G002: Streptococcal meningitis (13.0%)

@@ -38,8 +38,8 @@ Mouth cancer is part of the following death cause categories
 
 In the model Mouth cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [Current smoking amount](/model/SmokeIntensity) (Cigarettes)
 * [Alcohol consumption](/model/Drinking) (Alcohol)
+* [Current smoking amount](/model/SmokeIntensity) (Cigarettes)
 
 #### Number of deaths
 
@@ -60,7 +60,7 @@ plotSpecificPlots(dat, 'MouthCancer')
 
 The definition of dying from Mouth cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Mouth cancer who falls under the ICD code 
 
-* <details><summary> **C0 (62.0%)**</summary>
+* <details><summary> **C0 (61.6%)**</summary>
     * C00: Malignant neoplasm of lip (0.84%)
         * C000: Malignant neoplasm of external upper lip (0.021%)
         * C001: Malignant neoplasm of external lower lip (0.053%)
@@ -134,7 +134,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Cigarettes,Alcohol}}
+P=P_{\text{Alcohol,Cigarettes}}
 $$
 
 

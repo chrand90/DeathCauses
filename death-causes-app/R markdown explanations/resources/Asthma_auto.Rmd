@@ -52,10 +52,10 @@ plotSpecificPlots(dat, 'Asthma')
 
 The definition of dying from Asthma is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Asthma who falls under the ICD code 
 
-* <details><summary> J45: Asthma (91.0%)</summary>
+* <details><summary> J45: Asthma (90.5%)</summary>
     * J450 (4.2%)
     * J451 (0.14%)
-    * J459: Other and unspecified asthma (86.0%)
+    * J459: Other and unspecified asthma (86.2%)
 </details>
 * J46 (9.5%)
 

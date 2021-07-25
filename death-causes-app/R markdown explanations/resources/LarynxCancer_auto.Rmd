@@ -64,7 +64,7 @@ The definition of dying from Larynx Cancer is to get any of the following ICD co
     * C321: Malignant neoplasm of supraglottis (7.2%)
     * C322: Malignant neoplasm of subglottis (0.61%)
     * C323: Malignant neoplasm of laryngeal cartilage (0.08%)
-    * **C329: Malignant neoplasm of larynx, unspecified (88.0%)**
+    * **C329: Malignant neoplasm of larynx, unspecified (88.3%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

@@ -55,13 +55,13 @@ The definition of dying from Homicide is to get any of the following ICD codes a
 * X85 (0.52%)
 * X88 (0.076%)
 * X89 (0.038%)
-* <details><summary> X9 (84.0%)</summary>
+* <details><summary> X9 (84.2%)</summary>
     * X90 (0.0063%)
     * X91 (3.3%)
     * X92: Assault by drowning and submersion (0.2%)
     * X93: Assault by handgun discharge (5.0%)
     * X94: Assault by rifle, shotgun and larger firearm discharge (2.9%)
-    * **X95: Assault by other and unspecified firearm and gun discharge (61.0%)**
+    * **X95: Assault by other and unspecified firearm and gun discharge (61.3%)**
     * X96: Assault by explosive material (0.0063%)
     * X97: Assault by smoke, fire and flames (0.54%)
     * X98: Assault by steam, hot vapors and hot objects (0.019%)

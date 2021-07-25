@@ -53,7 +53,7 @@ plotSpecificPlots(dat, 'Pneumonitis')
 The definition of dying from Pneumonitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Pneumonitis who falls under the ICD code 
 
 * <details><summary> J69: Pneumonitis due to solids and liquids (100.0%)</summary>
-    * J690: Pneumonitis due to inhalation of food and vomit (100.0%)
+    * J690: Pneumonitis due to inhalation of food and vomit (99.984%)
     * J691: Pneumonitis due to inhalation of oils and essences (0.016%)
 </details>
 

@@ -58,7 +58,7 @@ plotSpecificPlots(dat, 'UndeterminedIntent')
 
 The definition of dying from Undetermined intent is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Undetermined intent who falls under the ICD code 
 
-* <details><summary> **Y1 (66.0%)**</summary>
+* <details><summary> **Y1 (65.7%)**</summary>
     * Y10 (0.72%)
     * Y11 (6.4%)
     * **Y12 (25.0%)**

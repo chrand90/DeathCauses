@@ -60,7 +60,7 @@ The definition of dying from Sepsis is to get any of the following ICD codes as 
     * A408: Other streptococcal sepsis (0.044%)
     * A409: Streptococcal sepsis, unspecified (0.35%)
 </details>
-* <details><summary> A41: Other sepsis (99.0%)</summary>
+* <details><summary> A41: Other sepsis (98.9%)</summary>
     * A410: Sepsis due to Staphylococcus aureus (1.8%)
     * A411: Sepsis due to other specified staphylococcus (0.015%)
     * A412: Sepsis due to unspecified staphylococcus (0.68%)
@@ -68,7 +68,7 @@ The definition of dying from Sepsis is to get any of the following ICD codes as 
     * A414: Sepsis due to anaerobes (0.35%)
     * A415: Sepsis due to other Gram-negative organisms (2.6%)
     * A418: Other specified sepsis (0.17%)
-    * **A419: Sepsis, unspecified organism (93.0%)**
+    * **A419: Sepsis, unspecified organism (93.3%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

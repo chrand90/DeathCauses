@@ -59,10 +59,10 @@ The definition of dying from Anemia is to get any of the following ICD codes as 
     * D619: Aplastic anemia, unspecified (19.0%)
 </details>
 * D62: Acute posthemorrhagic anemia (5.9%)
-* <details><summary> D64: Other anemias (53.0%)</summary>
+* <details><summary> D64: Other anemias (53.5%)</summary>
     * D643: Other sideroblastic anemias (0.23%)
     * D648: Other specified anemias (0.65%)
-    * D649: Anemia, unspecified (53.0%)
+    * D649: Anemia, unspecified (52.6%)
 </details>
 * <details><summary> D5 (22.0%)</summary>
     * **D50: Iron deficiency anemia (4.8%)**

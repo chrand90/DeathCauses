@@ -67,7 +67,7 @@ The definition of dying from Stomach cancer is to get any of the following ICD c
     * C164: Malignant neoplasm of pylorus (0.018%)
     * C166: Malignant neoplasm of greater curvature of stomach, unspecified (0.0088%)
     * C168: Malignant neoplasm of overlapping sites of stomach (0.0088%)
-    * **C169: Malignant neoplasm of stomach, unspecified (92.0%)**
+    * **C169: Malignant neoplasm of stomach, unspecified (92.4%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

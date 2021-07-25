@@ -66,7 +66,7 @@ The definition of dying from Suicide is to get any of the following ICD codes as
     * X68 (0.03%)
     * X69 (0.19%)
 </details>
-* <details><summary> **X7 (80.0%)**</summary>
+* <details><summary> **X7 (79.5%)**</summary>
     * **X70 (27.0%)**
     * X71: Intentional self-harm by drowning and submersion (0.88%)
     * **X72: Intentional self-harm by handgun discharge (13.0%)**

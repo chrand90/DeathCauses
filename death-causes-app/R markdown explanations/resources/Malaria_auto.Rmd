@@ -56,7 +56,7 @@ The definition of dying from Malaria is to get any of the following ICD codes as
     * B500: Plasmodium falciparum malaria with cerebral complications (25.0%)
     * B509: Plasmodium falciparum malaria, unspecified (12.0%)
 </details>
-* B54: Unspecified malaria (62.0%)
+* B54: Unspecified malaria (62.5%)
 
  Source: @CDCreport, @ICDcodes
 

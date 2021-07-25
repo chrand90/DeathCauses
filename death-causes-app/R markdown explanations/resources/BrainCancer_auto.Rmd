@@ -62,7 +62,7 @@ The definition of dying from Brain cancer is to get any of the following ICD cod
     * C700: Malignant neoplasm of cerebral meninges (0.21%)
     * C709: Malignant neoplasm of meninges, unspecified (0.65%)
 </details>
-* <details><summary> C71: Malignant neoplasm of brain (99.0%)</summary>
+* <details><summary> C71: Malignant neoplasm of brain (98.5%)</summary>
     * C710: Malignant neoplasm of cerebrum, except lobes and ventricles (1.1%)
     * C711: Malignant neoplasm of frontal lobe (0.9%)
     * C712: Malignant neoplasm of temporal lobe (0.62%)

@@ -56,7 +56,7 @@ plotSpecificPlots(dat, 'Stroke')
 
 The definition of dying from Stroke is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Stroke who falls under the ICD code 
 
-* <details><summary> I6 (100.0%)</summary>
+* <details><summary> I6 (100.00000%)</summary>
     * I60: Nontraumatic subarachnoid hemorrhage (4.0%)
         * I600: 0 Ntrm subarach hemorrhage from carotid siphon and bifurcation Nontraumatic subarachnoid hemorrhage from carotid siphon and bifurcation (0.063%)
         * I602: Nontraumatic subarachnoid hemorrhage from anterior communicating artery (0.00075%)

@@ -60,7 +60,7 @@ plotSpecificPlots(dat, 'ColonCancer')
 
 The definition of dying from Colon cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Colon cancer who falls under the ICD code 
 
-* <details><summary> C18: Malignant neoplasm of colon (79.0%)</summary>
+* <details><summary> C18: Malignant neoplasm of colon (79.5%)</summary>
     * C180: Malignant neoplasm of cecum (0.63%)
     * C181: Malignant neoplasm of appendix (1.4%)
     * C182: Malignant neoplasm of ascending colon (0.38%)
@@ -70,7 +70,7 @@ The definition of dying from Colon cancer is to get any of the following ICD cod
     * C186: Malignant neoplasm of descending colon (0.052%)
     * C187: Malignant neoplasm of sigmoid colon (0.68%)
     * C188: Malignant neoplasm of overlapping sites of colon (0.0019%)
-    * **C189: Malignant neoplasm of colon, unspecified (76.0%)**
+    * **C189: Malignant neoplasm of colon, unspecified (76.3%)**
 </details>
 * C19: Malignant neoplasm of rectosigmoid junction (5.7%)
 * C20: Malignant neoplasm of rectum (13.0%)

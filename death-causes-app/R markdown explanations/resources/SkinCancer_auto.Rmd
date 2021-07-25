@@ -68,7 +68,7 @@ The definition of dying from Skin cancer is to get any of the following ICD code
     * C435: Malignant melanoma of trunk (2.4%)
     * C436: Malignant melanoma of upper limb, including shoulder (1.4%)
     * C437: Malignant melanoma of lower limb, including hip (1.6%)
-    * **C439: Malignant melanoma of skin, unspecified (91.0%)**
+    * **C439: Malignant melanoma of skin, unspecified (91.4%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

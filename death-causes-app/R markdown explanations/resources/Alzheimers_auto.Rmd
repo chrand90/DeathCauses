@@ -60,7 +60,7 @@ The definition of dying from Alzheimers is to get any of the following ICD codes
     * G300: Alzheimer's disease with early onset (0.028%)
     * G301: Alzheimer's disease with late onset (2.3%)
     * G308: Other Alzheimer's disease (0.0086%)
-    * G309: Alzheimer's disease, unspecified (98.0%)
+    * G309: Alzheimer's disease, unspecified (97.6%)
 </details>
 
  Source: @CDCreport, @ICDcodes

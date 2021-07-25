@@ -59,7 +59,7 @@ The definition of dying from Emphysema is to get any of the following ICD codes 
     * J431: Panlobular emphysema (0.013%)
     * J432: Centrilobular emphysema (0.29%)
     * J438: Other emphysema (0.027%)
-    * **J439: Emphysema, unspecified (100.0%)**
+    * **J439: Emphysema, unspecified (99.65%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

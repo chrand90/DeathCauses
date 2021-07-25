@@ -52,7 +52,7 @@ plotSpecificPlots(dat, 'War')
 
 The definition of dying from War is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from War who falls under the ICD code 
 
-* Y891 (93.0%)
+* Y891 (92.9%)
 * <details><summary> Y36: Operations of war (7.1%)</summary>
     * Y364: War operations involving firearm discharge and other forms of conventional warfare (7.1%)
 </details>
