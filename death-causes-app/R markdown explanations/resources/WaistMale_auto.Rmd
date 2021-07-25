@@ -15,8 +15,8 @@ link-citations: true
 
 body{
     background:#F0F0F0;}
-details{
-    background:#e1f9fa;}
+blockquote{
+  text-align: center;}
 
 </style>
 _[auto-generated file]_
@@ -48,7 +48,7 @@ Waist circumference male equivalence is used by the model in the following place
 
 Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Waist circumference male equivalence is 80. This means that it can be interpreted as
 
-> It is possible to change, but it will take a lot of time.
+> *It is possible to change, but it will take a lot of time.*
 
 
 #### Computation

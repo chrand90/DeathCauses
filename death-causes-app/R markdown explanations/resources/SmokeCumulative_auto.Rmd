@@ -15,8 +15,8 @@ link-citations: true
 
 body{
     background:#F0F0F0;}
-details{
-    background:#e1f9fa;}
+blockquote{
+  text-align: center;}
 
 </style>
 _[auto-generated file]_
@@ -51,7 +51,7 @@ Total amount smoked in life is used by the model in the following places
 
 Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Total amount smoked in life is 90. This means that it can be interpreted as
 
-> It is possible to change, and it can be changed now or very soon.
+> *It is possible to change, and it can be changed now or very soon.*
 
 
 #### Computation

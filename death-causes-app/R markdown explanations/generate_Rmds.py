@@ -139,8 +139,8 @@ link-citations: true\n\
 \n\
 body{\n\
     background:#F0F0F0;}\n\
-details{\n\
-    background:#e1f9fa;}\n\
+blockquote{\n\
+  text-align: center;}\n\
 \n\
 </style>\n')
         f.write("_[auto-generated file]_\n\n")
@@ -209,7 +209,6 @@ def write_icd_group(icd_object, f, spaces=0):
             proportion=float(node[1])*100
             rounded_proportion = '%s' % float('%.2g' % proportion)
             f.write(indent+"* ")
-
             if node[2]=="Parent" and spaces==0 :
                 f.write("<details><summary> ")
             if ICD in strongs and len(ICDgroup)>4 and proportion>1:
@@ -517,7 +516,7 @@ def make_optimizability_section(node_name, title, f):
         f.write(text_available)
     else:
         f.write("The optimizability of "+title+ " is "+str(optim)+". This means that it can be interpreted as\n\n")
-    f.write("> ")
+    f.write("> *")
     if optim==10:
         f.write("It is impossible to change and it has never been in your control")
     if optim==20:
@@ -528,7 +527,7 @@ def make_optimizability_section(node_name, title, f):
         f.write("It is possible to change, but it will take a lot of time.")
     if optim==90:
         f.write("It is possible to change, and it can be changed now or very soon.")
-    f.write("\n\n")
+    f.write("*\n\n")
     add_text_if_there(f,node_name, "optimizability", "after")
 
 def make_guidance_section(node_name, title, f):

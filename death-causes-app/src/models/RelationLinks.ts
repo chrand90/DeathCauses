@@ -48,6 +48,11 @@ interface NodeToType {
   [nodeName: string]: NodeType;
 }
 
+export interface DeathCauseHierarchy {
+  level: number;
+  children: DeathCauseHierarchy[];
+  key: string;
+}
 export interface NodeToColor {
   [nodeName: string]: string;
 }
@@ -153,12 +158,16 @@ export default class RelationLinks {
   nodeOrderReversed: ReverseNodeOrder = {};
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
+  deathCauseNesting: DeathCauseHierarchy[];
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
     this.initializeInheritanceListsAndType(jsonObject);
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
+    this.deathCauseNesting= this.makeNesting();
+    console.log("nesting")
+    console.log(this.deathCauseNesting)
   }
 
   initializeReverseNodeTypeOrder() {
@@ -257,6 +266,35 @@ export default class RelationLinks {
     return this.descendantList[nodeName].filter(
       (d) => this.nodeType[d] === NodeType.CAUSE_CATEGORY
     );
+  }
+
+  getNestedNodes(nodeName: string, level: number): DeathCauseHierarchy[]{
+    return this.descendantList[nodeName].map(childNode => {
+      return {
+        key: childNode,
+        level: level,
+        children: this.getNestedNodes(childNode, level+1)
+      }
+    })
+  }
+
+  makeNesting(): DeathCauseHierarchy[]{
+    const topLevels=this.sortedNodes[NodeType.CAUSE_CATEGORY]
+        .concat(this.sortedNodes[NodeType.CAUSE])
+        .filter(nodeName => {
+          return this.ancestorList[nodeName].every(ancestor => {
+            return this.nodeType[ancestor]!==NodeType.CAUSE_CATEGORY
+          })
+        })
+    return topLevels.map(nodeName => {
+      return {
+        key:nodeName,
+        level:0,
+        children: this.getNestedNodes(nodeName, 1)
+      }
+    })
+    
+    
   }
 
   getPossibleExpansions() {
@@ -553,6 +591,11 @@ export default class RelationLinks {
 
   getAllPossibleNodes(): string[] {
     return Object.keys(this.nodeType).sort();
+  }
+
+  getNestedListOfDeathCauses(){
+    const takenCategories=new Set<string>();
+    
   }
 
   getSuperDescendantCount(node: string) {

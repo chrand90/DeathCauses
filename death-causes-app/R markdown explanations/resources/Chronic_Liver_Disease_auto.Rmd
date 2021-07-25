@@ -15,8 +15,8 @@ link-citations: true
 
 body{
     background:#F0F0F0;}
-details{
-    background:#e1f9fa;}
+blockquote{
+  text-align: center;}
 
 </style>
 _[auto-generated file]_
@@ -40,8 +40,8 @@ Chronic liver disease is part of the following death cause categories
 In the model Chronic liver disease has the following [risk factors](/model/intro#risk-factor)
 
 * [BMI](/model/BMI)
-* [HCV diagnosis](/model/HCVStatus) (HCV)
 * [Alcohol consumption](/model/Drinking) (Alcohol)
+* [HCV diagnosis](/model/HCVStatus) (HCV)
 
 #### Number of deaths
 
@@ -98,7 +98,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{BMI}} \cdot P_{\text{HCV,Alcohol}}
+P=P_{\text{BMI}} \cdot P_{\text{Alcohol,HCV}}
 $$
 
 

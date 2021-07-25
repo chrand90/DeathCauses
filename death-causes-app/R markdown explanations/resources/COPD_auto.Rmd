@@ -15,8 +15,8 @@ link-citations: true
 
 body{
     background:#F0F0F0;}
-details{
-    background:#e1f9fa;}
+blockquote{
+  text-align: center;}
 
 </style>
 _[auto-generated file]_
@@ -37,8 +37,8 @@ Chronic obstructive pulmonary disease is part of the following death cause categ
 
 In the model Chronic obstructive pulmonary disease has the following [risk factors](/model/intro#risk-factor)
 
-* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 
 #### Number of deaths
 
@@ -82,7 +82,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Smoke end a.,Smoke avg.}}
+P=P_{\text{Smoke avg.,Smoke end a.}}
 $$
 
 

@@ -15,8 +15,8 @@ link-citations: true
 
 body{
     background:#F0F0F0;}
-details{
-    background:#e1f9fa;}
+blockquote{
+  text-align: center;}
 
 </style>
 _[auto-generated file]_
@@ -50,7 +50,7 @@ Time since you stopped smoking per year is used by the model in the following pl
 
 Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking per year is 30. This means that it can be interpreted as
 
-> It is impossible to change now, but it has once definitely been in your control
+> *It is impossible to change now, but it has once definitely been in your control*
 
 
 #### Computation
