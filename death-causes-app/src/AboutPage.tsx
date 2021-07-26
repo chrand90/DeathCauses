@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Spinner } from "react-bootstrap";
 import { withRouter, RouteComponentProps } from "react-router";
 import './AboutPage.css'
+import { hideAllToolTips } from "./components/Helpers";
 import MathJaxLoader from "./components/MathJax";
 // var html = require('./resources/intro.nb.html')
 // var template = { __html: html }
@@ -126,6 +127,7 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
       }
     
       componentDidMount() {
+        hideAllToolTips()
         this.state.mathjax.initiateMathJax(() => this.updateTemplate()); 
       }
     

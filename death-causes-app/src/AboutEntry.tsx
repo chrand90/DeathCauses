@@ -6,6 +6,7 @@ import { observer } from "mobx-react";
 import RootStore, { withStore } from "./stores/rootStore";
 import { DeathCauseHierarchy, NodeType } from "./models/RelationLinks";
 import { isReturnStatement } from "typescript";
+import { hideAllToolTips } from "./components/Helpers";
 
 enum LoadingStatus {
   LOADING = "loading",
@@ -29,6 +30,10 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
   constructor(props: AboutEntryProps) {
     super(props);
     this.redirect = this.redirect.bind(this);
+  }
+
+  componentDidMount(){
+      hideAllToolTips()
   }
 
   redirect(target: string) {
