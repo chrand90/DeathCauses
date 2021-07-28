@@ -661,7 +661,7 @@ export default class BarChart {
           vis.stip.show(d, this);
         }
         d3.select(this)
-          .raise()
+          // .raise()
           .style("stroke-width", 3)
           .style("stroke", "#000000");
       })

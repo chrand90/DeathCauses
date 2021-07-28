@@ -57,7 +57,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             .append("g")
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-        const data = props.data.sort((a, b) => (b.value - a.value))
+        const data = props.data//.sort((a, b) => (b.value - a.value))
         console.log(data)
 
         var x = d3.scaleLinear()
@@ -85,7 +85,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             .attr("x", "-10");
 
         svg.selectAll("myline")
-            .data(data)
+            .data(data, function (data: any, i: any) { return i })
             .enter()
             .append("line")
             .attr("class", "myLine")
@@ -97,11 +97,12 @@ const LollipopChart = observer((props: PieChartProps) => {
             .attr("stroke-width", 2)
 
         // Circles -> start at X=0
-        svg.selectAll("mycircle")
-            .data(data)
+        svg.selectAll("myCircle")
+            .data(data, function (data: any, i: any) { return i })
             .enter()
             .append("circle")
             .attr("class", "myCircle")
+            // .attr("id", function (d: any, i: any) { return i })
             .attr("cx", x(0))
             .attr("cy", function (d: any) { return y(d.name) as number; })
             .attr("r", "7")
@@ -122,7 +123,7 @@ const LollipopChart = observer((props: PieChartProps) => {
 
     const updateData = () => {
 
-        const data = props.data.sort((a, b) => (b.value - a.value))
+        const data = props.data
 
         let svg = d3.select(chartArea.current).select("svg")
 
@@ -147,7 +148,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             .attr("x", "-10");
 
         var j = svg.select("g").selectAll<any, DataPoint[]>(".myLine")
-            .data(data)
+            .data(data, function (data: any, i: any) { return i })
         // update lines
         j.join(
             (enter: any) => {
@@ -166,14 +167,16 @@ const LollipopChart = observer((props: PieChartProps) => {
             }
         ).transition().duration(2000).attr("x2", function (d: any) { return x(d.value) })
 
-        var u = svg.select("g").selectAll<any, DataPoint[]>("circle")
-            .data(data)
+        var u = svg.select("g").selectAll<any, DataPoint[]>(".myCircle")
+            .sort((a: any, b: any) => d3.descending(a.value, b.value))
+            .data(data, function (data: any, i: any) { return i })
         // update bars
 
         u.join(
             (enter: any) => {
                 return enter.append("circle")
                     .attr("class", "myCircle")
+                    // .attr("id", function (d: any, i: any) { return i })
                     .attr("cx", function (d: any) { return x(0); })
                     .attr("cy", function (d: any) { return y(d.name) as number; })
                     .attr("r", 8)
@@ -185,7 +188,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             (exit: any) => {
                 return exit.remove().selection()
             }
-        ).transition().duration(2000).attr("cx", function (d: any) { return x(d.value) })//.attr("cy", function (d: any) : any { return y(d.name) })
+        ).transition().duration(2000).attr("cx", function (d: any) { return x(d.value) })//.on("end", () => setMouseOverTips())//.attr("cy", function (d: any) : any { return y(d.name) })
 
         setMouseOverTips()
     }
@@ -205,6 +208,9 @@ const LollipopChart = observer((props: PieChartProps) => {
 
         d3.select("g").call(tip);
 
+        let tmp = d3.selectAll(".myCircle")
+        console.log(tmp)
+
         d3.selectAll(".myCircle")
             .data(props.data)
             .on("mouseenter", function (e: Event, d: DataPoint) {
@@ -212,7 +218,7 @@ const LollipopChart = observer((props: PieChartProps) => {
                     .style("background-color", "9cc986")
                     .style("opacity", 1);
                 tip.show(d, this);
-                d3.select(this).raise().style("fill", colors.barHighlight);
+                d3.select(this).style("fill", colors.barHighlight);
             })
             .on("mouseleave", function (e: Event, d: DataPoint) {
                 tip.hide(d, this);

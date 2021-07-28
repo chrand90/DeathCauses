@@ -22,12 +22,12 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   // const [chart, setChart] = useState<BarPlot | null>(null);
   // const { width } = useWindowSize();
 
-  useEffect(() => { 
+  useEffect(() => {
     console.log("dataset changed");
     if (props.data && chartArea.current) {
       updateChart()
     }
-  }, [props.data]); 
+  }, [props.data]);
 
   useEffect(() => {
     createChart();
@@ -137,7 +137,7 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
         return enter
           .append("rect")
           .attr("x", function (d: any, i: any) {
-            return width;
+            return 0;
           })
           .attr("width", x.bandwidth())
           .attr("height", function (d: any) {
@@ -154,7 +154,13 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
         return update;
       },
       (exit: any) => {
-        return exit.remove().selection();
+        return exit.transition()
+          .duration(600)
+          .attr("x", 0)
+          .attr("y", function (d: any, i: any) { return y(0); })
+          .attr("height", height - y(0))
+          .remove()
+          .selection();
       }
     )
       .transition()
@@ -200,7 +206,7 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
     d3.select("g").call(tip);
 
     d3.selectAll("rect")
-      .data(props.data)
+      .data(props.data, function (survivalcurvedat: any) { return survivalcurvedat.age.toPrecision() })
       .on("mouseenter", function (e: Event, d: SurvivalCurveData) {
         d3.selectAll(".d3-tip")
           .style("background-color", "9cc986")
