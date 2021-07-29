@@ -37,7 +37,7 @@
   "scripts": {
     "start": "cross-env PUBLIC_URL=. react-scripts start",
     "start-localhost": "cross-env PUBLIC_URL=. react-scripts start",
-    "build": "cross-env PUBLIC_URL=http://161.35.19.16 react-scripts build",
+    "build": "cross-env PUBLIC_URL=http://deathcauses.com react-scripts build",
     "build-localhost": "%PUBLIC_URL%=/ react-scripts build",
     "analyze": "source-map-explorer 'build/static/js/*.js'",
     "test": "react-scripts test",

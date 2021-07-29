@@ -33,7 +33,6 @@ export interface QuestionProps<T> {
   inputvalidity: InputValidity;
   featured: boolean;
   ignore: boolean;
-  windowWidth: number;
   descendantDeathCauses: string[];
 }
 
@@ -53,7 +52,6 @@ interface QuestionContextProps {
   featured: boolean;
   unitText: string | React.ReactNode;
   validityStatus: string;
-  windowWidth: number;
   descendantDeathCauses: string[];
   store: RootStore;
 }
@@ -86,6 +84,8 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   }
 
   helpBox() {
+    
+    const width=this.props.store.uIStore.windowWidth<500 ? this.props.store.uIStore.windowWidth/2 : 300
     return (
       <Popover id="popover-basic">
         <Popover.Title as="h3">{this.props.store.loadedDataStore.descriptions.getDescription(this.props.name,30)}</Popover.Title>
@@ -200,7 +200,8 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
       <OverlayTrigger
         trigger="click"
         rootClose={true}
-        placement={this.props.windowWidth <= 992 ? "left" : "right"}
+        placement={this.props.store.uIStore.windowWidth <= 992 ? 
+          (this.props.store.uIStore.windowWidth<=400 ?  "bottom" : "left") : "right"}
         overlay={this.helpBox()}
       >
         <Button variant="light" className="btn-helpbox">
@@ -220,7 +221,7 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   }
 
   pixelsForFactorNameHeader() {
-    let widthOfArea = this.props.windowWidth;
+    let widthOfArea = this.props.store.uIStore.windowWidth;
     if (widthOfArea >= 1200) {
       widthOfArea = (widthOfArea * 1) / 3;
     } else if (widthOfArea >= 992) {

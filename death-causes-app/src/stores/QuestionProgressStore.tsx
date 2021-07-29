@@ -83,10 +83,18 @@ export default class QuestionProgressStore {
     this.currentFactor= ""; 
   }
 
+  finishQuestionnaireStartOverview(){
+    this.answeringProgress= AnswerProgress.FINISHED
+    this.hasBeenAnswered= this.loadedDataStore.factorOrder
+    this.currentFactor= ""; 
+    this.view=QuestionView.QUESTION_LIST; 
+  }
+
   startOverQuestionnaire(){
     this.hasBeenAnswered= []
     this.currentFactor= this.loadedDataStore.factorOrder[0]
     this.answeringProgress= AnswerProgress.ANSWERING
+    this.view=QuestionView.QUESTION_MANAGER
   }
 
   previousQuestion(factorMaskings: FactorMaskings){
@@ -107,8 +115,4 @@ export default class QuestionProgressStore {
     this.currentFactor = this.hasBeenAnswered[i];
     this.answeringProgress= AnswerProgress.ANSWERING;
   }
-
-
-
-
 }

@@ -51,11 +51,6 @@ export default class ComputationStore {
     }
     this.computationStateStore.setComputationState(ComputationState.RUNNING);
     
-    console.log("ageFrom");
-    console.log(this.advancedOptionsStore.submittedAgeFrom);
-    console.log("ageTo");
-    console.log(this.advancedOptionsStore.submittedAgeTo);
-    console.log(this.submittedFactorAnswers);
     if (this.advancedOptionsStore.threading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities();
