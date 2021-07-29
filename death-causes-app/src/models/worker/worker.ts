@@ -1,14 +1,14 @@
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
-import Deathcause, { Condition, ConditionJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
+import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
-import { RawDeathCauseJson } from "../../components/database/Deathcause";
+import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
-import ComputeController from "../updateFormNodes/UpdateFormController";
-import Descriptions, { DescriptionsJson } from "../Descriptions";
+import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
+import UpdateFormController from "../updateFormNodes/UpdateFormController";
 
 class computations {
-  computer: ComputeController | null;
+  computer: UpdateFormController | null;
 
   constructor() {
     this.computer = null;
@@ -31,7 +31,7 @@ class computations {
     Object.entries(rawConditions).forEach(([conditionName, conditionObject]) => {
         conditions[conditionName]=new Condition(conditionObject, conditionName);
     })
-    this.computer = new ComputeController(
+    this.computer = new UpdateFormController(
       rlinks,
       ageFrom,
       ageTo,
@@ -44,7 +44,7 @@ class computations {
 
   processData(data: FactorAnswers) {
     if(this.computer===null){
-      return {survivalData: [], innerCauses: []};
+      return {survivalData: [], innerCauses: [], summaryView: null};
     }
     else{
       return this.computer.computeAll(data);
@@ -54,7 +54,7 @@ class computations {
 
 let c = new computations();
 
-export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[]} {
+export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[], summaryView: SummaryViewData | null} {
   return c.processData(data);
 }
 

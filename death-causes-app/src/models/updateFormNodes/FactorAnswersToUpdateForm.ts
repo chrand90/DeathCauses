@@ -8,11 +8,24 @@ import {
   UpdateDic,
   UpdateForm,
 } from "./UpdateForm";
+import { customPrecision }  from "../../components/Helpers"
+
+export const UNKNOWNLABEL="Unknown"
+export interface FactorAnswerChange {
+  fromVal: number | string;
+  toVal: number | string;
+}
+export interface FactorAnswerChanges {
+  [factorName:string]: FactorAnswerChange
+}
 
 export class FactorAnswersToUpdateForm {
   lastInputFactorAnswers: FactorAnswers;
   lastOutputNodeValues: UpdateDic;
+  changes: FactorAnswerChanges;
+
   constructor() {
+    this.changes={};
     this.lastInputFactorAnswers = {};
     this.lastOutputNodeValues = {};
   }
@@ -66,7 +79,42 @@ export class FactorAnswersToUpdateForm {
     };
   }
 
+  getStringValueOfNode(node: UpdateForm | undefined):string[]{
+    if(!node){
+      return [UNKNOWNLABEL, UNKNOWNLABEL]
+    }
+    if(node.missing===MissingStatus.MISSING){
+      return [UNKNOWNLABEL, UNKNOWNLABEL]
+    }
+    else if(node.type===TypeStatus.NUMERIC){
+      return [
+        customPrecision(node.value as string | number,4),
+        customPrecision(node.value as string | number,14)
+      ];
+    }
+    else if(node.type===TypeStatus.STRING){
+      return [node.value as string , node.value as string]
+    }
+    throw Error("Unknown output type to input factor")
+  }
+
+  getRecentChanges(){
+    return this.changes;
+  }
+
+  addToChangeObject(factorname: string, newNode: UpdateForm): void{
+    const [fromVal, fromValPrecise]= this.getStringValueOfNode(this.lastOutputNodeValues[factorname])
+    const [toVal, toValPrecise]= this.getStringValueOfNode(newNode)
+    if(fromVal!==toVal){
+      this.changes[factorname]={fromVal, toVal}
+    }
+    else if(fromValPrecise!==toValPrecise){
+      this.changes[factorname]={fromVal:fromValPrecise, toVal:toValPrecise}
+    }
+  }
+
   update(newFactorAnswers: FactorAnswers) {
+    this.changes={};
     let defaultChangeStatus = ChangeStatus.UNCHANGED;
     if (
       !("Age" in this.lastInputFactorAnswers) ||
@@ -81,10 +129,12 @@ export class FactorAnswersToUpdateForm {
       ) {
         this.lastOutputNodeValues[factorname].change = defaultChangeStatus;
       } else {
-        this.lastOutputNodeValues[factorname] = this.createNewFactorVal(
+        const newNode= this.createNewFactorVal(
           factorname,
           factorval
         );
+        this.addToChangeObject(factorname, newNode)
+        this.lastOutputNodeValues[factorname] = newNode
       }
     });
     this.lastInputFactorAnswers = newFactorAnswers;

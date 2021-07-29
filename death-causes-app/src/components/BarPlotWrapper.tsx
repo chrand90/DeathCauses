@@ -1,28 +1,31 @@
 import * as d3 from "d3";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
 import d3Tip from "d3-tip";
 import "./BarPlotWrapper.css";
+import { useStore } from "../stores/rootStore";
+import { observer } from "mobx-react";
 
 interface BarPlotWrapperProps {
   data: SurvivalCurveData[];
 }
 
-const BarPlotWrapper = (props: BarPlotWrapperProps) => {
-  const chartArea = useRef(null);
-  const margin = { top: 50, right: 20, bottom: 50, left: 70 },
-    width = 800 - margin.left - margin.right,
-    height = 600 - margin.top - margin.bottom;
+const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
+  const store = useStore();
+  const chartArea = useRef<any>(null);
+  const margin = { top: 50, right: 20, bottom: 50, left: 70 }
+  let width = 800
+  let height = 600
 
   const colors = { barFill: "#69b3a2", barHighlight: "#9e1986" };
-    const formatter = d3.format(".3p")
+  const formatter = d3.format(".3p")
   // const [chart, setChart] = useState<BarPlot | null>(null);
   // const { width } = useWindowSize();
 
   useEffect(() => {
     console.log("dataset changed");
     if (props.data && chartArea.current) {
-      updateChart();
+      updateChart()
     }
   }, [props.data]);
 
@@ -30,9 +33,23 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
     createChart();
   }, []);
 
+  useEffect(() => {
+    updateWidth()
+    createChart()
+  }, [store.uIStore.windowWidth])
+
+  const updateWidth = () => {
+    const svg = d3.select(chartArea.current).selectAll("*").remove();
+    if (chartArea.current !== null) {
+      width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right
+    }
+  }
+
   const createChart = () => {
+
     const svg = d3
       .select(chartArea.current)
+      .append("svg")
       .attr("width", width + margin.left + margin.right)
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
@@ -68,7 +85,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
 
     var u = svg
       .selectAll<SVGRectElement, SurvivalCurveData[]>("rect")
-      .data(props.data, function(survivalcurvedat: any) { return survivalcurvedat.age.toPrecision()});
+      .data(props.data, function (survivalcurvedat: any) { return survivalcurvedat.age.toPrecision() });
 
     u.enter()
       .append("rect")
@@ -92,7 +109,6 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
         return height - y(d.prob);
       })
       .delay(function (d, i) {
-        console.log(i);
         return i * 5;
       });
 
@@ -104,7 +120,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
 
     var u = svg
       .selectAll<SVGRectElement, SurvivalCurveData[]>("rect")
-      .data(props.data, function(survivalcurvedat: any) { return survivalcurvedat.age.toPrecision()});
+      .data(props.data, function (survivalcurvedat: any) { return survivalcurvedat.age.toPrecision() });
 
     var x = d3
       .scaleBand()
@@ -121,7 +137,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
         return enter
           .append("rect")
           .attr("x", function (d: any, i: any) {
-            return width;
+            return 0;
           })
           .attr("width", x.bandwidth())
           .attr("height", function (d: any) {
@@ -138,7 +154,13 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
         return update;
       },
       (exit: any) => {
-        return exit.remove().selection();
+        return exit.transition()
+          .duration(600)
+          .attr("x", 0)
+          .attr("y", function (d: any, i: any) { return y(0); })
+          .attr("height", height - y(0))
+          .remove()
+          .selection();
       }
     )
       .transition()
@@ -176,7 +198,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
       .offset([-10, 0])
       .html(function (d: SurvivalCurveData) {
         return (
-          "Probability: <strong>" + formatter(d.prob) +  "</strong><br/>" +
+          "Probability: <strong>" + formatter(d.prob) + "</strong><br/>" +
           "of surviving past: <strong>" + d.age + "</strong>"
         );
       });
@@ -184,7 +206,7 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
     d3.select("g").call(tip);
 
     d3.selectAll("rect")
-      .data(props.data)
+      .data(props.data, function (survivalcurvedat: any) { return survivalcurvedat.age.toPrecision() })
       .on("mouseenter", function (e: Event, d: SurvivalCurveData) {
         d3.selectAll(".d3-tip")
           .style("background-color", "9cc986")
@@ -199,13 +221,14 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
   };
 
   const setTitleAndLabels = () => {
+
     let svg = d3.select(chartArea.current).select("g");
 
     svg
       .append("text")
       .attr("x", width / 2)
       .attr("y", -margin.top / 2)
-      .text("Probability of being alive")
+      .text("Probability of being alive each year")
       .style("font-size", "20px")
       .attr("font-weight", 700)
       .attr("text-anchor", "middle");
@@ -227,6 +250,6 @@ const BarPlotWrapper = (props: BarPlotWrapperProps) => {
       .attr("font-weight", 700);
   };
 
-  return <svg ref={chartArea} />;
-};
+  return <div ref={chartArea} ></div>;
+});
 export default BarPlotWrapper;

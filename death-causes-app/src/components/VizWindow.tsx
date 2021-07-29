@@ -13,6 +13,8 @@ import { hideAllToolTips } from "./Helpers";
 import { DataRow } from "./PlottingData";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import "./VizWindow.css";
+import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
+import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 
 interface VizWindowProps {
   store: RootStore;
@@ -21,8 +23,8 @@ interface VizWindowProps {
 interface VizWindowStates {
   riskFactorContributions: DataRow[];
   survivalCurveData: SurvivalCurveData[];
+  summaryViewData: SummaryViewData | null;
 }
-
 
 class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindowStates> {
   removeFinishComputationListener: IReactionDisposer | null=null;
@@ -32,6 +34,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     this.state = {
       riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
       survivalCurveData: this.props.store.computationStore.survivalCurveData,
+      summaryViewData: null
     }
   }
 
@@ -40,7 +43,8 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
         this.setState({
           riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-          survivalCurveData: this.props.store.computationStore.survivalCurveData
+          survivalCurveData: this.props.store.computationStore.survivalCurveData,
+          summaryViewData: this.props.store.computationStore.summaryView
         }, () => {
           this.props.store.computationStateStore.setComputationState(ComputationState.READY);
         })
@@ -62,7 +66,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       </div>
     );
   }
-
 
   renderDataBoundedGraph(
     visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH
@@ -106,6 +109,14 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       case Visualization.NO_GRAPH: {
         return "Input an age to get started";
       }
+      case Visualization.SUMMARY_VIEW: {
+        if (this.state.summaryViewData === null) {
+          return (<h3>Answer questions and compute to show results</h3>)
+        }
+        return (
+          <SummaryView data={this.state.summaryViewData}/>
+        )
+      }
       default: {
         return <p>'No visualizations'</p>;
       }
@@ -131,6 +142,8 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
                 Visualization.SURVIVAL_GRAPH,
                 Visualization.RELATION_GRAPH,
                 Visualization.BAR_GRAPH,
+                Visualization.SUMMARY_VIEW
+
               ].map((d: string) => {
                 return (
                   <option value={d} key={d}>
@@ -146,8 +159,15 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   render(): React.ReactNode {
+    const styleObject: {[k:string]:string}={}
+    if(!this.props.store.uIStore.verticalStacked){
+      styleObject["height"]="calc(100vh - 100px)"
+      styleObject["overflow-y"]="auto"
+      styleObject["width"]=this.props.store.uIStore.vizWindowWidth.toString()
+      styleObject["overflow-x"]="auto"
+    }
     return (
-      <div className="vizwindow" onClick={() => {
+      <div style={styleObject} onClick={() => {
         this.props.store.uIStore.tooltipHider()
       }}>
         <h4> Visualization Menu </h4>

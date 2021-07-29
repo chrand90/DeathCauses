@@ -27,7 +27,7 @@ export default class DataPrivacyBox extends React.PureComponent {
         placement={"bottom"}
         overlay={this.helpBox()}
       >
-        <Button variant="link">
+        <Button variant="link" className="text-link-button">
           (Privacy)
         </Button>
       </OverlayTrigger>

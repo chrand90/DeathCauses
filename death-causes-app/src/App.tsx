@@ -12,11 +12,13 @@ import { store, StoreContext } from "./stores/rootStore";
 
 class AppWithoutObserver extends React.Component {
 
-  constructor(props: any) {
-    super(props);
-  }
-
   render() {
+    if (store.uIStore.verticalStacked) {
+      document.body.style.overflow = "auto"
+    }
+    else {
+      document.body.style.overflow = "hidden"
+    }
     return (
       <StoreContext.Provider value={store}>
         <BrowserRouter>
