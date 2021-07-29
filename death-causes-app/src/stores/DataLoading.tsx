@@ -2,13 +2,17 @@ import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import DeathCause, { RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
-import causesData from "../resources/Causes.json";
-import causesCategoryData from "../resources/CategoryCauses.json";
 import Deathcause from "../components/database/Deathcause";
+import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 
 export interface LoadedFactors {
     factors: Factors;
     rawFactorInput: InputJson;
+}
+
+export interface LoadedDescriptions {
+    rawDescriptions: DescriptionsJson;
+    descriptions: Descriptions;
 }
 
 export interface LoadedRelationLinks {
@@ -60,6 +64,12 @@ export async function loadRelationLinks():Promise<LoadedRelationLinks> {
     const rawRelationLinks= await loadFromFile<RelationLinkJson>("Relations.json");
     const rdat= new RelationLinks(rawRelationLinks);
     return {rdat:rdat, rawRelationLinks: rawRelationLinks};
+}
+
+export async function loadDescriptions(): Promise<LoadedDescriptions> {
+    const rawDescriptions= await loadFromFile<DescriptionsJson>("Descriptions.json");
+    const descriptions= new Descriptions(rawDescriptions);
+    return {rawDescriptions: rawDescriptions, descriptions: descriptions};
 }
 
 export async function loadCauseData():Promise<LoadedCauseData> {

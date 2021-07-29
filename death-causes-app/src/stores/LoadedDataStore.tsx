@@ -1,8 +1,13 @@
+import { action, makeObservable, observable } from "mobx";
 import DeathCause, { RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
+import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import { loadCauseData, LoadedCauseData, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks } from "./DataLoading";
+import ComputationStore from "./ComputationStore";
+import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks } from "./DataLoading";
+import FactorInputStore from "./FactorInputStore";
+import QuestionProgressStore from "./QuestionProgressStore";
 
 export default class LoadedDataStore {
   factors: Factors;
@@ -14,6 +19,10 @@ export default class LoadedDataStore {
   deathCauses: DeathCause[];
   rawDeathCauseCategories: RawDeathCauseJson;
   deathCauseCategories: RiskFactorGroupsContainer[];
+  rawDescriptions:DescriptionsJson;
+  descriptions:Descriptions;
+  loadedQuestionMenuData: boolean;
+  loadedVizWindowData: boolean;
 
   constructor() {
     this.factors= new Factors([] as InputJson);
@@ -25,27 +34,67 @@ export default class LoadedDataStore {
     this.rawDeathCauseCategories = {} as RawDeathCauseJson;
     this.deathCauses= [];
     this.deathCauseCategories=[];
+    this.descriptions=new Descriptions({} as DescriptionsJson);
+    this.rawDescriptions={} as DescriptionsJson
+    this.loadedQuestionMenuData=false;
+    this.loadedVizWindowData=false;
+    makeObservable(this, {
+      loadedVizWindowData: observable,
+      loadedQuestionMenuData: observable,
+      loadAllData: action.bound,
+    });
   }
 
-  loadQuestionMenuContent(){
-      return new Promise(resolve => {
-        loadFactors().then((loadedFactors: LoadedFactors) => {
-            this.factors=loadedFactors.factors
-            this.rawFactorInput=loadedFactors.rawFactorInput;
-            this.factorOrder=loadedFactors.factors.getSortedOrder();
-            return
-          }).then(() => {
-              return loadRelationLinks()
-          })
-          .then((loadedRelationLinks: LoadedRelationLinks) => {
-            this.rdat=loadedRelationLinks.rdat;
-            this.rawRelationLinks=loadedRelationLinks.rawRelationLinks;
-            resolve(true);
-          })
+  loadAllData(factorInputStore: FactorInputStore, computationStore: ComputationStore, questionProgressStore: QuestionProgressStore) {
+    const promiseOfFactors=this.makePromiseOfFactors();
+    const promiseOfDescriptions= this.makePromiseOfDescriptions();
+    const promiseOfRelationLinks= this.makePromiseOfRelationsLinks();
+    const promiseOfDatabase = this.makePromiseOfDataBase();
+    Promise.all([promiseOfFactors, promiseOfDescriptions]).then(() => {
+      factorInputStore.attachLoadedData();
+      questionProgressStore.attachLoadedData();
+      this.loadedQuestionMenuData = true;
+      return
+    })
+    Promise.all([promiseOfRelationLinks, promiseOfDatabase, promiseOfDescriptions]).then(() => {
+      computationStore.attachLoadedData();
+      this.loadedVizWindowData=true;
+      return
+    })
+  }
+
+  makePromiseOfFactors(){
+    return new Promise(resolve => {
+      loadFactors().then((loadedFactors: LoadedFactors) => {
+          this.factors=loadedFactors.factors
+          this.rawFactorInput=loadedFactors.rawFactorInput;
+          this.factorOrder=loadedFactors.factors.getSortedOrder();
+          resolve(true);
+        })
       })
   }
 
-  loadDeathCauses(){
+  makePromiseOfRelationsLinks(){
+    return new Promise(resolve => {
+      loadRelationLinks().then((loadedRelationLinks: LoadedRelationLinks) => {
+        this.rdat=loadedRelationLinks.rdat;
+        this.rawRelationLinks=loadedRelationLinks.rawRelationLinks;
+        resolve(true);
+      })
+    })
+  }
+  
+  makePromiseOfDescriptions(){
+    return new Promise(resolve => {
+      loadDescriptions().then((loadedDescriptions: LoadedDescriptions ) => {
+        this.descriptions=loadedDescriptions.descriptions;
+        this.rawDescriptions=loadedDescriptions.rawDescriptions;
+        resolve(true);
+      })
+    })
+  }
+
+  makePromiseOfDataBase(){
     return new Promise(resolve => {
       loadCauseData().then((loadedData: LoadedCauseData) => {
           this.rawDeathCauseCategories=loadedData.rawCategoryData

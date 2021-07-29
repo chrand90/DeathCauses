@@ -14,6 +14,7 @@ import survivalCurve from "./FinalSummary/SurvivalCurve";
 import { UpdateDic } from "./UpdateForm";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
+import Descriptions from "../Descriptions";
 
 export default class ComputeController {
   formUpdaters: FormUpdater[];
@@ -25,14 +26,17 @@ export default class ComputeController {
   deathCauseCategories: RiskFactorGroupsContainer[];
   riskFactorGroupNodes: RiskFactorGroupNode[] = [];
   allComputedNodes: UpdateDic | null;
+  rdat: RelationLinks;
 
   constructor(
     rdat: RelationLinks,
     ageFrom: null | number,
     ageTo: number = 120,
     deathCauses: DeathCause[],
-    deathCauseCategories: RiskFactorGroupsContainer[]
+    deathCauseCategories: RiskFactorGroupsContainer[],
+    descriptions: Descriptions
   ) {
+    this.rdat=rdat;
     this.formUpdaters = [];
     this.formUpdaterNames = [];
     this.inputFactorTreater = new FactorAnswersToUpdateForm();
@@ -40,11 +44,11 @@ export default class ComputeController {
     this.ageTo = ageTo;
     this.deathCauses = deathCauses;
     this.deathCauseCategories = deathCauseCategories;
-    this.initialize(rdat);
+    this.initialize(rdat, descriptions);
     this.allComputedNodes=null;
   }
 
-  initialize(rdat: RelationLinks) {
+  initialize(rdat: RelationLinks, descriptions: Descriptions) {
     rdat.sortedNodes[NodeType.COMPUTED_FACTOR].forEach((computedFactorName) => {
       let ancestors = rdat.getAncestors(computedFactorName);
       if (!(computedFactorName in ComputedFactorClasses)) {
@@ -70,7 +74,7 @@ export default class ComputeController {
           causeToRFGNames[riskFactorContainer.deathCauseName] = [];
           riskFactorContainer.riskFactorGroups.map((rfg) => {
             const ancestors = [...Array.from(rfg.getAllFactorsInGroup())];
-            const optims = rdat.getOptimizabilityClasses(ancestors);
+            const optims = descriptions.getOptimizabilityClasses(ancestors);
             const riskFactorGroupNode = new RiskFactorGroupNode(
               ancestors,
               this.ageFrom,

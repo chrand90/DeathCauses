@@ -1,4 +1,5 @@
-import { CauseGrouping, NodeToOptimizability } from "../models/RelationLinks";
+import Descriptions from "../models/Descriptions";
+import RelationLinks, { CauseGrouping } from "../models/RelationLinks";
 import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
@@ -50,7 +51,7 @@ function makeRowSquare(
     max: number | null,
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
-    optimizabilities: NodeToOptimizability
+    descriptions: Descriptions
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -88,18 +89,19 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return optimizabilities[a]-optimizabilities[b]
+                return descriptions.optimizabilities[a]-descriptions.optimizabilities[b]
             })
         }
         
         
         innerCauses.forEach((innerCause:string)=>{
             let width=widthOfEachInnerCause[innerCause];
-            const statement=combinedBestValues?.getConsensusStatement(innerCause)
+            const statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions)
             const longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
                 totalProb>1e-8 ? width/totalProb : 0,
-                parent );
+                parent,
+                descriptions );
             squares.push({
                 name: parent,
                 cause: innerCause,
@@ -132,7 +134,7 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return optimizabilities[a]-optimizabilities[b]
+                return descriptions.optimizabilities[a]-descriptions.optimizabilities[b]
             })
         }
         innerCauses.forEach(innerCause=>{
@@ -182,7 +184,7 @@ function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
     grouping: CauseGrouping,
-    optimizabilities: NodeToOptimizability,
+    descriptions: Descriptions,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
 
@@ -203,7 +205,7 @@ function make_squares(
             max, 
             !(parent in noMergeAcross),
             parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
-            optimizabilities
+            descriptions
         )
         squareSections.push(squares)
         totalProbs.push({

@@ -104,7 +104,7 @@ class Factors {
               factorobject.initialValue
                 ? factorobject.initialValue
                 : "",
-              factorobject.longExplanation,
+              factorobject.question,
               factorobject.placeholder,
               factorobject.requiredDomain ? factorobject.requiredDomain : null,
               factorobject.recommendedDomain
@@ -112,7 +112,8 @@ class Factors {
                 : null,
               factorobject.units ? factorobject.units : {},
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -120,11 +121,12 @@ class Factors {
             this.factorList[factorname] = new StringFactorPermanent(
               factorname,
               factorobject.initialValue ? factorobject.initialValue : "",
-              factorobject.longExplanation,
+              factorobject.question,
               factorobject.placeholder,
               factorobject.options ? factorobject.options : [],
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -175,6 +177,10 @@ class Factors {
     } else {
       return [];
     }
+  }
+
+  getDeathCauseDescendants(nodeName: string){
+    return this.factorList[nodeName].getDeathCauseDescendants();
   }
 
   updateMasked(

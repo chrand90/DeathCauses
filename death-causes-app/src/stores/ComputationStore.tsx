@@ -87,13 +87,15 @@ export default class ComputationStore {
         this.advancedOptionsStore.submittedAgeFrom,
         this.advancedOptionsStore.submittedAgeTo,
         this.loadedDataStore.deathCauses,
-        this.loadedDataStore.deathCauseCategories
+        this.loadedDataStore.deathCauseCategories,
+        this.loadedDataStore.descriptions
       );
     } else {
       worker.initializeObject(
         this.loadedDataStore.rawRelationLinks,
         this.loadedDataStore.rawDeathCauses,
         this.loadedDataStore.rawDeathCauseCategories,
+        this.loadedDataStore.rawDescriptions,
         this.advancedOptionsStore.submittedAgeFrom,
         this.advancedOptionsStore.submittedAgeTo
       );

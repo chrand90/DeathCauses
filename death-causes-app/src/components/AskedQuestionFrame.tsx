@@ -8,7 +8,7 @@ import Dropdown from "react-bootstrap/Dropdown";
 import { FormControlStyle, CHANGED_COLOR } from "./Question";
 import ButtonToolbar from "react-bootstrap/esm/ButtonToolbar";
 import { ComputationState } from "../stores/ComputationStateStore";
-import { withStore } from "../stores/rootStore";
+import RootStore, { withStore } from "../stores/rootStore";
 import { Spinner } from "react-bootstrap";
 import { observer } from "mobx-react";
 
@@ -25,6 +25,7 @@ interface AskedQuestionProps {
   onSwitchView: () => void;
   finished: boolean;
   computationState: ComputationState;
+  store: RootStore;
 }
 
 class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps, any> {
@@ -71,7 +72,7 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
             {this.props.leftCornerCounter}
           </div>
           <Card.Title>
-            {this.props.factorName ? this.props.factorName : "No more questions"}
+            {this.props.factorName ? this.props.store.loadedDataStore.descriptions.getDescription(this.props.factorName,25) : "No more questions"}
           </Card.Title>
         <div>
           {""}

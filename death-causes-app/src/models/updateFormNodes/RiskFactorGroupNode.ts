@@ -4,7 +4,7 @@ import {
   SetToNumber,
 } from "../../components/Calculations/DebtInheritance";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
-import { OptimizabilityToNodes } from "../RelationLinks";
+import { OptimizabilityToNodes } from "../Descriptions";
 import { OptimsToSDics, RiskRatioResult } from "./RiskFactorGroupResult";
 import { ChangeStatus, DimensionStatus, MissingStatus, StochasticStatus, TypeStatus, UpdateDic, UpdateForm } from "./UpdateForm";
 import FormUpdater from "./FormUpdater";
@@ -20,7 +20,7 @@ export default class RiskRatioGroupNode extends FormUpdater {
     ageFrom: number | null,
     ageTo: number,
     riskFactorGroup: RiskFactorGroup,
-    optimizabilityClasses: OptimizabilityToNodes
+    optimizabilityClasses: OptimizabilityToNodes,
   ) {
     super(ancestors, ageFrom, ageTo);
     this.riskFactorGroup = riskFactorGroup;
@@ -121,7 +121,7 @@ export default class RiskRatioGroupNode extends FormUpdater {
   getSDics(allPreviousUpdateForms: UpdateDic) {
     const valueStore = new BestValues(
       this.optimizabilityClasses,
-      allPreviousUpdateForms
+      allPreviousUpdateForms,
     );
     let SDicsValue: OptimsToSDics | OptimsToSDics[]
     const dependsOnAge=this.inputDependsOnAge(allPreviousUpdateForms) || this.ageAsFactor;

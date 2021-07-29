@@ -82,7 +82,7 @@ class QuestionMenuWithoutStore extends React.Component<
                 ? this.props.store.factorInputStore.factorAnswerScales[factorName].unitName
                 : factor.placeholder
             }
-            descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
+            descendantDeathCauses={this.props.store.loadedDataStore.factors.getDeathCauseDescendants(
               factorName
             )}
           />

@@ -5,13 +5,12 @@ import { DataRow, DataSet } from "./PlottingData";
 import make_squares, { SquareSection } from "./ComputationEngine";
 import { ScaleBand, ScaleLinear } from "d3";
 import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
-import {
+import RelationLinks, {
   CauseGrouping,
   CauseToParentMapping,
-  NodeToColor,
-  NodeToOptimizability,
-  ParentToCausesMapping,
+  ParentToCausesMapping
 } from "../models/RelationLinks";
+import Descriptions from "../models/Descriptions";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
@@ -24,10 +23,6 @@ const TEXT_GRAY = "#666666";
 const NOT_CLICKABLE_GRAY = "#b8b8b8";
 const SELECTED_DISEASE_COLOR = "#a3e3f0";
 
-const BASE_COLORS: NodeToColor = {
-  Unexplained: "#FFFFFF",
-  partying: "#FF6C00",
-};
 
 function getDivWidth(div: HTMLElement | null): number {
   if (div === null) {
@@ -129,7 +124,7 @@ export default class BarChart {
   widthbuttontip: any;
   yBars: ScaleBand<string>;
   xscale: ScaleLinear<number, number>;
-  colorDic: NodeToColor;
+  descriptions: Descriptions;
   setDiseaseToWidth: (newDiseaseToWidth: string | null) => void;
   expandCollectedGroup: (causecategory: string) => void;
   collectGroup: (causecategory: string) => void;
@@ -144,12 +139,11 @@ export default class BarChart {
   clickedSquareSection: SquareSection | null=null;
   buttonTipTimeOut: NodeJS.Timeout | undefined=undefined;
   widthButtonTipTimeOut: NodeJS.Timeout | undefined=undefined;
-  optimizabilities: NodeToOptimizability
 
   constructor(
     element: HTMLElement | null,
     database: DataSet,
-    colorDic: NodeToColor,
+    descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
     collectedGroups: CauseGrouping,
@@ -159,13 +153,12 @@ export default class BarChart {
       collapsables: {[key:string]:string[]};
       expandables: {[key:string]:string[]};
     },
-    optimizabilities: NodeToOptimizability,
     simpleVersion: boolean = false
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
     this.xscale = d3.scaleLinear();
-    this.colorDic = Object.assign({}, colorDic, BASE_COLORS);
+    this.descriptions = descriptions;
     this.setDiseaseToWidth = setDiseaseToWidth;
     this.expandCollectedGroup = expandCollectedGroup;
     this.collectGroup = collectGroup;
@@ -175,7 +168,6 @@ export default class BarChart {
     this.chainedTransitionInProgress = false;
     this.transitionsFinished = 0;
     this.transitionsOrdered = 0;
-    this.optimizabilities=optimizabilities;
     this.simpleVersion = simpleVersion;
     this.hideAllToolTips=this.hideAllToolTips.bind(this);
     if (simpleVersion) {
@@ -269,7 +261,7 @@ export default class BarChart {
       .attr("y", 0)
       .attr("x", 0)
       .text(function (d: any) {
-        return d.name;
+        return vis.descriptions.getDescription(d.name,100);
       })
       .style("text-anchor", designConstants.textAnchor)
       .attr("transform", designConstants.textTranslation)
@@ -654,7 +646,7 @@ export default class BarChart {
     }
     if(buttonType==="collapse"){
       if(d in this.collapsables){
-        return "Merge all "+ this.collapsables[d][0]
+        return "Merge all "+ this.descriptions.getDescription(this.collapsables[d][0],20)
       }
     }
     if(buttonType==="width"){
@@ -673,11 +665,11 @@ export default class BarChart {
       .attr("x", (d) => this.xscale(d.x0))
       .attr("height", this.yBars.bandwidth)
       .attr("width", (d) => Math.max(0, this.xscale(d.x) - this.xscale(d.x0)))
-      .attr("fill", (d) => this.colorDic[d.cause])
+      .attr("fill", (d) => this.descriptions.getColor(d.cause))
       .attr("stroke", "#2378ae")
       .style("cursor", "pointer")
       .on("mouseenter", function (e: Event, d: SquareSection) {
-        d3.select(".stip").style("background-color", vis.colorDic[d.cause]);
+        d3.select(".stip").style("background-color", vis.descriptions.getColor(d.cause));
         if (vis.clickedSquareSection !== d) {
           vis.stip.show(d, this);
         }
@@ -695,7 +687,7 @@ export default class BarChart {
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
       })
       .on("click", function (e: Event, d: SquareSection) {
-        d3.select(".clicktip").style("background-color", vis.colorDic[d.cause]);
+        d3.select(".clicktip").style("background-color", vis.descriptions.getColor(d.cause));
         vis.clicktip.show(d, this);
         vis.clickedSquareSection = d;
         vis.stip.hide();
@@ -760,7 +752,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.optimizabilities,
+      this.descriptions,
     );
     const notToBeMerged = getSubCollectGroup(
       oldCollectedGroups,
@@ -771,7 +763,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.optimizabilities,
+      this.descriptions,
       notToBeMerged
     );
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
@@ -1001,7 +993,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.optimizabilities
+      this.descriptions
     );
     const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
     const {
@@ -1011,7 +1003,7 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       oldCollectedGroups,
-      this.optimizabilities,
+      this.descriptions,
       notToBeMerged
     );
     const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
@@ -1170,7 +1162,7 @@ export default class BarChart {
       data,
       diseaseToWidth,
       this.grouping,
-      this.optimizabilities
+      this.descriptions
     );
     const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
     const dataIds = dataSortedTotal.map((v: any, index: number) => {

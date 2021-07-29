@@ -19,11 +19,12 @@ export enum FactorTypes {
 export default abstract class GeneralFactor {
   factorName: string;
   initialValue: string;
-  phrasing: string; //If the factor is not going to be asked, the phrasing should be nu
+  phrasing: string; 
   placeholder: string;
   factorType: string = "abstract";
   helpJson: string | null;
   derivableStates: DerivableOptions;
+  descendants: string[];
 
   constructor(
     factorName: string,
@@ -31,7 +32,8 @@ export default abstract class GeneralFactor {
     phrasing: string,
     placeholder: string = "",
     derivableStates: DerivableOptions = {},
-    helpJson: string | null = null
+    helpJson: string | null = null,
+    descendants: string[]
   ) {
     this.factorName = factorName;
     this.initialValue = initialValue;
@@ -39,6 +41,7 @@ export default abstract class GeneralFactor {
     this.placeholder = placeholder;
     this.helpJson = helpJson;
     this.derivableStates = derivableStates;
+    this.descendants= descendants;
   }
 
   // replaceFloats(derivableStates: DerivableOptions): DerivableOptions {
@@ -49,6 +52,10 @@ export default abstract class GeneralFactor {
   //   })
   //   return derivableStates
   // }
+
+  getDeathCauseDescendants(){
+    return this.descendants;
+  }
 
   getInitialValue(): string {
     return this.initialValue;

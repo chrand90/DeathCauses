@@ -7,13 +7,16 @@ import risk_ratios as rr
 import json
 from data_frame import initialize_data_frame_by_columns
 from generate_color import make_hex_color
+from count_descendants import count_descendants, compute_forward_relations, compute_optimizability
 
 from age_numbers import get_age_distribution, get_age_totals  # to adjust the risk ratio to the age intervals
 
 DEATHCAUSE_CATEGORY = "Death cause category"
 DEATHCAUSE = "Death cause"
-FACTORQUESTIONS_FILE = "../death-causes-app/src/resources/FactorDatabase.json"
+FACTORQUESTIONS_RAW_FILE = "../death-causes-app/src/resources/FactorDatabaseRaw.json"
+FACTORQUESTIONS_COMPILED_FILE = "../death-causes-app/src/resources/FactorDatabase.json"
 COMPUTED_FACTORS_FILE = "../death-causes-app/src/resources/ComputedFactorsRelations.json"
+DESCRIPTIONS_DESTINATION_FILE = "../death-causes-app/src/resources/Descriptions.json"
 RELATIONFILE_DESTINATION = "../death-causes-app/src/resources/Relations.json"
 CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/Causes.json"
 CATEGORY_CAUSES_DESTIONATION_FILE="../death-causes-app/src/resources/CategoryCauses.json"
@@ -25,17 +28,45 @@ def remove_duplicates_and_Age(listi):
     return list(set(listi))
 
 
-def combine_relations(relations):
-    with open(FACTORQUESTIONS_FILE, "r") as f:
+def combine_relations(relations, descriptions):
+    with open(FACTORQUESTIONS_RAW_FILE, "r") as f:
         factors = json.load(f)
     for factor_info in factors:
-        relations[factor_info["factorname"]] = {"type": "Input factor", "ancestors": [], "optimizability": factor_info["optimizability"]}
+        relations[factor_info["factorname"]] = {
+            "type": "Input factor",
+            "ancestors": []}
+        descriptions[factor_info["factorname"]]={
+            "optimizability": factor_info["optimizability"],
+            "descriptions": factor_info["descriptions"],
+            "baseUnit":factor_info["baseUnit"]}
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
-    relations.update(computed_factors)
-    for node_name, node in relations.items():
-        relations[node_name]["color"]=make_hex_color(node_name)
-    return relations
+    for factorName, factor_info in computed_factors.items():
+        relations[factorName] = {
+            "ancestors": factor_info["ancestors"],
+            "type" : "Computed factor"
+        }
+    for factorName, factor_info in computed_factors.items():
+        descriptions[factorName]= {
+            "optimizability": compute_optimizability(relations, factorName, descriptions),
+            "descriptions": factor_info["descriptions"],
+            "baseUnit": factor_info["baseUnit"]
+        }
+    for node_name, node in descriptions.items():
+        descriptions[node_name]["color"]=make_hex_color(node_name)
+    factors_compiled=compiled_factors(relations, factors)
+    return relations, descriptions, factors_compiled
+
+def compiled_factors(relations, factors):
+    factors_compiled = []
+    forward_relations=compute_forward_relations(relations)
+    for factor_info in factors:
+        del factor_info["descriptions"]
+        del factor_info["baseUnit"]
+        descendants= factor_info["descendants"]=count_descendants(forward_relations, factor_info["factorname"])
+        factor_info["descendants"]=descendants
+        factors_compiled.append(factor_info)
+    return factors_compiled
 
 
 def integrate_and_interpolate_one(rr_dir, age_intervals, age_distribution, Ages):
@@ -75,6 +106,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
     relations = get_cause_hierarchy(folder)
     cause_dirs = search_for_causes(folder)
     rr_dirs = search_for_rrs(folder)
+    descriptions = search_for_descriptions(folder)
 
     # for disease, d_dic in relations.items():
     #     print(disease, ": ", d_dic["type"])
@@ -107,7 +139,7 @@ def integrate_and_interpolate_all(age_intervals, folder):
             else:
                 death_cause_categories[disease]['RiskFactorGroups'].append(rr_norm)
 
-    return relations, death_causes, death_cause_categories
+    return relations, descriptions, death_causes, death_cause_categories
 
 
 def extract_cause_name(ICD_dir):
@@ -117,8 +149,11 @@ def extract_cause_name(ICD_dir):
 def run(age_intervals=None):
     if age_intervals is None:
         age_intervals = get_age_totals()[0]
-    relations, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
-    transform_to_json(combine_relations(relations), RELATIONFILE_DESTINATION)
+    relations, descriptions, death_causes, death_cause_categories = integrate_and_interpolate_all(age_intervals, "Causes")
+    compiled_relations, compiled_descriptions, compiled_factors= combine_relations(relations, descriptions)
+    transform_to_json(compiled_relations, RELATIONFILE_DESTINATION)
+    transform_to_json(compiled_descriptions, DESCRIPTIONS_DESTINATION_FILE)
+    transform_to_json(compiled_factors, FACTORQUESTIONS_COMPILED_FILE)
     transform_to_json(death_causes, CAUSES_DESTIONATION_FILE)
     transform_to_json(death_cause_categories, CATEGORY_CAUSES_DESTIONATION_FILE)
     # transform_to_json(integrate_all_in_folder(age_intervals, "Indirect_Causes"), "Indirect_causes_for_json")
@@ -186,10 +221,26 @@ def getAllCategories(listOfDataframes):
 # def similarize_rrs(rrs):
 #     return rrs
 
+def search_for_descriptions(folder):
+    descriptions = {}
+    list_of_files = os.walk(os.path.join(os.pardir, "Database", folder))
+    for path, dirs_within, files_within in list_of_files:
+        name = path.split(os.sep)[-1]
+        if not len(dirs_within) == 0:
+            if "descriptions.json" in files_within:
+                with open(os.path.join(path, "descriptions.json")) as f:
+                    descriptions[name]={"descriptions":json.load(f)}
+            else:
+                descriptions[name]={"descriptions":[name]}
+    if "Causes" in descriptions:
+        del descriptions["Causes"]
+    return descriptions
+
 def search_for_causes(folder):
     cause_dirs = []
     list_of_files = os.walk(os.path.join(os.pardir, "Database", folder))
     for path, dirs_within, _ in list_of_files:
+
         if "ICDfiles" in dirs_within:
             cause_dirs.append(path + os.sep + "ICDfiles")
     return cause_dirs
