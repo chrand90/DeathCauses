@@ -114,12 +114,12 @@ export default class UpdateFormController {
   }
 
   compute(factorAnswers: FactorAnswers) {
-    this.computeAverage(factorAnswers)
     let res: UpdateDic = this.inputFactorTreater.update(factorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
     });
     this.allComputedNodes = res;
+    //this.computeAverage(factorAnswers)
   }
 
   computeAll(factorAnswers: FactorAnswers) {
@@ -143,9 +143,6 @@ export default class UpdateFormController {
     const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
       return (avgRes![deathcause.deathCauseName].value as CauseNodeResult)
     })
-
-    let tmp = computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes!), this.ageTo)
-    console.log(tmp)
   }
 
   computeSurvivalData(): SurvivalCurveData[] {
@@ -166,6 +163,6 @@ export default class UpdateFormController {
     const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
       return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
     })
-    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo, this.inputFactorTreater.getRecentChanges())
   }
 }

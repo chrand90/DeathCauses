@@ -24,6 +24,30 @@ export function getDivWidth(div: HTMLElement | null): number {
   return Math.round(Number(width));
 }
 
+export function customPrecision(inputNumber: number | string, digits: number): string{
+  let s: string;
+  let n: number;
+  if(typeof inputNumber==="number"){
+    n=inputNumber
+  }
+  else{
+    n=parseFloat(inputNumber)
+  }
+  if(n>(10**digits-1)){
+    s=n.toFixed(0);
+    return s;
+  }
+  else{
+    s=n.toPrecision(digits)
+  }
+  const beforeAndAfterComma=s.split(".")
+  if(beforeAndAfterComma.length===1){
+    return s
+  }
+  return beforeAndAfterComma[0]+'.'+beforeAndAfterComma[1].replace(/0+$/,"")
+}
+
+
 
 export function hideAllToolTips(){ 
   toolTipNamesShowHide.forEach((className) => {

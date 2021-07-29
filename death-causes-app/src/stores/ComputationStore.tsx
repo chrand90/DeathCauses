@@ -1,7 +1,8 @@
-import { action, makeObservable, observable, toJS } from "mobx";
+import { action, makeObservable, computed, observable, toJS } from "mobx";
 import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData";
 import { DataRow } from "../components/PlottingData";
 import { FactorAnswers } from "../models/Factors";
+import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
@@ -10,6 +11,12 @@ import ComputationStateStore, {
   ComputationState
 } from "./ComputationStateStore";
 import LoadedDataStore from "./LoadedDataStore";
+
+export interface Shadowing {
+  shadowsTheChange: string[];
+  unshadowedByTheChange: string[];
+  shadowedByTheChange: string[];
+}
 
 const worker = new Worker();
 
@@ -22,6 +29,8 @@ export default class ComputationStore {
   singeThreadComputeController: UpdateFormController | null;
   computationStateStore: ComputationStateStore;
   summaryView: SummaryViewData | null;
+  allChanges: FactorAnswerChanges[];
+  lifeExpectancies: number[];
 
   constructor(
     loadedDataStore: LoadedDataStore,
@@ -34,12 +43,59 @@ export default class ComputationStore {
     this.survivalCurveData = [];
     this.summaryView = null;
     this.singeThreadComputeController = null;
+    this.allChanges=[]
+    this.lifeExpectancies=[70]
     makeObservable(this, {
       submittedFactorAnswers: observable,
+      lifeExpectancies: observable,
+      allChanges: observable,
+      factorShadowing: computed,
+      pushChanges:action.bound,
       attachLoadedData: action.bound,
     });
     this.loadedDataStore = loadedDataStore;
     this.advancedOptionsStore = advancedOptionsStore;
+  }
+
+  get factorShadowing(): Shadowing{
+    let unshadowedByTheChange= new Set<string>();
+    let shadowsTheChange= new Set<string>();
+    let shadowedByTheChange= new Set<string>();
+    Object.entries(this.allChanges[0]).forEach(([factorName, {fromVal, toVal}]) => {
+      const siblingGroups= this.loadedDataStore.rdat.getDependentFactors(factorName)
+      siblingGroups.forEach(siblingGroup => {
+        let missings=siblingGroup.filter(siblingName => {
+          return this.submittedFactorAnswers[siblingName]==="";
+        })
+        let notChangedThisRound=siblingGroup.filter(siblingName => {
+          return !(siblingName in this.allChanges[0])
+        })
+        if(missings.length===0){
+          //Now that there are no missing we know then toVal can't be missing 
+          if(fromVal===UNKNOWNLABEL){
+            notChangedThisRound.forEach(sibling => unshadowedByTheChange.add(sibling));
+          }
+        }
+        else {
+          const previousNonMissing=missings.every(missing => {
+            return missing in this.allChanges[0] && this.allChanges[0][missing].fromVal!==UNKNOWNLABEL
+          })
+          if(previousNonMissing && missings.length<siblingGroup.length){
+            notChangedThisRound.forEach(newlyShadowed => shadowedByTheChange.add(newlyShadowed))
+          }
+        }
+        missings.forEach(missing => {
+          if(notChangedThisRound.includes(missing)){
+            shadowsTheChange.add(missing)
+          }
+        })
+      })
+    })
+    return {
+      shadowsTheChange:Array.from(shadowsTheChange).sort(), 
+      unshadowedByTheChange: Array.from(unshadowedByTheChange).sort(),
+      shadowedByTheChange: Array.from(shadowedByTheChange).sort()
+    }
   }
 
   compute(submittedFactorAnswers?: FactorAnswers) {
@@ -53,11 +109,6 @@ export default class ComputationStore {
     }
     this.computationStateStore.setComputationState(ComputationState.RUNNING);
     
-    console.log("ageFrom");
-    console.log(this.advancedOptionsStore.submittedAgeFrom);
-    console.log("ageTo");
-    console.log(this.advancedOptionsStore.submittedAgeTo);
-    console.log(this.submittedFactorAnswers);
     if (this.advancedOptionsStore.threading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities();
@@ -70,6 +121,10 @@ export default class ComputationStore {
       if (survivalCurveData !== undefined) {
         this.survivalCurveData = survivalCurveData;
       }
+      const summaryViewData = this.singeThreadComputeController?.computeSummaryViewData();
+      if (summaryViewData !== undefined) {
+        this.summaryView = summaryViewData;
+      }
       this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
     } else {
       worker.processData(
@@ -78,6 +133,7 @@ export default class ComputationStore {
         this.survivalCurveData = survivalData;
         this.riskFactorContributions = innerCauses;
         this.summaryView = summaryView
+        this.pushChanges(summaryView.changes, summaryView.lifeExpentancyData.lifeExpentancy)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));
     }
@@ -101,6 +157,11 @@ export default class ComputationStore {
         this.advancedOptionsStore.submittedAgeTo
       );
     }
+  }
+
+  pushChanges(newChanges: FactorAnswerChanges, newLifeExpectancy: number){
+    this.allChanges.unshift(newChanges);
+    this.lifeExpectancies.unshift(newLifeExpectancy);
   }
 
   attachLoadedData() {
