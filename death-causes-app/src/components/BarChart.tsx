@@ -1,16 +1,16 @@
 import * as d3 from "d3";
-import d3Tip from "d3-tip";
-import "./BarChart.css";
-import { DataRow, DataSet } from "./PlottingData";
-import make_squares, { SquareSection } from "./ComputationEngine";
 import { ScaleBand, ScaleLinear } from "d3";
-import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
-import RelationLinks, {
+import d3Tip from "d3-tip";
+import Descriptions from "../models/Descriptions";
+import {
   CauseGrouping,
   CauseToParentMapping,
   ParentToCausesMapping
 } from "../models/RelationLinks";
-import Descriptions from "../models/Descriptions";
+import "./BarChart.css";
+import make_squares, { SquareSection } from "./ComputationEngine";
+import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
+import { DataRow, DataSet } from "./PlottingData";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
@@ -74,18 +74,18 @@ function longDesignConstants(
   width: number,
   simplifiedVersion: boolean
 ): DesignConstants {
-  const heightScale = simplifiedVersion ? 2 : 1;
+  const heightScale = simplifiedVersion ? 1.25 : 1;
   const xbarheightScale = simplifiedVersion ? 0 : 1;
   return {
     ...sameConstants,
-    barheight: 1.5 * BARHEIGHT * heightScale,
+    barheight: 1.5 * BARHEIGHT * heightScale * (simplifiedVersion ? 1 : 1),
     totalheight: n * 1.5 * BARHEIGHT * heightScale,
     totalheightWithXBar:
-      n * 1.5 * BARHEIGHT * heightScale + XBARHEIGHT * xbarheightScale,
+      (n * 1.5 * BARHEIGHT * heightScale + XBARHEIGHT * xbarheightScale) * (simplifiedVersion ? 1 : 1),
     startXScale: 10,
     yListStart: XBARHEIGHT * xbarheightScale,
-    yListInnerPadding: 0.48,
-    yListOuterPadding: 0.24,
+    yListInnerPadding: 0.48 * (simplifiedVersion ? 0.3 : 1),
+    yListOuterPadding: 0.24 * (simplifiedVersion ? 0.3 : 1),
     yListAlign: 0.8,
     middleOfChart: width / 2,
     width: width,
@@ -130,15 +130,15 @@ export default class BarChart {
   collectGroup: (causecategory: string) => void;
   grouping: CauseGrouping;
   currentMax: number;
-  expandables: {[key:string]:string[]};
-  collapsables:{[key:string]:string[]};
+  expandables: { [key: string]: string[] };
+  collapsables: { [key: string]: string[] };
   chainedTransitionInProgress: boolean;
   transitionsOrdered: number;
   transitionsFinished: number;
   simpleVersion: boolean;
-  clickedSquareSection: SquareSection | null=null;
-  buttonTipTimeOut: NodeJS.Timeout | undefined=undefined;
-  widthButtonTipTimeOut: NodeJS.Timeout | undefined=undefined;
+  clickedSquareSection: SquareSection | null = null;
+  buttonTipTimeOut: NodeJS.Timeout | undefined = undefined;
+  widthButtonTipTimeOut: NodeJS.Timeout | undefined = undefined;
 
   constructor(
     element: HTMLElement | null,
@@ -150,8 +150,8 @@ export default class BarChart {
     expandCollectedGroup: (causecategory: string) => void,
     collectGroup: (causecategory: string) => void,
     collapseAndExpandables: {
-      collapsables: {[key:string]:string[]};
-      expandables: {[key:string]:string[]};
+      collapsables: { [key: string]: string[] };
+      expandables: { [key: string]: string[] };
     },
     simpleVersion: boolean = false
   ) {
@@ -169,17 +169,17 @@ export default class BarChart {
     this.transitionsFinished = 0;
     this.transitionsOrdered = 0;
     this.simpleVersion = simpleVersion;
-    this.hideAllToolTips=this.hideAllToolTips.bind(this);
+    this.hideAllToolTips = this.hideAllToolTips.bind(this);
     if (simpleVersion) {
       this.grouping = simplifyGrouping(collectedGroups);
     } else {
       this.grouping = collectedGroups;
     }
-  this.buttonTipText=this.buttonTipText.bind(this);
+    this.buttonTipText = this.buttonTipText.bind(this);
 
     const vis = this;
     vis.element = element;
-    vis.width = getDivWidth(element) * 0.9; //getDivWidth(element)*0.9;
+    vis.width = getDivWidth(element) * 0.9;
 
     //width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
     vis.svg = d3
@@ -208,7 +208,7 @@ export default class BarChart {
     vis.make(database, diseaseToWidth);
   }
 
-  hideAllToolTips(){
+  hideAllToolTips() {
     this.widthbuttontip.hide();
     this.buttontip.hide();
     this.clicktip.hide();
@@ -261,7 +261,7 @@ export default class BarChart {
       .attr("y", 0)
       .attr("x", 0)
       .text(function (d: any) {
-        return vis.descriptions.getDescription(d.name,100);
+        return vis.descriptions.getDescription(d.name, 100);
       })
       .style("text-anchor", designConstants.textAnchor)
       .attr("transform", designConstants.textTranslation)
@@ -305,16 +305,16 @@ export default class BarChart {
       .on("mouseenter", function (e: Event, d: any) {
         if (d.collapsable) {
           d3.select(this).style("fill", LINK_COLOR);
-          vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"collapse"}, this)
-          ,300);
-          vis.buttontip.offset([5,0])
+          vis.buttonTipTimeOut = setTimeout(() =>
+            vis.buttontip.show({ d: d.name, buttonType: "collapse" }, this)
+            , 300);
+          vis.buttontip.offset([5, 0])
         }
       })
       .on("mouseleave", function (e: Event, d: any) {
         if (d.collapsable) {
           d3.select(this).style("fill", TEXT_GRAY);
-          if(vis.buttonTipTimeOut){
+          if (vis.buttonTipTimeOut) {
             clearTimeout(vis.buttonTipTimeOut)
           }
           vis.buttontip.hide();
@@ -364,16 +364,16 @@ export default class BarChart {
       })
       .on("mouseenter", function (e: Event, d: DataRow) {
         if ((d as any).expandable) {
-          vis.buttonTipTimeOut=setTimeout( () => 
-            vis.buttontip.show({d:d.name, buttonType:"expand"}, this)
-          ,300);
-          vis.buttontip.offset([5,0])
+          vis.buttonTipTimeOut = setTimeout(() =>
+            vis.buttontip.show({ d: d.name, buttonType: "expand" }, this)
+            , 300);
+          vis.buttontip.offset([5, 0])
           d3.select(this).style("fill", LINK_COLOR);
         }
       })
       .on("mouseleave", function (e: Event, d: DataRow) {
         if ((d as any).expandable) {
-          if(vis.buttonTipTimeOut){
+          if (vis.buttonTipTimeOut) {
             clearTimeout(vis.buttonTipTimeOut)
           }
           vis.buttontip.hide()
@@ -490,7 +490,7 @@ export default class BarChart {
     d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
     d3.selectAll(".buttontip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
-    if(vis.width<501){
+    if (vis.width < 501) {
       vis.stip = d3Tip()
         .attr("class", "stip small")
         .html((d: SquareSection) => {
@@ -508,46 +508,46 @@ export default class BarChart {
         .offset([10, 0])
       vis.buttontip = d3Tip()
         .attr("class", "buttontip small")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+        .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
         .direction("n")
         .offset([-2, 0])
       vis.widthbuttontip = d3Tip()
         .attr("class", "buttontip small")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+        .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
         .direction("n")
         .offset([-2, 0])
     }
-    else{
+    else {
       vis.clicktip = d3Tip()
-      .attr("class", "clicktip")
-      .html((d: SquareSection) => {
-        return d.longComparison ? d.longComparison : d.cause;
-      })
-      .direction("s")
-      .offset([10, 0])
+        .attr("class", "clicktip")
+        .html((d: SquareSection) => {
+          return d.longComparison ? d.longComparison : d.cause;
+        })
+        .direction("s")
+        .offset([10, 0])
 
       vis.stip = d3Tip()
-      .attr("class", "stip")
-      .html((d: SquareSection) => {
-        return d.comparison ? d.comparison : d.cause;
-      })
-      .direction("s")
-      .offset([8, 0]);
+        .attr("class", "stip")
+        .html((d: SquareSection) => {
+          return d.comparison ? d.comparison : d.cause;
+        })
+        .direction("s")
+        .offset([8, 0]);
 
       vis.buttontip = d3Tip()
         .attr("class", "buttontip")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+        .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
         .direction("n")
         .offset([-2, 0])
       vis.widthbuttontip = d3Tip()
         .attr("class", "buttontip")
-        .html(({d, buttonType}: {d:string, buttonType: "expand" | "collapse" | "width"}) => {
+        .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
         .direction("n")
@@ -562,7 +562,7 @@ export default class BarChart {
 
     vis.svg.on("click", (e: Event) => {
       e.stopPropagation();
-      vis.clickedSquareSection=null
+      vis.clickedSquareSection = null
       vis.clicktip.hide();
     });
 
@@ -610,49 +610,49 @@ export default class BarChart {
     rectButtons
       .append("text")
       .style("font-size", "20px")
-      .style("font-weight","800")
+      .style("font-weight", "800")
       .attr("x", (d: any) => 0)
-      .attr("y", (d: any) => BARHEIGHT/2)
+      .attr("y", (d: any) => BARHEIGHT / 2)
       .attr("text-anchor", "central")
       .style("fill", TEXT_GRAY)
       .text(function (d: any, index: number) {
         return "\u27F7";
       })
       .on("mouseenter", function (d) {
-        vis.widthButtonTipTimeOut=setTimeout( () => 
-            vis.widthbuttontip.show({d:d.name, buttonType:"width"}, this),
+        vis.widthButtonTipTimeOut = setTimeout(() =>
+          vis.widthbuttontip.show({ d: d.name, buttonType: "width" }, this),
           500
         );
         d3.select(this).style("fill", LINK_COLOR);
       })
       .on("mouseleave", function (d) {
-        if(vis.widthButtonTipTimeOut){
+        if (vis.widthButtonTipTimeOut) {
           clearTimeout(vis.widthButtonTipTimeOut)
-          vis.widthButtonTipTimeOut=undefined;
-          vis.widthbuttontip.hide({d:d.name, buttonType:"width"}, this)
+          vis.widthButtonTipTimeOut = undefined;
+          vis.widthbuttontip.hide({ d: d.name, buttonType: "width" }, this)
         }
-        else{
-          vis.widthbuttontip.hide({d:d.name, buttonType:"width"}, this)
+        else {
+          vis.widthbuttontip.hide({ d: d.name, buttonType: "width" }, this)
         }
         d3.select(this).style("fill", TEXT_GRAY);
       });
   }
 
-  buttonTipText(d: string, buttonType: "expand" | "collapse" | "width"){
-    if(buttonType==="expand"){
-      if(d in this.expandables){
-        return "Expand into " + this.expandables[d].length.toString()+" subcategories";
+  buttonTipText(d: string, buttonType: "expand" | "collapse" | "width") {
+    if (buttonType === "expand") {
+      if (d in this.expandables) {
+        return "Expand into " + this.expandables[d].length.toString() + " subcategories";
       }
     }
-    if(buttonType==="collapse"){
-      if(d in this.collapsables){
-        return "Merge all "+ this.descriptions.getDescription(this.collapsables[d][0],20)
+    if (buttonType === "collapse") {
+      if (d in this.collapsables) {
+        return "Merge all " + this.descriptions.getDescription(this.collapsables[d][0], 20)
       }
     }
-    if(buttonType==="width"){
+    if (buttonType === "width") {
       return "adjust to width"
     }
-    throw Error("The text for element "+ d +" - "+buttonType + " was not found.")
+    throw Error("The text for element " + d + " - " + buttonType + " was not found.")
   }
 
   addAttributesToCauseBars(
@@ -674,7 +674,7 @@ export default class BarChart {
           vis.stip.show(d, this);
         }
         d3.select(this)
-          .raise()
+          // .raise()
           .style("stroke-width", 3)
           .style("stroke", "#000000");
       })
@@ -806,8 +806,8 @@ export default class BarChart {
         gsWitExpandedData
           .transition("bars_x_change")
           .duration(durationPerTransition)
-          .attr("x", (d) => this.xscale(d.x0))
-          .attr("width", (d) =>
+          .attr("x", (d: any) => this.xscale(d.x0))
+          .attr("width", (d: any) =>
             Math.max(0, this.xscale(d.x) - this.xscale(d.x0))
           )
           .end()
@@ -815,7 +815,7 @@ export default class BarChart {
             gsWitExpandedData
               .transition("bars_y_move")
               .duration(durationPerTransition)
-              .attr("y", (d) => {
+              .attr("y", (d: any) => {
                 let mapTo = removed.includes(d.name) ? added[0] : d.name;
                 return this.yBars(mapTo) as number;
               })
@@ -873,7 +873,7 @@ export default class BarChart {
     durationPerTransition: number,
     designConstants: DesignConstants,
     diseaseToWidth: string | null,
-    callback: () => void = () => {},
+    callback: () => void = () => { },
     delayBeforeTransition: number = 0
   ) {
     const vis = this;
@@ -972,10 +972,12 @@ export default class BarChart {
   ) {
     const newMaxX = getMaxX(dataSquares);
     const xAxisCall = this.createXAxisCall(newMaxX, designConstants);
-    this.xAxisGroup
-      .transition("x_axis_change")
-      .duration(durationPerTransition)
-      .call(xAxisCall);
+    if (!this.simpleVersion) {
+      this.xAxisGroup
+        .transition("x_axis_change")
+        .duration(durationPerTransition)
+        .call(xAxisCall);
+    }
     return newMaxX;
   }
 
@@ -1211,13 +1213,14 @@ export default class BarChart {
         return d.name + "." + d.cause;
       });
 
+    this.currentMax = this.transitionXAxis(
+      dataSquares,
+      designConstants,
+      durationPerTransition
+    );
+
     if (!this.simpleVersion) {
       //Updating X-axis
-      this.currentMax = this.transitionXAxis(
-        dataSquares,
-        designConstants,
-        durationPerTransition
-      );
 
       vis.svg
         .selectAll<any, any>(".ptext")

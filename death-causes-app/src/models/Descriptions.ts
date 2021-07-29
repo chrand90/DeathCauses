@@ -26,10 +26,6 @@ interface NodeToString {
   [nodeName: string]: string;
 }
 
-interface NodeToNumber {
-  [nodeName:string]: number;
-}
-
 export default class Descriptions {
     descriptions: NodeDic={};
     colors: NodeToString={};
@@ -83,6 +79,9 @@ export default class Descriptions {
     }
 
     getDescription(nodeName: string, maxSize:number=20): string{
+        if(nodeName === "any cause") {
+          return nodeName
+        }
         let candidateLength=0;
         let candidate=null;
         this.descriptions[nodeName].forEach(desc => {

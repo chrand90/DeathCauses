@@ -12,11 +12,8 @@ import { store, StoreContext } from "./stores/rootStore";
 
 class AppWithoutObserver extends React.Component {
 
-  constructor(props: any) {
-    super(props);
-  }
-
   render() {
+
     return (
       <StoreContext.Provider value={store}>
         <BrowserRouter>

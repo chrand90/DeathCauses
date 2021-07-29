@@ -2,7 +2,6 @@ import { observer } from "mobx-react";
 import React from "react";
 import { Col, Container, Row } from "react-bootstrap";
 import Spinner from "react-bootstrap/Spinner";
-import Header from "./components/Header";
 import QuestionMenu from "./components/QuestionMenu";
 import VizWindow from "./components/VizWindow";
 import "./Main.css";
@@ -14,11 +13,13 @@ interface MainProps {
 
 class MainWithoutObserver extends React.Component<MainProps> {
 
-  constructor(props: MainProps) {
-    super(props);
-  }
-
   render() {
+    if (this.props.store.uIStore.verticalStacked) {
+      document.body.style.overflow = "auto"
+    }
+    else {
+      document.body.style.overflow = "hidden"
+    }
     return (
       <div className="Main">
         <Container fluid>
