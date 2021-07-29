@@ -10,7 +10,8 @@ export enum TypeStatus {
   NUMERIC = "Numeric",
   STRING = "string",
   RISKFACTORGROUPRESULT="Riskfactorgroupresult",
-  CAUSERESULT="Causenode result"
+  CAUSERESULT="Causenode result",
+  SIMPLE_UPDATE_FORM="Simple update form"
 }
 
 export enum MissingStatus {
@@ -32,6 +33,7 @@ export interface ProbabilityObject {
   [factorlevel: string]: number;
 }
 
+
 export interface UpdateForm {
   change: ChangeStatus;
   type: TypeStatus;
@@ -47,7 +49,8 @@ export interface UpdateForm {
     | ProbabilityObject
     | ProbabilityObject[]
     | RiskFactorGroupResult
-    | CauseNodeResult;
+    | CauseNodeResult
+
 }
 
 export interface UpdateDic {

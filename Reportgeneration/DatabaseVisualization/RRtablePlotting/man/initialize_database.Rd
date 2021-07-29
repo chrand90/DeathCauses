@@ -4,10 +4,12 @@
 \alias{initialize_database}
 \title{Initializes the database}
 \usage{
-initialize_database(json_filename)
+initialize_database(json_filename, relation_json_filename = NULL)
 }
 \arguments{
 \item{json_filename}{path to the database}
+
+\item{relation_json_filename}{if supplied a path to the relation json file and it will save the variable for use in later functions.}
 }
 \value{
 a database object

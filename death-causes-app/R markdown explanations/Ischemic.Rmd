@@ -69,7 +69,7 @@ The raw age penalties ($\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}$) are shown 
 library(devtools)
 load_all("../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
 dat=initialize_database("../src/resources/Causes.json",
-                        "../src/resources/Relations.json")
+                        "../src/resources/Descriptions.json")
 plotSpecificPlots(dat, 'Ischemic', c("Age","SmokeTypicalAmount"),'raw')
 plotSpecificPlots(dat, 'Ischemic', c("Age", "SmokeTypicalAmount"),"interpolated")
 ```

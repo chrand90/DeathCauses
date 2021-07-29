@@ -51,6 +51,15 @@
     "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"],
     "baseUnit":""
   },
+  "WaistMale": {
+    "type":"Computed factor",
+    "ancestors": [
+      "Sex",
+      "Waist"
+    ],
+    "descriptions": ["Waist size as male","Waist circumference male equivalence","Waist circumference as male", "Waist (male)"],
+    "baseUnit":"cm"
+  },
   "OralContraceptiveSinceStop": {
     "type":"Computed factor",
     "ancestors": [

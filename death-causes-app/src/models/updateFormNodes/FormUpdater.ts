@@ -1,4 +1,4 @@
-import {UpdateForm, UpdateDic, MissingStatus, ChangeStatus, TypeStatus, DimensionStatus, StochasticStatus} from "./UpdateForm";
+import {UpdateForm, UpdateDic, MissingStatus, ChangeStatus, TypeStatus, DimensionStatus, StochasticStatus, ProbabilityObject} from "./UpdateForm";
 
 export default abstract class FormUpdater {
     lastOutput: UpdateForm | null;
@@ -71,12 +71,43 @@ export default abstract class FormUpdater {
       }
     }
 
+    missingAncestors(allPreviousUpdateForms: UpdateDic): string[] {
+      return this.ancestors.filter(ancestor => {
+          return allPreviousUpdateForms[ancestor].missing===MissingStatus.MISSING
+      })
+    }
+
+    isAllButAgeMissing(allPreviousUpdateForms: UpdateDic): boolean{
+      const missed=this.missingAncestors(allPreviousUpdateForms)
+      if(missed.length===this.ancestors.length || (this.ancestors.length-1===missed.length && !missed.includes("Age") && this.ancestors.includes("Age"))){
+          return true;
+      }
+      return false;
+    }
+
     inputDependsOnAge(allPreviousUpdateForms: UpdateDic): boolean {
       return !this.ancestors.every((nodeName) => {
         return (
           allPreviousUpdateForms[nodeName].dimension === DimensionStatus.SINGLE
         );
       });
+    }
+
+    getFactorAnswerValue(allPreviousUpdateForms: UpdateDic, nodeName: string, ageIndex: number): number | string | ProbabilityObject{
+      if(allPreviousUpdateForms[nodeName].dimension===DimensionStatus.YEARLY){
+        return (allPreviousUpdateForms[nodeName].value as (number[] | string[] | ProbabilityObject[]))[ageIndex]
+      }
+      else{
+        if(nodeName==="Age"){
+          if(typeof allPreviousUpdateForms[nodeName].value === "number"){
+            return (allPreviousUpdateForms[nodeName].value as number)+ageIndex
+          }
+          else{
+            return (parseInt(allPreviousUpdateForms[nodeName].value as string))+ageIndex
+          }
+        }
+        return allPreviousUpdateForms[nodeName].value as number | string | ProbabilityObject
+      }
     }
 
     ChangedAndMissing(){

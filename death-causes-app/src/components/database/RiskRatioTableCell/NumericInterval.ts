@@ -1,3 +1,4 @@
+import { TypeStatus } from "../../../models/updateFormNodes/UpdateForm";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCellInterface";
 
 export class NumericInterval implements RiskRatioTableCellInterface {
@@ -32,5 +33,9 @@ export class NumericInterval implements RiskRatioTableCellInterface {
 
     isInputWithinCell(input: number): boolean {
         return this.endPointFrom <= input && input <= this.endPointTo;
+    }
+
+    getType(){
+        return TypeStatus.NUMERIC
     }
 }

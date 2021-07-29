@@ -85,6 +85,9 @@ export default class CauseNode extends FormUpdater {
 
   computeTotalRR(optimsToSDicStratifiedByRFG: OptimsToSDics[]){
     let totalRR=1;
+    if(optimsToSDicStratifiedByRFG.length>0 && Object.keys(optimsToSDicStratifiedByRFG[0]).length===0){
+      console.log("debug location");
+    }
     optimsToSDicStratifiedByRFG.forEach((optimDividedResult: OptimsToSDics) => {
       const numericOptims=Object.keys(optimDividedResult).map(s=>+s)
       const maxOptim=numericOptims[numericOptims.length-1]
@@ -197,9 +200,6 @@ export default class CauseNode extends FormUpdater {
   }
 
   compute(allPreviousUpdateForms: UpdateDic): UpdateForm {
-    if(this.cause.deathCauseName==="LungCancer"){
-      console.log("debug location")
-    }
     const startAge = this.getAgeFrom(allPreviousUpdateForms);
     const endAge = this.getAgeTo();
 

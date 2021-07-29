@@ -1,13 +1,18 @@
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import DeathCause, { RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
+import DeathCause, { Condition, ConditionJson, DeathCauseJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
 import Deathcause from "../components/database/Deathcause";
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 
 export interface LoadedFactors {
     factors: Factors;
     rawFactorInput: InputJson;
+}
+
+export interface LoadedConditions {
+    conditions: {[conditionName: string]: Condition};
+    rawConditions: ConditionJson;
 }
 
 export interface LoadedDescriptions {
@@ -58,6 +63,15 @@ export async function loadFactors():Promise<LoadedFactors> {
     const inputJson= await loadFromFile<InputJson>("FactorDatabase.json")
     const factors = new Factors(inputJson);
     return {factors: factors, rawFactorInput: inputJson}
+}
+
+export async function loadConditions():Promise<LoadedConditions> {
+    const rawConditions= await loadFromFile<ConditionJson>("Conditions.json")
+    const conditions:{[k:string]:Condition}={}
+    Object.entries(rawConditions).forEach(([conditionName, conditionObject]) => {
+        conditions[conditionName]=new Condition(conditionObject, conditionName);
+    })
+    return {rawConditions, conditions};
 }
 
 export async function loadRelationLinks():Promise<LoadedRelationLinks> {

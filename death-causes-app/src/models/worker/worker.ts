@@ -1,5 +1,5 @@
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
-import Deathcause, { RiskFactorGroupsContainer } from "../../components/database/Deathcause";
+import Deathcause, { Condition, ConditionJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
 import { RawDeathCauseJson } from "../../components/database/Deathcause";
 import { FactorAnswers } from "../Factors";
@@ -14,7 +14,7 @@ class computations {
     this.computer = null;
   }
 
-  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number, rawDescriptions: DescriptionsJson) {
+  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson) {
     const rlinks = new RelationLinks(json);
     const deathcauses: Deathcause[]=[];
     Object.entries(rawData).forEach(([key, deathcause]) => {
@@ -27,13 +27,18 @@ class computations {
       );
     });
     const descriptions= new Descriptions(rawDescriptions);
+    const conditions:{[k:string]:Condition}={};
+    Object.entries(rawConditions).forEach(([conditionName, conditionObject]) => {
+        conditions[conditionName]=new Condition(conditionObject, conditionName);
+    })
     this.computer = new ComputeController(
       rlinks,
       ageFrom,
       ageTo,
       deathcauses,
       deathCauseCategories,
-      descriptions
+      descriptions,
+      conditions
     );
   }
 
@@ -53,6 +58,6 @@ export function processData(data: FactorAnswers):{survivalData: SurvivalCurveDat
   return c.processData(data);
 }
 
-export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, ageFrom: number | null, ageTo: number) {
-  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo, rawDescriptions);
+export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson, ageFrom: number | null, ageTo: number) {
+  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo, rawDescriptions, rawConditions);
 }

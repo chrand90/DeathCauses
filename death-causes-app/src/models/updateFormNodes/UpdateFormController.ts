@@ -1,5 +1,6 @@
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import DeathCause, {
+  Condition,
   RiskFactorGroupsContainer,
 } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
@@ -15,6 +16,8 @@ import { UpdateDic } from "./UpdateForm";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
 import Descriptions from "../Descriptions";
+import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
+import { ConditionClasses } from "./ConditionNodes";
 
 export default class ComputeController {
   formUpdaters: FormUpdater[];
@@ -27,6 +30,7 @@ export default class ComputeController {
   riskFactorGroupNodes: RiskFactorGroupNode[] = [];
   allComputedNodes: UpdateDic | null;
   rdat: RelationLinks;
+  conditions: {[conditionName: string]: Condition};
 
   constructor(
     rdat: RelationLinks,
@@ -34,7 +38,8 @@ export default class ComputeController {
     ageTo: number = 120,
     deathCauses: DeathCause[],
     deathCauseCategories: RiskFactorGroupsContainer[],
-    descriptions: Descriptions
+    descriptions: Descriptions,
+    conditions: {[conditionName: string]: Condition}
   ) {
     this.rdat=rdat;
     this.formUpdaters = [];
@@ -44,8 +49,22 @@ export default class ComputeController {
     this.ageTo = ageTo;
     this.deathCauses = deathCauses;
     this.deathCauseCategories = deathCauseCategories;
+    this.conditions=conditions;
     this.initialize(rdat, descriptions);
     this.allComputedNodes=null;
+  }
+
+  initializeRiskFactorGroupNode(rfg: RiskFactorGroup, descriptions: Descriptions){
+    const ancestors = [...Array.from(rfg.getAllFactorsInGroup())];
+    const optims = descriptions.getOptimizabilityClasses(ancestors);
+    const riskFactorGroupNode = new RiskFactorGroupNode(
+      ancestors,
+      this.ageFrom,
+      this.ageTo,
+      rfg,
+      optims
+    );
+    return {riskFactorGroupNode, ancestors}
   }
 
   initialize(rdat: RelationLinks, descriptions: Descriptions) {
@@ -66,6 +85,26 @@ export default class ComputeController {
       );
       this.formUpdaterNames.push(computedFactorName);
     });
+    rdat.sortedNodes[NodeType.CONDITION].forEach((conditionName) => {
+      let rfgNodes:RiskFactorGroupNode[]=[]
+      let rfgNames:string[]=[]
+      this.conditions[conditionName].riskFactorGroups.forEach(rfg=>{
+        const { riskFactorGroupNode, ancestors } =this.initializeRiskFactorGroupNode(rfg, descriptions)
+        rfgNames.push(conditionName + "." + ancestors.join("-"))
+        rfgNodes.push(riskFactorGroupNode)
+      })
+      const causeNode=new CauseNode(rfgNames, this.ageFrom, this.ageTo, this.conditions[conditionName])
+      const conditionNode= ConditionClasses[conditionName](
+        rdat.getAncestors(conditionName), 
+        this.ageFrom,
+        this.ageTo,
+        this.conditions[conditionName],
+        rfgNodes,
+        rfgNames,
+        causeNode)
+      this.formUpdaters.push(conditionNode)
+      this.formUpdaterNames.push(conditionName);
+    })
     const causeToRFGNames: { [a: string]: string[] } = {};
     this.deathCauseCategories
       .concat(this.deathCauses)
@@ -73,15 +112,7 @@ export default class ComputeController {
         if (riskFactorContainer.riskFactorGroups.length > 0) {
           causeToRFGNames[riskFactorContainer.deathCauseName] = [];
           riskFactorContainer.riskFactorGroups.map((rfg) => {
-            const ancestors = [...Array.from(rfg.getAllFactorsInGroup())];
-            const optims = descriptions.getOptimizabilityClasses(ancestors);
-            const riskFactorGroupNode = new RiskFactorGroupNode(
-              ancestors,
-              this.ageFrom,
-              this.ageTo,
-              rfg,
-              optims
-            );
+            const { riskFactorGroupNode, ancestors } =this.initializeRiskFactorGroupNode(rfg, descriptions)
             this.formUpdaters.push(riskFactorGroupNode);
             const nodeName =
               riskFactorContainer.deathCauseName + "." + ancestors.join("-");

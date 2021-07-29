@@ -6,6 +6,7 @@ import RelationLinks from "../../models/RelationLinks";
 import { BestValues } from "./ConsensusBestValue";
 import { RiskFactorGroup } from "../database/RickFactorGroup";
 import { UpdateDic } from "../../models/updateFormNodes/UpdateForm";
+import { WeightedLocationAndValue } from "../database/InterpolationTable";
 
 const TOLERABLE_NUMERIC_ERROR = 1e-11;
 
@@ -74,13 +75,13 @@ export function computeUsAndSs(
     sortedSubsets.forEach((set: string[], index: number) => {
       let key = set.sort().join(",");
       const varsEqualingUserInput = set.concat(fixedFactors);
-      const minLocationAndValue = riskRatioTable.interpolation.getMinimumRR(
+      const minLocationAndValues = riskRatioTable.interpolation.getMinimumRR(
         factorAnswersSubmitted,
         varsEqualingUserInput,
         ageIndex
       );
-      UDic[key] = minLocationAndValue.getValue();
-      valueStore.addContribution(minLocationAndValue, varsEqualingUserInput);
+      UDic[key] = extractValue(minLocationAndValues)
+      valueStore.addContribution(minLocationAndValues, varsEqualingUserInput);
 
       SDic[key] = UDic[key];
       for (let j = 0; j < index; j++) {
@@ -96,12 +97,12 @@ export function computeUsAndSs(
       }
     });
   } else {
-    const minLocationAndValue = riskRatioTable.interpolation.getMinimumRR(
+    const minLocationAndValues = riskRatioTable.interpolation.getMinimumRR(
       factorAnswersSubmitted,
       fixedFactors,
       ageIndex
     );
-    UDic[""] = minLocationAndValue.getValue();
+    UDic[""] = extractValue(minLocationAndValues)
     SDic[""] = UDic[""];
   }
   let RRmax = UDic[freeFactors.sort().join(",")];
@@ -166,6 +167,22 @@ function isAnyMissing(
     return factorAnswers[factorName] !== "";
   });
   return !noMissing;
+}
+
+function extractValue(weightedLocs: WeightedLocationAndValue[]):number{
+  let vals: number[]=[];
+  let weights: number[]=[];
+  let total=0;
+  weightedLocs.forEach(({weight,locationAndValue}) => {
+    weights.push(weight);
+    vals.push(locationAndValue.getValue())
+    total+=weight*vals[vals.length-1]
+  })
+  let denom=weights.reduce((a,b)=>a+b,0)
+  if(denom>1e-8){
+    return total/denom;
+  }
+  return vals.reduce((a,b)=>a+b,0)/vals.length
 }
 
 export function normalizeInnerCauses(

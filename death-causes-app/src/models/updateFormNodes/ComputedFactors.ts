@@ -174,6 +174,19 @@ class OralContraceptiveSinceStop extends FormUpdater{
     }
 }
 
+class WaistMale extends FormUpdater{
+    compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
+        const gender=this.getNode(allPreviousUpdateForms, "Sex").value as string;
+        const waist=this.getNode(allPreviousUpdateForms, "Waist").value as number;
+        return {...this.ChangedAndMissing(),
+            type: TypeStatus.NUMERIC,
+            dimension: DimensionStatus.SINGLE,
+            random: StochasticStatus.DETERMINISTIC,
+            value: gender=== 'Male' ? waist : waist+14
+        }
+    }
+}
+
 interface FormUpdaterInitializers {
     [key: string]: (ancestors: string[], ageFrom: null | number, ageTo: number) => FormUpdater
 }
@@ -190,5 +203,6 @@ export const ComputedFactorClasses: FormUpdaterInitializers={
     "OralContraceptiveEver": packConstructor(OralContraceptiveEver),
     "OralContraceptiveSinceStop": packConstructor(OralContraceptiveSinceStop),
     "Greens": packConstructor(Greens),
+    "WaistMale":packConstructor(WaistMale),
 }
 

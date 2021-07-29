@@ -52,7 +52,8 @@ setClass("DomainCollection", slots=c(orderable="logical",
                                      labelToIndex="numeric"))
 
 setClass("RiskRatioRow", slots=c(domains="list",
-                                 RR="numeric"))
+                                 RR="numeric",
+                                 freq="numeric"))
 
 setClass("RiskRatioTable", slots= c(riskFactorNames="character",
                                     interpolationTable="InterpolationTable",
@@ -275,8 +276,9 @@ initialize_cell=function(raw_element){
 initialize_risk_ratio_row=function(raw_element){
   raw_domains=raw_element[[1]]
   value=as.numeric(raw_element[[2]])
+  freq=as.numeric(raw_element[[3]])
   domains=lapply(raw_domains, initialize_domain)
-  return(new("RiskRatioRow", domains=domains, RR=value))
+  return(new("RiskRatioRow", domains=domains, RR=value, freq=freq))
 }
 
 initialize_risk_ratio_table=function(raw_element){
@@ -325,7 +327,7 @@ initialize_description=function(node, name){
   return(new("Description",
              names=node$descriptions,
              color=node$color,
-             baseUnit=node$baseUnit))
+             baseUnit=ifelse("baseUnit" %in% names(node), node$baseUnit,"")))
 }
 
 
@@ -358,12 +360,16 @@ initialize_descriptions=function(json_filename){
 #' @param relation_json_filename if supplied a path to the relation json file and it will save the variable for use in later functions.
 #' @return a database object
 #' @export
-initialize_database=function(json_filename, relation_json_filename=NULL){
+initialize_database=function(json_filenames, relation_json_filename=NULL){
   if(!is.null(relation_json_filename)){
     initialize_descriptions(relation_json_filename)
   }
-  raw_element=rjson::fromJSON(file=json_filename)
-  return(new("Database", diseases=lapply(raw_element, initialize_disease)))
+  disease_list=list()
+  for(json_filename in json_filenames){
+    raw_element=rjson::fromJSON(file=json_filename)
+    disease_list=c(disease_list,lapply(raw_element, initialize_disease))
+  }
+  return(new("Database", diseases=disease_list))
 }
 
 
@@ -385,14 +391,15 @@ setMethod("dim",
           })
 
 setGeneric(name="getDescription",
-           def=function(x,max_length,add_unit)
+           def=function(x,...)
            {
              standardGeneric("getDescription")
-           })
+           },
+           signature = c("x"))
 
 setMethod("getDescription",
-          signature=c(x="Description", max_length="numeric", add_unit="logical"),
-          function(x, max_length, add_unit=FALSE){
+          signature=c(x="Description"),
+          function(x, max_length=0, add_unit=F){
             candidate_length=0
             candidate_description=x@names[1]
             for(desc in x@names){
@@ -430,10 +437,11 @@ setGeneric(name="createPlottingDataframe",
 )
 
 setGeneric(name="makePlot",
-           def=function(x)
+           def=function(x, ...)
            {
              standardGeneric("makePlot")
-           }
+           },
+           signature=c("x")
 )
 setMethod("createPlottingDataframe",
           signature=(x="RawRiskRatioTable"),
@@ -442,9 +450,10 @@ setMethod("createPlottingDataframe",
             if(dim(x)==2){
               dc1=dc[[x@factorNames[1]]]
               dc2=dc[[x@factorNames[2]]]
-              df=matrix(0, nrow=0, ncol=5) #x,y,width,height, value
+              df=matrix(0, nrow=0, ncol=6) #x,y,width,height, value, freq
               for(row in x@riskRatioRows){
                 RR=row@RR
+                freq=row@freq
                 factorlevel1=row@domains[[1]]@label
                 factorlevel2=row@domains[[2]]@label
                 i1=dc1@labelToIndex[factorlevel1]
@@ -454,26 +463,27 @@ setMethod("createPlottingDataframe",
                 lower2=dc2@plottingBetweenPoints[i2]
                 upper2=dc2@plottingBetweenPoints[i2+1]
                 df=rbind(df,
-                         c(lower1, lower2, upper1-lower1, upper2-lower2, RR))
+                         c(lower1, lower2, upper1-lower1, upper2-lower2, RR,freq))
               }
               df=data.frame(df)
-              colnames(df) <- c("x","y","width","height","RR")
+              colnames(df) <- c("x","y","width","height","RR", "freq")
               return(df)
             }
             else if(dim(x)==1){
               dc=dc[[x@factorNames[1]]]
-              df=matrix(0, nrow=0, ncol=3) #x,width,value
+              df=matrix(0, nrow=0, ncol=4) #x,width,value, freq
               for(row in x@riskRatioRows){
                 RR=row@RR
+                freq=row@freq
                 factorlevel=row@domains[[1]]@label
                 i=dc@labelToIndex[factorlevel]
                 lower=dc@plottingBetweenPoints[i]
                 upper=dc@plottingBetweenPoints[i+1]
                 df=rbind(df,
-                         c(lower, upper-lower, RR))
+                         c(lower, upper-lower, RR,freq))
               }
               df=data.frame(df)
-              colnames(df) <- c("x","width","RR")
+              colnames(df) <- c("x","width","RR","freq")
               return(df)
             }
           })
@@ -577,7 +587,7 @@ setMethod("createPlottingDataframe",
           })
 
 setMethod("makePlot",
-          signature=(x="AgeGroups"),
+          signature=c(x="AgeGroups"),
           function(x){
             if(length(x@age_classification)>0){
               stop("has not implemented age plot with non-standard age cagetories")
@@ -599,7 +609,7 @@ setMethod("makePlot",
           })
 
 setMethod("makePlot",
-          signature=(x="InterpolationTable"),
+          signature=c(x="InterpolationTable"),
           function(x){
             p_df=createPlottingDataframe(x)
             fnames=x@interpolation_variables
@@ -682,8 +692,8 @@ setMethod("makePlot",
           })
 
 setMethod("makePlot",
-          signature=(x="RawRiskRatioTable"),
-          function(x){
+          signature=c(x="RawRiskRatioTable"),
+          function(x, plotFrequencies=F){
             n=dim(x)
             if(n<1 || n>2){
               stop(paste("Cant plot a riskratiotable of dimension",n))
@@ -699,7 +709,17 @@ setMethod("makePlot",
                 ggplot2::scale_fill_gradient(low = "yellow", high = "red", na.value = NA)+
                 ggplot2::xlab(fname_actual)+ggplot2::ylab('RR')+ggplot2::theme_bw()+ggplot2::guides(fill=FALSE)+
                 ggplot2::ggtitle('Risk ratio bar graph')
-              return(list(p))
+              res=list(p)
+              if(plotFrequencies){
+                p <- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=freq, width=width*0.95, fill=freq))+
+                  ggplot2::geom_bar(stat='identity', orientation="x")+
+                  ggplot2::scale_x_continuous(breaks=dc@tickPositions, labels = dc@tickLabels)+
+                  ggplot2::scale_fill_gradient(low = "green", high = "darkgreen", na.value = NA)+
+                  ggplot2::xlab(fname_actual)+ggplot2::ylab('Frequency')+ggplot2::theme_bw()+ggplot2::guides(fill=FALSE)+
+                  ggplot2::ggtitle('Frequency bar graph')
+                res[[2]] <- p
+              }
+              return(res)
             }
             if(n==2){
               fnames=x@factorNames
@@ -716,7 +736,21 @@ setMethod("makePlot",
                 ggplot2::ggtitle('Risk ratio matrix')+ggplot2::guides(fill=FALSE)+
                 ggplot2::xlab(fnames_actual[1])+ggplot2::ylab(fnames_actual[2])+
                 ggplot2::geom_text(ggplot2::aes(x=x+width/2,y=y+height/2, label=round(RR, digits=1)), color='black')
-              return(list(p))
+              res=list(p)
+              if(plotFrequencies){
+                p<- ggplot2::ggplot(df, ggplot2::aes(x=x+width/2,y=y+height/2, height=height*0.95, width=width*0.95, fill=freq))+
+                  ggplot2::geom_tile()+ggplot2::theme_bw()+
+                  ggplot2::scale_x_continuous(breaks = dc1@tickPositions,
+                                              labels = dc1@tickLabels) +
+                  ggplot2::scale_y_continuous(breaks = dc2@tickPositions,
+                                              labels = dc2@tickLabels) +
+                  ggplot2::scale_fill_gradient(low = "green", high = "darkgreen", na.value = NA)+
+                  ggplot2::ggtitle('Frequency matrix')+ggplot2::guides(fill=FALSE)+
+                  ggplot2::xlab(fnames_actual[1])+ggplot2::ylab(fnames_actual[2])+
+                  ggplot2::geom_text(ggplot2::aes(x=x+width/2,y=y+height/2, label=round(freq, digits=2)), color='black')
+                res[[2]] <- p
+              }
+              return(res)
             }
           })
 
@@ -729,8 +763,8 @@ setMethod("plot",
 
 setMethod("plot",
           signature=(x="RawRiskRatioTable"),
-          function(x){
-            print(makePlot(x)[[1]])
+          function(x, plotFrequencies=F){
+            print(makePlot(x, plotFrequencies)[[1]])
           }
           )
 
@@ -742,9 +776,9 @@ setMethod("plot",
 )
 
 setMethod("makePlot",
-          signature=(x="RiskRatioTable"),
-          function(x){
-            plots=makePlot(x@rawRiskRatios)
+          signature=c(x="RiskRatioTable"),
+          function(x, plotFrequencies=F){
+            plots=makePlot(x@rawRiskRatios, plotFrequencies)
             if(dim(x@interpolationTable)>0){
               plots=c(plots, makePlot(x@interpolationTable))
             }
@@ -752,9 +786,9 @@ setMethod("makePlot",
           })
 
 setMethod("makePlot",
-          signature=(x="RiskFactorGroup"),
-          function(x){
-            unflattened_plots=lapply(x@riskRatioTables, makePlot)
+          signature=c(x="RiskFactorGroup"),
+          function(x,plotFrequencies=F){
+            unflattened_plots=lapply(x@riskRatioTables, makePlot, plotFrequencies=plotFrequencies)
             return(do.call(c, unflattened_plots))
           })
 
@@ -766,10 +800,10 @@ setMethod("makePlot",
 #' @return A list of plots.
 #' @export
 setMethod("makePlot",
-          signature=(x="Disease"),
-          function(x){
+          signature=c(x="Disease"),
+          function(x, plotFrequencies=F){
             age_plot=makePlot(x@Age)
-            unflattened_plots=lapply(x@RiskFactorGroups, makePlot)
+            unflattened_plots=lapply(x@RiskFactorGroups, makePlot, plotFrequencies)
             flattened_plots=do.call(c, unflattened_plots)
             res=c(age_plot,flattened_plots)
             return(res)
@@ -792,7 +826,7 @@ setMethod("makePlot",
 #' @param plot_type the type of plot you want
 #' @return a list of plots that can later be combined to something
 #' @export
-generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated")){
+generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated"), plotFrequencies=F){
   disease=all_diseases@diseases[[diseaseName]]
   if(length(riskfactors)==0){
     return(makePlot(disease@Age))
@@ -801,7 +835,7 @@ generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type
     for(riskratiotable in riskfactorgroup@riskRatioTables){
       if(paste(sort(riskfactors), collapse=".")==paste(sort(riskratiotable@riskFactorNames), collapse=".")){
         if(plot_type[1]=="raw"){
-          return(makePlot(riskratiotable@rawRiskRatios))
+          return(makePlot(riskratiotable@rawRiskRatios, plotFrequencies))
         }
         else if(plot_type[1]=="interpolated"){
           return(makePlot(riskratiotable@interpolationTable))
@@ -822,7 +856,7 @@ generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type
 #' @param plot_type the type of plot you want
 #' @return will simply plot the plot
 #' @export
-plotSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated")){
+plotSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated"), plotFrequencies=F){
   disease=all_diseases@diseases[[diseaseName]]
   plotted_anything=F
   if(length(riskfactors)==0){
@@ -833,7 +867,7 @@ plotSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("
     for(riskratiotable in riskfactorgroup@riskRatioTables){
       if(paste(sort(riskfactors), collapse=".")==paste(sort(riskratiotable@riskFactorNames), collapse=".")){
         if(plot_type[1]=="raw"){
-          plot(riskratiotable@rawRiskRatios)
+          plot(riskratiotable@rawRiskRatios, plotFrequencies)
           plotted_anything=T
         }
         else if(plot_type[1]=="interpolated"){

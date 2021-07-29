@@ -185,6 +185,16 @@
     "color": "#cec88d"
   },
   "War": { "descriptions": ["War"], "color": "#ff8cf5" },
+  "Conditions": {
+    "descriptions": ["Conditions"],
+    "optimizability": 50,
+    "color": "#8cbcdd"
+  },
+  "DiabetesCondition": {
+    "descriptions": ["Diabetes", "Diabetes condition"],
+    "optimizability": 50,
+    "color": "#8ca18c"
+  },
   "Age": {
     "optimizability": 10,
     "descriptions": ["Age"],
@@ -480,6 +490,17 @@
     ],
     "baseUnit": "",
     "color": "#c3b08e"
+  },
+  "WaistMale": {
+    "optimizability": 80,
+    "descriptions": [
+      "Waist size as male",
+      "Waist circumference male equivalence",
+      "Waist circumference as male",
+      "Waist (male)"
+    ],
+    "baseUnit": "cm",
+    "color": "#f48e93"
   },
   "OralContraceptiveSinceStop": {
     "optimizability": 90,

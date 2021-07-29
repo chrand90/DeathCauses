@@ -324,7 +324,7 @@ def make_simultane(listOfdataframes):
 
     # The categories for all factors are loading into a dictionary
     factorDic = getAllCategories(listOfdataframes)
-    factorDicKeys = factorDic.keys()
+    factorDicKeys = list(factorDic.keys())
     factorDicValues = factorDic.values()
 
     # The resulting dataframe is created and
@@ -357,6 +357,8 @@ def make_simultane(listOfdataframes):
                 if [row[i] for i in reverse_nameValues] == [rowprime[i] for i in reverse_nameValues]:
                     reslist.append(rowprime)
             denomsum = sum(i[-1] for i in reslist)
+            if denomsum<1e-8:
+                print("debug location")
             newrow = list(row)
             newrow[-1] = newrow[-1] * pdf / denomsum
             newrows.append(newrow)

@@ -1,11 +1,11 @@
 import { action, makeObservable, observable } from "mobx";
-import DeathCause, { RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
+import DeathCause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import ComputationStore from "./ComputationStore";
-import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks } from "./DataLoading";
+import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions } from "./DataLoading";
 import FactorInputStore from "./FactorInputStore";
 import QuestionProgressStore from "./QuestionProgressStore";
 
@@ -23,6 +23,8 @@ export default class LoadedDataStore {
   descriptions:Descriptions;
   loadedQuestionMenuData: boolean;
   loadedVizWindowData: boolean;
+  conditions: {[conditionName:string]: Condition};
+  rawConditions: ConditionJson;
 
   constructor() {
     this.factors= new Factors([] as InputJson);
@@ -36,6 +38,8 @@ export default class LoadedDataStore {
     this.deathCauseCategories=[];
     this.descriptions=new Descriptions({} as DescriptionsJson);
     this.rawDescriptions={} as DescriptionsJson
+    this.conditions={} as {[conditionName:string]: Condition};
+    this.rawConditions={} as ConditionJson
     this.loadedQuestionMenuData=false;
     this.loadedVizWindowData=false;
     makeObservable(this, {
@@ -50,13 +54,14 @@ export default class LoadedDataStore {
     const promiseOfDescriptions= this.makePromiseOfDescriptions();
     const promiseOfRelationLinks= this.makePromiseOfRelationsLinks();
     const promiseOfDatabase = this.makePromiseOfDataBase();
+    const promiseOfConditions=this.makePromiseOfConditions();
     Promise.all([promiseOfFactors, promiseOfDescriptions]).then(() => {
       factorInputStore.attachLoadedData();
       questionProgressStore.attachLoadedData();
       this.loadedQuestionMenuData = true;
       return
     })
-    Promise.all([promiseOfRelationLinks, promiseOfDatabase, promiseOfDescriptions]).then(() => {
+    Promise.all([promiseOfRelationLinks, promiseOfDatabase, promiseOfDescriptions, promiseOfConditions]).then(() => {
       computationStore.attachLoadedData();
       this.loadedVizWindowData=true;
       return
@@ -89,6 +94,16 @@ export default class LoadedDataStore {
       loadDescriptions().then((loadedDescriptions: LoadedDescriptions ) => {
         this.descriptions=loadedDescriptions.descriptions;
         this.rawDescriptions=loadedDescriptions.rawDescriptions;
+        resolve(true);
+      })
+    })
+  }
+
+  makePromiseOfConditions(){
+    return new Promise(resolve => {
+      loadConditions().then((loadedConditions: LoadedConditions ) => {
+        this.conditions=loadedConditions.conditions;
+        this.rawConditions=loadedConditions.rawConditions;
         resolve(true);
       })
     })

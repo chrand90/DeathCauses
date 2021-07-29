@@ -1,6 +1,13 @@
 import { FactorAnswers } from "../../models/Factors";
+import { DimensionStatus, MissingStatus, TypeStatus, UpdateDic, UpdateForm } from "../../models/updateFormNodes/UpdateForm";
+import { ERROR_COLOR } from "../Question";
 import { InterpolationTable, InterpolationTableJson } from "./InterpolationTable";
 import { RiskRatioTableEntry } from "./RiskRatioTableEntry";
+
+export interface SpecialFactorTableJson {
+    riskRatioTable: (string[] | number)[][];
+    riskFactorNames: string[];
+}
 
 export interface RiskRatioTableJson {
     riskFactorNames: string[];
@@ -12,15 +19,13 @@ export interface MinimumRiskRatios {
     [key: string]: number
 }
 
-class RiskRatioTable {
+class SpecialFactorTable {
     factorNames: string[];
     riskRatioTable: RiskRatioTableEntry[];
-    interpolation: InterpolationTable;
 
-    constructor(json: RiskRatioTableJson) {
+    constructor(json: SpecialFactorTableJson) {
         this.factorNames = json.riskFactorNames;
-        this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number))
-        this.interpolation=new InterpolationTable(json.interpolationTable)
+        this.riskRatioTable = json.riskRatioTable.map(element => new RiskRatioTableEntry(element[0] as string[], element[1] as number, element[2] as number))
     }
 
     // getMinimumRRForSingleFactor(submittedFactorAnswers: FactorAnswers, factorToMinimize: string): number {
@@ -55,6 +60,24 @@ class RiskRatioTable {
         return 1.0
     } */
 
+    getFactorNameToIndex(){
+        return Object.fromEntries(
+            this.factorNames.map((f,i) => {
+                return [f,i]
+            })
+        )
+    }
+
+    getType(factorName:string):TypeStatus{
+        for(let i=0; i<this.factorNames.length; i++){
+            if(this.factorNames[i]===factorName){
+                //we can ask any row in the riskratiotable because either can give the type
+                return this.riskRatioTable[0].getType(i);
+            }
+        }
+        throw Error("The factorName: "+factorName+ " was not found")
+    }
+
     getFactorNames(){
         return this.factorNames;
     }
@@ -71,7 +94,17 @@ class RiskRatioTable {
         return res;
     }
 
+
 }
 
-export { RiskRatioTable };
+class RiskRatioTable extends SpecialFactorTable {
+
+    interpolation: InterpolationTable;
+    constructor(json: RiskRatioTableJson){
+        super(json);  
+        this.interpolation=new InterpolationTable(json.interpolationTable)
+    }
+}
+
+export { RiskRatioTable, SpecialFactorTable };
 
