@@ -118,10 +118,10 @@ export default class AdvancedOptionsStore {
       if (factorAnswers["Age"] !== "") {
         let val= factorAnswers["Age"];
         if(typeof val==="number"){
-          return val.toString();
+          return Math.floor(val).toString();
         }
         else{
-          return val;
+          return Math.floor(parseFloat(val)).toString();
         }
       }
     }

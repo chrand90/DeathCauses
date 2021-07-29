@@ -59,7 +59,7 @@ plotSpecificPlots(dat, 'BornWith')
 The definition of dying from Infant condition is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Infant condition who falls under the ICD code 
 
 * <details><summary> P (55.1%)</summary>
-    * **P0 (33.0%)**
+    * **P0 (32.9%)**
         * P00: Newborn (suspected to be) affected by maternal conditions that may be unrelated to present pregnancy (0.73%)
             * P000: Newborn (suspected to be) affected by maternal hypertensive disorders (0.3%)
             * P001: Newborn (suspected to be) affected by maternal renal and urinary tract diseases (0.019%)
@@ -106,10 +106,10 @@ The definition of dying from Infant condition is to get any of the following ICD
         * P05: Disorders of newborn related to slow fetal growth and fetal malnutrition (0.5%)
             * P051: Newborn small for gestational age (0.037%)
             * P059: Newborn affected by slow intrauterine growth, unspecified (0.46%)
-        * **P07: 0 Disord of NB related to short gest and low birth weight, NEC Disorders of newborn related to short gestation and low birth weight, not elsewhere classified (19.0%)**
+        * **P07: 0 Disord of NB related to short gest and low birth weight, NEC Disorders of newborn related to short gestation and low birth weight, not elsewhere classified (19.3%)**
             * P070: Extremely low birth weight newborn (0.29%)
             * P071: Other low birth weight newborn (0.014%)
-            * P072: Extreme immaturity of newborn (15.0%)
+            * P072: Extreme immaturity of newborn (14.7%)
             * P073: Preterm [premature] newborn [other] (4.3%)
         * P08: 0 Disord of newborn related to long gest and high birth weight Disorders of newborn related to long gestation and high birth weight (0.0047%)
             * P082: Late newborn, not heavy for gestational age (0.0047%)
@@ -119,13 +119,13 @@ The definition of dying from Infant condition is to get any of the following ICD
             * P112: Unspecified brain damage due to birth injury (0.023%)
         * P12: Birth injury to scalp (0.0094%)
             * P120: Cephalhematoma due to birth injury (0.0047%)
-            * P128: Other birth injuries to scalp (0.0%)
+            * P128: Other birth injuries to scalp (0%)
             * P129: Birth injury to scalp, unspecified (0.0047%)
         * P15: Other birth injuries (0.042%)
             * P150: Birth injury to liver (0.0047%)
             * P158: Other specified birth injuries (0.0047%)
             * P159: Birth injury, unspecified (0.033%)
-    * **P2 (11.0%)**
+    * **P2 (11.2%)**
         * P20 (0.7%)
             * P201 (0.0047%)
             * P209 (0.7%)
@@ -278,7 +278,7 @@ The definition of dying from Infant condition is to get any of the following ICD
   
 ---- 
 
-* <details><summary> Q (45.0%)</summary>
+* <details><summary> Q (44.9%)</summary>
     * **Q0 (5.9%)**
         * **Q00: Anencephaly and similar malformations (1.4%)**
             * Q000: Anencephaly (1.4%)
@@ -319,7 +319,7 @@ The definition of dying from Infant condition is to get any of the following ICD
         * Q18: Other congenital malformations of face and neck (0.0094%)
             * Q180: Sinus, fistula and cyst of branchial cleft (0.0047%)
             * Q189: Congenital malformation of face and neck, unspecified (0.0047%)
-    * **Q2 (14.0%)**
+    * **Q2 (13.7%)**
         * Q20: 0 Congenital malformations of cardiac chambers and connections Congenital malformations of cardiac chambers and connections (0.82%)
             * Q200: Common arterial trunk (0.18%)
             * Q201: Double outlet right ventricle (0.15%)
@@ -467,7 +467,7 @@ The definition of dying from Infant condition is to get any of the following ICD
             * Q610: Congenital renal cyst (0.019%)
             * Q611: Polycystic kidney, infantile type (0.11%)
             * Q612: Polycystic kidney, adult type (0.1%)
-            * **Q613: Polycystic kidney, unspecified (2.0%)**
+            * **Q613: Polycystic kidney, unspecified (2%)**
             * Q614: Renal dysplasia (0.29%)
             * Q615: Medullary cystic kidney (0.019%)
             * Q619: Cystic kidney disease, unspecified (0.084%)
@@ -569,7 +569,7 @@ The definition of dying from Infant condition is to get any of the following ICD
             * Q873: 1 Congenital malformation syndromes involving early overgrowth Congenital malformation syndromes involving early overgrowth (0.028%)
             * Q874: Marfan's syndrome (0.44%)
             * Q878: Other specified congenital malformation syndromes, not elsewhere classified (0.28%)
-        * **Q89: Other congenital malformations, not elsewhere classified (3.0%)**
+        * **Q89: Other congenital malformations, not elsewhere classified (3%)**
             * Q890: Congenital absence and malformations of spleen (0.047%)
             * Q892: Congenital malformations of other endocrine glands (0.0047%)
             * Q893: Situs inversus (0.084%)
@@ -577,7 +577,7 @@ The definition of dying from Infant condition is to get any of the following ICD
             * **Q897: Multiple congenital malformations, not elsewhere classified (1.1%)**
             * Q898: Other specified congenital malformations (0.36%)
             * **Q899: Congenital malformation, unspecified (1.3%)**
-    * **Q9 (10.0%)**
+    * **Q9 (10.3%)**
         * **Q90: Down syndrome (5.7%)**
             * Q909: Down syndrome, unspecified (5.7%)
         * **Q91: Trisomy 18 and Trisomy 13 (3.5%)**

@@ -57,15 +57,15 @@ plotSpecificPlots(dat, 'OtherDiseases')
 
 The definition of dying from Other disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Other disease who falls under the ICD code 
 
-* <details><summary> F (45.0%)</summary>
-    * **F0 (41.0%)**
+* <details><summary> F (44.6%)</summary>
+    * **F0 (40.8%)**
         * F01: Vascular dementia (4.3%)
             * F010 (0.0003%)
             * F011 (0.39%)
             * F013 (0.0003%)
             * F018 (0.0015%)
             * **F019 (3.9%)**
-        * **F03: Unspecified dementia (36.0%)**
+        * **F03: Unspecified dementia (36%)**
         * F05: Delirium due to known physiological condition (0.28%)
             * F051 (0.13%)
             * F059 (0.15%)
@@ -393,7 +393,7 @@ The definition of dying from Other disease is to get any of the following ICD co
 * <details><summary> K72: Hepatic failure, not elsewhere classified (1.2%)</summary>
     * K720: Acute and subacute hepatic failure (0.16%)
     * K721: Chronic hepatic failure (0.027%)
-    * K729: Hepatic failure, unspecified (1.0%)
+    * K729: Hepatic failure, unspecified (1%)
 </details>
 * <details><summary> K75: Other inflammatory liver diseases (0.26%)</summary>
     * K750: Abscess of liver (0.058%)
@@ -842,7 +842,7 @@ The definition of dying from Other disease is to get any of the following ICD co
         * N879: Dysplasia of cervix uteri, unspecified (0.0003%)
     * N88: Other noninflammatory disorders of cervix uteri (0.0035%)
         * N882: Stricture and stenosis of cervix uteri (0.003%)
-        * N883: Incompetence of cervix uteri (0.0%)
+        * N883: Incompetence of cervix uteri (0%)
         * N888: Other specified noninflammatory disorders of cervix uteri (0.0003%)
         * N889: Noninflammatory disorder of cervix uteri, unspecified (0.0003%)
     * N89: Other noninflammatory disorders of vagina (0.0003%)
@@ -921,7 +921,7 @@ The definition of dying from Other disease is to get any of the following ICD co
     * G310: Frontotemporal dementia (0.31%)
     * G311: Senile degeneration of brain, not elsewhere classified (0.6%)
     * G312: Degeneration of nervous system due to alcohol (0.046%)
-    * **G318: Other specified degenerative diseases of nervous system (1.0%)**
+    * **G318: Other specified degenerative diseases of nervous system (1%)**
     * G319: Degenerative disease of nervous system, unspecified (0.83%)
 </details>
 * **G35: Multiple sclerosis (1.2%)**
@@ -938,7 +938,7 @@ The definition of dying from Other disease is to get any of the following ICD co
     * G378: Other specified demyelinating diseases of central nervous system (0.0015%)
     * G379: 1 Demyelinating disease of central nervous system, unspecified Demyelinating disease of central nervous system, unspecified (0.015%)
 </details>
-* <details><summary> G4 (1.0%)</summary>
+* <details><summary> G4 (1%)</summary>
     * G40: Epilepsy and recurrent seizures (0.37%)
         * G401: Localization-related (focal) (partial) symptomatic epilepsy and epileptic syndromes with simple partial seizures (0.0015%)
         * G402: 0 Local-rel (focal) symptc epilepsy w complex partial seizures Localization-related (focal) (partial) symptomatic epilepsy and epileptic syndromes with complex partial seizures (0.0012%)
@@ -1059,9 +1059,9 @@ The definition of dying from Other disease is to get any of the following ICD co
         * G918: Other hydrocephalus (0.0018%)
         * G919: Hydrocephalus, unspecified (0.11%)
     * G92: Toxic encephalopathy (0.071%)
-    * **G93: Other disorders of brain (3.0%)**
+    * **G93: Other disorders of brain (3%)**
         * G930: Cerebral cysts (0.0068%)
-        * **G931: Anoxic brain damage, not elsewhere classified (2.0%)**
+        * **G931: Anoxic brain damage, not elsewhere classified (2%)**
         * G932: Benign intracranial hypertension (0.014%)
         * G933: Postviral fatigue syndrome (0.00089%)
         * G934: Other and unspecified encephalopathy (0.62%)
@@ -1168,7 +1168,7 @@ The definition of dying from Other disease is to get any of the following ICD co
         * E348: Other specified endocrine disorders (0.0024%)
         * E349: Endocrine disorder, unspecified (0.0024%)
 </details>
-* <details><summary> **E66: Overweight and obesity (2.0%)**</summary>
+* <details><summary> **E66: Overweight and obesity (2%)**</summary>
     * E660: Obesity due to excess calories (0.0053%)
     * E661: Drug-induced obesity (0.0003%)
     * E662: Morbid (severe) obesity with alveolar hypoventilation (0.04%)

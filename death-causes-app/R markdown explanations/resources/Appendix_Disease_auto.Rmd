@@ -57,13 +57,13 @@ plotSpecificPlots(dat, 'Appendix_Disease')
 
 The definition of dying from Appendix Disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Appendix Disease who falls under the ICD code 
 
-* <details><summary> K35: Acute appendicitis (77.0%)</summary>
+* <details><summary> K35: Acute appendicitis (77%)</summary>
     * K352: Acute appendicitis with generalized peritonitis (6.4%)
     * K353: Acute appendicitis with localized peritonitis (6.4%)
     * K358: Other and unspecified acute appendicitis (64.2%)
 </details>
 * K36: Other appendicitis (0.77%)
-* K37: Unspecified appendicitis (22.0%)
+* K37: Unspecified appendicitis (22%)
 * <details><summary> K38: Other diseases of appendix (0.26%)</summary>
     * K388: Other specified diseases of appendix (0.26%)
 </details>

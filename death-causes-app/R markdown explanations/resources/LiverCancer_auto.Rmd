@@ -64,13 +64,13 @@ plotSpecificPlots(dat, 'LiverCancer')
 The definition of dying from Liver cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Liver cancer who falls under the ICD code 
 
 * <details><summary> C22: Malignant neoplasm of liver and intrahepatic bile ducts (100.0%)</summary>
-    * **C220: Liver cell carcinoma (39.0%)**
-    * **C221: Intrahepatic bile duct carcinoma (23.0%)**
+    * **C220: Liver cell carcinoma (38.9%)**
+    * **C221: Intrahepatic bile duct carcinoma (23.5%)**
     * C222: Hepatoblastoma (0.089%)
     * C223: Angiosarcoma of liver (0.1%)
     * C224: Other sarcomas of liver (0.004%)
     * C227: Other specified carcinomas of liver (0.004%)
-    * **C229: Malignant neoplasm of liver, not specified as primary or secondary (37.0%)**
+    * **C229: Malignant neoplasm of liver, not specified as primary or secondary (37.4%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

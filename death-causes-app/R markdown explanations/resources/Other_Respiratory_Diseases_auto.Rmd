@@ -167,11 +167,11 @@ The definition of dying from Other respiratory disease is to get any of the foll
     * J80: Acute respiratory distress syndrome (4.6%)
     * J81: Pulmonary edema (1.6%)
     * J82: Pulmonary eosinophilia, not elsewhere classified (0.42%)
-    * **J84: Other interstitial pulmonary diseases (48.0%)**
+    * **J84: Other interstitial pulmonary diseases (48.4%)**
         * J840: Alveolar and parieto-alveolar conditions (0.36%)
-        * J841: Other interstitial pulmonary diseases with fibrosis (37.0%)
+        * J841: Other interstitial pulmonary diseases with fibrosis (36.9%)
         * J848: Other specified interstitial pulmonary diseases (0.054%)
-        * J849: Interstitial pulmonary disease, unspecified (11.0%)
+        * J849: Interstitial pulmonary disease, unspecified (11.1%)
     * J85: Abscess of lung and mediastinum (0.94%)
         * J850: Gangrene and necrosis of lung (0.45%)
         * J851: Abscess of lung with pneumonia (0.16%)
@@ -181,7 +181,7 @@ The definition of dying from Other respiratory disease is to get any of the foll
         * J860: Pyothorax with fistula (0.22%)
         * J869: Pyothorax without fistula (1.1%)
 </details>
-* <details><summary> **J9 (38.0%)**</summary>
+* <details><summary> **J9 (37.8%)**</summary>
     * J90: Pleural effusion, not elsewhere classified (3.1%)
     * J92: Pleural plaque (0.008%)
         * J920: Pleural plaque with presence of asbestos (0.0027%)
@@ -197,11 +197,11 @@ The definition of dying from Other respiratory disease is to get any of the foll
         * J942: Hemothorax (0.27%)
         * J948: Other specified pleural conditions (0.094%)
         * J949: Pleural condition, unspecified (0.038%)
-    * **J96: Respiratory failure, not elsewhere classified (22.0%)**
-        * J960: Acute respiratory failure (4.0%)
+    * **J96: Respiratory failure, not elsewhere classified (21.7%)**
+        * J960: Acute respiratory failure (4%)
         * J961: Chronic respiratory failure (5.7%)
-        * J969: Respiratory failure, unspecified (12.0%)
-    * J98: Other respiratory disorders (11.0%)
+        * J969: Respiratory failure, unspecified (12%)
+    * J98: Other respiratory disorders (11.4%)
         * J980: Diseases of bronchus, not elsewhere classified (0.2%)
         * J981: Pulmonary collapse (0.42%)
         * J982: Interstitial emphysema (0.17%)

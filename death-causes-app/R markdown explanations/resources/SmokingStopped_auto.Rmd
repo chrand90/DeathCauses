@@ -49,7 +49,7 @@ The answer has to be larger than 0 Years. The answer is recommended to be larger
 
 ### Optimizability
 
-Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is 30. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is 3. This means that it can be interpreted as
 
 > *It is impossible to change now, but it has once definitely been in your control*
 

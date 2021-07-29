@@ -155,10 +155,10 @@ The definition of dying from Other cancer is to get any of the following ICD cod
     * C496: Malignant neoplasm of connective and soft tissue of trunk, unspecified (0.01%)
     * **C499: Malignant neoplasm of connective and soft tissue, unspecified (3.5%)**
 </details>
-* <details><summary> C51: Malignant neoplasm of vulva (1.0%)</summary>
+* <details><summary> C51: Malignant neoplasm of vulva (1%)</summary>
     * C510: Malignant neoplasm of labium majus (0.015%)
     * C512: Malignant neoplasm of clitoris (0.0029%)
-    * C519: Malignant neoplasm of vulva, unspecified (1.0%)
+    * C519: Malignant neoplasm of vulva, unspecified (1%)
 </details>
 * C52: Malignant neoplasm of vagina (0.41%)
 * <details><summary> C57: Malignant neoplasm of other and unspecified female genital organs (0.62%)</summary>
@@ -239,7 +239,7 @@ The definition of dying from Other cancer is to get any of the following ICD cod
     * C784: Secondary malignant neoplasm of small intestine (0.00095%)
     * C785: Secondary malignant neoplasm of large intestine and rectum (0.042%)
     * C786: Secondary malignant neoplasm of retroperitoneum and peritoneum (0.61%)
-    * **C787: 1 Secondary malig neoplasm of liver and intrahepatic bile duct Secondary malignant neoplasm of liver and intrahepatic bile duct (2.0%)**
+    * **C787: 1 Secondary malig neoplasm of liver and intrahepatic bile duct Secondary malignant neoplasm of liver and intrahepatic bile duct (2%)**
     * C788: Secondary malignant neoplasm of other and unspecified digestive organs (0.039%)
 </details>
 * <details><summary> C79: Secondary malignant neoplasm of other and unspecified sites (4.3%)</summary>
@@ -253,15 +253,15 @@ The definition of dying from Other cancer is to get any of the following ICD cod
     * C797: Secondary malignant neoplasm of adrenal gland (0.0029%)
     * **C798: Secondary malignant neoplasm of other specified sites (3.2%)**
 </details>
-* **C80: Malignant neoplasm without specification of site (25.0%)**
+* **C80: Malignant neoplasm without specification of site (25.1%)**
 * <details><summary> C88: Malignant immunoproliferative diseases and certain other B-cell lymphomas (0.28%)</summary>
     * C880: Waldenstrom macroglobulinemia (0.28%)
     * C882: Heavy chain disease (0.0019%)
     * C889: Malignant immunoproliferative disease, unspecified (0.00095%)
 </details>
-* <details><summary> **C9 (38.0%)**</summary>
-    * **C90: Multiple myeloma and malignant plasma cell neoplasms (12.0%)**
-        * C900: Multiple myeloma (11.0%)
+* <details><summary> **C9 (38.5%)**</summary>
+    * **C90: Multiple myeloma and malignant plasma cell neoplasms (11.7%)**
+        * C900: Multiple myeloma (11.5%)
         * C901: Plasma cell leukemia (0.11%)
         * C902: Extramedullary plasmacytoma (0.095%)
     * **C91: Lymphoid leukemia (6.2%)**
@@ -272,7 +272,7 @@ The definition of dying from Other cancer is to get any of the following ICD cod
         * C915: Adult T-cell lymphoma/leukemia (HTLV-1-associated) (0.098%)
         * C917 (0.04%)
         * C919: Lymphoid leukemia, unspecified (0.2%)
-    * **C92: Myeloid leukemia (11.0%)**
+    * **C92: Myeloid leukemia (11.4%)**
         * **C920: Acute myeloblastic leukemia (9.3%)**
         * C921: Chronic myeloid leukemia, BCR/ABL-positive (1.1%)
         * C922: Atypical chronic myeloid leukemia, BCR/ABL-negative (0.00095%)

@@ -1,6 +1,17 @@
 # generate Rmd files
 import json
 import os
+import math
+
+OPTIM10="It is impossible to change and it has never been in your control"
+OPTIM20="It is impossible to change, but it could have been the consequence of your actions"
+OPTIM30="It is impossible to change now, but it has once definitely been in your control"
+OPTIM80="It is possible to change, but it will take a lot of time."
+OPTIM90="It is possible to change, and it can be changed now or very soon."
+
+OPTIM_DIC={10:1, 20:2, 30:3, 80:4, 90:5}
+OPTIM_REVERSE_DIC={v:k for k,v in OPTIM_DIC.items()}
+OPTIM_DESCRIPTION_DIC={1:OPTIM10, 2:OPTIM20, 3:OPTIM30, 4:OPTIM80, 5:OPTIM90, 10:OPTIM10, 20:OPTIM20, 30:OPTIM30, 80:OPTIM80, 90:OPTIM90}
 
 with open("../src/resources/Causes.json", "r") as f:
     causes = json.loads(f.read())
@@ -54,6 +65,14 @@ def get_all_descriptions(name):
 
 def get_optimizability(node_name):
     return descriptions[node_name]["optimizability"]
+
+def get_factors_of_certain_optimizability(optim):
+    res=[]
+    for node_name,descrip_node in descriptions.items():
+        if "optimizability" in descrip_node:
+            if descrip_node["optimizability"]==optim:
+                res.append(node_name)
+    return res
 
 
 def get_text(node_name, element, beforeafter="before"):
@@ -118,13 +137,10 @@ def get_description(name, maxlength=20):
     else:
         return name
 
-
-def createRMD(node_name):
-    title = get_description(node_name, 40)
-    with open(os.path.join("resources",node_name + "_auto.Rmd"), "w") as f:
-        f.write('---\n')
-        f.write('title: "' + title + '"\n')
-        f.write('output:\n\
+def make_opener(title, f):
+    f.write('---\n')
+    f.write('title: "' + title + '"\n')
+    f.write('output:\n\
     html_document:\n\
         theme: null\n\
         template: null\n\
@@ -143,7 +159,12 @@ blockquote{\n\
   text-align: center;}\n\
 \n\
 </style>\n')
-        f.write("_[auto-generated file]_\n\n")
+    f.write("_[auto-generated file]_\n\n")
+
+def createRMD(node_name):
+    title = get_description(node_name, 40)
+    with open(os.path.join("resources",node_name + "_auto.Rmd"), "w") as f:
+        make_opener(title, f)    
         if relations[node_name]["type"] == "Death cause":
             fill_out_death_cause(node_name, title, f)
         if relations[node_name]["type"] == "Death cause category":
@@ -208,11 +229,18 @@ def write_icd_group(icd_object, f, spaces=0):
             node=icd_object[ICD]
             proportion=float(node[1])*100
             if proportion>=50:
-                rounded_proportion = '%s' % float('%.2g' % (100-proportion))
-                digits=len(rounded_proportion.split(".")[1])
-                rounded_proportion='{0:.{1}f}'.format(proportion, digits)
+                if proportion>99.9999:
+                    rounded_proportion="100.0"
+                elif proportion<=90:
+                    rounded_proportion = f"{proportion:.3g}"
+                else:
+                    digits=math.ceil(-math.log10(100-proportion))+3
+                    rounded_proportion = f"{proportion:.{digits}g}"
             else:
-                rounded_proportion = '%s' % float('%.2g' % proportion)                    
+                if proportion>=10:
+                    rounded_proportion = f"{proportion:.3g}"
+                else: 
+                    rounded_proportion = f"{proportion:.2g}"                  
             f.write(indent+"* ")
             if node[2]=="Parent" and spaces==0 :
                 f.write("<details><summary> ")
@@ -515,23 +543,14 @@ def make_helpjson_section(factor_node, node_name, f):
 def make_optimizability_section(node_name, title, f):
     optim=get_optimizability(node_name)
     f.write("\n\n### Optimizability\n\n")
-    f.write("Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. ")
+    f.write("[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. ")
     text_available=get_text(node_name, "optimizability")
     if text_available: 
         f.write(text_available)
     else:
-        f.write("The optimizability of "+title+ " is "+str(optim)+". This means that it can be interpreted as\n\n")
+        f.write("The optimizability of "+title+ " is "+str(OPTIM_DIC[optim])+". This means that it can be interpreted as\n\n")
     f.write("> *")
-    if optim==10:
-        f.write("It is impossible to change and it has never been in your control")
-    if optim==20:
-        f.write("It is impossible to change, but it could have been the consequence of your actions")
-    if optim==30:
-        f.write("It is impossible to change now, but it has once definitely been in your control")
-    if optim==80:
-        f.write("It is possible to change, but it will take a lot of time.")
-    if optim==90:
-        f.write("It is possible to change, and it can be changed now or very soon.")
+    f.write(OPTIM_DESCRIPTION_DIC[optim])
     f.write("*\n\n")
     add_text_if_there(f,node_name, "optimizability", "after")
 
@@ -672,6 +691,22 @@ def fill_out_death_cause_category(node_name, title, f):
         else:
             make_reference_to_rfg_section(title, rfg, location_node, f)
 
+def createOptimizabilities():
+    with open(os.path.join("resources", "optimizabilities.Rmd"), "w") as f:
+        make_opener("Optimizabilities",f)
+        add_text_if_there(f, "optimizabilities", "introduction","before")
+        f.write("The different optimizabilities are\n\n")
+        for optim in range(1,6):
+            f.write("* "+OPTIM_DESCRIPTION_DIC[optim]+"\n")
+        f.write("\n\n## Risk factors")
+        for optim in range(1,6):
+            f.write("\n\n#### Category "+str(optim)+"\n\n")
+            f.write("Description: " + OPTIM_DESCRIPTION_DIC[optim]+"\n\n")
+            f.write("Members:\n\n")
+            for factor in sorted(get_factors_of_certain_optimizability(OPTIM_REVERSE_DIC[optim])):
+                f.write("* ["+get_description(factor,40)+"](/model/"+ factor+")\n")
+
 
 for k in relations:
     createRMD(k)
+createOptimizabilities()

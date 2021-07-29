@@ -48,7 +48,7 @@ Total time doing physical activity is used by the model in the following places
 
 ### Optimizability
 
-Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time doing physical activity is 90. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time doing physical activity is 5. This means that it can be interpreted as
 
 > *It is possible to change, and it can be changed now or very soon.*
 

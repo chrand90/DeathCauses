@@ -54,7 +54,7 @@ plotSpecificPlots(dat, 'HIV')
 
 The definition of dying from HIV is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from HIV who falls under the ICD code 
 
-* <details><summary> **B20: Human immunodeficiency virus [HIV] disease (37.0%)**</summary>
+* <details><summary> **B20: Human immunodeficiency virus [HIV] disease (36.5%)**</summary>
     * B200 (0.61%)
     * **B201 (8.5%)**
     * B202 (0.16%)
@@ -62,7 +62,7 @@ The definition of dying from HIV is to get any of the following ICD codes as the
     * B204 (0.074%)
     * B205 (1.7%)
     * B206 (2.2%)
-    * **B207 (10.0%)**
+    * **B207 (10.3%)**
     * **B208 (7.3%)**
     * B209 (0.22%)
 </details>
@@ -72,19 +72,19 @@ The definition of dying from HIV is to get any of the following ICD codes as the
     * **B212 (2.9%)**
     * B213 (0.53%)
     * B217 (0.34%)
-    * **B218 (3.0%)**
+    * **B218 (3%)**
     * B219 (0.71%)
 </details>
-* <details><summary> B22 (13.0%)</summary>
+* <details><summary> B22 (13%)</summary>
     * B220 (1.8%)
     * B222 (1.3%)
     * B227 (9.9%)
 </details>
-* <details><summary> B23 (21.0%)</summary>
+* <details><summary> B23 (20.6%)</summary>
     * B232 (1.8%)
-    * B238 (19.0%)
+    * B238 (18.8%)
 </details>
-* B24 (21.0%)
+* B24 (21.4%)
 
  Source: @CDCreport, @ICDcodes
 

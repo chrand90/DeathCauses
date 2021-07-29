@@ -67,12 +67,12 @@ The definition of dying from Mouth cancer is to get any of the following ICD cod
         * C005: Malignant neoplasm of lip, unspecified, inner aspect (0.011%)
         * C009: Malignant neoplasm of lip, unspecified (0.75%)
     * C01: Malignant neoplasm of base of tongue (1.7%)
-    * **C02: Malignant neoplasm of other and unspecified parts of tongue (24.0%)**
+    * **C02: Malignant neoplasm of other and unspecified parts of tongue (23.6%)**
         * C020: Malignant neoplasm of dorsal surface of tongue (0.021%)
         * C021: Malignant neoplasm of border of tongue (0.011%)
         * C022: Malignant neoplasm of ventral surface of tongue (0.011%)
         * C024: Malignant neoplasm of lingual tonsil (0.053%)
-        * **C029: Malignant neoplasm of tongue, unspecified (24.0%)**
+        * **C029: Malignant neoplasm of tongue, unspecified (23.5%)**
     * C03: Malignant neoplasm of gum (0.46%)
         * C030: Malignant neoplasm of upper gum (0.16%)
         * C031: Malignant neoplasm of lower gum (0.085%)
@@ -85,10 +85,10 @@ The definition of dying from Mouth cancer is to get any of the following ICD cod
         * C052: Malignant neoplasm of uvula (0.064%)
         * C058: Malignant neoplasm of overlapping sites of palate (0.011%)
         * C059: Malignant neoplasm of palate, unspecified (0.89%)
-    * **C06: Malignant neoplasm of other and unspecified parts of mouth (12.0%)**
+    * **C06: Malignant neoplasm of other and unspecified parts of mouth (12.2%)**
         * C060: Malignant neoplasm of cheek mucosa (0.42%)
         * C062: Malignant neoplasm of retromolar area (0.21%)
-        * C069: Malignant neoplasm of mouth, unspecified (12.0%)
+        * C069: Malignant neoplasm of mouth, unspecified (11.6%)
     * **C07: Malignant neoplasm of parotid gland (7.2%)**
     * C08: Malignant neoplasm of other and unspecified major salivary glands (2.9%)
         * C080: Malignant neoplasm of submandibular gland (0.4%)
@@ -98,16 +98,16 @@ The definition of dying from Mouth cancer is to get any of the following ICD cod
         * C091: Malignant neoplasm of tonsillar pillar (anterior) (posterior) (0.053%)
         * C099: Malignant neoplasm of tonsil, unspecified (9.5%)
 </details>
-* <details><summary> C10: Malignant neoplasm of oropharynx (11.0%)</summary>
+* <details><summary> C10: Malignant neoplasm of oropharynx (11%)</summary>
     * C100: Malignant neoplasm of vallecula (0.085%)
     * C104: Malignant neoplasm of branchial cleft (0.011%)
     * C108: Malignant neoplasm of overlapping sites of oropharynx (0.011%)
-    * C109: Malignant neoplasm of oropharynx, unspecified (11.0%)
+    * C109: Malignant neoplasm of oropharynx, unspecified (10.9%)
 </details>
 * <details><summary> C11: Malignant neoplasm of nasopharynx (7.1%)</summary>
     * C111: Malignant neoplasm of posterior wall of nasopharynx (0.17%)
     * C112: Malignant neoplasm of lateral wall of nasopharynx (0.021%)
-    * C119: Malignant neoplasm of nasopharynx, unspecified (7.0%)
+    * C119: Malignant neoplasm of nasopharynx, unspecified (7%)
 </details>
 * C12: Malignant neoplasm of pyriform sinus (0.72%)
 * <details><summary> C13: Malignant neoplasm of hypopharynx (2.9%)</summary>
@@ -115,8 +115,8 @@ The definition of dying from Mouth cancer is to get any of the following ICD cod
     * C131: Malignant neoplasm of aryepiglottic fold, hypopharyngeal aspect (0.021%)
     * C139: Malignant neoplasm of hypopharynx, unspecified (2.8%)
 </details>
-* <details><summary> C14: Malignant neoplasm of other and ill-defined sites in the lip, oral cavity and pharynx (17.0%)</summary>
-    * C140: Malignant neoplasm of pharynx, unspecified (17.0%)
+* <details><summary> C14: Malignant neoplasm of other and ill-defined sites in the lip, oral cavity and pharynx (16.7%)</summary>
+    * C140: Malignant neoplasm of pharynx, unspecified (16.7%)
 </details>
 
  Source: @CDCreport, @ICDcodes

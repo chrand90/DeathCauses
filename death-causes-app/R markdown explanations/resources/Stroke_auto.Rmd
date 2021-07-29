@@ -56,8 +56,8 @@ plotSpecificPlots(dat, 'Stroke')
 
 The definition of dying from Stroke is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Stroke who falls under the ICD code 
 
-* <details><summary> I6 (100.00000%)</summary>
-    * I60: Nontraumatic subarachnoid hemorrhage (4.0%)
+* <details><summary> I6 (100.0%)</summary>
+    * I60: Nontraumatic subarachnoid hemorrhage (4%)
         * I600: 0 Ntrm subarach hemorrhage from carotid siphon and bifurcation Nontraumatic subarachnoid hemorrhage from carotid siphon and bifurcation (0.063%)
         * I602: Nontraumatic subarachnoid hemorrhage from anterior communicating artery (0.00075%)
         * I604: Nontraumatic subarachnoid hemorrhage from basilar artery (0.00075%)
@@ -66,7 +66,7 @@ The definition of dying from Stroke is to get any of the following ICD codes as 
         * I607: 1 Nontraumatic subarachnoid hemorrhage from unsp intracran art Nontraumatic subarachnoid hemorrhage from unspecified intracranial artery (0.24%)
         * I608: Other nontraumatic subarachnoid hemorrhage (0.2%)
         * **I609: Nontraumatic subarachnoid hemorrhage, unspecified (3.4%)**
-    * I61: Nontraumatic intracerebral hemorrhage (12.0%)
+    * I61: Nontraumatic intracerebral hemorrhage (12.3%)
         * I610: Nontraumatic intracerebral hemorrhage in hemisphere, subcortical (0.26%)
         * I611: Nontraumatic intracerebral hemorrhage in hemisphere, cortical (0.19%)
         * I612: Nontraumatic intracerebral hemorrhage in hemisphere, unspecified (0.035%)
@@ -75,7 +75,7 @@ The definition of dying from Stroke is to get any of the following ICD codes as 
         * I615: Nontraumatic intracerebral hemorrhage, intraventricular (0.69%)
         * I616: Nontraumatic intracerebral hemorrhage, multiple localized (0.0015%)
         * I618: Other nontraumatic intracerebral hemorrhage (0.035%)
-        * **I619: Nontraumatic intracerebral hemorrhage, unspecified (10.0%)**
+        * **I619: Nontraumatic intracerebral hemorrhage, unspecified (10.3%)**
     * I62: Other and unspecified nontraumatic intracranial hemorrhage (8.8%)
         * I620: Nontraumatic subdural hemorrhage (1.9%)
         * I621: Nontraumatic extradural hemorrhage (0.018%)
@@ -85,12 +85,12 @@ The definition of dying from Stroke is to get any of the following ICD codes as 
         * I631: Cerebral infarction due to embolism of precerebral arteries (0.021%)
         * I632: Cerebral infarction due to unspecified occlusion or stenosis of precerebral arteries (0.57%)
         * I633: Cerebral infarction due to thrombosis of cerebral arteries (0.52%)
-        * **I634: Cerebral infarction due to embolism of cerebral arteries (1.0%)**
+        * **I634: Cerebral infarction due to embolism of cerebral arteries (1%)**
         * I635: 0 Cerebral infrc due to unsp occls or stenosis of cerebral art Cerebral infarction due to unspecified occlusion or stenosis of cerebral arteries (0.45%)
         * I636: Cerebral infarction due to cerebral venous thrombosis, nonpyogenic (0.00075%)
         * I638: Other cerebral infarction (0.071%)
         * **I639: Cerebral infarction, unspecified (2.4%)**
-    * **I64 (49.0%)**
+    * **I64 (49.2%)**
     * I67: Other cerebrovascular diseases (8.9%)
         * I670: Dissection of cerebral arteries, nonruptured (0.003%)
         * I671: Cerebral aneurysm, nonruptured (0.26%)
@@ -102,7 +102,7 @@ The definition of dying from Stroke is to get any of the following ICD codes as 
         * I677: Cerebral arteritis, not elsewhere classified (0.043%)
         * I678: Other specified cerebrovascular diseases (0.97%)
         * **I679: Cerebrovascular disease, unspecified (5.7%)**
-    * I69: Sequelae of cerebrovascular disease (12.0%)
+    * I69: Sequelae of cerebrovascular disease (11.6%)
         * I690: Sequelae of nontraumatic subarachnoid hemorrhage (0.052%)
         * I691: Sequelae of nontraumatic intracerebral hemorrhage (0.15%)
         * I692: Sequelae of other nontraumatic intracranial hemorrhage (0.1%)

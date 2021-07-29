@@ -54,12 +54,12 @@ The definition of dying from Syphilis is to get any of the following ICD codes a
 
 * <details><summary> A50: Congenital syphilis (9.3%)</summary>
     * A504: Late congenital neurosyphilis [juvenile neurosyphilis] (2.3%)
-    * A509: Congenital syphilis, unspecified (7.0%)
+    * A509: Congenital syphilis, unspecified (7%)
 </details>
-* <details><summary> A52: Late syphilis (86.0%)</summary>
+* <details><summary> A52: Late syphilis (86%)</summary>
     * A520: Cardiovascular and cerebrovascular syphilis (2.3%)
-    * A521: Symptomatic neurosyphilis (33.0%)
-    * A523: Neurosyphilis, unspecified (47.0%)
+    * A521: Symptomatic neurosyphilis (32.6%)
+    * A523: Neurosyphilis, unspecified (46.5%)
     * A529: Late syphilis, unspecified (4.7%)
 </details>
 * <details><summary> A53: Other and unspecified syphilis (4.7%)</summary>

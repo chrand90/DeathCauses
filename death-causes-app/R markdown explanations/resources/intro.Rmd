@@ -99,9 +99,9 @@ Many results in health research are presented with *binned* categories. An examp
 For each category they computed an [odds ratio](#odds-ratio) (that we treat as [risk ratios](#risk-ratio)). Below is the input data to our program.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-devtools::load_all("../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
-dat=initialize_database("../../death-causes-app/src/resources/Causes.json",
-                        "../../death-causes-app/src/resources/Descriptions.json")
+devtools::load_all("../../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
+dat=initialize_database("../../../death-causes-app/src/resources/Causes.json",
+                        "../../../death-causes-app/src/resources/Descriptions.json")
 plotSpecificPlots(dat, "Alzheimers", "Caffeine", "raw")
 ```
 
@@ -190,8 +190,201 @@ This means that  the normalization factor will always be in the interval (1.59,1
 </details>
 
 ### Decompositions
-This section will not be written before the method is tested.
+In the previous example we saw that gun-owners have twice as big a probability of dying from homicide in the home compared to non-owners. This means that half of the deaths of gun-owners can be *explained* by gun ownership in the sense that they wouldn't have taken place if the killed persons hadn't owned a gun. To communicate this interesting aspect to the user, we visually *decompose* the bar that represents the probability of dying from a death cause into smaller parts that explains the death. See the example below
 
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+opt <- par(mfrow=c(1,1), mar=c(1,4,1,1))
+layout(matrix(c(1,1,1,1,2,2,2,2), nrow = 4, ncol = 2, byrow = TRUE))
+barplot(cbind(c(0.001785,0),
+              c(0.003571,0)),
+        col = c("white","red"),
+        horiz = T, 
+        names.arg=c("Non-owner", "Gun owner"),
+        axes=F,
+        main="Probability of dying from homicide in the home"
+        )
+barplot(cbind(c(0.001785,0),
+              c(0.001785,0.001785)
+              ),
+        col = c("white","red"),
+        horiz = T,
+        names.arg=c("Non-owner","Gun owner"),
+        legend.text = c("Unexplained","Gun ownership"),
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home")
+par(opt)
+```
+
+Be aware that the visualizations of the website only shows the decomposed bar relevant to the user and so users who answer that they don't own a gun will not see any colored bars about gun ownership. 
+
+#### Decomposition with two risk factors
+If there are two different risk factors things get more complicated. If we go back to the example about homicide in the home, gun ownership and domestic violence, the un-decomposed probabilities would look like this
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+layout(matrix(c(1,1,1,1),2,2))
+opt <- par(mar=c(1,4,1,1))
+b <- barplot(rev(c(1,2,4.4,8.8)),
+        col = c("white"),
+        horiz = T, 
+        axes=F,
+        main="Probability of dying from homicide in the home"
+        )
+first=rev(rep(c("Non-owner","Gun owner"),2))
+second=rev(rep(c("No dom. violence","Dom. violence"),each=2))
+mtext(first, side=2, line=1, at=b, cex=0.7)
+mtext(second, side=2, line=2, at=b, cex=0.7)
+par(opt)
+```
+
+We could decompose each of them as before
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+layout(matrix(c(1,1,1,1),2,2))
+opt <- par(mar=c(1,4,1,1))
+b <- barplot(cbind(c(1,0,0,7.8),
+                   c(1,0,3.4,0),
+                   c(1,1,0,0),
+                   c(1,0,0,0)),
+        col = c("white","red","lightblue","black"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home, simple",
+        legend.text = c("Unexplained", "Gun ownership","Domestic violence","Gun AND violence in home")
+        )
+first=rev(rep(c("Non-owner","Gun owner"),2))
+second=rev(rep(c("No dom. violence","Dom. violence"),each=2))
+mtext(first, side=2, line=1, at=b, cex=0.7)
+mtext(second, side=2, line=2, at=b, cex=0.7)
+par(opt)
+```
+
+While the "domestic violence AND gun owner" is correct, it doesn't say anything that lets the user distinguish between the effect of domestic violence and gun ownership. Therefore, we decompose that section further. When comparing the "domestic violence, no gun" bar to the "domestic violence, gun owner" bar, we can see that the gun owner factor doubles the risk, and so we could argue that the gun owner section should constitute half of the risk for the group owning guns and having domestic violence. We call this approach Gun owner-*centered* because it computes the gun owner risk increase last. A domestic violence centered decomposition will look different as shown below.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+layout(matrix(c(1,1,2,2),2,2, byrow=T))
+opt <- par(mar=c(1,4,1,1))
+b <- barplot(cbind(c(1,1,6.8)),
+        col = c("white","red","lightblue"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability, Domestic violence centered",
+        legend.text = c("Unexplained", "Gun ownership","Domestic violence"))
+mtext("Gun owner", side=2, line=1, at=b, cex=0.7)
+mtext("Dom. violence", side=2, line=2, at=b, cex=0.7)
+b <- barplot(cbind(c(1,3.4,4.4)),
+        col = c("white","lightblue","red"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability, Gun ownership centered",
+        legend.text = c("Unexplained","Domestic violence", "Gun ownership"))
+mtext("Gun owner", side=2, line=1, at=b, cex=0.7)
+mtext("Dom. violence", side=2, line=2, at=b, cex=0.7)
+par(opt)
+```
+
+In the domestic violence centered decomposed probability, the interpretation of the two sections are
+
+* The size of the Gun ownership section is the risk increase when owning a gun *given that there is no domestic violence*
+* The size of the Domestic violence section is the risk increase when living in a violent household *given that there is a gun*
+
+In the Gun ownership centered decomposed probability, it is opposite;
+
+* The size of the Gun ownership section is the risk increase when owning a gun *given that there is domestic violence*
+* The size of the Domestic violence section is the risk increase when living in a violent household *given that there is a no gun*
+
+So how do we actually compute the decomposed probability? Gun ownership centered or domestic violence centered? And how do we handle this in general? We make the decomposition centered around the factors that are easier to optimize. For example in skin cancer, there are two main factors; your race and your sun exposure. It is clearly not possible to change your race, but you can change your (future) sun exposure. Therefore we decompose skin cancer centered on sun exposure. For domestic violence and gun ownership, it is a bit harder to judge which is easier to optimize. Both can be changed by moving which, in theory, can be done tomorrow. They are tied in our optimizability ranking, and we therefore use another decomposition strategy.
+
+#### Decomposing two equally optimizable factors
+
+When two factors are equally optimizable, we don't center the decomposition on  either factor. Instead, we divide the "extra" risk equally between them. Consider the example with gun ownership, domestic violence and their relation to homicide in the home and say that we want to decompose the probability for the group that both owns a gun and has a violent household. By comparing those with neither violence nor guns to those with guns, we can get the risk increase from purely guns, and likewise we can obtain the risk increase for purely domestic violence. If we add these pure risk increases, it doesn't add up to the risk increase when comparing those with neither guns nor violence to those with both guns and violence. It is surely better illustrated graphically;
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+layout(matrix(c(1,1,1,1,1,1,2,2),4,2, byrow=T))
+opt <- par(mar=c(1,4,1,1))
+b <- barplot(cbind(c(1,0,3.4,0),
+                   c(1,1,0,0),
+                   c(1,0,0,0)),
+        col = c("white","red","lightblue","black"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home, middle stage",
+        legend.text = c("Unexplained", "Gun ownership"),
+        xlim = c(0,8.8)
+        )
+first=rev(rep(c("Non-owner","Gun owner"),2))[-4]
+second=rev(rep(c("No dom. violence","Dom. violence"),each=2))[-4]
+mtext(first, side=2, line=1, at=b, cex=0.7)
+mtext(second, side=2, line=2, at=b, cex=0.7)
+b <- barplot(cbind(c(1,1,3.4,3.4)),
+        col = c("white","red","lightblue","black"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home, unassigned extra",
+        legend.text = c("Unexplained", "Gun ownership", "Domestic violence", "Extra"))
+mtext("Gun owner", side=2, line=1, at=b, cex=0.7)
+mtext("Dom. violence", side=2, line=2, at=b, cex=0.7)
+par(opt)
+```
+
+The "Extra" part can be interpreted as the risk increase that arises from the combination of domestic violence and gun ownership. Gun ownership and domestic violence are bad by themselves, but the combination is worse than the sum of them. In a Gun ownership centered decomposition, we would assign the "Extra" part to the "Gun ownership" category and in a Domestic violence centered decomposition, we would assign the "Extra" part to the "Domestic ownership" category. However, as we don't prioritize one over the other it is shared equally.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+layout(matrix(c(1,1,2,2),2,2, byrow=T))
+opt <- par(mar=c(1,4,1,1))
+b <- barplot(cbind(c(1,1,3.4,1.7,1.7)),
+        col = c("white","red","lightblue","red","lightblue"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home, unsorted",
+        legend.text = c("Unexplained", "Gun ownership", "Domestic violence"),
+        )
+mtext("Gun owner", side=2, line=1, at=b, cex=0.7)
+mtext("Dom. violence", side=2, line=2, at=b, cex=0.7)
+b <- barplot(cbind(c(1,2.7,5.1)),
+        col = c("white","red","lightblue"),
+        horiz = T, 
+        axes=F,
+        main="Decomposed probability of dying from homicide in the home, final",
+        legend.text = c("Unexplained", "Gun ownership", "Domestic violence"),
+        )
+mtext("Gun owner", side=2, line=1, at=b, cex=0.7)
+mtext("Dom. violence", side=2, line=2, at=b, cex=0.7)
+par(opt)
+```
+
+Though it rarely happens, be aware that the "Extra part" can be negative. It may occur when two factors are similar or measuring the same effect. In this case the negative "Extra part" is subtracted equally among the two factors.
+
+#### Decomposition of $n$ factors
+
+Decomposition of a risk with $n$ risk factors is not very different from decomposition of a risk with 2 risk factors. Instead of only centering on the factor with highest optimizability, we make scheme where we consecutively center on the with second-lowest optimizability, third-lowest optimizability and so on until the highest optimizable factor. Ties in optimizability can also be resolved in a similar way (see below).
+
+<details>
+Let $F_1, \dots, F_n$ be the $n$ factors. Let $\psi_1, \dots, \psi_n$ be the user's $n$ values on the $n$ factors. Now let $U(I)$, $I\subseteq \{1, \dots, n\}$ be the smallest risk possible that satisfy
+
+$$
+F_i=\psi_i \text{ for all } i\in I.
+$$
+
+Define recursively 
+
+$$
+S(\emptyset)=U(\emptyset)\\
+S(I)=U(I)-\sum_{J\subset I, J\neq I} S(J), \quad \text{for } |I|>0
+$$
+
+For $I=\{i\}$, we can interpret $S(I)$ as the pure contribution of factor $i$. For $|I|=2$, $S(I)$ can be interpreted as the "extra part" discussed in the previous section. For $|I|>2$ the interpretation is more complex but it will still some "extra part" to make the sum of all the previous factors add up. 
+
+Let $J_1, \dots, J_m\subseteq \{1, \dots, n\}$ be disjoint sets such that the set $J_i$ contains the indices of all factors that share the $i$'th lowest optimizability.
+
+Then, we can write the decomposition as follows
+
+$$
+V(i)=\sum_{I\subseteq J_1, i\in I} \frac{S(I)}{|I|} \quad \text{for } i\in J_1\\
+$$
+
+
+
+</details>
 ### Interpretation
 When the program says that one has a certain [probability](#risk) of dying of a certain cause it is under the assumption that the mathematical model is correct. If, for example, the program reports a $10\%$ probability of dying from Alzheimer's we suggest that it should be interpreted as
 

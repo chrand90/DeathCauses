@@ -58,26 +58,26 @@ plotSpecificPlots(dat, 'DoctorError')
 The definition of dying from Death caused by doctors' errors is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Death caused by doctors' errors who falls under the ICD code 
 
 * <details><summary> **Y83: Surgical operation and other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (60.3%)**</summary>
-    * Y830: Surgical operation with transplant of whole organ as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (2.0%)
-    * **Y831: Surgical operation with implant of artificial internal device as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (11.0%)**
+    * Y830: Surgical operation with transplant of whole organ as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (2%)
+    * **Y831: Surgical operation with implant of artificial internal device as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (10.8%)**
     * Y832: 1 Anastomos,bypass or grft cause abn react/compl, w/o misadvnt Surgical operation with anastomosis, bypass or graft as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (5.5%)
     * Y833: Surgical operation with formation of external stoma as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (5.2%)
     * Y834: Other reconstructive surgery as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (4.6%)
-    * Y835: Amputation of limb(s) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.0%)
-    * Y836: Removal of other organ (partial) (total) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.0%)
+    * Y835: Amputation of limb(s) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3%)
+    * Y836: Removal of other organ (partial) (total) as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3%)
     * Y838: Other surgical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (3.1%)
-    * **Y839: Surgical procedure, unspecified as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (23.0%)**
+    * **Y839: Surgical procedure, unspecified as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (23%)**
 </details>
-* <details><summary> Y84: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (18.0%)</summary>
+* <details><summary> Y84: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (18%)</summary>
     * Y840: Cardiac catheterization as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.039%)
     * Y841: Kidney dialysis as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (1.7%)
     * Y842: 1 Radiolog proc/radiothrpy cause abn react/compl, w/o misadvnt Radiological procedure and radiotherapy as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.79%)
     * Y844: Aspiration of fluid as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.16%)
     * Y846: Urinary catheterization as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (2.4%)
-    * **Y848: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (12.0%)**
+    * **Y848: Other medical procedures as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (12.4%)**
     * Y849: Medical procedure, unspecified as the cause of abnormal reaction of the patient, or of later complication, without mention of misadventure at the time of the procedure (0.43%)
 </details>
-* <details><summary> Y88 (3.0%)</summary>
+* <details><summary> Y88 (3%)</summary>
     * Y880 (0.039%)
     * Y881 (0.039%)
     * Y883 (2.9%)

@@ -58,7 +58,7 @@ The definition of dying from Bronchitis is to get any of the following ICD codes
 * <details><summary> J41: Simple and mucopurulent chronic bronchitis (0.71%)</summary>
     * J411: Mucopurulent chronic bronchitis (0.71%)
 </details>
-* J42: Unspecified chronic bronchitis (42.0%)
+* J42: Unspecified chronic bronchitis (41.6%)
 
  Source: @CDCreport, @ICDcodes
 

@@ -48,7 +48,7 @@ The answer has to be larger than 0 Servings. The answer is recommended to be lar
 
 ### Optimizability
 
-Optimizability is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Fish consumption is 90. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Fish consumption is 5. This means that it can be interpreted as
 
 > *It is possible to change, and it can be changed now or very soon.*
 

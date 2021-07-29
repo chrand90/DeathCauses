@@ -38,8 +38,8 @@ Uterus cancer is part of the following death cause categories
 
 In the model Uterus cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [BMI](/model/BMI)
 * [Coffee consumption](/model/Caffeine) (Coffee)
+* [BMI](/model/BMI)
 * [Biological sex](/model/Sex) (Sex)
 
 #### Number of deaths
@@ -61,9 +61,9 @@ plotSpecificPlots(dat, 'UterusCancer')
 
 The definition of dying from Uterus cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Uterus cancer who falls under the ICD code 
 
-* <details><summary> C54: Malignant neoplasm of corpus uteri (43.0%)</summary>
+* <details><summary> C54: Malignant neoplasm of corpus uteri (42.8%)</summary>
     * C540: Malignant neoplasm of isthmus uteri (0.021%)
-    * C541: Malignant neoplasm of endometrium (42.0%)
+    * C541: Malignant neoplasm of endometrium (42%)
     * C549: Malignant neoplasm of corpus uteri, unspecified (0.7%)
 </details>
 * C55: Malignant neoplasm of uterus, part unspecified (57.2%)
@@ -83,7 +83,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{BMI,Coffee}} \cdot P_{\text{Sex}}
+P=P_{\text{Coffee,BMI}} \cdot P_{\text{Sex}}
 $$
 
 

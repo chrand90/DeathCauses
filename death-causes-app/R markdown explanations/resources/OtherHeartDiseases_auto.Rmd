@@ -98,10 +98,10 @@ The definition of dying from Other heart disease is to get any of the following 
         * I098: Other specified rheumatic heart diseases (0.00032%)
         * I099: Rheumatic heart disease, unspecified (0.053%)
 </details>
-* <details><summary> **I1 (24.0%)**</summary>
+* <details><summary> **I1 (23.7%)**</summary>
     * I10: Essential (primary) hypertension (6.3%)
-    * **I11: Hypertensive heart disease (13.0%)**
-        * I110: Hypertensive heart disease with heart failure (4.0%)
+    * **I11: Hypertensive heart disease (12.5%)**
+        * I110: Hypertensive heart disease with heart failure (4%)
         * I119: Hypertensive heart disease without heart failure (8.5%)
     * I12: Hypertensive chronic kidney disease (3.4%)
         * I120: Hypertensive chronic kidney disease with stage 5 chronic kidney disease or end stage renal disease (3.4%)
@@ -122,7 +122,7 @@ The definition of dying from Other heart disease is to get any of the following 
 * <details><summary> I27: Other pulmonary heart diseases (2.5%)</summary>
     * I270: Primary pulmonary hypertension (0.11%)
     * I271: Kyphoscoliotic heart disease (0.018%)
-    * **I272: Other secondary pulmonary hypertension (2.0%)**
+    * **I272: Other secondary pulmonary hypertension (2%)**
     * I278: Other specified pulmonary heart diseases (0.0093%)
     * I279: Pulmonary heart disease, unspecified (0.38%)
 </details>
@@ -171,7 +171,7 @@ The definition of dying from Other heart disease is to get any of the following 
         * I379: Nonrheumatic pulmonary valve disorder, unspecified (0.0013%)
     * **I38: Endocarditis, valve unspecified (1.8%)**
 </details>
-* <details><summary> **I4 (23.0%)**</summary>
+* <details><summary> **I4 (23.5%)**</summary>
     * I40: Acute myocarditis (0.067%)
         * I400: Infective myocarditis (0.045%)
         * I401: Isolated myocarditis (0.0055%)
@@ -204,14 +204,14 @@ The definition of dying from Other heart disease is to get any of the following 
         * I456: Pre-excitation syndrome (0.013%)
         * I458: Other specified conduction disorders (0.35%)
         * I459: Conduction disorder, unspecified (0.051%)
-    * **I46: Cardiac arrest (5.0%)**
+    * **I46: Cardiac arrest (5%)**
         * I461 (0.5%)
         * I469: Cardiac arrest, cause unspecified (4.5%)
     * I47: Paroxysmal tachycardia (0.26%)
         * I471: Supraventricular tachycardia (0.051%)
         * I472: Ventricular tachycardia (0.2%)
         * I479: Paroxysmal tachycardia, unspecified (0.0013%)
-    * **I48: Atrial fibrillation and flutter (7.0%)**
+    * **I48: Atrial fibrillation and flutter (7%)**
     * **I49: Other cardiac arrhythmias (3.1%)**
         * I490: Ventricular fibrillation and flutter (0.45%)
         * I491: Atrial premature depolarization (0.00032%)
@@ -220,9 +220,9 @@ The definition of dying from Other heart disease is to get any of the following 
         * I498: Other specified cardiac arrhythmias (0.046%)
         * **I499: Cardiac arrhythmia, unspecified (2.5%)**
 </details>
-* <details><summary> **I5 (28.0%)**</summary>
-    * I50: Heart failure (22.0%)
-        * I500 (19.0%)
+* <details><summary> **I5 (28.2%)**</summary>
+    * I50: Heart failure (22.1%)
+        * I500 (19.5%)
         * I501: Left ventricular failure (0.075%)
         * I509: Heart failure, unspecified (2.6%)
     * I51: Complications and ill-defined descriptions of heart disease (6.1%)
@@ -238,12 +238,12 @@ The definition of dying from Other heart disease is to get any of the following 
         * **I519: Heart disease, unspecified (2.6%)**
 </details>
 * <details><summary> I7 (8.2%)</summary>
-    * **I70: Atherosclerosis (2.0%)**
+    * **I70: Atherosclerosis (2%)**
         * I700: Atherosclerosis of aorta (0.022%)
         * I701: Atherosclerosis of renal artery (0.0071%)
         * I702: Atherosclerosis of native arteries of the extremities (0.046%)
         * I708: Atherosclerosis of other arteries (0.00064%)
-        * **I709: Other and unspecified atherosclerosis (2.0%)**
+        * **I709: Other and unspecified atherosclerosis (2%)**
     * **I71: Aortic aneurysm and dissection (3.2%)**
         * **I710: Dissection of aorta (1.1%)**
         * I711: Thoracic aortic aneurysm, ruptured (0.16%)

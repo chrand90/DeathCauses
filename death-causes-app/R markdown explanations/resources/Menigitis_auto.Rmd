@@ -55,15 +55,15 @@ The definition of dying from Menigitis is to get any of the following ICD codes 
 * <details><summary> G00: Bacterial meningitis, not elsewhere classified (50.6%)</summary>
     * G000: Hemophilus meningitis (0.56%)
     * G001: Pneumococcal meningitis (6.5%)
-    * G002: Streptococcal meningitis (13.0%)
+    * G002: Streptococcal meningitis (13.2%)
     * G003: Staphylococcal meningitis (1.5%)
     * G008: Other bacterial meningitis (3.5%)
-    * **G009: Bacterial meningitis, unspecified (25.0%)**
+    * **G009: Bacterial meningitis, unspecified (25.4%)**
 </details>
-* <details><summary> G03: Meningitis due to other and unspecified causes (49.0%)</summary>
+* <details><summary> G03: Meningitis due to other and unspecified causes (49.4%)</summary>
     * G030: Nonpyogenic meningitis (2.2%)
     * G031: Chronic meningitis (0.56%)
-    * G039: Meningitis, unspecified (47.0%)
+    * G039: Meningitis, unspecified (46.6%)
 </details>
 
  Source: @CDCreport, @ICDcodes

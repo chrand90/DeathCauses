@@ -19,7 +19,8 @@ interface PageInfo {
 }
 
 const SPECIAL_PAGES: PageInfo[]=[
-    {linkText:"Introduction", direct:"intro"}
+    {linkText:"Introduction", direct:"intro"},
+    {linkText:"Optimizabilities", direct:"optimizabilities"}
 ]
 
 interface AboutEntryProps extends RouteComponentProps{

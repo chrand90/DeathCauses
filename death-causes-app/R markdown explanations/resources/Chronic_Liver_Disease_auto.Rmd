@@ -66,7 +66,7 @@ The definition of dying from Chronic liver disease is to get any of the followin
     * K700: Alcoholic fatty liver (0.99%)
     * K701: Alcoholic hepatitis (3.1%)
     * K702: Alcoholic fibrosis and sclerosis of liver (0.0052%)
-    * **K703: Alcoholic cirrhosis of liver (36.0%)**
+    * **K703: Alcoholic cirrhosis of liver (36.3%)**
     * K704: Alcoholic hepatic failure (3.6%)
     * K709: Alcoholic liver disease, unspecified (6.8%)
 </details>
@@ -74,13 +74,13 @@ The definition of dying from Chronic liver disease is to get any of the followin
     * K732: Chronic active hepatitis, not elsewhere classified (0.0052%)
     * K739: Chronic hepatitis, unspecified (0.16%)
 </details>
-* <details><summary> K74: Fibrosis and cirrhosis of liver (49.0%)</summary>
+* <details><summary> K74: Fibrosis and cirrhosis of liver (49%)</summary>
     * K740: Hepatic fibrosis (0.029%)
     * K741: Hepatic sclerosis (0.021%)
-    * K743: Primary biliary cirrhosis (1.0%)
+    * K743: Primary biliary cirrhosis (1%)
     * K744: Secondary biliary cirrhosis (0.01%)
     * K745: Biliary cirrhosis, unspecified (0.23%)
-    * **K746: Other and unspecified cirrhosis of liver (48.0%)**
+    * **K746: Other and unspecified cirrhosis of liver (47.7%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

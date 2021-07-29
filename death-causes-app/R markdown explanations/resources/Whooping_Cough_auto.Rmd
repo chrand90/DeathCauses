@@ -58,8 +58,8 @@ plotSpecificPlots(dat, 'Whooping_Cough')
 The definition of dying from Whooping cough is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Whooping cough who falls under the ICD code 
 
 * <details><summary> A37: Whooping cough (100.0%)</summary>
-    * A370: Whooping cough due to Bordetella pertussis (50.0%)
-    * A379: Whooping cough, unspecified species (50.0%)
+    * A370: Whooping cough due to Bordetella pertussis (50%)
+    * A379: Whooping cough, unspecified species (50%)
 </details>
 
  Source: @CDCreport, @ICDcodes

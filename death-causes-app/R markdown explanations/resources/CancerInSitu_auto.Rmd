@@ -148,14 +148,14 @@ The definition of dying from Cancer in situ is to get any of the following ICD c
     * D29: Benign neoplasm of male genital organs (0.031%)
         * D291: Benign neoplasm of prostate (0.031%)
 </details>
-* <details><summary> D3 (18.0%)</summary>
+* <details><summary> D3 (18.5%)</summary>
     * D30: Benign neoplasm of urinary organs (0.037%)
         * D300: Benign neoplasm of kidney (0.031%)
         * D309: Benign neoplasm of urinary organ, unspecified (0.0062%)
     * D31: Benign neoplasm of eye and adnexa (0.012%)
         * D313: Benign neoplasm of choroid (0.0062%)
         * D316: Benign neoplasm of unspecified site of orbit (0.0062%)
-    * **D32: Benign neoplasm of meninges (5.0%)**
+    * **D32: Benign neoplasm of meninges (5%)**
         * D320: Benign neoplasm of cerebral meninges (1.2%)
         * D321: Benign neoplasm of spinal meninges (0.031%)
         * D329: Benign neoplasm of meninges, unspecified (3.7%)
@@ -175,7 +175,7 @@ The definition of dying from Cancer in situ is to get any of the following ICD c
         * D361: Benign neoplasm of peripheral nerves and autonomic nervous system (0.12%)
         * D367: Benign neoplasm of other specified sites (0.025%)
         * D369: Benign neoplasm, unspecified site (0.21%)
-    * **D37: Neoplasm of uncertain behavior of oral cavity and digestive organs (6.0%)**
+    * **D37: Neoplasm of uncertain behavior of oral cavity and digestive organs (6%)**
         * D370: Neoplasm of uncertain behavior of lip, oral cavity and pharynx (0.44%)
         * D371: Neoplasm of uncertain behavior of stomach (0.5%)
         * D372: Neoplasm of uncertain behavior of small intestine (0.21%)
@@ -200,7 +200,7 @@ The definition of dying from Cancer in situ is to get any of the following ICD c
         * D397 (0.075%)
         * D399: 1 Neoplasm of uncertain behavior of female genital organ, unsp Neoplasm of uncertain behavior of female genital organ, unspecified (0.019%)
 </details>
-* <details><summary> **D4 (79.0%)**</summary>
+* <details><summary> **D4 (79%)**</summary>
     * D40: Neoplasm of uncertain behavior of male genital organs (0.36%)
         * D400: Neoplasm of uncertain behavior of prostate (0.31%)
         * D401: Neoplasm of uncertain behavior of testis (0.019%)
@@ -216,10 +216,10 @@ The definition of dying from Cancer in situ is to get any of the following ICD c
     * D42: Neoplasm of uncertain behavior of meninges (0.19%)
         * D420: Neoplasm of uncertain behavior of cerebral meninges (0.056%)
         * D429: Neoplasm of uncertain behavior of meninges, unspecified (0.13%)
-    * **D43: Neoplasm of uncertain behavior of brain and central nervous system (15.0%)**
+    * **D43: Neoplasm of uncertain behavior of brain and central nervous system (14.8%)**
         * D430: Neoplasm of uncertain behavior of brain, supratentorial (0.71%)
         * D431: Neoplasm of uncertain behavior of brain, infratentorial (0.3%)
-        * **D432: Neoplasm of uncertain behavior of brain, unspecified (13.0%)**
+        * **D432: Neoplasm of uncertain behavior of brain, unspecified (13.5%)**
         * D433: Neoplasm of uncertain behavior of cranial nerves (0.012%)
         * D434: Neoplasm of uncertain behavior of spinal cord (0.16%)
         * D439: Neoplasm of uncertain behavior of central nervous system, unspecified (0.11%)
@@ -234,13 +234,13 @@ The definition of dying from Cancer in situ is to get any of the following ICD c
         * D448 (0.05%)
         * D449: Neoplasm of uncertain behavior of unspecified endocrine gland (0.056%)
     * D45: Polycythemia vera (1.4%)
-    * **D46: Myelodysplastic syndromes (43.0%)**
+    * **D46: Myelodysplastic syndromes (42.9%)**
         * D461: Refractory anemia with ring sideroblasts (0.012%)
         * D462: Refractory anemia with excess of blasts (0.075%)
         * D463 (0.0062%)
         * D464: Refractory anemia, unspecified (0.52%)
         * D467 (0.019%)
-        * **D469: Myelodysplastic syndrome, unspecified (42.0%)**
+        * **D469: Myelodysplastic syndrome, unspecified (42.3%)**
     * D47: 0 Oth neoplm of uncrt behav of lymphoid, hematpoetc & rel tiss Other neoplasms of uncertain behavior of lymphoid, hematopoietic and related tissue (9.1%)
         * D470: Histiocytic and mast cell tumors of uncertain behavior (0.012%)
         * **D471: Chronic myeloproliferative disease (7.7%)**

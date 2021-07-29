@@ -565,6 +565,9 @@ export default class RelationLinks {
       if (xvals.length === 0) {
         return 0;
       }
+      if(cat===NodeType.CAUSE_CATEGORY){
+        return Math.max(...xvals)*0.5;
+      }
       return Math.max(...xvals);
     });
     const cumWeights = this.computeCumulativeWeights(weights);

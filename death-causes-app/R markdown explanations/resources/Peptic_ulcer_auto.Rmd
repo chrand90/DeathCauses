@@ -56,36 +56,36 @@ plotSpecificPlots(dat, 'Peptic_ulcer')
 
 The definition of dying from Peptic ulcer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Peptic ulcer who falls under the ICD code 
 
-* <details><summary> K25: Gastric ulcer (32.0%)</summary>
+* <details><summary> K25: Gastric ulcer (31.9%)</summary>
     * K250: Acute gastric ulcer with hemorrhage (0.53%)
     * K251: Acute gastric ulcer with perforation (0.066%)
     * K253: Acute gastric ulcer without hemorrhage or perforation (0.16%)
-    * **K254: Chronic or unspecified gastric ulcer with hemorrhage (13.0%)**
-    * **K255: Chronic or unspecified gastric ulcer with perforation (13.0%)**
+    * **K254: Chronic or unspecified gastric ulcer with hemorrhage (13.1%)**
+    * **K255: Chronic or unspecified gastric ulcer with perforation (13.1%)**
     * K256: Chronic or unspecified gastric ulcer with both hemorrhage and perforation (0.82%)
     * K257: Chronic gastric ulcer without hemorrhage or perforation (0.13%)
-    * **K259: Gastric ulcer, unspecified as acute or chronic, without hemorrhage or perforation (4.0%)**
+    * **K259: Gastric ulcer, unspecified as acute or chronic, without hemorrhage or perforation (4%)**
 </details>
-* <details><summary> K26: Duodenal ulcer (41.0%)</summary>
+* <details><summary> K26: Duodenal ulcer (41%)</summary>
     * K260: Acute duodenal ulcer with hemorrhage (0.23%)
     * K261: Acute duodenal ulcer with perforation (0.16%)
     * K262: Acute duodenal ulcer with both hemorrhage and perforation (0.033%)
     * K263: Acute duodenal ulcer without hemorrhage or perforation (0.13%)
-    * **K264: Chronic or unspecified duodenal ulcer with hemorrhage (17.0%)**
-    * **K265: Chronic or unspecified duodenal ulcer with perforation (18.0%)**
+    * **K264: Chronic or unspecified duodenal ulcer with hemorrhage (17%)**
+    * **K265: Chronic or unspecified duodenal ulcer with perforation (18%)**
     * K266: Chronic or unspecified duodenal ulcer with both hemorrhage and perforation (1.6%)
     * K269: Duodenal ulcer, unspecified as acute or chronic, without hemorrhage or perforation (3.9%)
 </details>
-* <details><summary> K27: Peptic ulcer, site unspecified (26.0%)</summary>
+* <details><summary> K27: Peptic ulcer, site unspecified (26%)</summary>
     * K270: Acute peptic ulcer, site unspecified, with hemorrhage (0.099%)
     * K271: Acute peptic ulcer, site unspecified, with perforation (0.033%)
-    * **K274: Chronic or unspecified peptic ulcer, site unspecified, with hemorrhage (15.0%)**
+    * **K274: Chronic or unspecified peptic ulcer, site unspecified, with hemorrhage (15.4%)**
     * **K275: Chronic or unspecified peptic ulcer, site unspecified, with perforation (5.7%)**
     * K276: Chronic or unspecified peptic ulcer, site unspecified, with both hemorrhage and perforation (0.85%)
     * K277: Chronic peptic ulcer, site unspecified, without hemorrhage or perforation (0.033%)
     * K279: Peptic ulcer, site unspecified, unspecified as acute or chronic, without hemorrhage or perforation (3.9%)
 </details>
-* <details><summary> K28: Gastrojejunal ulcer (1.0%)</summary>
+* <details><summary> K28: Gastrojejunal ulcer (1%)</summary>
     * K280: Acute gastrojejunal ulcer with hemorrhage (0.033%)
     * K283: Acute gastrojejunal ulcer without hemorrhage or perforation (0.033%)
     * K284: Chronic or unspecified gastrojejunal ulcer with hemorrhage (0.59%)

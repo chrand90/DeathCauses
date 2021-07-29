@@ -52,8 +52,8 @@ plotSpecificPlots(dat, 'Transport')
 
 The definition of dying from Transport is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Transport who falls under the ICD code 
 
-* <details><summary> V (98.0%)</summary>
-    * **V0 (17.0%)**
+* <details><summary> V (98%)</summary>
+    * **V0 (16.6%)**
         * V01: Pedestrian injured in collision with pedal cycle (0.013%)
             * V010: Pedestrian injured in collision with pedal cycle in nontraffic accident (0.0078%)
             * V011: Pedestrian injured in collision with pedal cycle in traffic accident (0.0052%)
@@ -133,7 +133,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V196: Unspecified pedal cyclist injured in collision with other and unspecified motor vehicles in traffic accident (0.32%)
             * V198: Pedal cyclist (driver) (passenger) injured in other specified transport accidents (0.0052%)
             * V199: Pedal cyclist (driver) (passenger) injured in unspecified traffic accident (0.31%)
-    * V2 (11.0%)
+    * V2 (10.8%)
         * V20: 0 Motorcycle rider injured in collision w pedestrian or animal Motorcycle rider injured in collision with pedestrian or animal (0.18%)
             * V204: Motorcycle driver injured in collision with pedestrian or animal in traffic accident (0.15%)
             * V205: 0 Motorcycle passenger injured in collision w ped/anml in traf Motorcycle passenger injured in collision with pedestrian or animal in traffic accident (0.01%)
@@ -148,7 +148,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
         * **V23: 0 Motorcycle rider injured pick-up truck, pick-up truck or van Motorcycle rider injured in collision with car, pick-up truck or van (2.2%)**
             * V230: Motorcycle driver injured in collision with car, pick-up truck or van in nontraffic accident (0.0026%)
             * V231: Motorcycle passenger injured in collision with car, pick-up truck or van in nontraffic accident (0.0026%)
-            * **V234: Motorcycle driver injured in collision with car, pick-up truck or van in traffic accident (2.0%)**
+            * **V234: Motorcycle driver injured in collision with car, pick-up truck or van in traffic accident (2%)**
             * V235: Motorcycle passenger injured in collision with car, pick-up truck or van in traffic accident (0.12%)
             * V239: Unspecified motorcycle rider injured in collision with car, pick-up truck or van in traffic accident (0.11%)
         * V24: Motorcycle rider injured in collision with heavy transport vehicle or bus (0.23%)
@@ -171,12 +171,12 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * **V284: Motorcycle driver injured in noncollision transport accident in traffic accident (1.2%)**
             * V285: Motorcycle passenger injured in noncollision transport accident in traffic accident (0.086%)
             * V289: Unspecified motorcycle rider injured in noncollision transport accident in traffic accident (0.13%)
-        * **V29: 0 Motorcycle rider injured in oth and unsp transport accidents Motorcycle rider injured in other and unspecified transport accidents (5.0%)**
+        * **V29: 0 Motorcycle rider injured in oth and unsp transport accidents Motorcycle rider injured in other and unspecified transport accidents (5%)**
             * V290: Motorcycle driver injured in collision with other and unspecified motor vehicles in nontraffic accident (0.039%)
             * V291: Motorcycle passenger injured in collision with other and unspecified motor vehicles in nontraffic accident (0.0052%)
             * V292: Unspecified motorcycle rider injured in collision with other and unspecified motor vehicles in nontraffic accident (0.0052%)
             * V293: Motorcycle rider (driver) (passenger) injured in unspecified nontraffic accident (0.026%)
-            * **V294: Motorcycle driver injured in collision with other and unspecified motor vehicles in traffic accident (2.0%)**
+            * **V294: Motorcycle driver injured in collision with other and unspecified motor vehicles in traffic accident (2%)**
             * V295: Motorcycle passenger injured in collision with other and unspecified motor vehicles in traffic accident (0.12%)
             * V296: Unspecified motorcycle rider injured in collision with other and unspecified motor vehicles in traffic accident (0.12%)
             * V298: 0 Motorcycle rider (driver) injured in oth transport accidents Motorcycle rider (driver) (passenger) injured in other specified transport accidents (0.0078%)
@@ -187,7 +187,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V386: 0 Pasngr in 3-whl mv injured in nonclsn trnsp accident in traf Passenger in three-wheeled motor vehicle injured in noncollision transport accident in traffic accident (0.0026%)
         * V39: Occupant of three-wheeled motor vehicle injured in other and unspecified transport accidents (0.0026%)
             * V395: 0 Pasngr in 3-whl mv injured in clsn w oth and unsp mv in traf Passenger in three-wheeled motor vehicle injured in collision with other and unspecified motor vehicles in traffic accident (0.0026%)
-    * **V4 (16.0%)**
+    * **V4 (16.5%)**
         * V40: Car occupant injured in collision with pedestrian or animal (0.024%)
             * V405: Car driver injured in collision with pedestrian or animal in traffic accident (0.016%)
             * V406: Car passenger injured in collision with pedestrian or animal in traffic accident (0.0052%)
@@ -205,10 +205,10 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V430: Car driver injured in collision with car, pick-up truck or van in nontraffic accident (0.013%)
             * V431: Car passenger injured in collision with car, pick-up truck or van in nontraffic accident (0.0026%)
             * V434: Person boarding or alighting a car injured in collision with car, pick-up truck or van (0.01%)
-            * **V435: Car driver injured in collision with car, pick-up truck or van in traffic accident (3.0%)**
+            * **V435: Car driver injured in collision with car, pick-up truck or van in traffic accident (3%)**
             * V436: Car passenger injured in collision with car, pick-up truck or van in traffic accident (1.3%)
             * V439: Unspecified car occupant injured in collision with car, pick-up truck or van in traffic accident (0.28%)
-        * V44: Car occupant injured in collision with heavy transport vehicle or bus (1.0%)
+        * V44: Car occupant injured in collision with heavy transport vehicle or bus (1%)
             * V440: Car driver injured in collision with heavy transport vehicle or bus in nontraffic accident (0.0026%)
             * V444: Person boarding or alighting a car injured in collision with heavy transport vehicle or bus (0.0026%)
             * V445: 0 Car driver injured in collision w hv veh in traffic accident Car driver injured in collision with heavy transport vehicle or bus in traffic accident (0.72%)
@@ -224,7 +224,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V465: Car driver injured in collision with other nonmotor vehicle in traffic accident (0.01%)
             * V466: Car passenger injured in collision with other nonmotor vehicle in traffic accident (0.0078%)
             * V469: Unspecified car occupant injured in collision with other nonmotor vehicle in traffic accident (0.0052%)
-        * **V47: Car occupant injured in collision with fixed or stationary object (4.0%)**
+        * **V47: Car occupant injured in collision with fixed or stationary object (4%)**
             * V470: Car driver injured in collision with fixed or stationary object in nontraffic accident (0.034%)
             * V471: Car passenger injured in collision with fixed or stationary object in nontraffic accident (0.01%)
             * V472: Person on outside of car injured in collision with fixed or stationary object in nontraffic accident (0.0026%)
@@ -346,7 +346,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V784: 0 Prsn brd/alit from bus injured in nonclsn transport accident Person boarding or alighting from bus injured in noncollision transport accident (0.01%)
             * V786: Passenger on bus injured in noncollision transport accident in traffic accident (0.016%)
             * V789: Unspecified occupant of bus injured in noncollision transport accident in traffic accident (0.0078%)
-    * **V8 (45.0%)**
+    * **V8 (45.4%)**
         * V80: Animal-rider or occupant of animal-drawn vehicle injured in transport accident (0.25%)
             * V800: Animal-rider or occupant of animal drawn vehicle injured by fall from or being thrown from animal or animal-drawn vehicle in noncollision accident (0.19%)
             * V801: 0 Animl-ridr or occ of anml-drn vehicle inj in clsn w ped/anml Animal-rider or occupant of animal-drawn vehicle injured in collision with pedestrian or animal (0.0078%)
@@ -391,7 +391,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V866: Passenger of special all-terrain or other off-road motor vehicle injured in nontraffic accident (0.14%)
             * V867: Person on outside of special all-terrain or other off-road motor vehicle injured in nontraffic accident (0.01%)
             * V869: Unspecified occupant of special all-terrain or other off-road motor vehicle injured in nontraffic accident (0.52%)
-        * **V87: Traffic accident of specified type but victim's mode of transport unknown (12.0%)**
+        * **V87: Traffic accident of specified type but victim's mode of transport unknown (12.1%)**
             * V870: Person injured in collision between car and two- or three-wheeled powered vehicle (traffic) (0.33%)
             * V871: Person injured in collision between other motor vehicle and two- or three-wheeled motor vehicle (traffic) (0.2%)
             * V872: 0 Person injured in collision betw car and pk-up/van (traffic) Person injured in collision between car and pick-up truck or van (traffic) (0.23%)
@@ -399,7 +399,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V874: Person injured in collision between car and heavy transport vehicle (traffic) (0.35%)
             * V875: Person injured in collision between heavy transport vehicle and bus (traffic) (0.016%)
             * V876: Person injured in collision between railway train or railway vehicle and car (traffic) (0.016%)
-            * **V877: Person injured in collision between other specified motor vehicles (traffic) (11.0%)**
+            * **V877: Person injured in collision between other specified motor vehicles (traffic) (10.9%)**
             * V878: Person injured in other specified noncollision transport accidents involving motor vehicle (traffic) (0.016%)
             * V879: Person injured in other specified (collision)(noncollision) transport accidents involving nonmotor vehicle (traffic) (0.0026%)
         * V88: Nontraffic accident of specified type but victim's mode of transport unknown (0.073%)
@@ -407,10 +407,10 @@ The definition of dying from Transport is to get any of the following ICD codes 
             * V886: Person injured in collision between railway train or railway vehicle and car, nontraffic (0.0026%)
             * V887: Person injured in collision between other specified motor vehicle, nontraffic (0.065%)
             * V888: Person injured in other specified noncollision transport accidents involving motor vehicle, nontraffic (0.0026%)
-        * **V89: Motor- or nonmotor-vehicle accident, type of vehicle unspecified (30.0%)**
+        * **V89: Motor- or nonmotor-vehicle accident, type of vehicle unspecified (30.2%)**
             * V890: Person injured in unspecified motor-vehicle accident, nontraffic (0.47%)
             * V891: 0 Person injured in unsp nonmotor-vehicle accident, nontraffic Person injured in unspecified nonmotor-vehicle accident, nontraffic (0.0026%)
-            * **V892: Person injured in unspecified motor-vehicle accident, traffic (29.0%)**
+            * **V892: Person injured in unspecified motor-vehicle accident, traffic (29.4%)**
             * V893: Person injured in unspecified nonmotor-vehicle accident, traffic (0.0052%)
             * V899: Person injured in unspecified vehicle accident (0.32%)
     * V9 (2.2%)
@@ -470,7 +470,7 @@ The definition of dying from Transport is to get any of the following ICD codes 
   
 ---- 
 
-* <details><summary> Y85 (2.0%)</summary>
+* <details><summary> Y85 (2%)</summary>
     * Y850 (1.9%)
     * Y859 (0.016%)
 </details>

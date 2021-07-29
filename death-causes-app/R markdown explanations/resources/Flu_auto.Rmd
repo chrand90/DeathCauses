@@ -52,17 +52,17 @@ plotSpecificPlots(dat, 'Flu')
 
 The definition of dying from Flu is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Flu who falls under the ICD code 
 
-* <details><summary> J10: Influenza due to other identified influenza virus (31.0%)</summary>
-    * J100: Influenza due to other identified influenza virus with pneumonia (15.0%)
-    * J101: Influenza due to other identified influenza virus with other respiratory manifestations (15.0%)
+* <details><summary> J10: Influenza due to other identified influenza virus (30.8%)</summary>
+    * J100: Influenza due to other identified influenza virus with pneumonia (15.2%)
+    * J101: Influenza due to other identified influenza virus with other respiratory manifestations (15.2%)
     * J108: Influenza due to other identified influenza virus with other manifestations (0.41%)
 </details>
 * <details><summary> J11: Influenza due to unidentified influenza virus (54.5%)</summary>
-    * J110: 0 Influenza due to unidentified influenza virus with pneumonia Influenza due to unidentified influenza virus with pneumonia (31.0%)
-    * J111: Influenza due to unidentified influenza virus with other respiratory manifestations (23.0%)
+    * J110: 0 Influenza due to unidentified influenza virus with pneumonia Influenza due to unidentified influenza virus with pneumonia (30.8%)
+    * J111: Influenza due to unidentified influenza virus with other respiratory manifestations (22.8%)
     * J118: 0 Influenza due to unidentified influenza virus w oth manifest Influenza due to unidentified influenza virus with other manifestations (0.87%)
 </details>
-* J09: Influenza due to certain identified influenza viruses (15.0%)
+* J09: Influenza due to certain identified influenza viruses (14.7%)
 
  Source: @CDCreport, @ICDcodes
 

@@ -58,7 +58,7 @@ plotSpecificPlots(dat, 'Unknown_Disease')
 The definition of dying from Unkown disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Unkown disease who falls under the ICD code 
 
 * <details><summary> R (100.0%)</summary>
-    * R0 (11.0%)
+    * R0 (10.7%)
         * R00: Abnormalities of heart beat (0.44%)
             * R000: Tachycardia, unspecified (0.034%)
             * R001: Bradycardia, unspecified (0.4%)
@@ -135,7 +135,7 @@ The definition of dying from Unkown disease is to get any of the following ICD c
             * R461: Bizarre personal appearance (0.0031%)
         * R47: Speech disturbances, not elsewhere classified (0.087%)
             * R470: Dysphasia and aphasia (0.087%)
-    * **R5 (25.0%)**
+    * **R5 (25.4%)**
         * R50: Fever of other and unknown origin (0.077%)
             * R509: Fever, unspecified (0.077%)
         * R52: Pain, unspecified (0.065%)
@@ -143,7 +143,7 @@ The definition of dying from Unkown disease is to get any of the following ICD c
             * R522 (0.053%)
             * R529 (0.0093%)
         * R53: Malaise and fatigue (2.5%)
-        * **R54: Age-related physical debility (14.0%)**
+        * **R54: Age-related physical debility (14.5%)**
         * R55: Syncope and collapse (0.14%)
         * R56: Convulsions, not elsewhere classified (3.4%)
             * R560: Febrile convulsions (0.0031%)
@@ -158,13 +158,13 @@ The definition of dying from Unkown disease is to get any of the following ICD c
             * R590: Localized enlarged lymph nodes (0.0031%)
             * R591: Generalized enlarged lymph nodes (0.012%)
             * R599: Enlarged lymph nodes, unspecified (0.0093%)
-    * **R6 (19.0%)**
+    * **R6 (19.2%)**
         * R60: Edema, not elsewhere classified (0.037%)
             * R600: Localized edema (0.0031%)
             * R601: Generalized edema (0.0093%)
             * R609: Edema, unspecified (0.025%)
-        * **R62: Lack of expected normal physiological development in childhood and adults (13.0%)**
-            * R628 (13.0%)
+        * **R62: Lack of expected normal physiological development in childhood and adults (12.6%)**
+            * R628 (12.6%)
             * R629 (0.025%)
         * R63: Symptoms and signs concerning food and fluid intake (0.57%)
             * R630: Anorexia (0.35%)
@@ -189,18 +189,18 @@ The definition of dying from Unkown disease is to get any of the following ICD c
             * R788: Finding of other specified substances, not normally found in blood (0.0031%)
         * R79: Other abnormal findings of blood chemistry (0.0093%)
             * R798: Other specified abnormal findings of blood chemistry (0.0093%)
-    * **R9 (42.0%)**
+    * **R9 (42.5%)**
         * R90: Abnormal findings on diagnostic imaging of central nervous system (0.043%)
             * R900: Intracranial space-occupying lesion found on diagnostic imaging of central nervous system (0.04%)
             * R908: Other abnormal findings on diagnostic imaging of central nervous system (0.0031%)
-        * R91: Abnormal findings on diagnostic imaging of lung (1.0%)
+        * R91: Abnormal findings on diagnostic imaging of lung (1%)
         * R94: Abnormal results of function studies (0.0031%)
             * R943: Abnormal results of cardiovascular function studies (0.0031%)
         * R95 (4.8%)
         * R96 (0.56%)
             * R960 (0.56%)
         * R98 (0.049%)
-        * **R99: Ill-defined and unknown cause of mortality (36.0%)**
+        * **R99: Ill-defined and unknown cause of mortality (36%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

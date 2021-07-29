@@ -55,14 +55,14 @@ The definition of dying from Malnutrition is to get any of the following ICD cod
 * <details><summary> E4 (95.7%)</summary>
     * E40: Kwashiorkor (0.073%)
     * E41: Nutritional marasmus (1.1%)
-    * E43: Unspecified severe protein-calorie malnutrition (30.0%)
+    * E43: Unspecified severe protein-calorie malnutrition (30.3%)
     * E44: Protein-calorie malnutrition of moderate and mild degree (0.54%)
         * E440: Moderate protein-calorie malnutrition (0.46%)
         * E441: Mild protein-calorie malnutrition (0.073%)
     * E45: Retarded development following protein-calorie malnutrition (4.6%)
     * **E46: Unspecified protein-calorie malnutrition (59.1%)**
 </details>
-* <details><summary> E5 (2.0%)</summary>
+* <details><summary> E5 (2%)</summary>
     * E51: Thiamine deficiency (0.85%)
         * E512: Wernicke's encephalopathy (0.85%)
     * E53: Deficiency of other B group vitamins (0.95%)

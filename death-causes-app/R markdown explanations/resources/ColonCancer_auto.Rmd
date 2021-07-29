@@ -73,7 +73,7 @@ The definition of dying from Colon cancer is to get any of the following ICD cod
     * **C189: Malignant neoplasm of colon, unspecified (76.3%)**
 </details>
 * C19: Malignant neoplasm of rectosigmoid junction (5.7%)
-* C20: Malignant neoplasm of rectum (13.0%)
+* C20: Malignant neoplasm of rectum (13.1%)
 * <details><summary> C21: Malignant neoplasm of anus and anal canal (1.8%)</summary>
     * C210: Malignant neoplasm of anus, unspecified (1.5%)
     * C211: Malignant neoplasm of anal canal (0.098%)

@@ -43,9 +43,9 @@ In the model Coronary heart disease has the following [risk factors](/model/intr
 * [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
 * [Total physical activity time](/model/PhysicalTotal) (Phys. total)
 * [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
-* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
-* [Age](/model/Age)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Age](/model/Age)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 * [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
 
 #### Number of deaths
@@ -72,11 +72,11 @@ The definition of dying from Coronary heart disease is to get any of the followi
     * I201: Angina pectoris with documented spasm (0.0036%)
     * I209: Angina pectoris, unspecified (0.038%)
 </details>
-* <details><summary> I21: ST elevation (STEMI) and non-ST elevation (NSTEMI) myocardial infarction (31.0%)</summary>
+* <details><summary> I21: ST elevation (STEMI) and non-ST elevation (NSTEMI) myocardial infarction (31.3%)</summary>
     * I210: ST elevation (STEMI) myocardial infarction of anterior wall (0.00082%)
     * I213: ST elevation (STEMI) myocardial infarction of unspecified site (0.003%)
     * I214: Non-ST elevation (NSTEMI) myocardial infarction (0.028%)
-    * I219 (31.0%)
+    * I219 (31.2%)
 </details>
 * <details><summary> I22: Subsequent ST elevation (STEMI) and non-ST elevation (NSTEMI) myocardial infarction (0.01%)</summary>
     * I220: Subsequent ST elevation (STEMI) myocardial infarction of anterior wall (0.00027%)
@@ -88,13 +88,13 @@ The definition of dying from Coronary heart disease is to get any of the followi
     * I249: Acute ischemic heart disease, unspecified (0.68%)
 </details>
 * <details><summary> **I25: Chronic ischemic heart disease (67.6%)**</summary>
-    * **I250 (17.0%)**
-    * **I251: Atherosclerotic heart disease of native coronary artery (44.0%)**
+    * **I250 (16.5%)**
+    * **I251: Atherosclerotic heart disease of native coronary artery (44.3%)**
     * I253: Aneurysm of heart (0.017%)
     * I254: Coronary artery aneurysm and dissection (0.0014%)
     * I255: Ischemic cardiomyopathy (3.2%)
     * I258: Other forms of chronic ischemic heart disease (0.43%)
-    * I259: Chronic ischemic heart disease, unspecified (3.0%)
+    * I259: Chronic ischemic heart disease, unspecified (3%)
 </details>
 
  Source: @CDCreport, @ICDcodes
@@ -112,7 +112,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke end a.,Age,Smoke avg.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
 $$
 
 

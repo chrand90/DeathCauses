@@ -91,7 +91,7 @@ The definition of dying from Childbirth is to get any of the following ICD codes
             * O152: Eclampsia in the puerperium (0.27%)
             * O159: Eclampsia, unspecified as to time period (0.53%)
         * O16: Unspecified maternal hypertension (1.8%)
-    * **O2 (26.0%)**
+    * **O2 (26.1%)**
         * O20: Hemorrhage in early pregnancy (0.088%)
             * O209: Hemorrhage in early pregnancy, unspecified (0.088%)
         * O22: Venous complications and hemorrhoids in pregnancy (0.35%)
@@ -100,13 +100,13 @@ The definition of dying from Childbirth is to get any of the following ICD codes
         * O23: Infections of genitourinary tract in pregnancy (0.53%)
             * O230: Infections of kidney in pregnancy (0.088%)
             * O235: Infections of the genital tract in pregnancy (0.44%)
-        * O24: Diabetes mellitus in pregnancy, childbirth, and the puerperium (3.0%)
+        * O24: Diabetes mellitus in pregnancy, childbirth, and the puerperium (3%)
             * O243: 0 Unsp pre-exist diabetes in pregnancy, chldbrth and the puerp Unspecified pre-existing diabetes mellitus in pregnancy, childbirth and the puerperium (0.088%)
             * O249: Unspecified diabetes mellitus in pregnancy, childbirth and the puerperium (2.9%)
         * O25: Malnutrition in pregnancy, childbirth and the puerperium (0.27%)
-        * **O26: 0 Maternal care for oth conditions predom related to pregnancy Maternal care for other conditions predominantly related to pregnancy (22.0%)**
+        * **O26: 0 Maternal care for oth conditions predom related to pregnancy Maternal care for other conditions predominantly related to pregnancy (21.9%)**
             * O266: Liver and biliary tract disorders in pregnancy, childbirth and the puerperium (2.9%)
-            * O268: Other specified pregnancy related conditions (19.0%)
+            * O268: Other specified pregnancy related conditions (18.8%)
             * O269: Pregnancy related conditions, unspecified (0.18%)
     * O3 (0.35%)
         * O30: Multiple gestation (0.088%)
@@ -132,7 +132,7 @@ The definition of dying from Childbirth is to get any of the following ICD codes
         * O60: Preterm labor (0.18%)
         * O62: Abnormalities of forces of labor (0.088%)
             * O622: Other uterine inertia (0.088%)
-    * O7 (2.0%)
+    * O7 (2%)
         * O71: Other obstetric trauma (0.18%)
             * O711: Rupture of uterus during labor (0.088%)
             * O713: Obstetric laceration of cervix (0.088%)
@@ -154,15 +154,15 @@ The definition of dying from Childbirth is to get any of the following ICD codes
             * O882: Obstetric thromboembolism (1.6%)
         * O89: Complications of anesthesia during the puerperium (0.088%)
             * O898: Other complications of anesthesia during the puerperium (0.088%)
-    * **O9 (55.0%)**
+    * **O9 (55%)**
         * O90: Complications of the puerperium, not elsewhere classified (3.9%)
             * O903: Peripartum cardiomyopathy (3.1%)
             * O904: Postpartum acute kidney failure (0.18%)
             * O908: Other complications of the puerperium, not elsewhere classified (0.62%)
         * O95 (1.3%)
-        * O96 (23.0%)
+        * O96 (22.8%)
             * O960 (8.2%)
-            * O961 (14.0%)
+            * O961 (13.9%)
             * O969 (0.71%)
         * O97 (1.1%)
             * O970 (0.8%)
@@ -171,7 +171,7 @@ The definition of dying from Childbirth is to get any of the following ICD codes
             * O980: Tuberculosis complicating pregnancy, childbirth and the puerperium (0.53%)
             * O987: Human immunodeficiency virus [HIV] disease complicating pregnancy, childbirth and the puerperium (0.53%)
             * O988: Other maternal infectious and parasitic diseases complicating pregnancy, childbirth and the puerperium (0.53%)
-        * **O99: Other maternal diseases classifiable elsewhere but complicating pregnancy, childbirth and the puerperium (24.0%)**
+        * **O99: Other maternal diseases classifiable elsewhere but complicating pregnancy, childbirth and the puerperium (24.3%)**
             * O990: 0 Anemia complicating pregnancy, childbirth and the puerperium Anemia complicating pregnancy, childbirth and the puerperium (0.27%)
             * O991: Other diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism complicating pregnancy, childbirth and the puerperium (0.18%)
             * O992: 0 Endo, nutritional and metabolic diseases compl preg/chldbrth Endocrine, nutritional and metabolic diseases complicating pregnancy, childbirth and the puerperium (0.44%)
@@ -180,7 +180,7 @@ The definition of dying from Childbirth is to get any of the following ICD codes
             * O995: Diseases of the respiratory system complicating pregnancy, childbirth and the puerperium (1.9%)
             * O996: Diseases of the digestive system complicating pregnancy, childbirth and the puerperium (0.35%)
             * O997: Diseases of the skin and subcutaneous tissue complicating pregnancy, childbirth and the puerperium (0.088%)
-            * **O998: Other specified diseases and conditions complicating pregnancy, childbirth and the puerperium (13.0%)**
+            * **O998: Other specified diseases and conditions complicating pregnancy, childbirth and the puerperium (12.9%)**
 </details>
 
  Source: @CDCreport, @ICDcodes

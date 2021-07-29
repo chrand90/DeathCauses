@@ -72,7 +72,7 @@ The definition of dying from Brain cancer is to get any of the following ICD cod
     * C716: Malignant neoplasm of cerebellum (1.1%)
     * C717: Malignant neoplasm of brain stem (1.2%)
     * C718: Malignant neoplasm of overlapping sites of brain (0.13%)
-    * **C719: Malignant neoplasm of brain, unspecified (93.0%)**
+    * **C719: Malignant neoplasm of brain, unspecified (93%)**
 </details>
 * <details><summary> C72: 0 Malig neoplm of spinal cord, cranial nerves and oth prt cnsl Malignant neoplasm of spinal cord, cranial nerves and other parts of central nervous system (0.62%)</summary>
     * C720: Malignant neoplasm of spinal cord (0.27%)

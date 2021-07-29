@@ -54,7 +54,7 @@ plotSpecificPlots(dat, 'Hepatitis')
 
 The definition of dying from Hepatitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Hepatitis who falls under the ICD code 
 
-* <details><summary> B1 (100.00000%)</summary>
+* <details><summary> B1 (100.0%)</summary>
     * B15: Acute hepatitis A (0.32%)
         * B150: Hepatitis A with hepatic coma (0.012%)
         * B159: Hepatitis A without hepatic coma (0.31%)

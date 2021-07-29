@@ -37,8 +37,8 @@ Chronic obstructive pulmonary disease is part of the following death cause categ
 
 In the model Chronic obstructive pulmonary disease has the following [risk factors](/model/intro#risk-factor)
 
-* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 
 #### Number of deaths
 
@@ -60,7 +60,7 @@ plotSpecificPlots(dat, 'COPD')
 The definition of dying from Chronic obstructive pulmonary disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Chronic obstructive pulmonary disease who falls under the ICD code 
 
 * <details><summary> J44: Other chronic obstructive pulmonary disease (99.28%)</summary>
-    * J440: Chronic obstructive pulmonary disease with acute lower respiratory infection (15.0%)
+    * J440: Chronic obstructive pulmonary disease with acute lower respiratory infection (14.9%)
     * J441: 1 Chronic obstructive pulmonary disease w (acute) exacerbation Chronic obstructive pulmonary disease with (acute) exacerbation (3.8%)
     * J448 (1.1%)
     * J449: Chronic obstructive pulmonary disease, unspecified (79.6%)
@@ -82,7 +82,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Smoke end a.,Smoke avg.}}
+P=P_{\text{Smoke avg.,Smoke end a.}}
 $$
 
 

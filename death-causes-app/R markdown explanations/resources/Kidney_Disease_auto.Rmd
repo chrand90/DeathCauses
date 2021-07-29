@@ -65,21 +65,21 @@ The definition of dying from Kidney disease is to get any of the following ICD c
 * N12: Tubulo-interstitial nephritis, not specified as acute or chronic (1.1%)
 * N136: Pyonephrosis (0.023%)
 * N151: Renal and perinephric abscess (0.047%)
-* <details><summary> **N17: Acute kidney failure (17.0%)**</summary>
+* <details><summary> **N17: Acute kidney failure (17.1%)**</summary>
     * N170: Acute kidney failure with tubular necrosis (0.41%)
     * N171: Acute kidney failure with acute cortical necrosis (0.0061%)
     * N178: Other acute kidney failure (0.0041%)
-    * N179: Acute kidney failure, unspecified (17.0%)
+    * N179: Acute kidney failure, unspecified (16.7%)
 </details>
-* <details><summary> **N18: Chronic kidney disease (CKD) (57.0%)**</summary>
+* <details><summary> **N18: Chronic kidney disease (CKD) (57%)**</summary>
     * N181: Chronic kidney disease, stage 1 (0.0041%)
     * N182: Chronic kidney disease, stage 2 (mild) (0.023%)
     * N183: Chronic kidney disease, stage 3 (moderate) (0.52%)
     * N184: Chronic kidney disease, stage 4 (severe) (0.73%)
-    * **N185: Chronic kidney disease, stage 5 (37.0%)**
-    * N189: Chronic kidney disease, unspecified (19.0%)
+    * **N185: Chronic kidney disease, stage 5 (37.1%)**
+    * N189: Chronic kidney disease, unspecified (18.6%)
 </details>
-* **N19: Unspecified kidney failure (23.0%)**
+* **N19: Unspecified kidney failure (22.8%)**
 * <details><summary> N0 (1.5%)</summary>
     * N00: Acute nephritic syndrome (0.74%)
         * N009: Acute nephritic syndrome with unspecified morphologic changes (0.74%)
