@@ -14,6 +14,12 @@ interface MainProps {
 class MainWithoutObserver extends React.Component<MainProps> {
 
   render() {
+    if (this.props.store.uIStore.verticalStacked) {
+      document.body.style.overflow = "auto"
+    }
+    else {
+      document.body.style.overflow = "hidden"
+    }
     return (
       <div className="Main">
         <Container fluid>

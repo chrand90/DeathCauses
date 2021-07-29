@@ -60,7 +60,7 @@ export default class RelationLinkViz {
     this.svg = d3
       .select(canvas)
       .append("svg")
-      .attr("width", Math.max(this.width - 10, 800))
+      .attr("width", Math.max(this.width - 25, 800))
       .attr("height", 1000);
     const vis = this;
 
