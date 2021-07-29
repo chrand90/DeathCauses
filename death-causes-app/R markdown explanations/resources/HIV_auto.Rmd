@@ -1,0 +1,120 @@
+---
+title: "HIV"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+HIV is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+HIV is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+In the model HIV has the following [risk factors](/model/intro#risk-factor)
+
+* [HIV/AIDS diagnosis](/model/HIVStatus) (HIV)
+
+#### Number of deaths
+
+In 2014 HIV was responsible for 0.257% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'HIV')
+```
+
+
+#### Definition
+
+The definition of dying from HIV is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from HIV who falls under the ICD code 
+
+* <details><summary> **B20: Human immunodeficiency virus [HIV] disease (36.5%)**</summary>
+    * B200 (0.61%)
+    * **B201 (8.5%)**
+    * B202 (0.16%)
+    * **B203 (5.4%)**
+    * B204 (0.074%)
+    * B205 (1.7%)
+    * B206 (2.2%)
+    * **B207 (10.3%)**
+    * **B208 (7.3%)**
+    * B209 (0.22%)
+</details>
+* <details><summary> B21 (8.5%)</summary>
+    * B210 (0.64%)
+    * B211 (0.31%)
+    * **B212 (2.9%)**
+    * B213 (0.53%)
+    * B217 (0.34%)
+    * **B218 (3%)**
+    * B219 (0.71%)
+</details>
+* <details><summary> B22 (13%)</summary>
+    * B220 (1.8%)
+    * B222 (1.3%)
+    * B227 (9.9%)
+</details>
+* <details><summary> B23 (20.6%)</summary>
+    * B232 (1.8%)
+    * B238 (18.8%)
+</details>
+* B24 (21.4%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{HIV}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{HIV}}
+$$
+
+
+#### HIV/AIDS diagnosis
+
+HIV/AIDS diagnosis is a risk factor for HIV.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'HIV', c('HIVStatus'),'raw')
+```
+
+
+
+## References

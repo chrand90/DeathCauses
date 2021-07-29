@@ -1,0 +1,95 @@
+---
+title: "Undetermined intent"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Undetermined intent is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Uncertain
+* Undetermined intent
+* Undetermined if homicide, accident or suicide
+* UndeterminedIntent
+
+#### Categories
+
+Undetermined intent is part of the following death cause categories
+
+* [Violent death](/model/ViolentDeath)
+
+#### Risk factors
+
+Undetermined intent has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Undetermined intent was responsible for 0.175% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'UndeterminedIntent')
+```
+
+
+#### Definition
+
+The definition of dying from Undetermined intent is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Undetermined intent who falls under the ICD code 
+
+* <details><summary> **Y1 (65.7%)**</summary>
+    * Y10 (0.72%)
+    * Y11 (6.4%)
+    * **Y12 (25.4%)**
+    * Y13 (0.17%)
+    * **Y14 (28.7%)**
+    * Y15 (1.3%)
+    * Y16 (0.3%)
+    * Y17 (2.3%)
+    * Y18 (0.022%)
+    * Y19 (0.5%)
+</details>
+* <details><summary> Y2 (16.8%)</summary>
+    * **Y20 (3%)**
+    * **Y21: Drowning and submersion, undetermined intent (4%)**
+    * Y22: Handgun discharge, undetermined intent (0.85%)
+    * Y23: Rifle, shotgun and larger firearm discharge, undetermined intent (0.48%)
+    * **Y24: 0 Other and unspecified firearm discharge, undetermined intent Other and unspecified firearm discharge, undetermined intent (4.5%)**
+    * Y25: Contact with explosive material, undetermined intent (0.043%)
+    * **Y26: Exposure to smoke, fire and flames, undetermined intent (3.4%)**
+    * Y28: Contact with sharp object, undetermined intent (0.43%)
+    * Y29: Contact with blunt object, undetermined intent (0.043%)
+</details>
+* Y30: Falling, jumping or pushed from a high place, undetermined intent (1.3%)
+* Y31: Falling, lying or running before or into moving object, undetermined intent (0.37%)
+* Y32: Crashing of motor vehicle, undetermined intent (0.35%)
+* Y33: Other specified events, undetermined intent (2.8%)
+* Y34 (11.6%)
+* Y872 (1%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

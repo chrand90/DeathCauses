@@ -1,0 +1,66 @@
+---
+title: "Salmonella"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Salmonella is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Salmonella is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Salmonella has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Salmonella was responsible for 0.00171% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Salmonella')
+```
+
+
+#### Definition
+
+The definition of dying from Salmonella is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Salmonella who falls under the ICD code 
+
+* <details><summary> A02: Other salmonella infections (100.0%)</summary>
+    * A020: Salmonella enteritis (24.4%)
+    * A021: Salmonella sepsis (51.1%)
+    * A022: Localized salmonella infections (4.4%)
+    * A029: Salmonella infection, unspecified (20%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

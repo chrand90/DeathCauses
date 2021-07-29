@@ -169,7 +169,7 @@
         "placeholder":"Choose Vaccine",
         "initialValue":"Choose Vaccine",
         "options":["None", "9vHPV", "4vHPV"],
-        "optimizability":30
+        "optimizability":20
     },
     {
         "factorname": "BMI",
@@ -236,11 +236,11 @@
         "baseUnit":"1 fruit=100 grams",
         "type":"number",
         "question":"How much fruit do you eat in a normal day",
-        "placeholder":"Number",
+        "placeholder":"Servings",
         "recommendedDomain":{"min":0 },
         "requiredDomain":{"min":0},
-        "units":{"Number":1.0,"Grams":0.01},
-        "helpJson":"A standard fruit weighs 100 grams. An average apple is almost 200 grams.",
+        "units":{"Servings":1.0,"Grams":0.01},
+        "helpJson":"A standard fruit serving weighs 100 grams. An average apple is almost 200 grams.",
         "optimizability":90
     },
     {"factorname":"Vegetables",
@@ -292,7 +292,7 @@
         "baseUnit":"",
         "type":"number",
         "question":"How many concussions have you had that caused hospitilization, memory loss or loss of conscience",
-        "placeholder":"Number",
+        "placeholder":"Concussions",
         "recommendedDomain":{"min":0},
         "requiredDomain": {"min":0},
         "optimizability":20
@@ -302,7 +302,7 @@
         "baseUnit":"days",
         "type":"number",
         "question":"In how many days have you been exposed to pesticides",
-        "placeholder":"Number",
+        "placeholder":"Days",
         "recommendedDomain":{"min":0 ,"max":300},
         "requiredDomain":{"min":0},
         "helpJson":"Your are exposed to pesticides primarily when you apply it either in your garden or in a field.",

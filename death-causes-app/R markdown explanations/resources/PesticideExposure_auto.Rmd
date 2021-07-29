@@ -1,0 +1,56 @@
+---
+title: "Pesticide exposure"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Pesticide exposure is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Pesticides
+* Pesticide exposure
+* PesticideExposure
+
+#### Uses
+
+Pesticide exposure is used by the model in the following places
+
+* [Parkinsons](/model/Parkinsons)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> In how many days have you been exposed to pesticides?
+
+The unit of the input is **Days**.
+
+The answer has to be larger than 0 Days. The answer is recommended to be larger than 0 Days and smaller than 300 Days. Your are exposed to pesticides primarily when you apply it either in your garden or in a field.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Pesticide exposure is 3. This means that it can be interpreted as
+
+> *It is impossible to change now, but it has once definitely been in your control*
+
+
+
+## References

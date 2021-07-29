@@ -15,7 +15,8 @@ library(ggplot2)
 library(gridExtra)
 
 dat=initialize_database(c("../../death-causes-app/src/resources/Causes.json",
-                          "../../death-causes-app/src/resources/Conditions.json"
+                          "../../death-causes-app/src/resources/Conditions.json",
+                          "../../death-causes-app/src/resources/CategoryCauses.json"
                           ),
                         "../../death-causes-app/src/resources/Descriptions.json")
 all_diseases=dat@diseases

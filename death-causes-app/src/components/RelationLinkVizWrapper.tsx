@@ -3,6 +3,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../stores/rootStore';
 import RelationLinkViz from './RelationLinkViz';
 import './RelationLinkVizWrapper.css';
+import { useHistory } from "react-router-dom";
+import  Button  from 'react-bootstrap/Button';
+
 
 interface RelationLinkWrapperProps {
 }
@@ -21,7 +24,12 @@ function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (
 const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
 	const chartArea = useRef(null);
 	const store = useStore();
+	let history = useHistory();
 	const [chart, setChart] = useState<RelationLinkViz | null>(null);
+
+	const onRedirectToLibrary = (name: string) => {
+		history.push("/model/"+name)
+	} 
 
 	const createNewChart = function () {
 		setChart(new RelationLinkViz(
@@ -63,6 +71,11 @@ const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //cl
 					return <option value={d}>{store.loadedDataStore.descriptions.getDescription(d,20)}</option>
 				})}
 				</select> in the model</p>
+			<p> Visit its page in the library <Button 
+				className="text-link-button" 
+				variant="link"
+				onClick={()=> onRedirectToLibrary(store.relationLinkVizStore.elementInFocus)}> 
+				{store.relationLinkVizStore.elementInFocus} </Button></p>
 		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
 		</div>
 	)

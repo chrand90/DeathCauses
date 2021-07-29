@@ -1,0 +1,89 @@
+---
+title: "Malnutrition"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Malnutrition is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Malnutrition is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Malnutrition has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Malnutrition was responsible for 0.156% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Malnutrition')
+```
+
+
+#### Definition
+
+The definition of dying from Malnutrition is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Malnutrition who falls under the ICD code 
+
+* <details><summary> E4 (95.7%)</summary>
+    * E40: Kwashiorkor (0.073%)
+    * E41: Nutritional marasmus (1.1%)
+    * E43: Unspecified severe protein-calorie malnutrition (30.3%)
+    * E44: Protein-calorie malnutrition of moderate and mild degree (0.54%)
+        * E440: Moderate protein-calorie malnutrition (0.46%)
+        * E441: Mild protein-calorie malnutrition (0.073%)
+    * E45: Retarded development following protein-calorie malnutrition (4.6%)
+    * **E46: Unspecified protein-calorie malnutrition (59.1%)**
+</details>
+* <details><summary> E5 (2%)</summary>
+    * E51: Thiamine deficiency (0.85%)
+        * E512: Wernicke's encephalopathy (0.85%)
+    * E53: Deficiency of other B group vitamins (0.95%)
+        * E538: Deficiency of other specified B group vitamins (0.95%)
+    * E55: Vitamin D deficiency (0.097%)
+        * E550: Rickets, active (0.049%)
+        * E559: Vitamin D deficiency, unspecified (0.049%)
+    * E56: Other vitamin deficiencies (0.073%)
+        * E569: Vitamin deficiency, unspecified (0.073%)
+</details>
+* <details><summary> E61: Deficiency of other nutrient elements (0.24%)</summary>
+    * E610: Copper deficiency (0.024%)
+    * E611: Iron deficiency (0.12%)
+    * E615: Molybdenum deficiency (0.097%)
+</details>
+* <details><summary> E63: Other nutritional deficiencies (2.1%)</summary>
+    * E639: Nutritional deficiency, unspecified (2.1%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

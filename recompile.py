@@ -54,12 +54,12 @@ if options.guided:
 	yes_no_continue("Are you happy with using this command to invoke R notebooks: '"+options.Rpath+"'?[y/n]", "Make sure to add the correct argument to --Rpath for this recompiler")
 	
 if yes_no("Do you wish to recompute all html help files? [y/n]"):	
-	for l in os.listdir(os.path.join("death-causes-app","R markdown explanations")):
+	for l in os.listdir(os.path.join("death-causes-app","R markdown explanations","resources")):
 		if l.endswith(".Rmd"):
 			command= '"rmarkdown::render(\'{filename}\')"'.format(filename=l)
-			print("cwd",  os.path.join("death-causes-app", "R markdown explanations"))
+			print("cwd",  os.path.join("death-causes-app", "R markdown explanations", "resources"))
 			print(command)
-			subprocess.run([options.Rpath, "-e", command], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations"))
+			subprocess.run([options.Rpath, "-e", command], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations","resources"))
 		
 yes_no_continue("do you want to see the changes on the development server by creating a new server now? [y/n]", "ending script then...")
 subprocess.run(["npm", "run", "start-dev"], shell=True, cwd=os.path.join("death-causes-app"))

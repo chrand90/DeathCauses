@@ -1,0 +1,63 @@
+---
+title: "Current smoking amount"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Current smoking amount is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Cigarettes
+* Smoking amount
+* Current smoking amount
+* SmokeIntensity
+
+#### Uses
+
+Current smoking amount is used by the model in the following places
+
+* [Mouth cancer](/model/MouthCancer)
+* [Stroke](/model/Stroke)
+* [Emphysema](/model/Emphysema)
+* [Total amount smoked in life](/model/SmokeCumulative)
+* [Smoking average](/model/SmokeTypicalAmount)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much tobacco do you smoke in a normal day?
+
+The unit of the input is **Cigarettes**, but can be changed to any of the units below
+
+* Packs (1 Packs = 20.0 Cigarettes)
+
+The answer has to be larger than 0 Cigarettes. The answer is recommended to be larger than 0 Cigarettes and smaller than 40 Cigarettes. If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) 
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Current smoking amount is 5. This means that it can be interpreted as
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+
+## References

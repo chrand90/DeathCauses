@@ -1,0 +1,243 @@
+---
+title: "Coronary heart disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Coronary heart disease is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Coronary
+* Coronary heart disease
+* Ischemic
+
+#### Categories
+
+Coronary heart disease is part of the following death cause categories
+
+* [Heart disease](/model/HeartDiseases)
+
+#### Risk factors
+
+In the model Coronary heart disease has the following [risk factors](/model/intro#risk-factor)
+
+* [Coffee consumption](/model/Caffeine) (Coffee)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
+* [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
+* [Total physical activity time](/model/PhysicalTotal) (Phys. total)
+* [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Age](/model/Age)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+* [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
+
+#### Number of deaths
+
+In 2014 Coronary heart disease was responsible for 13.9% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic')
+```
+
+
+#### Definition
+
+The definition of dying from Coronary heart disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Coronary heart disease who falls under the ICD code 
+
+* <details><summary> I20: Angina pectoris (0.05%)</summary>
+    * I200: Unstable angina (0.0082%)
+    * I201: Angina pectoris with documented spasm (0.0036%)
+    * I209: Angina pectoris, unspecified (0.038%)
+</details>
+* <details><summary> I21: ST elevation (STEMI) and non-ST elevation (NSTEMI) myocardial infarction (31.3%)</summary>
+    * I210: ST elevation (STEMI) myocardial infarction of anterior wall (0.00082%)
+    * I213: ST elevation (STEMI) myocardial infarction of unspecified site (0.003%)
+    * I214: Non-ST elevation (NSTEMI) myocardial infarction (0.028%)
+    * I219 (31.2%)
+</details>
+* <details><summary> I22: Subsequent ST elevation (STEMI) and non-ST elevation (NSTEMI) myocardial infarction (0.01%)</summary>
+    * I220: Subsequent ST elevation (STEMI) myocardial infarction of anterior wall (0.00027%)
+    * I229: Subsequent ST elevation (STEMI) myocardial infarction of unspecified site (0.01%)
+</details>
+* <details><summary> I24: Other acute ischemic heart diseases (1.1%)</summary>
+    * I241: Dressler's syndrome (0.00055%)
+    * I248: Other forms of acute ischemic heart disease (0.42%)
+    * I249: Acute ischemic heart disease, unspecified (0.68%)
+</details>
+* <details><summary> **I25: Chronic ischemic heart disease (67.6%)**</summary>
+    * **I250 (16.5%)**
+    * **I251: Atherosclerotic heart disease of native coronary artery (44.3%)**
+    * I253: Aneurysm of heart (0.017%)
+    * I254: Coronary artery aneurysm and dissection (0.0014%)
+    * I255: Ischemic cardiomyopathy (3.2%)
+    * I258: Other forms of chronic ischemic heart disease (0.43%)
+    * I259: Chronic ischemic heart disease, unspecified (3%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{Coffee}} \cdot RR_{\text{Alcohol}} \cdot RR_{\text{Peak alcohol}} \cdot RR_{\text{Phys. total,Phys. Hard}} \cdot RR_{\text{Smoke avg.,Age}} \cdot RR_{\text{Smoke avg.,Smoke end a.}} \cdot RR_{\text{Greens}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
+$$
+
+
+#### Coffee consumption
+
+Coffee consumption is a risk factor for Coronary heart disease.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'raw')
+```
+
+
+Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'interpolated')
+```
+
+
+#### Alcohol consumption
+
+If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call Peak alcohol consumption).  @roerecke2014alcohol have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from @malyutina2002relation, which is one of the studies included in the meta analysis of @roerecke2014alcohol. Because the study from @malyutina2002relation is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method. 
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('Drinking'),'raw')
+```
+
+
+Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('Drinking'),'interpolated')
+```
+
+
+#### Peak Alcohol consumption
+
+See [Peak alcohol](#drinking)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'raw')
+```
+
+
+Because the variable Peak Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'interpolated')
+```
+
+
+#### Hard physical activity time, Total physical activity time
+
+Hard physical activity time and Total physical activity time are a group of risk factors for Coronary heart disease.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'raw')
+```
+
+
+Because the variables Total physical activity time and Hard physical activity time are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'interpolated')
+```
+
+
+#### Age, Smoking average
+
+See [Smoking average, Time since smoking per year](#smoking-average-time-since-smoking-per-year)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','Age'),'raw')
+```
+
+
+Because the variables Smoking average and Age are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','Age'),'interpolated')
+```
+
+
+#### Smoking average, Time since smoking per year
+
+We use the [meta analysis](#meta-analysis) of cohort studies by @hackshaw2018low to get age-specific risk ratios for different amounts of smoking. They computed a joint [risk ratio](#risk-ratio) using estimates that were adjusted for different other [risk factors](#risk-factors). Only age was a common adjusting risk factor in all the studies. The meta analysis focused on low-intensity smokers which means that they estimated the risk ratio when smoking just one cigarette per day and this is great because it seems that even a little smoking is harmful to the heart. To take into account smoking cessation we multiplied the numbers from @hackshaw2018low with the smoking cessation estimates from @shields2013smoking. @shields2013smoking perfectly quantifies the drop in risk ratio of dying from coronary heart disease as more times passes since one stopped smoking, but unfortunately, they have not stratified on amount smoked, but instead put all former smokers in the same category. For us to obtain pseudo-stratified data we do the following. Let
+
+$$
+RR_{s,a,t}=RR(\text{smoke amount=s, age=a, time since smoking=t})\\
+RR_{s,a,\bullet}=RR(\text{smoke amount=s, age=a})\\
+RR^*=RR(\text{smoke amount=0, age=a})=1\\
+RR_{\bullet,\bullet,t}=RR(\text{time since smoking=t})\\
+\widetilde{RR}_t=RR_{\bullet,\bullet,t}/RR_{\bullet, \bullet,0}\\
+\widetilde{RR}_{\infty}=RR(\text{never smoked})
+$$
+where all RR-risk ratios are with respect to never-smokers and the $\widetilde{RR}$-risk ratios are with respect to current smokers. The study by @hackslaw2018low contains the values $RR_{s,a,\bullet}$ and the study by @shields2013smoking provides $\widetilde{RR}_t$ and $\widetilde{RR}_{\infty}$. Ideally we would We estimate $RR_{s,a,t}$ by
+
+$$
+RR_{s,a,t}=RR^*+(RR_{s,a, \bullet}-RR^*)\cdot \frac{\widetilde{RR}_t-\widetilde{RR}_{\infty}}{\widetilde{RR}_0-\widetilde{RR}_{\infty}}
+$$
+
+The idea is as follows; as you stop smoking you slowly move from the risk ratio you would have if you still smoked ($RR_{s,a,\bullet}$) and towards the risk ratio applicable if you never smoked ($RR^*$). However, because the deathcauses framework works best if there are not 3-dimensional tables, we do not combine this to make an actual 3-dimensional table. Instead we keep two tables make the computation 
+
+$$
+RR_{s,a,t}=\Bigl\{\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\Bigr\}\cdot \Bigl\{RR^*+(RR_{s,65,\bullet}-RR^*)\cdot \frac{\widetilde{RR}_t-\widetilde{RR}_{\infty}}{\widetilde{RR}_0-\widetilde{RR}_{\infty}}\Bigr\}
+$$
+where the first product term is saved in one table and the second product term is saved in another.The price for making this trick was to introduce an artificial standard age - here 65. In practice this means that young former smokers will still receive the age penalty $\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}$ even though they haven't smoked in a while.
+
+The raw age penalties ($\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}$) are shown below. Be aware that this table only says how much more dangerous it is to smoke when you are young and not how dangerous it is to smoke when you are old.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','SmokeSinceStop'),'raw')
+```
+
+
+Because the variables Smoking average and Time since smoking per year are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','SmokeSinceStop'),'interpolated')
+```
+
+
+#### Greens consumption
+
+See [Heart disease: Greens consumption](/model/HeartDiseases#greens-consumption)
+
+
+
+## References

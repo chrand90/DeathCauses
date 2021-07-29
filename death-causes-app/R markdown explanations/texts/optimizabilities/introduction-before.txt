@@ -1,0 +1,5 @@
+Every risk factor is assigned a *optimizability* that describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+
+
+The optimizabilities are used to [decompose](/model/intro#decomposition) the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. Because risk factors often [interact](/model/intro#interaction) with each other, some of the total risk will often be caused by more than one risk factor. In those cases we use the optimizability to assign this multiple-caused risk to the risk factor with higher optimizability. If some factors have the same optimizability, we use [another method](/model/intro#decomposing-two-equally-optimizable-factors).
+

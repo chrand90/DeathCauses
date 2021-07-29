@@ -1,0 +1,119 @@
+---
+title: "Uterus cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Uterus cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Uterus ca.
+* Uterus cancer
+* UterusCancer
+
+#### Categories
+
+Uterus cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Uterus cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [Coffee consumption](/model/Caffeine) (Coffee)
+* [BMI](/model/BMI)
+* [Biological sex](/model/Sex) (Sex)
+
+#### Number of deaths
+
+In 2014 Uterus cancer was responsible for 0.37% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'UterusCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Uterus cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Uterus cancer who falls under the ICD code 
+
+* <details><summary> C54: Malignant neoplasm of corpus uteri (42.8%)</summary>
+    * C540: Malignant neoplasm of isthmus uteri (0.021%)
+    * C541: Malignant neoplasm of endometrium (42%)
+    * C549: Malignant neoplasm of corpus uteri, unspecified (0.7%)
+</details>
+* C55: Malignant neoplasm of uterus, part unspecified (57.2%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{BMI,Coffee}} \cdot RR_{\text{Sex}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Coffee,BMI}} \cdot P_{\text{Sex}}
+$$
+
+
+#### BMI, Coffee consumption
+
+BMI and Coffee consumption are a group of risk factors for Uterus cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'UterusCancer', c('BMI','Caffeine'),'raw')
+```
+
+
+Because the variables BMI and Coffee consumption are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'UterusCancer', c('BMI','Caffeine'),'interpolated')
+```
+
+
+#### Biological sex
+
+Biological sex is a risk factor for Uterus cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'UterusCancer', c('Sex'),'raw')
+```
+
+
+
+## References

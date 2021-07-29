@@ -1,0 +1,96 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Coronary Heart Disease</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="Ischemic_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Coronary Heart Disease</h1>
+</div>
+<style type="text/css">
+
+body{   
+    background:#F0F0F0;}
+    
+details{
+    background:#e1f9fa;}
+
+</style>
+<div id="coronary-heart-disease" class="section level3">
+<h3>Coronary Heart Disease</h3>
+<p><a href="/model/intro">backlink</a></p>
+<p>test</p>
+<p>There are many minor <a href="#risk-factor">risk factors</a> for ischemic heart disease (also called coronary heart disease). So far we have included the following</p>
+<ul>
+<li><a href="%22coronary-heart-disease-smoking">Age-related smoking and cessation</a>.</li>
+</ul>
+<div id="interactions" class="section level4">
+<h4>Interactions</h4>
+<p>We assume that some of the factors are dependent on each other but we assume that the <a href="#interactions-between-risk-factors">interaction</a> between the different types are multiplicative. That means that we multiply the <a href="#risk-ratio">risk ratios</a> for every factor to get the full risk ratio, <span class="math inline">\(\text{RR}\)</span>. <span class="math display">\[
+\text{RR}=\text{RR}_{\text{smoke amount,age}}\cdot RR_{\text{smoke amount, smoke stop}}\cdot  RR_{\text{drinking}}\cdot RR_{\text{max drinking}}
+\]</span> We also assume that the factors are <a href="#independence">independent</a> when we compute the normalizing factor. This means that we compute the joint proportions, <span class="math inline">\(P\)</span>, as <span class="math display">\[
+P= P_{\text{smoke amount,age,smoke stop}} P_{\text{drinking, max drinking}}
+\]</span></p>
+</div>
+<div id="coronary-heart-disease-smoking" class="section level4">
+<h4>Coronary Heart Disease: Smoking</h4>
+<p>We use the <a href="#meta-analysis">meta analysis</a> of cohort studies by <span class="citation">Hackshaw et al. (<a href="#ref-hackshaw2018low" role="doc-biblioref">2018</a>)</span> to get age-specific risk ratios for different amounts of smoking. They computed a joint <a href="#risk-ratio">risk ratio</a> using estimates that were adjusted for different other <a href="#risk-factors">risk factors</a>. Only age was a common adjusting risk factor in all the studies. The meta analysis focused on low-intensity smokers which means that they estimated the risk ratio when smoking just one cigarette per day and this is great because it seems that even a little smoking is harmful to the heart. To take into account smoking cessation we multiplied the numbers from <span class="citation">Hackshaw et al. (<a href="#ref-hackshaw2018low" role="doc-biblioref">2018</a>)</span> with the smoking cessation estimates from <span class="citation">Shields and Wilkins (<a href="#ref-shields2013smoking" role="doc-biblioref">2013</a>)</span>. <span class="citation">Shields and Wilkins (<a href="#ref-shields2013smoking" role="doc-biblioref">2013</a>)</span> perfectly quantifies the drop in risk ratio of dying from coronary heart disease as more times passes since one stopped smoking, but unfortunately, they have not stratified on amount smoked, but instead put all former smokers in the same category. For us to obtain pseudo-stratified data we do the following. Let</p>
+<p><span class="math display">\[
+RR_{s,a,t}=RR(\text{smoke amount=s, age=a, time since smoking=t})\\
+RR_{s,a,\bullet}=RR(\text{smoke amount=s, age=a})\\
+RR^*=RR(\text{smoke amount=0, age=a})=1\\
+RR_{\bullet,\bullet,t}=RR(\text{time since smoking=t})\\
+\widetilde{RR}_t=RR_{\bullet,\bullet,t}/RR_{\bullet, \bullet,0}\\
+\widetilde{RR}_{\infty}=RR(\text{never smoked})
+\]</span> where all RR-risk ratios are with respect to never-smokers and the <span class="math inline">\(\widetilde{RR}\)</span>-risk ratios are with respect to current smokers. The study by <span class="citation">(<span class="citeproc-not-found" data-reference-id="hackslaw2018low"><strong>???</strong></span>)</span> contains the values <span class="math inline">\(RR_{s,a,\bullet}\)</span> and the study by <span class="citation">Shields and Wilkins (<a href="#ref-shields2013smoking" role="doc-biblioref">2013</a>)</span> provides <span class="math inline">\(\widetilde{RR}_t\)</span> and <span class="math inline">\(\widetilde{RR}_{\infty}\)</span>. Ideally we would We estimate <span class="math inline">\(RR_{s,a,t}\)</span> by</p>
+<p><span class="math display">\[
+RR_{s,a,t}=RR^*+(RR_{s,a, \bullet}-RR^*)\cdot \frac{\widetilde{RR}_t-\widetilde{RR}_{\infty}}{\widetilde{RR}_0-\widetilde{RR}_{\infty}}
+\]</span></p>
+<p>The idea is as follows; as you stop smoking you slowly move from the risk ratio you would have if you still smoked (<span class="math inline">\(RR_{s,a,\bullet}\)</span>) and towards the risk ratio applicable if you never smoked (<span class="math inline">\(RR^*\)</span>). However, because the deathcauses framework works best if there are not 3-dimensional tables, we do not combine this to make an actual 3-dimensional table. Instead we keep two tables make the computation</p>
+<p><span class="math display">\[
+RR_{s,a,t}=\Bigl\{\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\Bigr\}\cdot \Bigl\{RR^*+(RR_{s,65,\bullet}-RR^*)\cdot \frac{\widetilde{RR}_t-\widetilde{RR}_{\infty}}{\widetilde{RR}_0-\widetilde{RR}_{\infty}}\Bigr\}
+\]</span> where the first product term is saved in one table and the second product term is saved in another.The price for making this trick was to introduce an artificial standard age - here 65. In practice this means that young former smokers will still receive the age penalty <span class="math inline">\(\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\)</span> even though they haven’t smoked in a while.</p>
+<p>The raw age penalties (<span class="math inline">\(\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\)</span>) are shown below. Be aware that this table only says how much more dangerous it is to smoke when you are young and not how dangerous it is to smoke when you are old.</p>
+<p><img src="Ischemic_files/figure-html/unnamed-chunk-1-1.png" width="672" /><img src="Ischemic_files/figure-html/unnamed-chunk-1-2.png" width="672" /></p>
+<p>Below is the risk ratios for time since one stopped smoking (Smokestop duration) and the average amount smoked (Smoking average). It is not age adjusted, so it is only for 65-year olds.</p>
+<p><img src="Ischemic_files/figure-html/unnamed-chunk-2-1.png" width="672" /><img src="Ischemic_files/figure-html/unnamed-chunk-2-2.png" width="672" /></p>
+</div>
+<div id="coronary-heart-disease-drinking" class="section level4">
+<h4>Coronary Heart Disease: Drinking</h4>
+<p>If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call Peak alcohol consumption). <span class="citation">Roerecke and Rehm (<a href="#ref-roerecke2014alcohol" role="doc-biblioref">2014</a>)</span> have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from <span class="citation">Malyutina et al. (<a href="#ref-malyutina2002relation" role="doc-biblioref">2002</a>)</span>, which is one of the studies included in the meta analysis of <span class="citation">Roerecke and Rehm (<a href="#ref-roerecke2014alcohol" role="doc-biblioref">2014</a>)</span>. Because the study from <span class="citation">Malyutina et al. (<a href="#ref-malyutina2002relation" role="doc-biblioref">2002</a>)</span> is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method.</p>
+<p><img src="Ischemic_files/figure-html/unnamed-chunk-3-1.png" width="672" /><img src="Ischemic_files/figure-html/unnamed-chunk-3-2.png" width="672" /></p>
+<p><img src="Ischemic_files/figure-html/unnamed-chunk-4-1.png" width="672" /><img src="Ischemic_files/figure-html/unnamed-chunk-4-2.png" width="672" /></p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references hanging-indent">
+<div id="ref-hackshaw2018low">
+<p>Hackshaw, Allan, Joan K Morris, Sadie Boniface, Jin-Ling Tang, and Dušan Milenković. 2018. “Low Cigarette Consumption and Risk of Coronary Heart Disease and Stroke: Meta-Analysis of 141 Cohort Studies in 55 Study Reports.” <em>Bmj</em> 360.</p>
+</div>
+<div id="ref-malyutina2002relation">
+<p>Malyutina, Sofia, Martin Bobak, Svetlana Kurilovitch, Valery Gafarov, Galina Simonova, Yuri Nikitin, and Michael Marmot. 2002. “Relation Between Heavy and Binge Drinking and All-Cause and Cardiovascular Mortality in Novosibirsk, Russia: A Prospective Cohort Study.” <em>The Lancet</em> 360 (9344): 1448–54.</p>
+</div>
+<div id="ref-roerecke2014alcohol">
+<p>Roerecke, Michael, and Jürgen Rehm. 2014. “Alcohol Consumption, Drinking Patterns, and Ischemic Heart Disease: A Narrative Review of Meta-Analyses and a Systematic Review and Meta-Analysis of the Impact of Heavy Drinking Occasions on Risk for Moderate Drinkers.” <em>BMC Medicine</em> 12 (1): 1–11.</p>
+</div>
+<div id="ref-shields2013smoking">
+<p>Shields, Margot, and Kathryn Wilkins. 2013. <em>Smoking, Smoking Cessation and Heart Disease Risk: A 16-Year Follow-up Study</em>. Statistics Canada.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,135 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Liver cancer</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="LiverCancer_auto_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Liver cancer</h1>
+</div>
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+<p><em>[auto-generated file]</em></p>
+<p>Liver cancer is a <strong>death cause</strong>. It means that there is a certain probability that one dies from this.</p>
+<div id="alternative-names" class="section level4">
+<h4>Alternative names:</h4>
+<ul>
+<li>Liver cancer</li>
+<li>LiverCancer</li>
+</ul>
+</div>
+<div id="categories" class="section level4">
+<h4>Categories</h4>
+<p>Liver cancer is part of the following death cause categories</p>
+<ul>
+<li><a href="/model/Cancer">Cancer</a></li>
+</ul>
+</div>
+<div id="risk-factors" class="section level4">
+<h4>Risk factors</h4>
+<p>In the model Liver cancer has the following <a href="/model/intro#risk-factor">risk factors</a></p>
+<ul>
+<li><a href="/model/BMI">BMI</a></li>
+<li><a href="/model/HCVStatus">HCV diagnosis</a> (HCV)</li>
+<li><a href="/model/Caffeine">Coffee consumption</a> (Coffee)</li>
+<li><a href="/model/DiabetesStatus">Diabetes diagnosis</a> (Diabetes)</li>
+<li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
+<li><a href="/model/Sex">Biological sex</a> (Sex)</li>
+</ul>
+</div>
+<div id="number-of-deaths" class="section level4">
+<h4>Number of deaths</h4>
+<p>In 2014 Liver cancer was responsible for 0.941% of the deaths in the US. Below is a plot of how prevalent the death was for different ages <span class="citation">(Xu et al. <a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span></p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="definition" class="section level4">
+<h4>Definition</h4>
+<p>The definition of dying from Liver cancer is to get any of the following ICD codes as the main cause of death on one’s death certificate. The percentage is the proportion of the deaths from Liver cancer who falls under the ICD code</p>
+<ul>
+<li><details>
+<summary>
+C22: Malignant neoplasm of liver and intrahepatic bile ducts (100.0%)
+</summary>
+<ul>
+<li><strong>C220: Liver cell carcinoma (38.9%)</strong></li>
+<li><strong>C221: Intrahepatic bile duct carcinoma (23.5%)</strong></li>
+<li>C222: Hepatoblastoma (0.089%)</li>
+<li>C223: Angiosarcoma of liver (0.1%)</li>
+<li>C224: Other sarcomas of liver (0.004%)</li>
+<li>C227: Other specified carcinomas of liver (0.004%)</li>
+<li><strong>C229: Malignant neoplasm of liver, not specified as primary or secondary (37.4%)</strong></li>
+</ul>
+</details></li>
+</ul>
+<p>Source: <span class="citation">Xu et al. (<a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span>, <span class="citation">(“ICD Order Files 2014,” <a href="#ref-ICDcodes" role="doc-biblioref">n.d.</a>)</span></p>
+</div>
+<div id="interaction" class="section level4">
+<h4>Interaction</h4>
+<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p><span class="math display">\[
+RR=RR_{\text{BMI,HCV}} \cdot RR_{\text{Coffee}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Alcohol,Sex}}
+\]</span></p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p><span class="math display">\[
+P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Alcohol,Sex}}
+\]</span></p>
+</div>
+<div id="bmi-hcv-diagnosis" class="section level4">
+<h4>BMI, HCV diagnosis</h4>
+<p>BMI and HCV diagnosis are a group of risk factors for Liver cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Because the variable BMI is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>for every value of the other variables. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="coffee-consumption" class="section level4">
+<h4>Coffee consumption</h4>
+<p>Coffee consumption is a risk factor for Liver cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>Because the variable Coffee consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="diabetes-diagnosis" class="section level4">
+<h4>Diabetes diagnosis</h4>
+<p>Diabetes diagnosis is a risk factor for Liver cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="alcohol-consumption-biological-sex" class="section level4">
+<h4>Alcohol consumption, Biological sex</h4>
+<p>Alcohol consumption and Biological sex are a group of risk factors for Liver cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>for every value of the other variables. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references hanging-indent">
+<div id="ref-ICDcodes">
+<p>“ICD Order Files 2014.” n.d. <a href="https://www.cdc.gov/nchs/icd/icd10cm.htm">https://www.cdc.gov/nchs/icd/icd10cm.htm</a>.</p>
+</div>
+<div id="ref-CDCreport">
+<p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>
+</div>
+</div>
+</div>
+</body>
+</html>

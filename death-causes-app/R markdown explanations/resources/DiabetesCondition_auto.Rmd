@@ -1,0 +1,122 @@
+---
+title: "Diabetes condition"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Diabetes condition is a **condition**. It means that the model computes probabilities of getting or having it and uses that in further computations.
+
+#### Alternative names:
+* Diabetes
+* Diabetes condition
+* DiabetesCondition
+
+#### Risk factors
+
+In the model Diabetes condition has the following [risk factors](/model/intro#risk-factor)
+
+* [BMI](/model/BMI)
+* [Waist circumference as male](/model/WaistMale) (Waist (male))
+
+#### Special factors
+
+In the model Diabetes condition has the following [special factors](/model/intro#special-factor)
+
+* [Diabetes diagnosis](/model/DiabetesStatus) (Diabetes)
+
+#### Uses
+
+Diabetes condition is used by the model in the following places
+
+* [Diabetes](/model/Diabetes)
+
+#### Prevalence
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json",
+"../../../death-causes-app/src/resources/Conditions.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DiabetesCondition')
+```
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{BMI}} \cdot RR_{\text{Waist (male)}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{BMI,Waist (male)}}
+$$
+
+
+#### BMI
+
+BMI is a risk factor for Diabetes condition.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'raw')
+```
+
+
+Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'interpolated')
+```
+
+
+#### Waist circumference as male
+
+Waist circumference as male is a risk factor for Diabetes condition.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'raw')
+```
+
+
+Because the variable Waist circumference as male is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'interpolated')
+```
+
+
+#### Diabetes diagnosis
+
+The factor Diabetes diagnosis is used to decide whether the probability of having diabetes should be computed. If one is already diagnosed with diabetes, there is no need to compute the probability of having diabetes because it will be 100%.
+
+
+
+
+## References

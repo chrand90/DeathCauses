@@ -1,0 +1,73 @@
+---
+title: "Menigitis"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Menigitis is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Menigitis is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Menigitis has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Menigitis was responsible for 0.0205% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Menigitis')
+```
+
+
+#### Definition
+
+The definition of dying from Menigitis is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Menigitis who falls under the ICD code 
+
+* <details><summary> G00: Bacterial meningitis, not elsewhere classified (50.6%)</summary>
+    * G000: Hemophilus meningitis (0.56%)
+    * G001: Pneumococcal meningitis (6.5%)
+    * G002: Streptococcal meningitis (13.2%)
+    * G003: Staphylococcal meningitis (1.5%)
+    * G008: Other bacterial meningitis (3.5%)
+    * **G009: Bacterial meningitis, unspecified (25.4%)**
+</details>
+* <details><summary> G03: Meningitis due to other and unspecified causes (49.4%)</summary>
+    * G030: Nonpyogenic meningitis (2.2%)
+    * G031: Chronic meningitis (0.56%)
+    * G039: Meningitis, unspecified (46.6%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

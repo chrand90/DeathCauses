@@ -330,9 +330,17 @@ initialize_description=function(node, name){
              baseUnit=ifelse("baseUnit" %in% names(node), node$baseUnit,"")))
 }
 
+setClass("AgeGroups", slots=c(age_classification="character", age_prevalences="numeric"))
 
 initialize_disease=function(raw_element){
-  ageGroups=initialize_Age_object(raw_element$Age)
+  if("Age" %in% names(raw_element)){
+    ageGroups=initialize_Age_object(raw_element$Age)
+  }
+  else{
+    ageGroups=new("AgeGroups",
+                  age_classification=character(),
+                  age_prevalences=rep(0,22))
+  }
   riskfactorgroups=lapply(raw_element$RiskFactorGroups, initialize_risk_factor_group)
   return(new("Disease", Age=ageGroups, RiskFactorGroups=riskfactorgroups))
 }
@@ -856,23 +864,25 @@ generateSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type
 #' @param plot_type the type of plot you want
 #' @return will simply plot the plot
 #' @export
-plotSpecificPlots=function(all_diseases, diseaseName, riskfactors, plot_type=c("raw","interpolated"), plotFrequencies=F){
+plotSpecificPlots=function(all_diseases, diseaseName, riskfactors=character(), plot_type=c("raw","interpolated"), plotFrequencies=F){
   disease=all_diseases@diseases[[diseaseName]]
   plotted_anything=F
   if(length(riskfactors)==0){
     plot(disease@Age)
     plotted_anything=T
   }
-  for(riskfactorgroup in disease@RiskFactorGroups){
-    for(riskratiotable in riskfactorgroup@riskRatioTables){
-      if(paste(sort(riskfactors), collapse=".")==paste(sort(riskratiotable@riskFactorNames), collapse=".")){
-        if(plot_type[1]=="raw"){
-          plot(riskratiotable@rawRiskRatios, plotFrequencies)
-          plotted_anything=T
-        }
-        else if(plot_type[1]=="interpolated"){
-          plot(riskratiotable@interpolationTable)
-          plotted_anything=T
+  else{
+    for(riskfactorgroup in disease@RiskFactorGroups){
+      for(riskratiotable in riskfactorgroup@riskRatioTables){
+        if(paste(sort(riskfactors), collapse=".")==paste(sort(riskratiotable@riskFactorNames), collapse=".")){
+          if(plot_type[1]=="raw"){
+            plot(riskratiotable@rawRiskRatios, plotFrequencies)
+            plotted_anything=T
+          }
+          else if(plot_type[1]=="interpolated"){
+            plot(riskratiotable@interpolationTable)
+            plotted_anything=T
+          }
         }
       }
     }

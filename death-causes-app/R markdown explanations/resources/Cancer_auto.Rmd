@@ -1,0 +1,62 @@
+---
+title: "Cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Cancer is a **death cause category**. It means that it is a collection of **death causes** and so we can compute the probability of dying from this death cause category by adding up all of its death causes. 
+
+#### Death causes
+
+Cancer consists of the following causes
+
+* [Bladder cancer](/model/BladderCancer)
+* [Brain cancer](/model/BrainCancer)
+* [Breast cancer](/model/BreastCancer)
+* [Cancer in situ](/model/CancerInSitu)
+* [Cervix cancer](/model/CervixCancer)
+* [Colon cancer](/model/ColonCancer)
+* [Esophagus cancer](/model/EatingTubeCancer)
+* [Kidney cancer](/model/KidneyCancer)
+* [Larynx Cancer](/model/LarynxCancer)
+* [Leukemia](/model/Leukemia)
+* [Liver cancer](/model/LiverCancer)
+* [Lung cancer](/model/LungCancer)
+* [Mouth cancer](/model/MouthCancer)
+* [Other cancer](/model/OtherCancer)
+* [Ovary cancer](/model/OvaryCancer)
+* [Pancreas cancer](/model/PancreasCancer)
+* [Prostate cancer](/model/ProstateCancer)
+* [Skin cancer](/model/SkinCancer)
+* [Stomach cancer](/model/StomachCancer)
+* [Uterus cancer](/model/UterusCancer)
+
+#### Categories
+
+Cancer is itself part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Cancer has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+
+## References

@@ -1,0 +1,56 @@
+---
+title: "BMI"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+BMI is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Uses
+
+BMI is used by the model in the following places
+
+* [Kidney cancer](/model/KidneyCancer)
+* [Liver cancer](/model/LiverCancer)
+* [Uterus cancer](/model/UterusCancer)
+* [Chronic liver disease](/model/Chronic_Liver_Disease)
+* [Diabetes condition](/model/DiabetesCondition)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> What is your BMI?
+
+The unit of the input is **kg/m^2**.
+
+The answer has to be larger than 0 kg/m^2. The answer is recommended to be larger than 18 kg/m^2 and smaller than 40 kg/m^2. BMI is calculated as weight in kilograms divided by the square of height in meters. You can compute it on the [CDC website](https://www.cdc.gov/healthyweight/assessing/bmi/adult_bmi/english_bmi_calculator/bmi_calculator.html).
+ A healthy BMI is between 18.5 and 25.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of BMI is 4. This means that it can be interpreted as
+
+> *It is possible to change, but it will take a lot of time.*
+
+
+
+## References

@@ -1,0 +1,112 @@
+---
+title: "Optimizabilities"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+The different optimizabilities are
+
+* It is impossible to change and it has never been in your control
+* It is impossible to change, but it could have been the consequence of your actions
+* It is impossible to change now, but it has once definitely been in your control
+* It is possible to change, but it will take a lot of time.
+* It is possible to change, and it can be changed now or very soon.
+
+
+## Risk factors
+
+#### 1
+
+Description: It is impossible to change and it has never been in your control
+
+Members:
+
+* [Age](/model/Age)
+* [Family history parkinsons](/model/FamilyHistoryParkinson)
+* [Race](/model/Race)
+* [Biological sex](/model/Sex)
+
+
+#### 2
+
+Description: It is impossible to change, but it could have been the consequence of your actions
+
+Members:
+
+* [Depression](/model/Depression)
+* [Diabetes diagnosis](/model/DiabetesStatus)
+* [HCV diagnosis](/model/HCVStatus)
+* [HIV/AIDS diagnosis](/model/HIVStatus)
+* [Head traumas](/model/HeadTrauma)
+
+
+#### 3
+
+Description: It is impossible to change now, but it has once definitely been in your control
+
+Members:
+
+* [HPV vaccine](/model/HPVVaccine)
+* [Time spent indoor tanning](/model/IndoorTanning)
+* [Oral contraceptives](/model/OralContraceptiveStatus)
+* [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* [Pesticide exposure](/model/PesticideExposure)
+* [Time span of smoking period](/model/SmokeDuration)
+* [Amount smoked in the past](/model/SmokePastAmount)
+* [Time since you stopped smoking per year](/model/SmokeSinceStop)
+* [Smoking status](/model/Smoking)
+* [Time since you stopped smoking](/model/SmokingStopped)
+
+
+#### 4
+
+Description: It is possible to change, but it will take a lot of time.
+
+Members:
+
+* [BMI](/model/BMI)
+* [Waist circumference](/model/Waist)
+* [Waist circumference male equivalence](/model/WaistMale)
+
+
+#### 5
+
+Description: It is possible to change, and it can be changed now or very soon.
+
+Members:
+
+* [Coffee consumption](/model/Caffeine)
+* [Alcohol consumption](/model/Drinking)
+* [Fish consumption](/model/Fish)
+* [Fluids intake](/model/Fluids)
+* [Fruit consumption](/model/Fruits)
+* [Fruits and vegetables consumption](/model/Greens)
+* [Peak Alcohol consumption](/model/MaxDrinking)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver)
+* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+* [Time till stopping oral contraceptives](/model/OralContraceptiveTillStop)
+* [Hard physical activity time](/model/PhysicalHard)
+* [Medium physical activity time](/model/PhysicalMedium)
+* [Total time doing physical activity](/model/PhysicalTotal)
+* [Red meat consumption](/model/RedMeat)
+* [Total amount smoked in life](/model/SmokeCumulative)
+* [Current smoking amount](/model/SmokeIntensity)
+* [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
+* [Vegetable consumption](/model/Vegetables)

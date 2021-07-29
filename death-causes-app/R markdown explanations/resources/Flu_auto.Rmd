@@ -1,0 +1,71 @@
+---
+title: "Flu"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Flu is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Flu is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Flu has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Flu was responsible for 0.176% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Flu')
+```
+
+
+#### Definition
+
+The definition of dying from Flu is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Flu who falls under the ICD code 
+
+* <details><summary> J10: Influenza due to other identified influenza virus (30.8%)</summary>
+    * J100: Influenza due to other identified influenza virus with pneumonia (15.2%)
+    * J101: Influenza due to other identified influenza virus with other respiratory manifestations (15.2%)
+    * J108: Influenza due to other identified influenza virus with other manifestations (0.41%)
+</details>
+* <details><summary> J11: Influenza due to unidentified influenza virus (54.5%)</summary>
+    * J110: 0 Influenza due to unidentified influenza virus with pneumonia Influenza due to unidentified influenza virus with pneumonia (30.8%)
+    * J111: Influenza due to unidentified influenza virus with other respiratory manifestations (22.8%)
+    * J118: 0 Influenza due to unidentified influenza virus w oth manifest Influenza due to unidentified influenza virus with other manifestations (0.87%)
+</details>
+* J09: Influenza due to certain identified influenza viruses (14.7%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

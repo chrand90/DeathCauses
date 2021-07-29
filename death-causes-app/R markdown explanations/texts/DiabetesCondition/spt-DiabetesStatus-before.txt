@@ -1,0 +1,3 @@
+The factor Diabetes diagnosis is used to decide whether the probability of having diabetes should be computed. If one is already diagnosed with diabetes, there is no need to compute the probability of having diabetes because it will be 100%.
+
+

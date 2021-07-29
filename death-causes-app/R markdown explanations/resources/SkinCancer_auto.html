@@ -1,0 +1,119 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Skin cancer</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="SkinCancer_auto_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Skin cancer</h1>
+</div>
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+<p><em>[auto-generated file]</em></p>
+<p>Skin cancer is a <strong>death cause</strong>. It means that there is a certain probability that one dies from this.</p>
+<div id="alternative-names" class="section level4">
+<h4>Alternative names:</h4>
+<ul>
+<li>Skin cancer</li>
+<li>SkinCancer</li>
+</ul>
+</div>
+<div id="categories" class="section level4">
+<h4>Categories</h4>
+<p>Skin cancer is part of the following death cause categories</p>
+<ul>
+<li><a href="/model/Cancer">Cancer</a></li>
+</ul>
+</div>
+<div id="risk-factors" class="section level4">
+<h4>Risk factors</h4>
+<p>In the model Skin cancer has the following <a href="/model/intro#risk-factor">risk factors</a></p>
+<ul>
+<li><a href="/model/IndoorTanning">Time spent indoor tanning</a> (Sunbed time)</li>
+<li><a href="/model/Race">Race</a></li>
+</ul>
+</div>
+<div id="number-of-deaths" class="section level4">
+<h4>Number of deaths</h4>
+<p>In 2014 Skin cancer was responsible for 0.355% of the deaths in the US. Below is a plot of how prevalent the death was for different ages <span class="citation">(Xu et al. <a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span></p>
+<p><img src="SkinCancer_auto_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="definition" class="section level4">
+<h4>Definition</h4>
+<p>The definition of dying from Skin cancer is to get any of the following ICD codes as the main cause of death on one’s death certificate. The percentage is the proportion of the deaths from Skin cancer who falls under the ICD code</p>
+<ul>
+<li><details>
+<summary>
+C43: Malignant melanoma of skin (100.0%)
+</summary>
+<ul>
+<li>C430: Malignant melanoma of lip (0.043%)</li>
+<li>C431: Malignant melanoma of eyelid, including canthus (0.021%)</li>
+<li>C432: Malignant melanoma of ear and external auricular canal (0.42%)</li>
+<li>C433: Malignant melanoma of other and unspecified parts of face (0.86%)</li>
+<li>C434: Malignant melanoma of scalp and neck (1.8%)</li>
+<li>C435: Malignant melanoma of trunk (2.4%)</li>
+<li>C436: Malignant melanoma of upper limb, including shoulder (1.4%)</li>
+<li>C437: Malignant melanoma of lower limb, including hip (1.6%)</li>
+<li><strong>C439: Malignant melanoma of skin, unspecified (91.4%)</strong></li>
+</ul>
+</details></li>
+</ul>
+<p>Source: <span class="citation">Xu et al. (<a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span>, <span class="citation">(“ICD Order Files 2014,” <a href="#ref-ICDcodes" role="doc-biblioref">n.d.</a>)</span></p>
+</div>
+<div id="interaction" class="section level4">
+<h4>Interaction</h4>
+<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p><span class="math display">\[
+RR=RR_{\text{Sunbed time}} \cdot RR_{\text{Race}}
+\]</span></p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p><span class="math display">\[
+P=P_{\text{Sunbed time}} \cdot P_{\text{Race}}
+\]</span></p>
+</div>
+<div id="time-spent-indoor-tanning" class="section level4">
+<h4>Time spent indoor tanning</h4>
+<p>Time spent indoor tanning is a risk factor for Skin cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="SkinCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Because the variable Time spent indoor tanning is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="SkinCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="race" class="section level4">
+<h4>Race</h4>
+<p>Race is a risk factor for Skin cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p><img src="SkinCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references hanging-indent">
+<div id="ref-ICDcodes">
+<p>“ICD Order Files 2014.” n.d. <a href="https://www.cdc.gov/nchs/icd/icd10cm.htm">https://www.cdc.gov/nchs/icd/icd10cm.htm</a>.</p>
+</div>
+<div id="ref-CDCreport">
+<p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>
+</div>
+</div>
+</div>
+</body>
+</html>

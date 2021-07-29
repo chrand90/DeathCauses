@@ -1,0 +1,59 @@
+---
+title: "Non-violent death"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Non-violent death is a **death cause category**. It means that it is a collection of **death causes** and so we can compute the probability of dying from this death cause category by adding up all of its death causes. 
+
+#### Alternative names:
+* Illness
+* Non-violent death
+* NonViolentDeath
+
+#### Death causes
+
+Non-violent death consists of the following causes
+
+* [Alzheimers](/model/Alzheimers)
+* [Anemia](/model/Anemia)
+* [Appendix Disease](/model/Appendix_Disease)
+* [Infant condition](/model/BornWith)
+* The death causes of the category *[Cancer](/model/Cancer)* [Childbirth](/model/Childbirth)
+* [Chronic liver disease](/model/Chronic_Liver_Disease)
+* [Diabetes](/model/Diabetes)
+* [Doctor error](/model/DoctorError)
+* [Gallbladder disease](/model/Gallbladder_Disease)
+* The death causes of the category *[Heart disease](/model/HeartDiseases)* [Hernia](/model/Hernia)
+* The death causes of the category *[Infectious disease](/model/InfectiousDisease)* [Kidney disease](/model/Kidney_Disease)
+* [Malnutrition](/model/Malnutrition)
+* [Other disease](/model/OtherDiseases)
+* [Parkinsons](/model/Parkinsons)
+* [Peptic ulcer](/model/Peptic_ulcer)
+* [Prostate disease](/model/Prostate_Disease)
+* The death causes of the category *[Respiratory disease](/model/RespiratoryDiseases)* [Sepsis](/model/Sepsis)
+* [Unkown disease](/model/Unknown_Disease)
+
+#### Risk factors
+
+Non-violent death has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+
+## References

@@ -1,0 +1,154 @@
+---
+title: "Colon cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Colon cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Colon cancer
+* ColonCancer
+
+#### Categories
+
+Colon cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Colon cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [Alcohol consumption](/model/Drinking) (Alcohol)
+* [Total physical activity time](/model/PhysicalTotal) (Phys. total)
+* [Red meat consumption](/model/RedMeat) (Red meat)
+
+#### Number of deaths
+
+In 2014 Colon cancer was responsible for 1.99% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Colon cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Colon cancer who falls under the ICD code 
+
+* <details><summary> C18: Malignant neoplasm of colon (79.5%)</summary>
+    * C180: Malignant neoplasm of cecum (0.63%)
+    * C181: Malignant neoplasm of appendix (1.4%)
+    * C182: Malignant neoplasm of ascending colon (0.38%)
+    * C183: Malignant neoplasm of hepatic flexure (0.011%)
+    * C184: Malignant neoplasm of transverse colon (0.088%)
+    * C185: Malignant neoplasm of splenic flexure (0.0057%)
+    * C186: Malignant neoplasm of descending colon (0.052%)
+    * C187: Malignant neoplasm of sigmoid colon (0.68%)
+    * C188: Malignant neoplasm of overlapping sites of colon (0.0019%)
+    * **C189: Malignant neoplasm of colon, unspecified (76.3%)**
+</details>
+* C19: Malignant neoplasm of rectosigmoid junction (5.7%)
+* C20: Malignant neoplasm of rectum (13.1%)
+* <details><summary> C21: Malignant neoplasm of anus and anal canal (1.8%)</summary>
+    * C210: Malignant neoplasm of anus, unspecified (1.5%)
+    * C211: Malignant neoplasm of anal canal (0.098%)
+    * C218: 1 Malig neoplasm of ovrlp sites of rectum, anus and anal canal Malignant neoplasm of overlapping sites of rectum, anus and anal canal (0.17%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the formula
+
+$$
+RR=RR_{\text{Alcohol}} \cdot RR_{\text{Phys. total}} \cdot RR_{\text{Red meat}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+
+$$
+P=P_{\text{Alcohol}} \cdot P_{\text{Phys. total}} \cdot P_{\text{Red meat}}
+$$
+
+
+#### Alcohol consumption
+
+Alcohol consumption is a risk factor for Colon cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'raw')
+```
+
+
+Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'interpolated')
+```
+
+
+#### Total physical activity time
+
+Total physical activity time is a risk factor for Colon cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'raw')
+```
+
+
+Because the variable Total physical activity time is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'interpolated')
+```
+
+
+#### Red meat consumption
+
+Red meat consumption is a risk factor for Colon cancer.
+
+Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('RedMeat'),'raw')
+```
+
+
+Because the variable Red meat consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'ColonCancer', c('RedMeat'),'interpolated')
+```
+
+
+
+## References

@@ -1,0 +1,58 @@
+---
+title: "Red meat consumption"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;}
+
+</style>
+_[auto-generated file]_
+
+Red meat consumption is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Red meat
+* Red meat consumption
+* RedMeat
+
+#### Uses
+
+Red meat consumption is used by the model in the following places
+
+* [Colon cancer](/model/ColonCancer)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much red meat (beef/pork/lamb) do you eat in a normal day?
+
+The unit of the input is **Grams**, but can be changed to any of the units below
+
+* Ounces (1 Ounces = 28.35 Grams)
+
+The answer has to be larger than 0 Grams. The answer is recommended to be larger than 0 Grams and smaller than 500 Grams. Red meat includes beef, pork, lamb, meat from goat, rabbit and similarly colored meat. It does not include chicken, birds and fish. Cooked red meat is still red meat.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Red meat consumption is 5. This means that it can be interpreted as
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+
+## References

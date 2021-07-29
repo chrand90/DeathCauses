@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "react-bootstrap";
+import { hideAllToolTips } from "./components/Helpers";
 
 interface ContactCardProps {
     name: string,
@@ -24,5 +25,9 @@ export class ContactCard extends React.Component<ContactCardProps> {
                 </Card.Body>
             </Card>
         )
+    }
+
+    componentDidMount(){
+        hideAllToolTips()
     }
 }

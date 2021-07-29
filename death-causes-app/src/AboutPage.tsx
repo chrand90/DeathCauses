@@ -2,6 +2,7 @@ import React from "react";
 import { Container, Spinner } from "react-bootstrap";
 import { withRouter, RouteComponentProps } from "react-router";
 import './AboutPage.css'
+import { hideAllToolTips } from "./components/Helpers";
 import MathJaxLoader from "./components/MathJax";
 // var html = require('./resources/intro.nb.html')
 // var template = { __html: html }
@@ -22,6 +23,22 @@ interface AboutPageStats {
     mathjax: MathJaxLoader;
     template: {__html:string};
     status: LoadingStatus
+}
+
+function replacerFunction(match: string, p1: string):string{
+  let urlStart='';
+  if(process.env.NODE_ENV === "development"){
+    urlStart+="http://localhost:5000"
+  }
+  else{
+    urlStart+=""
+  }
+  const replacer=urlStart+"/api/figures/"
+  return `<img src="${replacer}${p1}" loading="lazy"`
+}
+
+function replaceLinks(s:string):string{
+  return s.replaceAll(/<img src=\"([^ ]*)\"/g, replacerFunction)
 }
 class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageStats> {
     constructor(props: any ){
@@ -46,12 +63,13 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
         console.log("fetching link: "+link)
         fetch(link).then((response) => {
             if(!response.ok){
+              console.error("throwing error from react frontend handler")
               console.error(response.statusText)
               throw response.statusText;
             }
             return response.text();
           }).then(d => {
-            this.setState({template: {__html: d}, status: LoadingStatus.READY},
+            this.setState({template: {__html: replaceLinks(d)}, status: LoadingStatus.READY},
                 () => {
                     cb();
                     this.hashLinkScroll()
@@ -69,7 +87,7 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
             const id = hash.replace('#', '');
             const element = document.getElementById(id);
             if (element) element.scrollIntoView();
-          }, 100);  //giving it a small chance to perhaps finish the loading of mathjax such that it guesses the height correctly.
+          }, 250);  //giving it a small chance to perhaps finish the loading of mathjax such that it guesses the height correctly.
         }
       }
 
@@ -109,8 +127,8 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
       }
     
       componentDidMount() {
+        hideAllToolTips()
         this.state.mathjax.initiateMathJax(() => this.updateTemplate()); 
-        ;
       }
     
       componentDidUpdate(prevProps:AboutPageProps) {
