@@ -22,6 +22,9 @@ const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
 const NOT_CLICKABLE_GRAY = "#b8b8b8";
 const SELECTED_DISEASE_COLOR = "#a3e3f0";
+const WIDTH_PROPORTION= 0.95
+const STIP_MAX_WIDTH=150;
+const CLICKTIP_MAX_WIDTH=250;
 
 
 function getDivWidth(div: HTMLElement | null): number {
@@ -78,7 +81,7 @@ function longDesignConstants(
   const xbarheightScale = simplifiedVersion ? 0 : 1;
   return {
     ...sameConstants,
-    barheight: 1.5 * BARHEIGHT * heightScale * (simplifiedVersion ? 1 : 1),
+    barheight: 1.5 * BARHEIGHT * heightScale,
     totalheight: n * 1.5 * BARHEIGHT * heightScale,
     totalheightWithXBar:
       (n * 1.5 * BARHEIGHT * heightScale + XBARHEIGHT * xbarheightScale) * (simplifiedVersion ? 1 : 1),
@@ -119,7 +122,9 @@ export default class BarChart {
   svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>; // the exclamation point is necessary because the compiler does not realize that it is initialized in the constructor
   xAxisGroup: any | null;
   stip: any;
+  stiparrow: any;
   clicktip: any;
+  clicktiparrow: any;
   buttontip: any;
   widthbuttontip: any;
   yBars: ScaleBand<string>;
@@ -179,12 +184,13 @@ export default class BarChart {
 
     const vis = this;
     vis.element = element;
-    vis.width = getDivWidth(element) * 0.9;
+    vis.width = getDivWidth(element) * WIDTH_PROPORTION;
 
     //width="100%" viewBox="0 0 10 1.5" preserveAspectRatio="xMinYMin">
     vis.svg = d3
       .select(element)
       .append("svg")
+      .style("display","block")
       .attr("width", vis.width)
       .attr("height", BARHEIGHT + XBARHEIGHT);
 
@@ -211,14 +217,18 @@ export default class BarChart {
   hideAllToolTips() {
     this.widthbuttontip.hide();
     this.buttontip.hide();
-    this.clicktip.hide();
-    this.stip.hide();
+    this.clicktip.style("display","none")
+    this.clicktiparrow.style("display","none")
+    this.stip.style("display","none")
+    this.stiparrow.style("display","none")
   }
 
   clear() {
     d3.select("svg").remove();
     d3.select(".stip").remove();
+    d3.select(".stiparrow").remove();
     d3.select(".clicktip").remove();
+    d3.select(".clicktiparrow").remove();
   }
 
   async waitForTransitionsToBeFree(
@@ -487,25 +497,33 @@ export default class BarChart {
       });
 
     d3.select(".stip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".stiparrow").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
     d3.select(".clicktip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
+    d3.select(".clicktiparrow").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
     d3.selectAll(".buttontip").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
-    if (vis.width < 501) {
-      vis.stip = d3Tip()
-        .attr("class", "stip small")
-        .html((d: SquareSection) => {
-          return d.comparison ? d.comparison : d.cause;
-        })
-        .direction("s")
-        .offset([10, 0]);
 
-      vis.clicktip = d3Tip()
-        .attr("class", "clicktip small")
-        .html((d: SquareSection) => {
-          return d.longComparison ? d.longComparison : d.cause;
-        })
-        .direction("s")
-        .offset([10, 0])
+    vis.stip= d3
+      .select("#barchartcontainer")
+      .append("div")
+      .attr("class", "stip")
+      .style("display", "none");
+    vis.stiparrow= d3
+      .select("#barchartcontainer")
+      .append("div")
+      .attr("class", "stiparrow")
+      .style("display", "none");
+    vis.clicktip= d3
+      .select("#barchartcontainer")
+      .append("div")
+      .attr("class", "clicktip")
+      .style("display", "none");
+    vis.clicktiparrow= d3
+      .select("#barchartcontainer")
+      .append("div")
+      .attr("class", "clicktiparrow")
+      .style("display", "none");
+    if (vis.width < 501) {
       vis.buttontip = d3Tip()
         .attr("class", "buttontip small")
         .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
@@ -522,24 +540,9 @@ export default class BarChart {
         .offset([-2, 0])
     }
     else {
-      vis.clicktip = d3Tip()
-        .attr("class", "clicktip")
-        .html((d: SquareSection) => {
-          return d.longComparison ? d.longComparison : d.cause;
-        })
-        .direction("s")
-        .offset([10, 0])
-
-      vis.stip = d3Tip()
-        .attr("class", "stip")
-        .html((d: SquareSection) => {
-          return d.comparison ? d.comparison : d.cause;
-        })
-        .direction("s")
-        .offset([8, 0]);
-
       vis.buttontip = d3Tip()
         .attr("class", "buttontip")
+        .attr("id","buttontip")
         .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
@@ -547,6 +550,7 @@ export default class BarChart {
         .offset([-2, 0])
       vis.widthbuttontip = d3Tip()
         .attr("class", "buttontip")
+        .attr("id","widthbuttontip")
         .html(({ d, buttonType }: { d: string, buttonType: "expand" | "collapse" | "width" }) => {
           return this.buttonTipText(d, buttonType);
         })
@@ -554,8 +558,6 @@ export default class BarChart {
         .offset([-2, 0])
     }
 
-    vis.svg.call(vis.stip);
-    vis.svg.call(vis.clicktip);
     vis.svg.call(vis.buttontip);
     vis.svg.call(vis.widthbuttontip);
 
@@ -563,7 +565,8 @@ export default class BarChart {
     vis.svg.on("click", (e: Event) => {
       e.stopPropagation();
       vis.clickedSquareSection = null
-      vis.clicktip.hide();
+      vis.clicktip.style("display","none");
+      vis.clicktiparrow.style("display","none");
     });
 
     const addedBars = gs.enter().append("rect").attr("class", "causebar");
@@ -670,27 +673,69 @@ export default class BarChart {
       .style("cursor", "pointer")
       .on("mouseenter", function (e: Event, d: SquareSection) {
         d3.select(".stip").style("background-color", vis.descriptions.getColor(d.cause));
+        const bbox=this.getBBox();
+
+        let middlePoint=bbox.x+bbox.width/2
+        const overflowLeft= middlePoint-STIP_MAX_WIDTH/2;
+        const overflowRight= vis.width-(middlePoint+STIP_MAX_WIDTH/2);
+        if(overflowLeft<0){
+          middlePoint=middlePoint-overflowLeft
+        }
+        if(overflowRight<0){
+          middlePoint+=overflowRight
+        }
         if (vis.clickedSquareSection !== d) {
-          vis.stip.show(d, this);
+          vis.stip
+            .style("display", "block")
+            .html(d.comparison ? d.comparison : d.cause)
+            .style("left", (middlePoint).toString() + "px")
+            .style("top", (bbox.y+bbox.height+12).toString() + "px");
+          vis.stiparrow
+            .style("display", "block")
+            .html("\u25B2")
+            .style("left", (bbox.x+bbox.width/2-6).toString() + "px")
+            .style("top", (bbox.y+bbox.height-4).toString() + "px");
         }
         d3.select(this)
-          // .raise()
+          .raise()
           .style("stroke-width", 3)
           .style("stroke", "#000000");
       })
       .on("mouseleave", function (e: Event, d: SquareSection) {
-        vis.stip.hide(d, this);
+        vis.stip.style("display","none")
+        vis.stiparrow.style("display","none")
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
       })
       .on("resize", function (e: Event, d: SquareSection) {
-        vis.stip.hide(d, this);
+        vis.stip.style("display","none")
+        vis.stiparrow.style("display","none")
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
       })
       .on("click", function (e: Event, d: SquareSection) {
         d3.select(".clicktip").style("background-color", vis.descriptions.getColor(d.cause));
-        vis.clicktip.show(d, this);
+        const bbox=this.getBBox();
+        let middlePoint=bbox.x+bbox.width/2
+        const overflowLeft= middlePoint-CLICKTIP_MAX_WIDTH/2;
+        const overflowRight= vis.width-(middlePoint+CLICKTIP_MAX_WIDTH/2);
+        if(overflowLeft<0){
+          middlePoint=middlePoint-overflowLeft
+        }
+        if(overflowRight<0){
+          middlePoint+=overflowRight
+        }
+        vis.clicktip
+          .style("display", "block")
+          .html(d.longComparison ? d.longComparison : d.cause)
+          .style("left", (middlePoint).toString() + "px")
+          .style("top", (bbox.y+bbox.height+12).toString() + "px");
+        vis.clicktiparrow
+          .style("display", "block")
+          .html("\u25B2")
+          .style("left", (bbox.x+bbox.width/2-6).toString() + "px")
+          .style("top", (bbox.y+bbox.height-4).toString() + "px");
         vis.clickedSquareSection = d;
-        vis.stip.hide();
+        vis.stip.style("display","none")
+        vis.stiparrow.style("display","none")
         e.stopPropagation();
       });
   }
@@ -1179,8 +1224,10 @@ export default class BarChart {
     instantDiseaseToWidthColoring: boolean = false,
     durationPerTransition: number = 500
   ) {
-    this.stip.hide();
-    this.clicktip.hide();
+    this.stip.style("display","none")
+    this.stiparrow.style("display","none")
+    this.clicktip.style("display","none");
+    this.clicktiparrow.style("display","none")
     await this.waitForTransitionsToBeFree(0, 0.5);
     const vis = this;
 

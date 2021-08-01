@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../stores/rootStore';
 import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
+import "./BarChartWrapper.css";
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -79,7 +80,12 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		}
 	}, []);
 
-	return <div className="container" ref={chartArea} id="barchartcontainer" />
+
+	return (
+		<div className="container" style={{width:"90%"}}>
+			<div ref={chartArea} id="barchartcontainer" style={{position:"relative", padding:"0px",margin: "auto", top:"0px",left:"0px"}} />
+		</div>
+	)
 
 });
 

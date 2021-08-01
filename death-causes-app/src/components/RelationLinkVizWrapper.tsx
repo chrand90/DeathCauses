@@ -6,7 +6,7 @@ import './RelationLinkVizWrapper.css';
 import { useHistory } from "react-router-dom";
 import  Button  from 'react-bootstrap/Button';
 
-
+const DESCRIPTION_LENGTH=22;
 interface RelationLinkWrapperProps {
 }
 
@@ -68,14 +68,14 @@ const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //cl
 		<div>
 			<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
 				{store.loadedDataStore.rdat.getAllPossibleNodes().map((d:string) => {
-					return <option value={d}>{store.loadedDataStore.descriptions.getDescription(d,20)}</option>
+					return <option value={d}>{store.loadedDataStore.descriptions.getDescription(d,DESCRIPTION_LENGTH)}</option>
 				})}
 				</select> in the model</p>
 			<p> Visit its page in the library <Button 
 				className="text-link-button" 
 				variant="link"
 				onClick={()=> onRedirectToLibrary(store.relationLinkVizStore.elementInFocus)}> 
-				{store.relationLinkVizStore.elementInFocus} </Button></p>
+				{store.loadedDataStore.descriptions.getDescription(store.relationLinkVizStore.elementInFocus, DESCRIPTION_LENGTH)} </Button></p>
 		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
 		</div>
 	)

@@ -13,6 +13,7 @@ import RelationLinks, {
 import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
 
+const DESCRIPTION_LENGTH=22
 const SLIGHTLY_DARKER_GRAY="#707070"
 interface PlottingNodeDicValue {
   bbox: SVGRect;
@@ -61,7 +62,8 @@ export default class RelationLinkViz {
       .select(canvas)
       .append("svg")
       .attr("width", Math.max(this.width - 25, 800))
-      .attr("height", 1000);
+      .attr("height", 1000)
+      .style("position","relative");
     const vis = this;
 
     const {
@@ -131,7 +133,7 @@ export default class RelationLinkViz {
       .attr("class", "linktext")
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) => this.descriptions.getDescription(d.nodeName,20));
+      .text((d: any) => this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH));
 
     this.addTextProperties(stext, elementInFocus, nodeExtremas);
 
@@ -171,7 +173,7 @@ export default class RelationLinkViz {
     d3.select(".arrowexplanation").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
     var tooltipdiv = d3
-      .select("body")
+      .select("#relationlinkcontainer")
       .append("div")
       .attr("class", "arrowexplanation")
       .style("opacity", 0);
@@ -246,14 +248,25 @@ export default class RelationLinkViz {
           })
           .attr("stroke-width", 1);
       })
-      .on("click", function (e: MouseEvent, d: ArrowPlottingObject) {
-        var x = e.pageX; //x position within the element.
-        var y = e.pageY; //y position within the element.
+      .on("click", function(e: MouseEvent, d: ArrowPlottingObject) {
+        var bbox= this.getBBox()
+        console.log(bbox)
+        console.log(e)
+        var x = e.clientX; //x position within the elemen
+        var y = e.clientY; //y position within the element.
+        const cleanedFrom=d.from.replace("*","")
+        const cleanedTo=d.to.replace("*","")
         tooltipdiv
           .style("opacity", 1)
-          .html(`${vis.rdat.arrowInterpretation(d.from, d.to)}`)
-          .style("left", x + "px")
-          .style("top", y + "px");
+          .html(`${vis.rdat.arrowInterpretation(
+            d.from, 
+            d.to,
+            vis.descriptions.getDescription(cleanedFrom, DESCRIPTION_LENGTH),
+            vis.descriptions.getDescription(cleanedTo, DESCRIPTION_LENGTH)
+            )}`)
+          .style("position","absolute")
+          .style("left", e.offsetX + "px")
+          .style("top", e.offsetY + "px");
         e.stopPropagation();
       });
   }
@@ -396,7 +409,7 @@ export default class RelationLinkViz {
             .attr("class", "linktext")
             .attr("y", (d: any) => y(d.y) as number)
             .attr("x", (d: any) => x(d.x) as number)
-            .text((d: any) => this.descriptions.getDescription(d.nodeName,20))
+            .text((d: any) => this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH))
             .style("opacity", 0);
         },
         (exit) => {
@@ -413,7 +426,7 @@ export default class RelationLinkViz {
       .duration(500)
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) =>  this.descriptions.getDescription(d.nodeName,20))
+      .text((d: any) =>  this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH))
       .style("opacity", 1);
 
     stext
