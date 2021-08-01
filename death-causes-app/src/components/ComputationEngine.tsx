@@ -1,6 +1,6 @@
 import Descriptions from "../models/Descriptions";
-import RelationLinks, { CauseGrouping } from "../models/RelationLinks";
-import { BestValues, mergeBestValues } from "./Calculations/ConsensusBestValue";
+import { CauseGrouping } from "../models/RelationLinks";
+import { BestValues, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -9,7 +9,7 @@ export interface SquareSection {
     x0: number,
     x: number,
     comparison?: string,
-    longComparison?: string,
+    longComparison?: LongConsensus,
 }
 
 interface ProbSums {
@@ -82,7 +82,7 @@ function makeRowSquare(
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
             x: zeroTruncater(unexplained*totalProb)*rescaler,
-            longComparison: getUnexplainedStatement(unexplained, parent)
+            longComparison: getUnexplainedStatement(unexplained, parent, descriptions)
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
@@ -218,9 +218,6 @@ function make_squares(
     return {allSquares, totalProbs};
 };
 
-function getUnexplainedStatement(prob: number, cause: string){
-    return "If you die from "+ cause + ", there is <strong>"+ +(prob*100).toFixed(1).replace(/\.?0+$/,"")+ "%</strong> probability that it is due to " + 
-    "unknown reasons."    
-}
+
 
 export default make_squares;

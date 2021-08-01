@@ -133,6 +133,7 @@ export default class BarChart {
   setDiseaseToWidth: (newDiseaseToWidth: string | null) => void;
   expandCollectedGroup: (causecategory: string) => void;
   collectGroup: (causecategory: string) => void;
+  redirectPage: (target: string) => void;
   grouping: CauseGrouping;
   currentMax: number;
   expandables: { [key: string]: string[] };
@@ -154,6 +155,7 @@ export default class BarChart {
     collectedGroups: CauseGrouping,
     expandCollectedGroup: (causecategory: string) => void,
     collectGroup: (causecategory: string) => void,
+    redirectPage: (target: string) => void,
     collapseAndExpandables: {
       collapsables: { [key: string]: string[] };
       expandables: { [key: string]: string[] };
@@ -175,6 +177,7 @@ export default class BarChart {
     this.transitionsOrdered = 0;
     this.simpleVersion = simpleVersion;
     this.hideAllToolTips = this.hideAllToolTips.bind(this);
+    this.redirectPage = redirectPage;
     if (simpleVersion) {
       this.grouping = simplifyGrouping(collectedGroups);
     } else {
@@ -517,7 +520,7 @@ export default class BarChart {
       .select("#barchartcontainer")
       .append("div")
       .attr("class", "clicktip")
-      .style("display", "none");
+      .style("display", "none")
     vis.clicktiparrow= d3
       .select("#barchartcontainer")
       .append("div")
@@ -563,6 +566,7 @@ export default class BarChart {
 
 
     vis.svg.on("click", (e: Event) => {
+      console.log("closing on outside click")
       e.stopPropagation();
       vis.clickedSquareSection = null
       vis.clicktip.style("display","none");
@@ -711,7 +715,7 @@ export default class BarChart {
         vis.stiparrow.style("display","none")
         d3.select(this).style("stroke-width", 1).style("stroke", "#2378ae");
       })
-      .on("click", function (e: Event, d: SquareSection) {
+      .on("click", function (e: Event, d: SquareSection) { 
         d3.select(".clicktip").style("background-color", vis.descriptions.getColor(d.cause));
         const bbox=this.getBBox();
         let middlePoint=bbox.x+bbox.width/2
@@ -725,9 +729,12 @@ export default class BarChart {
         }
         vis.clicktip
           .style("display", "block")
-          .html(d.longComparison ? d.longComparison : d.cause)
+          .html(`${d.longComparison ? d.longComparison.textWithButtons : d.cause}`)
           .style("left", (middlePoint).toString() + "px")
           .style("top", (bbox.y+bbox.height+12).toString() + "px");
+        if(d.longComparison){
+          vis.addButtonActions(d.longComparison.buttonCodes)
+        }
         vis.clicktiparrow
           .style("display", "block")
           .html("\u25B2")
@@ -738,6 +745,16 @@ export default class BarChart {
         vis.stiparrow.style("display","none")
         e.stopPropagation();
       });
+  }
+
+  addButtonActions(buttonCodes: string[]){
+    buttonCodes.forEach((nodeName, index) => {
+      d3.select("#but"+(index+1).toString())
+        .on("click", (e)=> { 
+          e.stopPropagation();
+          this.redirectPage(nodeName)  
+        });
+    })
   }
 
   createXAxisCall(newMax: number, designConstants: DesignConstants) {

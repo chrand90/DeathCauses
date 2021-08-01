@@ -4,6 +4,7 @@ import { useStore } from '../stores/rootStore';
 import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 import "./BarChartWrapper.css";
+import { useHistory } from 'react-router';
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -19,7 +20,18 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	const store= useStore();
 	const database = props.database;
 	const chartArea = useRef(null);
+	const history = useHistory();
 	const [chart, setChart] = useState<BarChart | null>(null);
+
+	const rerouter = (modelPage: string) => {
+		if(modelPage.length>0){
+			history.push("/model/"+modelPage)
+		}
+		else{
+			history.push("/model")
+		}
+		
+	}
 
 
 	useEffect(() => {
@@ -43,6 +55,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			store.barChartStore.explicitCollectedGroups, 
 			store.barChartStore.expandCategory, 
 			store.barChartStore.collectParentCategory,
+			rerouter,
 			store.loadedDataStore.rdat.getPossibleExpansions(),
 			props.simpleVersion ? props.simpleVersion : false
 		));

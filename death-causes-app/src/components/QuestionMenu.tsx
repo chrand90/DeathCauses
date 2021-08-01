@@ -240,7 +240,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
     }
     const styleObject: {[k:string]:string}={}
     if(!this.props.store.uIStore.verticalStacked){
-      styleObject["height"]="calc(100vh - 100px)"
+      styleObject["height"]="calc(100vh - 72px)"
       styleObject["overflow-y"]="auto"
     }
     return (
