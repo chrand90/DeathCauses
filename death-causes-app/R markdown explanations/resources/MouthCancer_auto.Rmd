@@ -38,8 +38,8 @@ Mouth cancer is part of the following death cause categories
 
 In the model Mouth cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Current smoking amount](/model/SmokeIntensity) (Cigarettes)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
 
 #### Number of deaths
 
@@ -134,7 +134,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Alcohol,Cigarettes}}
+P=P_{\text{Cigarettes,Alcohol}}
 $$
 
 

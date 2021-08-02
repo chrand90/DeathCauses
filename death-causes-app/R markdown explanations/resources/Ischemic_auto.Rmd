@@ -19,7 +19,7 @@ blockquote{
   text-align: center;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Coronary heart disease is a **death cause**. It means that there is a certain probability that one dies from this.
 
@@ -39,12 +39,12 @@ Coronary heart disease is part of the following death cause categories
 In the model Coronary heart disease has the following [risk factors](/model/intro#risk-factor)
 
 * [Coffee consumption](/model/Caffeine) (Coffee)
-* [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Total physical activity time](/model/PhysicalTotal) (Phys. total)
 * [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
-* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Age](/model/Age)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 * [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
 
@@ -112,7 +112,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Peak alcohol,Alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Age,Smoke avg.,Smoke end a.}} \cdot P_{\text{Greens}}
 $$
 
 

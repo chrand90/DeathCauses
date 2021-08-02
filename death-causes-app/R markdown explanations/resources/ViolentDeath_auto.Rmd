@@ -32,7 +32,8 @@ Violent death is a **death cause category**. It means that it is a collection of
 
 Violent death consists of the following causes
 
-* The death causes of the category *[Accidents](/model/Accidents)* [Homicide](/model/Homicide)
+* The death causes of the category *[Accidents](/model/Accidents)
+* [Homicide](/model/Homicide)
 * [Killed by police](/model/Police)
 * [Suicide](/model/Suicide)
 * [Undetermined intent](/model/UndeterminedIntent)

@@ -19,7 +19,7 @@ blockquote{
   text-align: center;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Diabetes condition is a **condition**. It means that the model computes probabilities of getting or having it and uses that in further computations.
 
@@ -32,8 +32,8 @@ Diabetes condition is a **condition**. It means that the model computes probabil
 
 In the model Diabetes condition has the following [risk factors](/model/intro#risk-factor)
 
-* [BMI](/model/BMI)
 * [Waist circumference as male](/model/WaistMale) (Waist (male))
+* [BMI](/model/BMI)
 
 #### Special factors
 
@@ -74,7 +74,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
 
 $$
-P=P_{\text{BMI,Waist (male)}}
+P=P_{\text{Waist (male),BMI}}
 $$
 
 
