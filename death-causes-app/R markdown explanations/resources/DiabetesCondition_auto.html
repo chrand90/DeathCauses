@@ -25,7 +25,8 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[partly auto-generated file]</em></p>
@@ -42,8 +43,8 @@ blockquote{
 <h4>Risk factors</h4>
 <p>In the model Diabetes condition has the following <a href="/model/intro#risk-factor">risk factors</a></p>
 <ul>
-<li><a href="/model/WaistMale">Waist circumference as male</a> (Waist (male))</li>
 <li><a href="/model/BMI">BMI</a></li>
+<li><a href="/model/WaistMale">Waist circumference as male</a> (Waist (male))</li>
 </ul>
 </div>
 <div id="special-factors" class="section level4">
@@ -66,28 +67,30 @@ blockquote{
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{BMI}} \cdot RR_{\text{Waist (male)}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{Waist (male),BMI}}
+P=P_{\text{BMI,Waist (male)}}
 \]</span></p>
 </div>
 <div id="bmi" class="section level4">
 <h4>BMI</h4>
 <p>BMI is a risk factor for Diabetes condition.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variable BMI is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variable BMI is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="waist-circumference-as-male" class="section level4">
 <h4>Waist circumference as male</h4>
 <p>Waist circumference as male is a risk factor for Diabetes condition.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Because the variable Waist circumference as male is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Because the variable Waist circumference as male is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="DiabetesCondition_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="diabetes-diagnosis" class="section level4">
 <h4>Diabetes diagnosis</h4>

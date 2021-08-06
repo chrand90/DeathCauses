@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -82,13 +83,13 @@ The definition of dying from Hepatitis is to get any of the following ICD codes 
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{HCV}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{HCV}}
@@ -99,7 +100,7 @@ $$
 
 HCV diagnosis is a risk factor for Hepatitis.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Hepatitis', c('HCVStatus'),'raw')

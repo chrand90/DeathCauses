@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -125,13 +126,13 @@ The definition of dying from Mouth cancer is to get any of the following ICD cod
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Alcohol,Cigarettes}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{Cigarettes,Alcohol}}
@@ -142,7 +143,7 @@ $$
 
 Alcohol consumption and Current smoking amount are a group of risk factors for Mouth cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'MouthCancer', c('Drinking','SmokeIntensity'),'raw')
@@ -150,6 +151,7 @@ plotSpecificPlots(dat, 'MouthCancer', c('Drinking','SmokeIntensity'),'raw')
 
 
 Because the variables Alcohol consumption and Current smoking amount are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'MouthCancer', c('Drinking','SmokeIntensity'),'interpolated')
 ```

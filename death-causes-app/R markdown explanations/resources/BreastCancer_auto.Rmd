@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -39,8 +40,8 @@ Breast cancer is part of the following death cause categories
 In the model Breast cancer has the following [risk factors](/model/intro#risk-factor)
 
 * [Alcohol consumption](/model/Drinking) (Alcohol)
-* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
 * [Biological sex](/model/Sex) (Sex)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
 * [Time since taking OCP per year](/model/OralContraceptiveSinceStop) (OCP end a.)
 
 #### Number of deaths
@@ -76,16 +77,16 @@ The definition of dying from Breast cancer is to get any of the following ICD co
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Alcohol}} \cdot RR_{\text{OCP ever,OCP end a.}} \cdot RR_{\text{Sex}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Alcohol}} \cdot P_{\text{OCP ever,Sex,OCP end a.}}
+P=P_{\text{Alcohol}} \cdot P_{\text{Sex,OCP ever,OCP end a.}}
 $$
 
 
@@ -93,7 +94,7 @@ $$
 
 Alcohol consumption is a risk factor for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'raw')
@@ -101,6 +102,7 @@ plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'raw')
 
 
 Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'interpolated')
 ```
@@ -110,14 +112,15 @@ plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'interpolated')
 
 Ever used oral contraceptives and Time since taking OCP per year are a group of risk factors for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('OralContraceptiveEver','OralContraceptiveSinceStop'),'raw')
 ```
 
 
-Because the variable Time since taking OCP per year is numeric, we have computed a [smoothed approximation](/model/intro#smoothing)for every value of the other variables.
+Because the variable Time since taking OCP per year is numeric, we have computed a [smoothed approximation](/model/intro#smoothing) for every value of the other variables.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('OralContraceptiveEver','OralContraceptiveSinceStop'),'interpolated')
 ```
@@ -127,7 +130,7 @@ plotSpecificPlots(dat, 'BreastCancer', c('OralContraceptiveEver','OralContracept
 
 Biological sex is a risk factor for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('Sex'),'raw')

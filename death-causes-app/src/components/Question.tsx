@@ -8,6 +8,7 @@ import InputGroup from "react-bootstrap/InputGroup";
 import OverlayTrigger from "react-bootstrap/OverlayTrigger";
 import Popover from "react-bootstrap/Popover";
 import MarkDown from "react-markdown";
+import { RouteComponentProps, withRouter } from "react-router";
 import { InputValidity } from "../models/FactorAbstract";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
@@ -22,7 +23,7 @@ export const WARNING_COLOR_STRONGER = "#806e09";
 export const SUCCESS_COLOR = "#3E713F";
 export const CHANGED_COLOR = "#630396";
 
-export interface QuestionProps<T> {
+export interface QuestionProps<T>{
   handleChange: (e: ChangeEvent<HTMLInputElement>) => void;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
   name: string;
@@ -42,7 +43,7 @@ export interface FormControlStyle {
   [key: string]: string;
 }
 
-interface QuestionContextProps {
+interface QuestionContextProps extends RouteComponentProps{
   name: string;
   ignore: boolean;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -56,7 +57,7 @@ interface QuestionContextProps {
   store: RootStore;
 }
 
-class QuestionContextWithoutStore extends React.PureComponent<QuestionContextProps> {
+class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<QuestionContextProps> {
   constructor(props: QuestionContextProps) {
     super(props);
   }
@@ -66,6 +67,8 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
       return (
         <div>
           <MarkDown>{this.props.helpText}</MarkDown>
+          <hr></hr>
+          {this.readMoreLink()}
           {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
@@ -76,6 +79,8 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
           {this.questionPhrasing()}
           <hr></hr>
           <MarkDown>{this.props.helpText}</MarkDown>
+          <hr></hr>
+          {this.readMoreLink()}
           {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
         </div>
@@ -83,9 +88,20 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
     }
   }
 
+  readMoreLink(){
+    return(
+      <Button 
+        variant="link" 
+        style={{fontSize:"14px"}}
+        onClick={() => {
+          this.props.history.push("/model/"+this.props.name)
+        }}
+        className="text-link-button"
+      >Visit its page in the library</Button>
+    )
+  }
+
   helpBox() {
-    
-    const width=this.props.store.uIStore.windowWidth<500 ? this.props.store.uIStore.windowWidth/2 : 300
     return (
       <Popover id="popover-basic">
         <Popover.Title as="h3">{this.props.store.loadedDataStore.descriptions.getDescription(this.props.name,30)}</Popover.Title>
@@ -314,7 +330,7 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   descendantMessage() {
     return (
       <div>
-        <span className="text-with-button"> This risk factor is used for </span>
+        <span className="text-with-button">This risk factor is used for </span>
         <Button
           variant="link"
           className="inline-text-button"
@@ -386,4 +402,4 @@ class QuestionContextWithoutStore extends React.PureComponent<QuestionContextPro
   }
 }
 
-export const QuestionContext = withStore(observer(QuestionContextWithoutStore));
+export const QuestionContext = withRouter(withStore(observer(QuestionContextWithoutStoreWithoutRouter)));

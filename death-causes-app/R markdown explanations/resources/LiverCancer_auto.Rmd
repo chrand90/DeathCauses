@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -37,8 +38,8 @@ Liver cancer is part of the following death cause categories
 
 In the model Liver cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [HCV diagnosis](/model/HCVStatus) (HCV)
 * [BMI](/model/BMI)
+* [HCV diagnosis](/model/HCVStatus) (HCV)
 * [Coffee consumption](/model/Caffeine) (Coffee)
 * [Diabetes diagnosis](/model/DiabetesStatus) (Diabetes)
 * [Biological sex](/model/Sex) (Sex)
@@ -79,16 +80,16 @@ The definition of dying from Liver cancer is to get any of the following ICD cod
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{BMI,HCV}} \cdot RR_{\text{Coffee}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Alcohol,Sex}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{HCV,BMI}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Sex,Alcohol}}
+P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Sex,Alcohol}}
 $$
 
 
@@ -96,14 +97,15 @@ $$
 
 BMI and HCV diagnosis are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'raw')
 ```
 
 
-Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing)for every value of the other variables.
+Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing) for every value of the other variables.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'interpolated')
 ```
@@ -113,7 +115,7 @@ plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'interpolated')
 
 Coffee consumption is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'raw')
@@ -121,6 +123,7 @@ plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'raw')
 
 
 Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'interpolated')
 ```
@@ -130,7 +133,7 @@ plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'interpolated')
 
 Diabetes diagnosis is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
@@ -141,14 +144,15 @@ plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
 
 Alcohol consumption and Biological sex are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Drinking','Sex'),'raw')
 ```
 
 
-Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing)for every value of the other variables.
+Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing) for every value of the other variables.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Drinking','Sex'),'interpolated')
 ```

@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
   <meta http-equiv="Content-Style-Type" content="text/css" />
   <meta name="generator" content="pandoc" />
-  <title>Best explanation and optimizabilities</title>
+  <title>Optimizabilities</title>
   <style type="text/css">
     code{white-space: pre-wrap;}
     span.smallcaps{font-variant: small-caps;}
@@ -17,25 +17,18 @@
 </head>
 <body>
 <div id="header">
-<h1 class="title">Best explanation and optimizabilities</h1>
+<h1 class="title">Optimizabilities</h1>
 </div>
 <style type="text/css">
 
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[partly auto-generated file]</em></p>
-<div id="best-explanation" class="section level2">
-<h2>Best explanation</h2>
-<p>There will always be many reasons for why someone dies of something. For example to die of <a href="/model/LungCancer">lung cancer</a>, one obviously have to be alive and have lungs. In addition many lung cancer deaths wouldn’t have happened if the patient was younger or if they hadn’t smoked tobacco. These four reasons - alive, human, old and tobacco - are all true explanations for the majority of lung cancer deaths but they are not equally interesting. Most people would probably agree that tobacco is the more interesting explanation because, unlike the others, we can actually do something about how much we smoke. Therefore, we say that tobacco is the <em>best explanation</em> for most lung cancer deaths. Not all lung cancer deaths happen to smokers, so for those cases tobacco can’t be the best explanation. Furthermore, some of the smokers who die from lung cancer would have died from lung cancer anyway, so the best explanation for their cases is not tobacco either. For these cases we look towards the less interesting, true explanations, to find their best explanation. In theory it could be either being alive, being human or being old, but we have decided that none of those explanations is interesting enough to visualize. Instead we assign their cases to the category <a href="/model/UnknownFactor">Unexplained</a>.</p>
-<p>The math behind the proportion of cases being explained by the different risk factors is described in the <a href="/model/intro#decomposition">Decomposition</a> section.</p>
-<p>To quantify the “interestingness” of an explanation we have created a measure that we call <em><a href="#optimizability">optimizability</a></em>.</p>
-</div>
-<div id="optimizabiliy" class="section level2">
-<h2>Optimizabiliy</h2>
 <p>Every risk factor is assigned an <em>optimizability</em> that describes how easy the factor is to optimize. For example, it is impossible to change your <a href="/model/Sex">biological sex</a>, but it is possible to change your <a href="/model/Drinking">alcohol intake</a>. Therefore we have given drinking habits a higher optmizability than the biological sex.</p>
 <p>The optimizabilities are used to <a href="/model/intro#decomposition">decompose</a> the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. If some factors have the same optimizability, we use <a href="/model/intro#decomposing-two-equally-optimizable-factors">another method</a>.</p>
 <p>The different optimizabilities are</p>
@@ -46,7 +39,6 @@ blockquote{
 <li>It is possible to change, but it will take a lot of time.</li>
 <li>It is possible to change, and it can be changed now or very soon.</li>
 </ol>
-</div>
 <div id="risk-factors" class="section level2">
 <h2>Risk factors</h2>
 <div id="category-1" class="section level4">
@@ -69,6 +61,7 @@ blockquote{
 <li><a href="/model/DiabetesStatus">Diabetes diagnosis</a></li>
 <li><a href="/model/HCVStatus">HCV diagnosis</a></li>
 <li><a href="/model/HIVStatus">HIV/AIDS diagnosis</a></li>
+<li><a href="/model/HPVVaccine">HPV vaccine</a></li>
 <li><a href="/model/HeadTrauma">Head traumas</a></li>
 </ul>
 </div>
@@ -77,7 +70,6 @@ blockquote{
 <p>Description: It is impossible to change now, but it has once definitely been in your control</p>
 <p>Members:</p>
 <ul>
-<li><a href="/model/HPVVaccine">HPV vaccine</a></li>
 <li><a href="/model/IndoorTanning">Time spent indoor tanning</a></li>
 <li><a href="/model/OralContraceptiveStatus">Oral contraceptives</a></li>
 <li><a href="/model/OralContraceptiveStopped">Time since taking oral contraceptives</a></li>

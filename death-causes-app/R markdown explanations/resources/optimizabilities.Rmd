@@ -1,5 +1,5 @@
 ---
-title: "Best explanation and optimizabilities"
+title: "Optimizabilities"
 output:
     html_document:
         theme: null
@@ -16,19 +16,12 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[partly auto-generated file]_
 
-## Best explanation
-There will always be many reasons for why someone dies of something. For example to die of [lung cancer](/model/LungCancer), one obviously have to be alive and have lungs. In addition many lung cancer deaths wouldn't have happened if the patient was younger or if they hadn't smoked tobacco. These four reasons - alive, human, old and tobacco - are all true explanations for the majority of lung cancer deaths but they are not equally interesting. Most people would probably agree that tobacco is the more interesting explanation because, unlike the others, we can actually do something about how much we smoke. Therefore, we say that tobacco is the *best explanation* for most lung cancer deaths. Not all lung cancer deaths happen to smokers, so for those cases tobacco can't be the best explanation. Furthermore, some of the smokers who die from lung cancer would have died from lung cancer anyway, so the best explanation for their cases is not tobacco either. For these cases we look towards the less interesting, true explanations, to find their best explanation. In theory it could be either being alive, being human or being old, but we have decided that none of those explanations is interesting enough to visualize. Instead we assign their cases to the category [Unexplained](/model/UnknownFactor).
-
-The math behind the proportion of cases being explained by the different risk factors is described in the [Decomposition](/model/intro#decomposition) section. 
-
-To quantify the "interestingness" of an explanation we have created a measure that we call *[optimizability](#optimizability)*.
-
-## Optimizabiliy
 Every risk factor is assigned an *optimizability* that describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
 
 The optimizabilities are used to [decompose](/model/intro#decomposition) the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. If some factors have the same optimizability, we use [another method](/model/intro#decomposing-two-equally-optimizable-factors).
@@ -66,6 +59,7 @@ Members:
 * [Diabetes diagnosis](/model/DiabetesStatus)
 * [HCV diagnosis](/model/HCVStatus)
 * [HIV/AIDS diagnosis](/model/HIVStatus)
+* [HPV vaccine](/model/HPVVaccine)
 * [Head traumas](/model/HeadTrauma)
 
 
@@ -75,7 +69,6 @@ Description: It is impossible to change now, but it has once definitely been in 
 
 Members:
 
-* [HPV vaccine](/model/HPVVaccine)
 * [Time spent indoor tanning](/model/IndoorTanning)
 * [Oral contraceptives](/model/OralContraceptiveStatus)
 * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
