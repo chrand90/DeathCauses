@@ -25,7 +25,8 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[auto-generated file]</em></p>
@@ -48,8 +49,8 @@ blockquote{
 <h4>Risk factors</h4>
 <p>In the model Lung cancer has the following <a href="/model/intro#risk-factor">risk factors</a></p>
 <ul>
-<li><a href="/model/SmokeTypicalAmount">Smoking average</a> (Smoke avg.)</li>
 <li><a href="/model/SmokeSinceStop">Time since smoking per year</a> (Smoke end a.)</li>
+<li><a href="/model/SmokeTypicalAmount">Smoking average</a> (Smoke avg.)</li>
 </ul>
 </div>
 <div id="number-of-deaths" class="section level4">
@@ -80,21 +81,22 @@ C34: Malignant neoplasm of bronchus and lung (99.947%)
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{Smoke avg.,Smoke end a.}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{Smoke avg.,Smoke end a.}}
+P=P_{\text{Smoke end a.,Smoke avg.}}
 \]</span></p>
 </div>
 <div id="smoking-average-time-since-smoking-per-year" class="section level4">
 <h4>Smoking average, Time since smoking per year</h4>
 <p>Smoking average and Time since smoking per year are a group of risk factors for Lung cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="LungCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variables Smoking average and Time since smoking per year are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="LungCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variables Smoking average and Time since smoking per year are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="LungCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>

@@ -25,7 +25,8 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[auto-generated file]</em></p>
@@ -49,8 +50,8 @@ blockquote{
 <h4>Risk factors</h4>
 <p>In the model Mouth cancer has the following <a href="/model/intro#risk-factor">risk factors</a></p>
 <ul>
-<li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
 <li><a href="/model/SmokeIntensity">Current smoking amount</a> (Cigarettes)</li>
+<li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
 </ul>
 </div>
 <div id="number-of-deaths" class="section level4">
@@ -166,21 +167,22 @@ C14: Malignant neoplasm of other and ill-defined sites in the lip, oral cavity a
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{Alcohol,Cigarettes}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{Alcohol,Cigarettes}}
+P=P_{\text{Cigarettes,Alcohol}}
 \]</span></p>
 </div>
 <div id="alcohol-consumption-current-smoking-amount" class="section level4">
 <h4>Alcohol consumption, Current smoking amount</h4>
 <p>Alcohol consumption and Current smoking amount are a group of risk factors for Mouth cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="MouthCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variables Alcohol consumption and Current smoking amount are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="MouthCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variables Alcohol consumption and Current smoking amount are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="MouthCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>

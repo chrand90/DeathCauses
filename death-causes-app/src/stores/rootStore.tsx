@@ -27,7 +27,7 @@ export default class RootStore {
     this.computationStateStore= new ComputationStateStore();
     this.advancedOptionsStore= new AdvancedOptionsStore(this.computationStateStore);
     this.computationStore= new ComputationStore(this.loadedDataStore, this.advancedOptionsStore, this.computationStateStore);
-    this.factorInputStore = new FactorInputStore(this.loadedDataStore, this.computationStateStore);
+    this.factorInputStore = new FactorInputStore(this.loadedDataStore, this.computationStateStore, this.advancedOptionsStore);
     this.relationLinkVizStore = new RelationLinkVizStore();
     this.questionProgressStore = new QuestionProgressStore(
       this.loadedDataStore

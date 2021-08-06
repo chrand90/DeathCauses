@@ -7,6 +7,7 @@ import {
 import { InputValidity } from "../models/FactorAbstract";
 import LoadedDataStore from "./LoadedDataStore";
 import ComputationStateStore, { ComputationState } from "./ComputationStateStore";
+import AdvancedOptionsStore from "./AdvancedOptionsStore";
 
 interface InputValidities {
   [key: string]: InputValidity;
@@ -30,9 +31,10 @@ export default class FactorInputStore {
   activelyIgnored: IgnoreList;
   loadedDataStore: LoadedDataStore;
   computationStateStore: ComputationStateStore;
+  advancedOptionsStore: AdvancedOptionsStore;
   factorMaskings: FactorMaskings;
 
-  constructor(loadedDataStore: LoadedDataStore, computationStateStore: ComputationStateStore) {
+  constructor(loadedDataStore: LoadedDataStore, computationStateStore: ComputationStateStore, advancedOptionsStore: AdvancedOptionsStore) {
     this.validities = {};
     this.factorAnswers = {};
     this.factorAnswerScales = {};
@@ -40,6 +42,7 @@ export default class FactorInputStore {
     this.factorMaskings = {};
     this.loadedDataStore = loadedDataStore;
     this.computationStateStore= computationStateStore;
+    this.advancedOptionsStore= advancedOptionsStore
     makeObservable(this, {
       validities: observable,
       factorAnswers: observable,
@@ -101,6 +104,7 @@ export default class FactorInputStore {
       );
     }
     this.validities = res;
+    this.updateAgeValidity()
   }
 
   ignoreFactor(ev: React.ChangeEvent<HTMLInputElement>) {
@@ -166,6 +170,21 @@ export default class FactorInputStore {
         ? this.factorAnswerScales[factorName].unitName
         : undefined
     );
+    if(factorName==="Age"){
+      this.updateAgeValidity();
+    }
+  }
+
+  updateAgeValidity(){
+    if(this.validities["Age"].status!=="Error"){
+      const newValue=parseFloat(this.factorAnswers["Age"] as string)
+      if(newValue>=this.advancedOptionsStore.submittedAgeTo){
+        this.validities["Age"]= {
+          status: "Error",
+          message: "Can't be higher than endAge."
+        }
+      }
+    }
   }
 
   updateMissingValidities(hasBeenAnswered: string[], currentFactor: string) {

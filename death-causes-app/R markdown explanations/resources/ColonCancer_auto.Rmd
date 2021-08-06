@@ -16,10 +16,11 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Colon cancer is a **death cause**. It means that there is a certain probability that one dies from this.
 
@@ -86,24 +87,24 @@ The definition of dying from Colon cancer is to get any of the following ICD cod
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Alcohol}} \cdot RR_{\text{Phys. total}} \cdot RR_{\text{Red meat}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{Alcohol}} \cdot P_{\text{Phys. total}} \cdot P_{\text{Red meat}}
 $$
 
+There is evidence that people who drink are more physically active than those who don't [@piazza2012examining], but that effect is negligible in our context.
+
 
 #### Alcohol consumption
 
-Alcohol consumption is a risk factor for Colon cancer.
-
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Alcohol consumption is a known risk factor for colon cancer. We use the [meta analysis](#meta-analysis) of cohort studies by @cho2004alcohol. They computed a joint [risk ratio](#risk-ratio) that were adjusted for many other [factors](#risk-factors), including physical activity and red meat consumed. This study is also ideal because it is a big meta analysis with data divided into many bins. They found that it was slightly better to drink a little($\text{RR}=0.94$) rather than nothing($\text{RR}=1.0$), but they thought it was an artifact of many former heavy drinkers who turned to abstinence. We therefore raise the risk ratio of the light drinkers to 1.0 as well. 
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'raw')
@@ -111,6 +112,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'raw')
 
 
 Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'interpolated')
 ```
@@ -118,9 +120,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'interpolated')
 
 #### Total physical activity time
 
-Total physical activity time is a risk factor for Colon cancer.
-
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar [@samad2005meta]. We therefore obtain the [risk ratios](#risk-ratio) from @Kyui2016physical, where they estimated a [dose-response](#dose-response) relationship based on total physical activity in a [meta analysis](#meta-analysis). They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'raw')
@@ -128,6 +128,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'raw')
 
 
 Because the variable Total physical activity time is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'interpolated')
 ```
@@ -135,9 +136,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'interpolated')
 
 #### Red meat consumption
 
-Red meat consumption is a risk factor for Colon cancer.
-
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+We use the risk ratios from @schwingshackl2018food, which is a big dose-response meta analysis. Not all, but most of the big included studies in the meta analysis adjusted for physical activity and alcohol consumption, so it is very reasonable to use it in combination with our other risk factors
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('RedMeat'),'raw')
@@ -145,6 +144,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('RedMeat'),'raw')
 
 
 Because the variable Red meat consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('RedMeat'),'interpolated')
 ```

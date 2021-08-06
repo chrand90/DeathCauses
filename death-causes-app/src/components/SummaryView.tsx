@@ -18,6 +18,32 @@ export interface SummaryViewProps {
 
 export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
 
+    lifeExpectancySentence(){
+        if("Age" in this.props.store.computationStore.submittedFactorAnswers &&
+            this.props.store.loadedDataStore.loadedLifeExpectancies){
+            const age=this.props.store.computationStore.submittedFactorAnswers["Age"]
+            if(age===""){
+                return(
+                    <p>
+                        The average life expectancy from birth is: {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
+                    </p>
+                )
+            }
+            else{
+                const ageNumber= Math.floor(typeof age==="string" ? parseFloat(age) : age)
+                if(age>110){
+                    return null
+                }
+                return (
+                    <p>
+                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is: {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
+                    </p>
+                )
+            }
+        }
+        return null
+    }
+
     render() {
         if (this.props.store.computationStore.summaryView === null) {
             return (
@@ -36,8 +62,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         <CardBody>
                             <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
                             <p></p>
-                            <h5>The average life expentancy is: 70</h5>
-                            <RangeSliders />
+                            {this.lifeExpectancySentence()}
+                            <RangeSliders summaryViewData={summaryViewData}/>
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>

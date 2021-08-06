@@ -53,7 +53,8 @@ if options.guided:
 	print("A list of certainly required R packages can be found in Reportgeneration/DatabaseVisualization/RRtablePlotting/DESCRIPTION and possibly required packages can be found in \"death-causes-app/R markdown explanations/installed_packages.csv\"")
 	yes_no_continue("Are you happy with using this command to invoke R notebooks: '"+options.Rpath+"'?[y/n]", "Make sure to add the correct argument to --Rpath for this recompiler")
 	
-if yes_no("Do you wish to recompute all html help files? [y/n]"):	
+if yes_no("Do you wish to recompute all html help files? [y/n]"):
+	subprocess.run(["python","generate_Rmds.py"], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations"))
 	for l in os.listdir(os.path.join("death-causes-app","R markdown explanations","resources")):
 		if l.endswith(".Rmd"):
 			command= '"rmarkdown::render(\'{filename}\')"'.format(filename=l)

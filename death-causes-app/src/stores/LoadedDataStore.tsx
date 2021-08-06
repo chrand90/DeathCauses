@@ -5,7 +5,7 @@ import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import ComputationStore from "./ComputationStore";
-import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions } from "./DataLoading";
+import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions, loadLifeExpectancies } from "./DataLoading";
 import FactorInputStore from "./FactorInputStore";
 import QuestionProgressStore from "./QuestionProgressStore";
 
@@ -23,6 +23,8 @@ export default class LoadedDataStore {
   descriptions:Descriptions;
   loadedQuestionMenuData: boolean;
   loadedVizWindowData: boolean;
+  loadedLifeExpectancies: boolean;
+  lifeExpectancies: number[];
   conditions: {[conditionName:string]: Condition};
   rawConditions: ConditionJson;
 
@@ -40,11 +42,14 @@ export default class LoadedDataStore {
     this.rawDescriptions={} as DescriptionsJson
     this.conditions={} as {[conditionName:string]: Condition};
     this.rawConditions={} as ConditionJson
+    this.lifeExpectancies=[];
     this.loadedQuestionMenuData=false;
     this.loadedVizWindowData=false;
+    this.loadedLifeExpectancies=false;
     makeObservable(this, {
       loadedVizWindowData: observable,
       loadedQuestionMenuData: observable,
+      loadedLifeExpectancies: observable,
       loadAllData: action.bound,
     });
   }
@@ -66,6 +71,19 @@ export default class LoadedDataStore {
       this.loadedVizWindowData=true;
       return
     })
+    this.makePromiseOfLifeExpectancies().then(() => {
+      this.loadedLifeExpectancies=true;
+      return
+    })
+  }
+
+  makePromiseOfLifeExpectancies(){
+    return new Promise(resolve => {
+      loadLifeExpectancies().then((lifeExpectancies: number[]) => {
+          this.lifeExpectancies=lifeExpectancies;
+          resolve(true);
+        })
+      })
   }
 
   makePromiseOfFactors(){

@@ -1,5 +1,9 @@
+.root{
+  --leftadjust: 0px;
+}
+
 .stip{
-    line-height: 1;
+    line-height: 1.5;
     display: inline-block;
     padding: 6px;
     color: rgb(0, 0, 0);
@@ -11,33 +15,25 @@
     z-index: 2;
     font-size: 14px;
     font-weight: 500;
+    transform: translate(-50%,0);
+    width:150px;
   }
   
   /* Creates a small triangle extender for the tooltip 
+  I have no idea why the transform is necessary.
   */
-  .stip:before {
-    box-sizing: border-box;
-    display: inline;
-    font-size: 14px;
-    width: 100%;
-    color: rgba(77, 77, 77, 0.8);
-    content: "\25B2";
+
+  .stiparrow {
+    display: block;
     position: absolute;
-    z-index: 0; 
-    text-align: center;
-  }
-
-  .stip.s:before {
-    top: -13px;
-    left: 0;
-  }
-
-  .stip.small {
-    max-width: 100px;
-    word-wrap: break-word;
+    color: rgba(77, 77, 77, 0.8);
+    font-size: 14px;
+    top:0px;
   }
 
   .clicktip {
+    position: absolute;
+    text-align: left;
     line-height: 1.5;
     padding: 6px;
     color: rgb(0, 0, 0);
@@ -48,35 +44,19 @@
     position: absolute;
     font-size: 14px;
     font-weight: 400;
-    max-width: 250px;
-    z-index: 1;
-    }
-    
-    /* Creates a small triangle extender for the tooltip 
-    */
-    .clicktip:before {
-      height:14px;
-      box-sizing: border-box;
-      font-size: 14px;
-      width: 100%;
-      line-height: 1;
-      padding: 0px;
-      margin: 0px;
-      color: rgba(0, 0, 0, 0.8);
-      content: "\25B2";
-      position: absolute;
-      text-align: center;
-    }
-    
-    .clicktip.s:before {
-      top: -13px;
-      left: 0;
+    width: 250px;
+    transform: translate(-50%,0);
+    z-index: 2;
     }
 
-    .clicktip.small {
-      max-width: 100px;
-      word-wrap: break-word;
+    .clicktiparrow {
+      display: block;
+      position: absolute;
+      color: rgb(0, 0, 0);
+      font-size: 14px;
+      top:0px;
     }
+    
     
     .buttontip {
       line-height: 1.5;
@@ -120,4 +100,18 @@
         max-width: 100px;
         word-wrap: break-word;
       }
+.aslink {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #0000EE;
+  cursor: pointer;
+}
+
+.aslink:hover{
+  text-decoration:underline;
+}
         

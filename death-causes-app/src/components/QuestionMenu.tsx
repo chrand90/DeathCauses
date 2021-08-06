@@ -66,7 +66,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
       this.props.store.questionProgressStore.nextQuestion(this.props.store.factorInputStore.factorMaskings);
       this.props.store.computationStore.compute(this.props.store.factorInputStore.computeSubmittedAnswers());
       if(this.props.store.uIStore.visualization===Visualization.NO_GRAPH){
-        this.props.store.uIStore.setVisualization(Visualization.BAR_GRAPH);
+        this.props.store.uIStore.setVisualization(Visualization.SUMMARY_VIEW);
       }
     }
   }

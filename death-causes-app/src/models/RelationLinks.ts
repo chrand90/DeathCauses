@@ -355,26 +355,36 @@ export default class RelationLinks {
   arrowInterpretation(
     //TODO: when there are duplicate keys it doesn't give the right output
     fromNode: string,
-    toNode: string
+    toNode: string,
+    fromPrettyString: string="",
+    toPrettyString: string=""
   ): string {
+    fromNode=fromNode.replace("*","")
+    toNode=toNode.replace("*","")
     let res: string = "";
     let fromType = this.nodeType[fromNode];
     let toType = this.nodeType[toNode];
+    if(fromPrettyString===""){
+      fromPrettyString=fromNode
+    }
+    if(toPrettyString===""){
+      toPrettyString=toNode
+    }
     if (fromType === NodeType.INPUT || fromType === NodeType.COMPUTED_FACTOR) {
-      res += fromNode + " is used ";
+      res += fromPrettyString + " is used ";
     } else if (fromType === NodeType.CONDITION) {
-      res += "The status of " + fromNode + " is used ";
+      res += "The status of " + fromPrettyString + " is used ";
     } else if (fromType === NodeType.CAUSE_CATEGORY) {
-      return toNode + " is a type of " + fromNode;
+      return toPrettyString + " is a type of " + fromPrettyString;
     }
     if (toType === NodeType.COMPUTED_FACTOR) {
-      res += "to compute " + toNode;
+      res += "to compute " + toPrettyString;
     } else if (toType === NodeType.CONDITION) {
-      res += "to estimate the status of " + toNode;
+      res += "to estimate the status of " + toPrettyString;
     } else if (toType === NodeType.CAUSE_CATEGORY) {
-      res += "as a risk factor for all types of " + toNode;
+      res += "as a risk factor for all types of " + toPrettyString;
     } else if (toType === NodeType.CAUSE) {
-      res += "to compute the risk of dying from " + toNode;
+      res += "to compute the risk of dying from " + toPrettyString;
     }
     return res;
   }

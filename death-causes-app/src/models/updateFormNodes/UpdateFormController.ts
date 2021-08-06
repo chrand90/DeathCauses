@@ -154,6 +154,8 @@ export default class UpdateFormController {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
     });
     this.allComputedNodes = res;
+    console.log("all computed nodes:")
+    console.log(this.allComputedNodes);
     //this.computeAverage(factorAnswers)
   }
 

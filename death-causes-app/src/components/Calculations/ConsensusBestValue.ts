@@ -21,6 +21,11 @@ enum FlankStability {
   UNSTABLE = "unstable",
 }
 
+export interface LongConsensus {
+  textWithButtons: string;
+  buttonCodes: string[]
+}
+
 export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
   factorAnswers: UpdateDic;
@@ -164,7 +169,7 @@ export class BestValues {
           }
         }
         case Flank.BOTH: {
-          return factorNameDescription + "(complicated)";
+          return factorNameDescription + " (complicated)";
         }
       }
     } else {
@@ -181,9 +186,10 @@ export class BestValues {
     probability: number,
     causeName: string,
     descriptions: Descriptions
-  ) {
+  ): LongConsensus {
     const factorNameDescription = descriptions.getDescription(factorName, 30);
     const causeDescription = descriptions.getDescription(causeName, 30);
+    let buttonCodes:string[]=[];
     const prob =
       "<strong>" +
       (probability * 100).toFixed(1).replace(/\.?0+$/, "") +
@@ -193,11 +199,23 @@ export class BestValues {
       subtracted,
       optimizability,
     } = this.getGivensAndOptimizability(factorName);
-    let res = "If you die from " + causeDescription + ", there is a ";
-    res += prob + " probability that it is due to ";
-    res += "<strong>" + factorNameDescription + "</strong>";
+    let buttonCounter=0;
+    let res = "If you die"
+    if(causeDescription.length>0){
+      buttonCounter += 1;
+      res+=" from " + createButton(causeDescription, buttonCounter)
+      buttonCodes.push(causeName)
+    }
+    res += ", there is a ";
+    res += prob + " probability that the ";
+    buttonCounter += 1;
+    res +=  createButton("best explanation", buttonCounter)+" is "
+    buttonCodes.push("optimizabilities")
+    buttonCounter += 1;
+    res +=  createButton(factorNameDescription, buttonCounter)
+    buttonCodes.push(factorName);
 
-    if (givens.length > 0) {
+    if (givens.length > 0 && false) {
       res =
         res +
         ". This includes cases where other valid reasons were " +
@@ -209,7 +227,7 @@ export class BestValues {
           listFormatting(subtracted) +
           " could also explain the death";
       }
-    } else if (subtracted.length > 0) {
+    } else if (subtracted.length > 0 && false) {
       res =
         res +
         ". This excludes cases where other valid reasons were " +
@@ -229,8 +247,14 @@ export class BestValues {
       !(factorName in this.optimals) ||
       this.optimals[factorName].length === 0
     ) {
-      return res;
+      return {
+        textWithButtons: res,
+        buttonCodes: buttonCodes
+      };
     }
+    buttonCounter+=1
+    const optimalButtonSingular=createButton("optimal value", buttonCounter)
+    buttonCodes.push("interpretation#optimal-values")
     const firstEntry = this.optimals[factorName][0];
     if (typeof firstEntry === "number") {
       const { min, max } = this.getMinMaxOfFactorAnswers(
@@ -265,13 +289,13 @@ export class BestValues {
         .toFixed(2)
         .replace(/\.?0+$/, "");
       if (factorAnswerFlank === Flank.NEITHER) {
-        res = res + ". That is extremely close to the optimal value";
+        res = res + ". That is extremely close to the "+optimalButtonSingular;
       } else if (stability === FlankStability.STABLE) {
-        res = res + ". The optimal value is <strong>" + minVal + "</strong>";
+        res = res + ". The "+optimalButtonSingular+" is <strong>" + minVal + "</strong>";
       } else {
         res =
           res +
-          ". The optimal value varies between " +
+          ". The "+ optimalButtonSingular + " varies between " +
           minVal +
           " and " +
           maxVal +
@@ -279,17 +303,20 @@ export class BestValues {
       }
     } else {
       if (this.optimals[factorName].every((d) => d === firstEntry)) {
-        res = res + ". The optimal value is " + firstEntry;
+        res = res + ". The "+optimalButtonSingular+" is " + firstEntry;
       } else {
         res =
           res +
-          ". The optimal values is one of {" +
+          ". The "+optimalButtonSingular+" is one of {" +
           removeDuplicates(this.optimals[factorName] as string[]).join(", ") +
           "}" +
           " depending on age, subcause and/or other risk factors";
       }
     }
-    return res + ".";
+    return {
+      textWithButtons: res,
+      buttonCodes: buttonCodes
+    };
   }
 
   merge(otherStore: BestValues) {
@@ -362,6 +389,10 @@ function computeFlankOfFactorAnswer(
   return { side, stability };
 }
 
+function createButton(buttonText: string, counter: number){
+  return `<button id="but${counter}" class="aslink" href="something">${buttonText}</button>`
+}
+
 function listFormatting(factors: string[], finalword: string = "or") {
   if (factors.length === 1) {
     return "<i>" + factors[0] + "</i>";
@@ -373,6 +404,32 @@ function listFormatting(factors: string[], finalword: string = "or") {
     });
     return res.slice(0, -2) + " " + finalword + " <i>" + lastElement + "</i>";
   }
+}
+
+export function getUnexplainedStatement(prob: number, cause: string, descriptions: Descriptions){
+  const causeDescription = descriptions.getDescription(cause, 30);
+  let res=""
+  res+="If you die"
+  let buttonCounter=0
+  let buttonCodes: string[]=[]
+  if(cause!=="any cause"){
+      buttonCounter+=1
+      res+=" from "+ createButton(causeDescription, buttonCounter);
+      buttonCodes.push(cause)
+  }
+  res+=", there is <strong>" +(prob*100).toFixed(1).replace(/\.?0+$/,"")+ "%</strong> probability that the "
+  buttonCounter+=1
+  res+=createButton("best explanation", buttonCounter)
+  buttonCodes.push("optimizabilities")
+  res+= " is "
+  buttonCounter+=1;
+  res+=createButton("Unknown", buttonCounter)
+  buttonCodes.push("interpretation#unexplained")
+  res+="."
+  return {
+      textWithButtons: res,
+      buttonCodes:  buttonCodes
+  };    
 }
 
 export function mergeBestValues(bestValues: BestValues[]): BestValues {

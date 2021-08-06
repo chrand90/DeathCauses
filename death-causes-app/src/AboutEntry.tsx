@@ -19,8 +19,10 @@ interface PageInfo {
 }
 
 const SPECIAL_PAGES: PageInfo[]=[
-    {linkText:"Introduction", direct:"intro"},
-    {linkText:"Optimizabilities", direct:"optimizabilities"}
+    {linkText:"Theory", direct:"intro"},
+    {linkText: "Interpretation", direct: "interpretation"},
+    {linkText:"Optimizabilities", direct:"optimizabilities"},
+    {linkText: "All references", direct:"references"}
 ]
 
 interface AboutEntryProps extends RouteComponentProps{
@@ -116,7 +118,9 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
         <h1>About the model</h1>
         <p style={{fontSize:"22px"}}>
          Read first:{" "}
-          {this.linkButton("Introduction", "intro", "22px")}
+          {this.linkButton("Theory", "intro", "22px")}
+          {" or "}
+          {this.linkButton("Interpretation","interpretation","22px")}
         </p>
         <hr></hr>
         <h3>All pages</h3>

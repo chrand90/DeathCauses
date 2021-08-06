@@ -1,0 +1,2 @@
+We use the risk ratios from @schwingshackl2018food, which is a big dose-response meta analysis. Not all, but most of the big included studies in the meta analysis adjusted for physical activity and alcohol consumption, so it is very reasonable to use it in combination with our other risk factors
+

@@ -16,10 +16,11 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Diabetes condition is a **condition**. It means that the model computes probabilities of getting or having it and uses that in further computations.
 
@@ -65,13 +66,13 @@ plotSpecificPlots(dat, 'DiabetesCondition')
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{BMI}} \cdot RR_{\text{Waist (male)}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{BMI,Waist (male)}}
@@ -82,7 +83,7 @@ $$
 
 BMI is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'raw')
@@ -90,6 +91,7 @@ plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'raw')
 
 
 Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'interpolated')
 ```
@@ -99,7 +101,7 @@ plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'interpolated')
 
 Waist circumference as male is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'raw')
@@ -107,6 +109,7 @@ plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'raw')
 
 
 Because the variable Waist circumference as male is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'interpolated')
 ```
