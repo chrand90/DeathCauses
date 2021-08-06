@@ -80,6 +80,10 @@ export async function loadRelationLinks():Promise<LoadedRelationLinks> {
     return {rdat:rdat, rawRelationLinks: rawRelationLinks};
 }
 
+export async function loadLifeExpectancies():Promise<number[]> {
+    return await loadFromFile<number[]>("lifeTable.json");
+}
+
 export async function loadDescriptions(): Promise<LoadedDescriptions> {
     const rawDescriptions= await loadFromFile<DescriptionsJson>("Descriptions.json");
     const descriptions= new Descriptions(rawDescriptions);

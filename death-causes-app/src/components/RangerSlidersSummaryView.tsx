@@ -1,32 +1,49 @@
 import { observer } from "mobx-react"
 import React from "react"
+import { useRef } from "react"
 import { useEffect, useState } from "react"
 import { FormGroup } from "reactstrap"
+import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView"
 import RootStore, { withStore } from "../stores/rootStore"
 
 interface RangeSlidersProps {
+    summaryViewData: null | SummaryViewData
     store: RootStore
 }
 
-const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
-    const ages = props.store.computationStore.summaryView!.lifeExpentancyData.ages
-    const survivalProbs = props.store.computationStore.summaryView!.lifeExpentancyData.probabilities
+enum SliderAnchor {
+    AGE="Age",
+    PROB="Prob"   
+}
 
-    const [sliderAge, setSliderAge] = useState<number>(ages[0])
-    const [sliderProb, setSliderProb] = useState<number>(survivalProbs[0] * 100)
+const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
+    const ages = props.summaryViewData!.lifeExpentancyData.ages
+    const survivalProbs = props.summaryViewData!.lifeExpentancyData.probabilities
+
+    const [sliderAge, setSliderAge] = useState<number>(0)
+    const [sliderProb, setSliderProb] = useState<number>(50)
     const ageMax = props.store.advancedOptionsStore.ageTo;
+    const sliderInCenter = useRef<SliderAnchor>(SliderAnchor.PROB);
 
     useEffect(() => {
-        updateProbSlider(50)
+        if(sliderInCenter.current===SliderAnchor.PROB){
+            updateProbSlider(sliderProb)
+        }
+        else{
+            updateAgeSlider(sliderAge)
+        }
+        
     }, [ages, survivalProbs])
 
     const updateAgeSlider = (ageValue: number) => {
+        sliderInCenter.current=SliderAnchor.AGE
         setSliderAge(ageValue)
         setSliderProb(survivalProbs[ages.findIndex(element => element === ageValue)] * 100)
         // setSliderProb(Math.round(props.survivalProbs[props.ages.findIndex(element => element === ageValue)] * 1000) / 10)
     }
 
     const updateProbSlider = (value: number) => {
+        sliderInCenter.current=SliderAnchor.PROB
         setSliderProb(value)
         let indexOfAges = survivalProbs.findIndex(element => element < value / 100)
         if (indexOfAges === -1) {
