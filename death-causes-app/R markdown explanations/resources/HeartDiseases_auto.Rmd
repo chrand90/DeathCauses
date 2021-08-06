@@ -16,12 +16,13 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
 
-Heart disease is a **death cause category**. It means that it is a collection of **death causes** and so we can compute the probability of dying from this death cause category by adding up all of its death causes. 
+Heart disease is a **death cause category**. It means that it is a collection of **death causes** and so one can compute the probability of dying from this death cause category by adding up all of its death causes. 
 
 #### Alternative names:
 * Heart dis.
@@ -51,13 +52,13 @@ In the model Heart disease has the following [risk factors](/model/intro#risk-fa
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Greens}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{Greens}}
@@ -76,7 +77,7 @@ dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json",
 
 Greens consumption is a risk factor for Heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'HeartDiseases', c('Greens'),'raw')
@@ -84,6 +85,7 @@ plotSpecificPlots(dat, 'HeartDiseases', c('Greens'),'raw')
 
 
 Because the variable Greens consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'HeartDiseases', c('Greens'),'interpolated')
 ```

@@ -25,7 +25,8 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[auto-generated file]</em></p>
@@ -52,8 +53,8 @@ blockquote{
 <li><a href="/model/HCVStatus">HCV diagnosis</a> (HCV)</li>
 <li><a href="/model/Caffeine">Coffee consumption</a> (Coffee)</li>
 <li><a href="/model/DiabetesStatus">Diabetes diagnosis</a> (Diabetes)</li>
-<li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
 <li><a href="/model/Sex">Biological sex</a> (Sex)</li>
+<li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
 </ul>
 </div>
 <div id="number-of-deaths" class="section level4">
@@ -84,41 +85,44 @@ C22: Malignant neoplasm of liver and intrahepatic bile ducts (100.0%)
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{BMI,HCV}} \cdot RR_{\text{Coffee}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Alcohol,Sex}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Alcohol,Sex}}
+P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Sex,Alcohol}}
 \]</span></p>
 </div>
 <div id="bmi-hcv-diagnosis" class="section level4">
 <h4>BMI, HCV diagnosis</h4>
 <p>BMI and HCV diagnosis are a group of risk factors for Liver cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variable BMI is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>for every value of the other variables. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variable BMI is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a> for every value of the other variables.</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="coffee-consumption" class="section level4">
 <h4>Coffee consumption</h4>
 <p>Coffee consumption is a risk factor for Liver cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Because the variable Coffee consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Because the variable Coffee consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="diabetes-diagnosis" class="section level4">
 <h4>Diabetes diagnosis</h4>
 <p>Diabetes diagnosis is a risk factor for Liver cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 </div>
 <div id="alcohol-consumption-biological-sex" class="section level4">
 <h4>Alcohol consumption, Biological sex</h4>
 <p>Alcohol consumption and Biological sex are a group of risk factors for Liver cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
-<p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>for every value of the other variables. <img src="LiverCancer_auto_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+<p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a> for every value of the other variables.</p>
+<p><img src="LiverCancer_auto_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>

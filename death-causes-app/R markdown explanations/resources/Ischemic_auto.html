@@ -25,10 +25,11 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
-<p><em>[auto-generated file]</em></p>
+<p><em>[partly auto-generated file]</em></p>
 <p>Coronary heart disease is a <strong>death cause</strong>. It means that there is a certain probability that one dies from this.</p>
 <div id="alternative-names" class="section level4">
 <h4>Alternative names:</h4>
@@ -52,11 +53,11 @@ blockquote{
 <li><a href="/model/Caffeine">Coffee consumption</a> (Coffee)</li>
 <li><a href="/model/Drinking">Alcohol consumption</a> (Alcohol)</li>
 <li><a href="/model/MaxDrinking">Peak Alcohol consumption</a> (Peak alcohol)</li>
-<li><a href="/model/PhysicalTotal">Total physical activity time</a> (Phys. total)</li>
 <li><a href="/model/PhysicalHard">Hard physical activity time</a> (Phys. Hard)</li>
-<li><a href="/model/SmokeTypicalAmount">Smoking average</a> (Smoke avg.)</li>
+<li><a href="/model/PhysicalTotal">Total physical activity time</a> (Phys. total)</li>
 <li><a href="/model/Age">Age</a></li>
 <li><a href="/model/SmokeSinceStop">Time since smoking per year</a> (Smoke end a.)</li>
+<li><a href="/model/SmokeTypicalAmount">Smoking average</a> (Smoke avg.)</li>
 <li><a href="/model/Greens">Greens consumption</a> (Greens) inherited from <a href="/model/HeartDiseases">Heart disease</a></li>
 </ul>
 </div>
@@ -128,46 +129,51 @@ I24: Other acute ischemic heart diseases (1.1%)
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{Coffee}} \cdot RR_{\text{Alcohol}} \cdot RR_{\text{Peak alcohol}} \cdot RR_{\text{Phys. total,Phys. Hard}} \cdot RR_{\text{Smoke avg.,Age}} \cdot RR_{\text{Smoke avg.,Smoke end a.}} \cdot RR_{\text{Greens}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. Hard,Phys. total}} \cdot P_{\text{Age,Smoke end a.,Smoke avg.}} \cdot P_{\text{Greens}}
 \]</span></p>
 </div>
 <div id="coffee-consumption" class="section level4">
 <h4>Coffee consumption</h4>
 <p>Coffee consumption is a risk factor for Coronary heart disease.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variable Coffee consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variable Coffee consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="alcohol-consumption" class="section level4">
 <h4>Alcohol consumption</h4>
 <p>If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call Peak alcohol consumption). <span class="citation">Roerecke and Rehm (<a href="#ref-roerecke2014alcohol" role="doc-biblioref">2014</a>)</span> have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from <span class="citation">Malyutina et al. (<a href="#ref-malyutina2002relation" role="doc-biblioref">2002</a>)</span>, which is one of the studies included in the meta analysis of <span class="citation">Roerecke and Rehm (<a href="#ref-roerecke2014alcohol" role="doc-biblioref">2014</a>)</span>. Because the study from <span class="citation">Malyutina et al. (<a href="#ref-malyutina2002relation" role="doc-biblioref">2002</a>)</span> is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method.</p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="peak-alcohol-consumption" class="section level4">
 <h4>Peak Alcohol consumption</h4>
 <p>See <a href="#drinking">Peak alcohol</a></p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
-<p>Because the variable Peak Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Because the variable Peak Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div id="hard-physical-activity-time-total-physical-activity-time" class="section level4">
 <h4>Hard physical activity time, Total physical activity time</h4>
 <p>Hard physical activity time and Total physical activity time are a group of risk factors for Coronary heart disease.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
-<p>Because the variables Total physical activity time and Hard physical activity time are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
+<p>Because the variables Total physical activity time and Hard physical activity time are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-10-1.png" width="672" /></p>
 </div>
 <div id="age-smoking-average" class="section level4">
 <h4>Age, Smoking average</h4>
 <p>See <a href="#smoking-average-time-since-smoking-per-year">Smoking average, Time since smoking per year</a></p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-11-1.png" width="672" /></p>
-<p>Because the variables Smoking average and Age are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
+<p>Because the variables Smoking average and Age are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-12-1.png" width="672" /></p>
 </div>
 <div id="smoking-average-time-since-smoking-per-year" class="section level4">
 <h4>Smoking average, Time since smoking per year</h4>
@@ -189,7 +195,8 @@ RR_{s,a,t}=\Bigl\{\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\Bigr\}\cdot \Bigl\
 \]</span> where the first product term is saved in one table and the second product term is saved in another.The price for making this trick was to introduce an artificial standard age - here 65. In practice this means that young former smokers will still receive the age penalty <span class="math inline">\(\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\)</span> even though they haven’t smoked in a while.</p>
 <p>The raw age penalties (<span class="math inline">\(\frac{RR_{s,a, \bullet}}{RR_{s,65,\bullet}}\)</span>) are shown below. Be aware that this table only says how much more dangerous it is to smoke when you are young and not how dangerous it is to smoke when you are old.</p>
 <p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-13-1.png" width="672" /></p>
-<p>Because the variables Smoking average and Time since smoking per year are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="Ischemic_auto_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
+<p>Because the variables Smoking average and Time since smoking per year are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Ischemic_auto_files/figure-html/unnamed-chunk-14-1.png" width="672" /></p>
 </div>
 <div id="greens-consumption" class="section level4">
 <h4>Greens consumption</h4>

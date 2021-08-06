@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -89,13 +90,13 @@ The definition of dying from Chronic liver disease is to get any of the followin
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{BMI}} \cdot RR_{\text{Alcohol,HCV}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{BMI}} \cdot P_{\text{Alcohol,HCV}}
@@ -106,7 +107,7 @@ $$
 
 BMI is a risk factor for Chronic liver disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'raw')
@@ -114,6 +115,7 @@ plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'raw')
 
 
 Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'interpolated')
 ```
@@ -123,14 +125,15 @@ plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'interpolated')
 
 Alcohol consumption and HCV diagnosis are a group of risk factors for Chronic liver disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('Drinking','HCVStatus'),'raw')
 ```
 
 
-Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing)for every value of the other variables.
+Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing) for every value of the other variables.
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('Drinking','HCVStatus'),'interpolated')
 ```

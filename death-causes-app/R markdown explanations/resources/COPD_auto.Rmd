@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -37,8 +38,8 @@ Chronic obstructive pulmonary disease is part of the following death cause categ
 
 In the model Chronic obstructive pulmonary disease has the following [risk factors](/model/intro#risk-factor)
 
-* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 
 #### Number of deaths
 
@@ -73,16 +74,16 @@ The definition of dying from Chronic obstructive pulmonary disease is to get any
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Smoke avg.,Smoke end a.}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Smoke avg.,Smoke end a.}}
+P=P_{\text{Smoke end a.,Smoke avg.}}
 $$
 
 
@@ -90,7 +91,7 @@ $$
 
 Smoking average and Time since smoking per year are a group of risk factors for Chronic obstructive pulmonary disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'COPD', c('SmokeTypicalAmount','SmokeSinceStop'),'raw')
@@ -98,6 +99,7 @@ plotSpecificPlots(dat, 'COPD', c('SmokeTypicalAmount','SmokeSinceStop'),'raw')
 
 
 Because the variables Smoking average and Time since smoking per year are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'COPD', c('SmokeTypicalAmount','SmokeSinceStop'),'interpolated')
 ```

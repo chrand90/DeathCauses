@@ -66,7 +66,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
       this.props.store.questionProgressStore.nextQuestion(this.props.store.factorInputStore.factorMaskings);
       this.props.store.computationStore.compute(this.props.store.factorInputStore.computeSubmittedAnswers());
       if(this.props.store.uIStore.visualization===Visualization.NO_GRAPH){
-        this.props.store.uIStore.setVisualization(Visualization.BAR_GRAPH);
+        this.props.store.uIStore.setVisualization(Visualization.SUMMARY_VIEW);
       }
     }
   }
@@ -240,7 +240,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
     }
     const styleObject: {[k:string]:string}={}
     if(!this.props.store.uIStore.verticalStacked){
-      styleObject["height"]="calc(100vh - 100px)"
+      styleObject["height"]="calc(100vh - 72px)"
       styleObject["overflow-y"]="auto"
     }
     return (

@@ -80,7 +80,7 @@ export default class Descriptions {
 
     getDescription(nodeName: string, maxSize:number=20): string{
         if(nodeName === "any cause") {
-          return nodeName
+          return "";
         }
         let candidateLength=0;
         let candidate=null;

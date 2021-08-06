@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -52,7 +53,7 @@ The answer has to be larger than 0 Minutes. The answer is recommended to be larg
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of Hard physical activity time is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Hard physical activity time is 5. This means that it can be interpreted as
 
 > *It is possible to change, and it can be changed now or very soon.*
 

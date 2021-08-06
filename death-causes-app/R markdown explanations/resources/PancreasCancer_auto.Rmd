@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -77,13 +78,13 @@ The definition of dying from Pancreas cancer is to get any of the following ICD 
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Coffee}} \cdot RR_{\text{Diabetes}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 P=P_{\text{Coffee}} \cdot P_{\text{Diabetes}}
@@ -94,7 +95,7 @@ $$
 
 Coffee consumption is a risk factor for Pancreas cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'raw')
@@ -102,6 +103,7 @@ plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'raw')
 
 
 Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'interpolated')
 ```
@@ -111,7 +113,7 @@ plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'interpolated')
 
 Diabetes diagnosis is a risk factor for Pancreas cancer.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'PancreasCancer', c('DiabetesStatus'),'raw')

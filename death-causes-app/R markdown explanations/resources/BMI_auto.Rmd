@@ -16,7 +16,8 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 _[auto-generated file]_
@@ -47,7 +48,7 @@ The answer has to be larger than 0 kg/m^2. The answer is recommended to be large
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure that we have made to describe how easy it is to optimize a certain factor of your life. The optimizability of BMI is 4. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of BMI is 4. This means that it can be interpreted as
 
 > *It is possible to change, but it will take a lot of time.*
 

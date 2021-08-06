@@ -16,23 +16,28 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
+
+Every risk factor is assigned an *optimizability* that describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+
+The optimizabilities are used to [decompose](/model/intro#decomposition) the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. If some factors have the same optimizability, we use [another method](/model/intro#decomposing-two-equally-optimizable-factors).
 
 The different optimizabilities are
 
-* It is impossible to change and it has never been in your control
-* It is impossible to change, but it could have been the consequence of your actions
-* It is impossible to change now, but it has once definitely been in your control
-* It is possible to change, but it will take a lot of time.
-* It is possible to change, and it can be changed now or very soon.
+1. It is impossible to change and it has never been in your control
+2. It is impossible to change, but it could have been the consequence of your actions
+3. It is impossible to change now, but it has once definitely been in your control
+4. It is possible to change, but it will take a lot of time.
+5. It is possible to change, and it can be changed now or very soon.
 
 
 ## Risk factors
 
-#### 1
+#### Category 1
 
 Description: It is impossible to change and it has never been in your control
 
@@ -44,7 +49,7 @@ Members:
 * [Biological sex](/model/Sex)
 
 
-#### 2
+#### Category 2
 
 Description: It is impossible to change, but it could have been the consequence of your actions
 
@@ -54,16 +59,16 @@ Members:
 * [Diabetes diagnosis](/model/DiabetesStatus)
 * [HCV diagnosis](/model/HCVStatus)
 * [HIV/AIDS diagnosis](/model/HIVStatus)
+* [HPV vaccine](/model/HPVVaccine)
 * [Head traumas](/model/HeadTrauma)
 
 
-#### 3
+#### Category 3
 
 Description: It is impossible to change now, but it has once definitely been in your control
 
 Members:
 
-* [HPV vaccine](/model/HPVVaccine)
 * [Time spent indoor tanning](/model/IndoorTanning)
 * [Oral contraceptives](/model/OralContraceptiveStatus)
 * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
@@ -75,7 +80,7 @@ Members:
 * [Time since you stopped smoking](/model/SmokingStopped)
 
 
-#### 4
+#### Category 4
 
 Description: It is possible to change, but it will take a lot of time.
 
@@ -86,7 +91,7 @@ Members:
 * [Waist circumference male equivalence](/model/WaistMale)
 
 
-#### 5
+#### Category 5
 
 Description: It is possible to change, and it can be changed now or very soon.
 

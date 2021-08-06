@@ -16,10 +16,11 @@ link-citations: true
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Coronary heart disease is a **death cause**. It means that there is a certain probability that one dies from this.
 
@@ -41,11 +42,11 @@ In the model Coronary heart disease has the following [risk factors](/model/intr
 * [Coffee consumption](/model/Caffeine) (Coffee)
 * [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
-* [Total physical activity time](/model/PhysicalTotal) (Phys. total)
 * [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
-* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Total physical activity time](/model/PhysicalTotal) (Phys. total)
 * [Age](/model/Age)
 * [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
 
 #### Number of deaths
@@ -103,16 +104,16 @@ The definition of dying from Coronary heart disease is to get any of the followi
 
 #### Interaction
 
-The combined risk ratio of all risk factors is computed using the formula
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
 RR=RR_{\text{Coffee}} \cdot RR_{\text{Alcohol}} \cdot RR_{\text{Peak alcohol}} \cdot RR_{\text{Phys. total,Phys. Hard}} \cdot RR_{\text{Smoke avg.,Age}} \cdot RR_{\text{Smoke avg.,Smoke end a.}} \cdot RR_{\text{Greens}}
 $$
 
-The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke avg.,Age,Smoke end a.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. Hard,Phys. total}} \cdot P_{\text{Age,Smoke end a.,Smoke avg.}} \cdot P_{\text{Greens}}
 $$
 
 
@@ -120,7 +121,7 @@ $$
 
 Coffee consumption is a risk factor for Coronary heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'raw')
@@ -128,6 +129,7 @@ plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'raw')
 
 
 Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'interpolated')
 ```
@@ -143,6 +145,7 @@ plotSpecificPlots(dat, 'Ischemic', c('Drinking'),'raw')
 
 
 Because the variable Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('Drinking'),'interpolated')
 ```
@@ -158,6 +161,7 @@ plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'raw')
 
 
 Because the variable Peak Alcohol consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'interpolated')
 ```
@@ -167,7 +171,7 @@ plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'interpolated')
 
 Hard physical activity time and Total physical activity time are a group of risk factors for Coronary heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature alterated to fit our model
+Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'raw')
@@ -175,6 +179,7 @@ plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'raw')
 
 
 Because the variables Total physical activity time and Hard physical activity time are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'interpolated')
 ```
@@ -190,6 +195,7 @@ plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','Age'),'raw')
 
 
 Because the variables Smoking average and Age are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','Age'),'interpolated')
 ```
@@ -229,6 +235,7 @@ plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','SmokeSinceStop'),'raw
 
 
 Because the variables Smoking average and Time since smoking per year are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','SmokeSinceStop'),'interpolated')
 ```

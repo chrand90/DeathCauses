@@ -25,7 +25,8 @@
 body{
     background:#F0F0F0;}
 blockquote{
-  text-align: center;}
+  text-align: center;
+  font-size: 18px;}
 
 </style>
 <p><em>[auto-generated file]</em></p>
@@ -80,11 +81,11 @@ C67: Malignant neoplasm of bladder (100.0%)
 </div>
 <div id="interaction" class="section level4">
 <h4>Interaction</h4>
-<p>The combined risk ratio of all risk factors is computed using the formula</p>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke total}}
 \]</span></p>
-<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the formula</p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
 P=P_{\text{Fluids}} \cdot P_{\text{Smoke total}}
 \]</span></p>
@@ -92,16 +93,18 @@ P=P_{\text{Fluids}} \cdot P_{\text{Smoke total}}
 <div id="fluids-intake" class="section level4">
 <h4>Fluids intake</h4>
 <p>Fluids intake is a risk factor for Bladder cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
-<p>Because the variable Fluids intake is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="BladderCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>Because the variable Fluids intake is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
 <div id="total-amount-smoked-in-life" class="section level4">
 <h4>Total amount smoked in life</h4>
 <p>Total amount smoked in life is a risk factor for Bladder cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature alterated to fit our model</p>
+<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Because the variable Total amount smoked in life is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>. <img src="BladderCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Because the variable Total amount smoked in life is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>

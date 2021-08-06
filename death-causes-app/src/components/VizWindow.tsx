@@ -161,10 +161,10 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   render(): React.ReactNode {
     const styleObject: {[k:string]:string}={}
     if(!this.props.store.uIStore.verticalStacked){
-      styleObject["height"]="calc(100vh - 100px)"
-      styleObject["overflow-y"]="auto"
+      styleObject["height"]="calc(100vh - 72px)"
+      styleObject["overflowY"]="auto"
       styleObject["width"]=this.props.store.uIStore.vizWindowWidth.toString()
-      styleObject["overflow-x"]="auto"
+      styleObject["overflowX"]="auto"
     }
     return (
       <div style={styleObject} onClick={() => {

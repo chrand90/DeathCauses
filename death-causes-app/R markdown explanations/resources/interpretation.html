@@ -1,0 +1,97 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Interpretation</title>
+  <style type="text/css">
+      code{white-space: pre-wrap;}
+      span.smallcaps{font-variant: small-caps;}
+      span.underline{text-decoration: underline;}
+      div.column{display: inline-block; vertical-align: top; width: 50%;}
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
+  <script src="interpretation_files/accessible-code-block-0.0.1/empty-anchor.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Interpretation</h1>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#probabilities-and-general-assumptions">Probabilities and general assumptions</a></li>
+<li><a href="#life-expectancy">Life expectancy</a></li>
+<li><a href="#best-explanation">Best explanation</a></li>
+<li><a href="#optimal-values">Optimal values</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;  
+}
+
+.infobox{
+    background:#FFFFFF;
+    border: solid 2px #304b80;
+    border-radius:5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+</style>
+<p>This document is a guide for how to interpret the results on this website. As you may have guessed, we use a mathematical model to compute all the interesting numbers such as life expectancy, probability of dying of a cause, how much is caused by alcohol etc. The <a href="/model/intro">main document</a> explains the data and assumptions so that you can form your own appropriately critical view of the model. Here, we only present the intended interpretation of the results.</p>
+<div id="probabilities-and-general-assumptions" class="section level2">
+<h2>Probabilities and general assumptions</h2>
+<p>When the program says that one has a certain <a href="/model/intro#risk">probability</a> of dying of a certain cause, it is naturally under the assumption that the mathematical model is correct. If, for example, the program reports a <span class="math inline">\(10\%\)</span> probability of dying from Alzheimer’s, we suggest the interpretation</p>
+<blockquote>
+<p>“My probability of dying from Alzheimers is 10% given the program’s collection of risk ratios and my answers to the questions (and given that I lived in the US).”</p>
+</blockquote>
+<p>Note two things:</p>
+<ol style="list-style-type: decimal">
+<li><p>The information that the program has about the real world comes from the collection of <a href="/model/intro#risk-ratio">risk ratios</a>. The good thing about having a collection is that we can expand it indefinitely, but in contrast to probabilities calculated from a single experiment, it is harder to understand and trust a collection. Therefore, we put a lot of effort into documenting the collection.</p></li>
+<li><p>As discussed in the <a href="/model/intro#the-neutral-model">neutral model</a> section, the base numbers come from the US. Ideally, the collection of risk factors were so good that it could explain the differences between the US and the user. When it doesn’t, it is good to know that the numbers come from the US. For example, we have not added any risk factors for being killed by the police (yet), so if you are a European, your risk of dying from this may not be as big as the program says.</p></li>
+</ol>
+</div>
+<div id="life-expectancy" class="section level2">
+<h2>Life expectancy</h2>
+<p>The life expectancy is the average life span. Imagine that there were many copies of an individual. The life expectancy would then be the average age of death of all these copies.</p>
+<p>Life expectancy should not be confused with the estimates that kids today will more than <a href="https://www.weforum.org/agenda/2016/09/you-ll-probably-live-to-be-100-here-s-how-you-need-to-prepare-for-it/">100 years</a>. The more-than-100-year estimate is based on the assumption that the technological advances in medicine continues at the same rate (which is quite optimistic). In contrast, life expectancy is computed under the assumption that the world remains the same.</p>
+<p>The life expectancy of this website should be interpreted under the same assumptions as the <a href="#probabilities-and-general-assumptions">probabilities</a></p>
+</div>
+<div id="best-explanation" class="section level2">
+<h2>Best explanation</h2>
+<p>There will always be many reasons for why someone dies of something. For example to die of <a href="/model/LungCancer">lung cancer</a>, one obviously have to be alive and have lungs. In addition many lung cancer deaths wouldn’t have happened if the patient was younger or if they hadn’t smoked tobacco. These four reasons - alive, human, old and tobacco - are all true <em>explanations</em> for the majority of lung cancer deaths but they are not equally interesting. Most people would probably agree that tobacco is the more interesting explanation because, unlike the others, we can actually do something about how much we smoke. Therefore, we say that tobacco is the <em>best</em> explanation for most lung cancer deaths.</p>
+<p>Not all lung cancer deaths happen to smokers, so for those cases tobacco can’t be the best explanation. Furthermore, some of the smokers who die from lung cancer would have died from lung cancer anyway, so the best explanation for their cases is not tobacco either. For these cases we look towards the less interesting, true explanations to find their best explanation. In theory it could be either being alive, being human or being old, but we have decided that none of those explanations is interesting enough to visualize. Instead we assign their cases to the category <a href="#unexplained">Unexplained</a>.</p>
+<div id="unexplained" class="infobox">
+<p><strong>Unexplained: </strong> All the risk that can’t be explained by the risk factors are assigned to the category <em>unexplained</em>. Furthermore, when the user hasn’t answered all the questions, the model will assume that the corresponding risk factors doesn’t exist, which means that their hidden risk is also assigned to unexplained.</p>
+<p>If we were to explain this unexplained category, we would use the explanations:</p>
+<ul>
+<li>Old age. <a href="/model/Age">Age</a> is not counted as a risk factor, but if it were, it could explain most of the unexplained.</li>
+<li>Risk factors that are not in the model. We have not (yet) included all the risk factors that science have found, and even if we had, there would be risk factors that science hasn’t found yet.</li>
+<li>Bad luck.</li>
+</ul>
+</div>
+<p>To read more about how we compute the number of deaths belonging to each explanations, read the <a href="/model/intro#decomposition">Decomposition</a> section. Also, the ranking of the “interestingness” of the explanations is handled by our custom measure <em>optimizability</em> which we describe on the page <a href="/model/optimizabilities">Optimizabilities</a>.</p>
+</div>
+<div id="optimal-values" class="section level2">
+<h2>Optimal values</h2>
+<p>The optimal value of a risk factor is the value that minimizes the risk ratio of that factor. For example the optimal value of <a href="/model/Sex">biological sex</a> in relation to <a href="/model/BreastCancer">breast cancer</a> is male because it is the sex with the lowest risk of breast cancer.</p>
+<p>The optimal value depends on the context. For example, in <a href="/model/ProstateCancer">prostate cancer</a> female is the optimal sex and not male as in breast cancer. The context is also the value of the other risk factors and the age, which can affect the optimal values (See <a href="/model/intro#optimal-values">here for more explanation</a>). Most results, such as the probability of dying from a certain cause, is computed from many different contexts and so the optimal value is not unique. Therefore, the model sometimes report more than one optimal value.</p>
+</div>
+<div id="references" class="section level1">
+<h1>References</h1>
+</div>
+</body>
+</html>
