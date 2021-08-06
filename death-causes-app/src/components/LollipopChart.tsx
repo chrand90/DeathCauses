@@ -1,47 +1,60 @@
 import * as d3 from "d3";
-import { extent } from "d3";
 import { observer } from "mobx-react";
 import React from "react";
 import { useEffect, useRef } from "react";
 import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import { useStore } from "../stores/rootStore";
 import d3Tip from "d3-tip";
+import Descriptions from "../models/Descriptions";
 
 
-export interface PieChartProps {
-    data: DataPoint[]
+export interface LollipopChartProps {
+    data: DataPoint[],
+    descriptions: Descriptions,
+    formatting: LollipopChartFormatting
 }
 
-const LollipopChart = observer((props: PieChartProps) => {
+export interface LollipopChartFormatting {
+    getTooltipText: (value: any, name: any) => string,
+    xAxisFormatter: (value: any) => string
+}
+
+const LollipopChart = observer((props: LollipopChartProps) => {
     const store = useStore();
     const chartArea = useRef<any>(null);
     const margin = { top: 40, right: 20, bottom: 40, left: 120 }
-    var width = 400 - margin.left - margin.right;
-    var height = 300 - margin.top - margin.bottom;
+    var width = 400 - margin.left - margin.right
+    var height = 330 - margin.top - margin.bottom;
 
-    const formatter = d3.format(".3p")
-    const axisFormatter = d3.format(".2~p")
     const colors = { barFill: "#69b3a2", barHighlight: "#9e1986" };
 
-
     useEffect(() => {
-        console.log("dataset changed");
-        if (props.data && chartArea.current) {
-            updateData()
-            console.log(props.data)
-        }
-    }, [props.data]);
-
-    useEffect(() => {
+        console.log("updating: []")
         createChart();
     }, []);
 
     useEffect(() => {
-        updateWidth()
-        createChart()
+        if (props.data && chartArea.current) {
+            console.log("updating: data")
+            console.log(store.uIStore.windowWidth)
+            updateData()
+        }
+    }, [props.data]);
+
+    useEffect(() => {
+        if (chartArea.current !== null) {
+            console.log("updating: window")
+            console.log(store.uIStore.windowWidth)
+            onWindowWidthUpdate()
+            createChart()
+        }
     }, [store.uIStore.windowWidth])
 
-    const updateWidth = () => {
+    const updateDivWidth = () => {
+        width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right;
+    }
+
+    const onWindowWidthUpdate = () => {
         const svg = d3.select(chartArea.current).selectAll("*").remove();
         if (chartArea !== null && chartArea.current !== null) {
             width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right
@@ -49,6 +62,7 @@ const LollipopChart = observer((props: PieChartProps) => {
     }
 
     const createChart = () => {
+        updateDivWidth()
         const svg = d3
             .select(chartArea.current)
             .append("svg")
@@ -58,15 +72,14 @@ const LollipopChart = observer((props: PieChartProps) => {
             .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
         const data = props.data//.sort((a, b) => (b.value - a.value))
-        console.log(data)
 
         var x = d3.scaleLinear()
             .range([0, width])
-            .domain([0, 1.1 * (d3.max(data.map(d => d.value)) as number)]);
+            .domain([0, 1.2 * (d3.max(data.map(d => d.value)) as number)]);
         svg.append("g")
             .attr("class", "xAxis")
             .attr("transform", "translate(0," + height + ")")
-            .call(d3.axisBottom(x).ticks(5).tickFormat(d => axisFormatter(d)))
+            .call(d3.axisBottom(x).ticks(5).tickFormat(d => props.formatting.xAxisFormatter(d)))
             .selectAll("text")
             .style("text-anchor", "center")
             .style("font-size", "12px");
@@ -77,7 +90,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             .padding(1)
         svg.append("g")
             .attr("class", "yAxis")
-            .call(d3.axisLeft(y).tickSize(0))
+            .call(d3.axisLeft(y).tickFormat(x => getDescription(x)).tickSize(0))
             .selectAll("text")
             // .attr("transform", "translate(-10)rotate(-45)")
             .style("text-anchor", "end")
@@ -122,18 +135,23 @@ const LollipopChart = observer((props: PieChartProps) => {
     }
 
     const updateData = () => {
-
+        updateDivWidth()
         const data = props.data
 
         let svg = d3.select(chartArea.current).select("svg")
+        console.log(width)
 
         let x = d3.scaleLinear()
             .domain([0, 1.1 * (d3.max(data.map(d => d.value)) as number)])
             .range([0, width]);
 
-        d3.select<any, any>("g.xAxis").transition().duration(2000).call(
-            d3.axisBottom(x).ticks(5).tickFormat(d => axisFormatter(d))
-        ).style("text-anchor", "center")
+        d3.select<any, any>("g.xAxis")
+            .transition()
+            .duration(2000)
+            .call(
+                d3.axisBottom(x).ticks(5).tickFormat(d => props.formatting.xAxisFormatter(d))
+            )
+            .style("text-anchor", "center")
             .style("font-size", "12px");
 
         var y = d3.scaleBand()
@@ -141,8 +159,11 @@ const LollipopChart = observer((props: PieChartProps) => {
             .domain(data.map(function (d) { return d.name; }))
             .padding(1);
 
-        d3.select<any, any>("g.yAxis").transition().duration(2000).call(d3.axisLeft(y).ticks(5).tickSize(0)).selectAll("text")
-            // .attr("transform", "translate(-10)rotate(-45)")
+        d3.select<any, any>("g.yAxis").transition()
+            .duration(2000)
+            .call(d3.axisLeft(y)
+                .tickFormat(x => getDescription(x)).tickSize(0)
+            ).selectAll("text")
             .style("text-anchor", "end")
             .style("font-size", "12px")
             .attr("x", "-10");
@@ -188,7 +209,7 @@ const LollipopChart = observer((props: PieChartProps) => {
             (exit: any) => {
                 return exit.remove().selection()
             }
-        ).transition().duration(2000).attr("cx", function (d: any) { return x(d.value) })//.on("end", () => setMouseOverTips())//.attr("cy", function (d: any) : any { return y(d.name) })
+        ).transition().duration(2000).attr("cx", function (d: any) { return x(d.value) })
 
         setMouseOverTips()
     }
@@ -199,19 +220,17 @@ const LollipopChart = observer((props: PieChartProps) => {
         let tip = d3Tip()
             .attr("class", "d3-tip")
             .offset([-10, 0])
-            .html(function (d: DataPoint) {
-                return (
-                    "Probability: <strong>" + formatter(d.value) + "</strong><br/>" +
-                    "of dying due to: <strong>" + d.name + "</strong>"
-                );
-            });
+            .html((d: DataPoint) => props.formatting.getTooltipText(d.value, getDescription(d.name, 30)));
+        // .html(function (d: DataPoint) {
+        //     return (
+        //         "Probability: <strong>" + tooltipValueFormatter(d.value) + "</strong><br/>" +
+        //         "of dying due to: <strong>" + getDescription(d.name, 50) + "</strong>"
+        //     );
 
-        d3.select("g").call(tip);
 
-        let tmp = d3.selectAll(".myCircle")
-        console.log(tmp)
+        let svg = d3.select(chartArea.current).select("svg").call(tip);
 
-        d3.selectAll(".myCircle")
+        svg.selectAll(".myCircle")
             .data(props.data)
             .on("mouseenter", function (e: Event, d: DataPoint) {
                 d3.selectAll(".d3-tip")
@@ -227,6 +246,9 @@ const LollipopChart = observer((props: PieChartProps) => {
 
     }
 
+    const getDescription = (causeName: string, length: number = 15): string => {
+        return props.descriptions.getDescription(causeName, length)
+    }
 
     return <div ref={chartArea} />;
 })

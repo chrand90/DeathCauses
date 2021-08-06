@@ -238,13 +238,8 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
     if (Object.keys(this.props.store.factorInputStore.validities).length === 0) {
       return <Spinner animation="border"></Spinner>;
     }
-    const styleObject: {[k:string]:string}={}
-    if(!this.props.store.uIStore.verticalStacked){
-      styleObject["height"]="calc(100vh - 100px)"
-      styleObject["overflow-y"]="auto"
-    }
     return (
-      <div className="questionmenu" style={styleObject}>
+      <div className="questionmenu" >
         <h4> Risk factors </h4>
         {this.renderQuestionList()}
       </div>

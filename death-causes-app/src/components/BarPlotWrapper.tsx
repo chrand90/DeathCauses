@@ -41,12 +41,16 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   const updateWidth = () => {
     const svg = d3.select(chartArea.current).selectAll("*").remove();
     if (chartArea.current !== null) {
-      width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right
+      width = getDivWidth()
     }
   }
 
-  const createChart = () => {
+  const getDivWidth = () => {
+    return chartArea.current.offsetWidth * 0.9 - margin.left - margin.right
+  }
 
+  const createChart = () => {
+    width = getDivWidth()
     const svg = d3
       .select(chartArea.current)
       .append("svg")
@@ -116,6 +120,7 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   };
 
   const updateChart = function () {
+    width = getDivWidth()
     var svg = d3.select("g");
 
     var u = svg

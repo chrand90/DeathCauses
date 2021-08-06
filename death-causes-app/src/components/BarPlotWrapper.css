@@ -26,7 +26,7 @@
   }
 
   .d3-tip.n:before {
-    margin: -2px 0 0 0;
+    margin: -1px 0 0 0;
     top: 100%;
     left: 0;
   }

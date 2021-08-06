@@ -1,11 +1,14 @@
+import * as d3 from "d3";
 import { observer } from "mobx-react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { CardBody, CardHeader } from "reactstrap";
+import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import RootStore, { withStore } from "../stores/rootStore";
 import BarChartWrapper from "./BarChartWrapper";
 import ChangeView from "./ChangeView";
-import LollipopChart from "./LollipopChart";
+import LollipopChart, { LollipopChartFormatting } from "./LollipopChart";
+import { probabilityLollipopChartFormatter } from "./ProbabilityLollipopChartFormatter";
 import RangeSliders from "./RangerSlidersSummaryView";
 
 
@@ -34,7 +37,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                             <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
                             <p></p>
                             <h5>The average life expentancy is: 70</h5>
-                            <RangeSliders/>
+                            <RangeSliders />
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
@@ -57,7 +60,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                     <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
                         <Card className="bg-light " style={{}} >
                             <CardHeader><h5 style={{ fontWeight: 600 }}>Years lost per cause</h5></CardHeader>
-                            {/* <LollipopChart data={summaryViewData.yearsLostToDeathCauses} /> */}
+                            <LollipopChart data={summaryViewData.yearsLostToDeathCauses} descriptions={this.props.store.loadedDataStore.descriptions} formatting={probabilityLollipopChartFormatter}/>
                             {/* <table style={{ width: "60%", margin: "auto" }}>
                                 <thead>
                                     <th style={{ textAlign: "left" }}>Death cause</th>
@@ -74,24 +77,10 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                             </table> */}
                         </Card>
                     </Col>
-                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-6">
+                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
                         <Card className="bg-light" style={{}}> {/*backgroundColor: 'rgba(50, 50, 200, 0.1)'*/}
                             <CardHeader><h5 style={{ fontWeight: 600 }}>Most likely cause of death</h5></CardHeader>
-                            <LollipopChart data={summaryViewData.probabiliiesOfDyingOfEachDeathCause} />
-                            {/* <table style={{ width: "60%", margin: "auto" }}>
-                                <thead>
-                                    <th style={{ textAlign: "left" }}>Death cause</th>
-                                    <th style={{ textAlign: "right" }}>Probability</th>
-                                </thead>
-                                <tbody>
-                                    {
-                                        summaryViewData.probabiliiesOfDyingOfEachDeathCause.map(element => {
-                                            return <tr><td style={{ textAlign: "left" }}>
-                                                {element.name}</td><td style={{ textAlign: "right" }}>{(element.value * 100).toPrecision(3) + "%"}</td></tr>
-                                        })
-                                    }
-                                </tbody>
-                            </table> */}
+                            <LollipopChart data={summaryViewData.probabiliiesOfDyingOfEachDeathCause} descriptions={this.props.store.loadedDataStore.descriptions} formatting={probabilityLollipopChartFormatter}/>
                         </Card>
                     </Col>
                 </Row>
