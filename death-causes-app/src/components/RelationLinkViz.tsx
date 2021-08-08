@@ -15,6 +15,7 @@ import "./RelationLinkViz.css";
 
 const DESCRIPTION_LENGTH=22
 const SLIGHTLY_DARKER_GRAY="#707070"
+const BOTTOM_BUFFER_HEIGHT=16
 interface PlottingNodeDicValue {
   bbox: SVGRect;
   x: number;
@@ -90,8 +91,8 @@ export default class RelationLinkViz {
       .attr("class", "darkrect")
       .attr("x", (d: any) => x(d.x0))
       .attr("width", (d: any) => x(d.x0 + d.width) - x(d.x0))
-      .attr("y", y(yfromDomain))
-      .attr("height", y(ytoDomain) - y(yfromDomain))
+      .attr("y", 0)
+      .attr("height", y(ytoDomain) - y(yfromDomain)+BOTTOM_BUFFER_HEIGHT*2)
       .style("fill", (d: any) => d.color)
       .style("opacity", 0.8);
 
@@ -103,7 +104,7 @@ export default class RelationLinkViz {
       .append("text")
       .attr("class","cattext")
       .attr("x", (d:any) => x(d.x0))
-      .attr("y", y(yfromDomain))
+      .attr("y", 0)
       .text( function(d:any){
         if(d.width>0){
           return d.cat;
@@ -113,7 +114,7 @@ export default class RelationLinkViz {
       .style("fill", SLIGHTLY_DARKER_GRAY)
       .style("font-size","14px")
       .attr("text-anchor", "start")
-      .attr("alignment-baseline", "hanging")
+      .attr("dominant-baseline", "hanging")
       .style("opacity", function(d:any){
         if(d.width>0){
           return 1;
@@ -302,7 +303,7 @@ export default class RelationLinkViz {
       .style("cursor", function (d: any) {
         return  "pointer";
       })
-      .attr("alignment-baseline", "central")
+      .attr("dominant-baseline", "central")
       .on("click", function (e: Event, d: TransformedLabel) {
         vis.changeElementInFocus(d.nodeName);
       })
@@ -316,11 +317,11 @@ export default class RelationLinkViz {
     const x = d3
       .scaleLinear()
       .domain([-maxX * 0.05, maxX * 1.05])
-      .range([0.1, Math.max(this.width - 10, 800) * 0.9]);
+      .range([0.1, Math.max(this.width - 10, 800)]);
 
     const yfromDomain = -0.5;
     const ytoDomain = Math.max(10, maxY);
-    const y = d3.scaleLinear().domain([yfromDomain, ytoDomain]).range([0, 800]);
+    const y = d3.scaleLinear().domain([yfromDomain, ytoDomain]).range([BOTTOM_BUFFER_HEIGHT, 1000- BOTTOM_BUFFER_HEIGHT]);
     return { x, y, yfromDomain, ytoDomain, maxX };
   }
 
@@ -381,6 +382,7 @@ export default class RelationLinkViz {
       .transition("adjuse_top_labels")
       .duration(500)
       .attr("x", (d:any) => x(d.x0))
+      .attr("y", (d:any) => 0)
       .text( function(d:any){
         if(d.width>0){
           return d.cat;

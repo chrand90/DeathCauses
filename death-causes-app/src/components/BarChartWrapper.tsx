@@ -93,9 +93,10 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		}
 	}, []);
 
-
+	const colwidth= store.uIStore.windowWidth<501 ? "100%" : "90%"
+	const padding= store.uIStore.windowWidth<501 ? "0px" : ""
 	return (
-		<div className="container" style={{width:"90%"}}>
+		<div className="container" style={{width:colwidth, padding: padding}}>
 			<div ref={chartArea} id="barchartcontainer" style={{position:"relative", padding:"0px",margin: "auto", top:"0px",left:"0px"}} />
 		</div>
 	)

@@ -25,6 +25,7 @@ const SELECTED_DISEASE_COLOR = "#a3e3f0";
 const WIDTH_PROPORTION= 0.95
 const STIP_MAX_WIDTH=150;
 const CLICKTIP_MAX_WIDTH=250;
+const CAUSE_HEADER_LENGTH=35;
 
 
 function getDivWidth(div: HTMLElement | null): number {
@@ -69,7 +70,7 @@ const sameConstants = {
     "translate(" + 10 + "," + (-BARHEIGHT / 16 - buttonSize) + ")",
   collapseButtonsWidth: buttonSize,
   collapseButtonsHeight: buttonSize,
-  airToTheRight: 0.15,
+  airToTheRight: 80,
 };
 
 function longDesignConstants(
@@ -94,7 +95,7 @@ function longDesignConstants(
     width: width,
     textTranslation: "translate(" + 10 + "," + -BARHEIGHT / 8 + ")",
     textAnchor: "start",
-    airToTheRight: simplifiedVersion ? 0.01 : 0.15,
+    airToTheRight: simplifiedVersion ? 1 : 80,
   };
 }
 
@@ -274,7 +275,7 @@ export default class BarChart {
       .attr("y", 0)
       .attr("x", 0)
       .text(function (d: any) {
-        return vis.descriptions.getDescription(d.name, 100);
+        return vis.descriptions.getDescription(d.name, CAUSE_HEADER_LENGTH);
       })
       .style("text-anchor", designConstants.textAnchor)
       .attr("transform", designConstants.textTranslation)
@@ -688,18 +689,16 @@ export default class BarChart {
         if(overflowRight<0){
           middlePoint+=overflowRight
         }
-        if (vis.clickedSquareSection !== d) {
-          vis.stip
-            .style("display", "block")
-            .html(d.comparison ? d.comparison : d.cause)
-            .style("left", (middlePoint).toString() + "px")
-            .style("top", (bbox.y+bbox.height+12).toString() + "px");
-          vis.stiparrow
-            .style("display", "block")
-            .html("\u25B2")
-            .style("left", (bbox.x+bbox.width/2-6).toString() + "px")
-            .style("top", (bbox.y+bbox.height-4).toString() + "px");
-        }
+        vis.stip
+          .style("display", "block")
+          .html(d.comparison ? d.comparison : d.cause)
+          .style("left", (middlePoint).toString() + "px")
+          .style("top", (bbox.y+bbox.height+12).toString() + "px");
+        vis.stiparrow
+          .style("display", "block")
+          .html("\u25B2")
+          .style("left", (bbox.x+bbox.width/2-6).toString() + "px")
+          .style("top", (bbox.y+bbox.height-4).toString() + "px");
         d3.select(this)
           .raise()
           .style("stroke-width", 3)
@@ -731,7 +730,7 @@ export default class BarChart {
           .style("display", "block")
           .html(`${d.longComparison ? d.longComparison.textWithButtons : d.cause}`)
           .style("left", (middlePoint).toString() + "px")
-          .style("top", (bbox.y+bbox.height+12).toString() + "px");
+          .style("top", (bbox.y+bbox.height+12).toString() + "px")
         if(d.longComparison){
           vis.addButtonActions(d.longComparison.buttonCodes)
         }
@@ -739,7 +738,7 @@ export default class BarChart {
           .style("display", "block")
           .html("\u25B2")
           .style("left", (bbox.x+bbox.width/2-6).toString() + "px")
-          .style("top", (bbox.y+bbox.height-4).toString() + "px");
+          .style("top", (bbox.y+bbox.height-4).toString() + "px")
         vis.clickedSquareSection = d;
         vis.stip.style("display","none")
         vis.stiparrow.style("display","none")
@@ -751,7 +750,6 @@ export default class BarChart {
     buttonCodes.forEach((nodeName, index) => {
       d3.select("#but"+(index+1).toString())
         .on("click", (e)=> { 
-          e.stopPropagation();
           this.redirectPage(nodeName)  
         });
     })
@@ -760,10 +758,13 @@ export default class BarChart {
   createXAxisCall(newMax: number, designConstants: DesignConstants) {
     const x = d3
       .scaleLinear()
-      .domain([0, newMax * (1 + designConstants.airToTheRight)])
-      .range([designConstants.startXScale, designConstants.width]);
+      .domain([0, newMax])
+      .range([
+        designConstants.startXScale, 
+        designConstants.width-designConstants.airToTheRight
+        ]);
     this.xscale = x;
-    return d3.axisTop(x);
+    return d3.axisTop(x).ticks(4);
   }
 
   instantUpdateOfRects(
@@ -1038,7 +1039,7 @@ export default class BarChart {
       this.xAxisGroup
         .transition("x_axis_change")
         .duration(durationPerTransition)
-        .call(xAxisCall);
+        .call(xAxisCall)
     }
     return newMaxX;
   }

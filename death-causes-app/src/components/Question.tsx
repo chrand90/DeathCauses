@@ -29,7 +29,7 @@ export interface QuestionProps<T>{
   name: string;
   phrasing: string;
   factorAnswer: T;
-  helpText: string;
+  helpText: string | null;
   placeholder: string;
   inputvalidity: InputValidity;
   featured: boolean;
@@ -47,7 +47,7 @@ interface QuestionContextProps extends RouteComponentProps{
   name: string;
   ignore: boolean;
   handleIgnoreFactor: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  helpText: string;
+  helpText: string | null;
   phrasing: string;
   secondLine: ReactElement | string;
   featured: boolean;
@@ -66,8 +66,8 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
     if (this.props.featured) {
       return (
         <div>
-          <MarkDown>{this.props.helpText}</MarkDown>
-          <hr></hr>
+          {this.props.helpText ? <MarkDown>{this.props.helpText}</MarkDown> : null}
+          {this.props.helpText ? <hr></hr> : null}
           {this.readMoreLink()}
           {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
@@ -78,8 +78,8 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
         <div>
           {this.questionPhrasing()}
           <hr></hr>
-          <MarkDown>{this.props.helpText}</MarkDown>
-          <hr></hr>
+          {this.props.helpText ? <MarkDown>{this.props.helpText}</MarkDown> : null}
+          {this.props.helpText ? <hr></hr> : null}
           {this.readMoreLink()}
           {this.props.name !== "Age" ? <hr></hr> : null}
           {this.props.name !== "Age" ? this.descendantMessage() : null}
@@ -268,14 +268,14 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
 
   inLineFactorNameHeader() {
     //const { fontSize, writtenName } = this.fontSizeForFactorNameHeader();
-    const fontSize=17;
-    const writtenName=this.props.store.loadedDataStore.descriptions.getDescription(this.props.name, 14)
+    const fontSize=this.props.store.uIStore.windowWidth<501 ? 12 : 14;
+    const writtenName=this.props.store.loadedDataStore.descriptions.getDescription(this.props.name, 15)
     return (
       <div>
         <p
           style={{
             color: this.FactorNameColor(),
-            fontWeight: "bold",
+            fontWeight:"bold",
             marginBottom: "0px",
             textAlign: "left",
             fontSize: fontSize.toPrecision() + "px",
@@ -350,7 +350,10 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
 
   getErrorMessageStyle() {
     let errorMessageStyle: FormControlStyle = {};
-    errorMessageStyle["color"] =  "";
+    errorMessageStyle["color"] = 
+      this.props.store.factorInputStore.validities[this.props.name].status === "Error" ? 
+      ERROR_COLOR : 
+      ""
     return errorMessageStyle;
   }
 
