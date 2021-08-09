@@ -146,6 +146,7 @@ export default class BarChart {
   clickedSquareSection: SquareSection | null = null;
   buttonTipTimeOut: NodeJS.Timeout | undefined = undefined;
   widthButtonTipTimeOut: NodeJS.Timeout | undefined = undefined;
+  useLifeExpectancy: boolean;
 
   constructor(
     element: HTMLElement | null,
@@ -161,7 +162,8 @@ export default class BarChart {
       collapsables: { [key: string]: string[] };
       expandables: { [key: string]: string[] };
     },
-    simpleVersion: boolean = false
+    simpleVersion: boolean = false,
+    useLifeExpectancy: boolean =true,
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
@@ -184,6 +186,7 @@ export default class BarChart {
     } else {
       this.grouping = collectedGroups;
     }
+    this.useLifeExpectancy=useLifeExpectancy;
     this.buttonTipText = this.buttonTipText.bind(this);
 
     const vis = this;
@@ -209,7 +212,7 @@ export default class BarChart {
         .attr("y", XBARHEIGHT / 2)
         .attr("font-size", 20)
         .attr("text-anchor", "middle")
-        .text("Probability of dying of cause");
+        .text(this.useLifeExpectancy ? "Years lost to cause" : "Probability of dying of cause");
       vis.xAxisGroup = vis.svg
         .append("g")
         .attr("transform", `translate(0,${XBARHEIGHT})`);
@@ -412,6 +415,7 @@ export default class BarChart {
   }
 
   insertPercentageText(dataSortedTotal: DataRow[]) {
+    const vis= this
     this.svg
       .selectAll(".ptext")
       .data(dataSortedTotal, function (d: any) {
@@ -425,6 +429,9 @@ export default class BarChart {
         this.xscale(Math.min(this.currentMax, d.totalProb))
       )
       .text(function (d: any) {
+        if(vis.useLifeExpectancy){
+          return (d.totalProb).toPrecision(3)
+        }
         return (d.totalProb * 100).toPrecision(3) + "%";
       })
       .style("text-anchor", "start")
@@ -816,6 +823,7 @@ export default class BarChart {
       diseaseToWidth,
       this.grouping,
       this.descriptions,
+      this.useLifeExpectancy
     );
     const notToBeMerged = getSubCollectGroup(
       oldCollectedGroups,
@@ -827,6 +835,7 @@ export default class BarChart {
       diseaseToWidth,
       this.grouping,
       this.descriptions,
+      this.useLifeExpectancy,
       notToBeMerged
     );
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
@@ -1058,7 +1067,8 @@ export default class BarChart {
       dataset,
       diseaseToWidth,
       this.grouping,
-      this.descriptions
+      this.descriptions,
+      this.useLifeExpectancy
     );
     const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
     const {
@@ -1069,6 +1079,7 @@ export default class BarChart {
       diseaseToWidth,
       oldCollectedGroups,
       this.descriptions,
+      this.useLifeExpectancy,
       notToBeMerged
     );
     const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
@@ -1227,7 +1238,8 @@ export default class BarChart {
       data,
       diseaseToWidth,
       this.grouping,
-      this.descriptions
+      this.descriptions,
+      this.useLifeExpectancy
     );
     const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
     const dataIds = dataSortedTotal.map((v: any, index: number) => {

@@ -51,7 +51,8 @@ function makeRowSquare(
     max: number | null,
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
-    descriptions: Descriptions
+    descriptions: Descriptions,
+    useLifeExpectancy: boolean,
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -82,7 +83,7 @@ function makeRowSquare(
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
             x: zeroTruncater(unexplained*totalProb)*rescaler,
-            longComparison: getUnexplainedStatement(unexplained, parent, descriptions)
+            longComparison: getUnexplainedStatement(unexplained,totalProb, parent, descriptions, useLifeExpectancy)
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
@@ -96,12 +97,15 @@ function makeRowSquare(
         
         innerCauses.forEach((innerCause:string)=>{
             let width=widthOfEachInnerCause[innerCause];
-            const statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions)
+            const statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions, useLifeExpectancy)
             const longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
                 totalProb>1e-8 ? width/totalProb : 0,
+                totalProb,
                 parent,
-                descriptions );
+                descriptions,
+                useLifeExpectancy,
+                );
             squares.push({
                 name: parent,
                 cause: innerCause,
@@ -185,6 +189,7 @@ function make_squares(
     setToWidth: string | null, 
     grouping: CauseGrouping,
     descriptions: Descriptions,
+    useLifeExpectancy: boolean,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
 
@@ -205,7 +210,8 @@ function make_squares(
             max, 
             !(parent in noMergeAcross),
             parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
-            descriptions
+            descriptions,
+            useLifeExpectancy
         )
         squareSections.push(squares)
         totalProbs.push({

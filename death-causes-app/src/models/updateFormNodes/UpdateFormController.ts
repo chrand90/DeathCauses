@@ -14,6 +14,7 @@ import { ComputedFactorClasses } from "./ComputedFactors";
 import { ConditionClasses } from "./ConditionNodes";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
+import riskFactorContributionsLifeExpectancy from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
 import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
 import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
@@ -32,6 +33,7 @@ export default class UpdateFormController {
   allComputedNodes: UpdateDic | null;
   rdat: RelationLinks;
   conditions: {[conditionName: string]: Condition};
+  useLifeExpectancy: boolean;
 
   constructor(
     rdat: RelationLinks,
@@ -40,7 +42,8 @@ export default class UpdateFormController {
     deathCauses: DeathCause[],
     deathCauseCategories: RiskFactorGroupsContainer[],
     descriptions: Descriptions,
-    conditions: {[conditionName: string]: Condition}
+    conditions: {[conditionName: string]: Condition},
+    useLifeExpectancy=true
   ) {
     this.rdat=rdat;
     this.formUpdaters = [];
@@ -51,6 +54,7 @@ export default class UpdateFormController {
     this.deathCauses = deathCauses;
     this.deathCauseCategories = deathCauseCategories;
     this.conditions=conditions;
+    this.useLifeExpectancy=useLifeExpectancy;
     this.initialize(rdat, descriptions);
     this.allComputedNodes=null;
   }
@@ -144,7 +148,12 @@ export default class UpdateFormController {
       const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
         return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
       })
-      return riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+      if(this.useLifeExpectancy){
+        return riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+      }
+      else{
+        return riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+      }
     }
   }
 

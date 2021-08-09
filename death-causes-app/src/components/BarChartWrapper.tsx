@@ -82,6 +82,8 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	useEffect(() => {
 		if (chart) {
 			console.log("updating graphics based on database")
+			console.log("database")
+			console.log(database);
 			chart.update(database, store.barChartStore.diseaseToWidth);
 		}
 	}, [database]);

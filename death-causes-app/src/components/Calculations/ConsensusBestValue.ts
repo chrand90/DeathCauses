@@ -122,7 +122,7 @@ export class BestValues {
     return { min: factorAnswer, max: factorAnswer };
   }
 
-  getConsensusStatement(factorName: string, descriptions: Descriptions) {
+  getConsensusStatement(factorName: string, descriptions: Descriptions, useLifeExpectancy: boolean) {
     if (
       !(factorName in this.optimals) ||
       this.optimals[factorName].length === 0
@@ -181,24 +181,18 @@ export class BestValues {
     }
   }
 
-  getLongConsensusStatement(
-    factorName: string,
+  makeConsensusOpenerProbability(
     probability: number,
-    causeName: string,
-    descriptions: Descriptions
-  ): LongConsensus {
-    const factorNameDescription = descriptions.getDescription(factorName, 30);
-    const causeDescription = descriptions.getDescription(causeName, 30);
+    causeName:string,
+    factorName: string,
+    factorNameDescription: string,
+    causeDescription: string
+  ): {res: string, buttonCounter: number, buttonCodes: string[]}{
     let buttonCodes:string[]=[];
     const prob =
       "<strong>" +
       (probability * 100).toFixed(1).replace(/\.?0+$/, "") +
       "%</strong>";
-    const {
-      givens,
-      subtracted,
-      optimizability,
-    } = this.getGivensAndOptimizability(factorName);
     let buttonCounter=0;
     let res = "If you die"
     if(causeDescription.length>0){
@@ -214,7 +208,68 @@ export class BestValues {
     buttonCounter += 1;
     res +=  createButton(factorNameDescription, buttonCounter)
     buttonCodes.push(factorName);
+    return {res, buttonCodes, buttonCounter}
+  }
+    
+  makeConsensusOpenerLifeExpectancy(
+    yearsLost: number, 
+    causeName: string, 
+    factorName: string, 
+    factorNameDescription: string, 
+    causeDescription: string): { res: string; buttonCodes: string[]; buttonCounter: number; } {
+      let buttonCodes:string[]=[];
+      const gain =
+        "<strong>" +
+        (yearsLost * 1).toFixed(2).replace(/\.?0+$/, "") +
+        "</strong>";
+      let buttonCounter=0;
+      let res = "If you can avoid the deaths"
+      if(causeDescription.length>0){
+        buttonCounter += 1;
+        res+=" from " + createButton(causeDescription, buttonCounter)
+        buttonCodes.push(causeName)
+      }
+      res += " where the ";
+      buttonCounter += 1;
+      res +=  createButton("best explanation", buttonCounter)+" is "
+      buttonCodes.push("optimizabilities")
+      buttonCounter += 1;
+      res +=  createButton(factorNameDescription, buttonCounter)
+      buttonCodes.push(factorName);
+      res+=", you will live "+gain + " years longer"
+      return {res, buttonCodes, buttonCounter}
+  }
 
+  getLongConsensusStatement(
+    factorName: string,
+    proportion: number,
+    totalWidth: number,
+    causeName: string,
+    descriptions: Descriptions,
+    useLifeExpectancy: boolean,
+  ): LongConsensus {
+    const {
+      givens,
+      subtracted,
+      optimizability,
+    } = this.getGivensAndOptimizability(factorName);
+    const factorNameDescription = descriptions.getDescription(factorName, 30);
+    const causeDescription = descriptions.getDescription(causeName, 30);
+    let {res, buttonCodes, buttonCounter} = useLifeExpectancy ? 
+      this.makeConsensusOpenerLifeExpectancy(
+        proportion*totalWidth, 
+        causeName, 
+        factorName,
+        factorNameDescription, 
+        causeDescription
+      ) :
+      this.makeConsensusOpenerProbability(
+        proportion, 
+        causeName, 
+        factorName,
+        factorNameDescription, 
+        causeDescription) 
+      
     if (givens.length > 0 && false) {
       res =
         res +
@@ -319,6 +374,7 @@ export class BestValues {
     };
   }
 
+
   merge(otherStore: BestValues) {
     Object.entries(otherStore.optimals).forEach(([factorName, vals]) => {
       if (factorName in this.optimals) {
@@ -406,10 +462,13 @@ function listFormatting(factors: string[], finalword: string = "or") {
   }
 }
 
-export function getUnexplainedStatement(prob: number, cause: string, descriptions: Descriptions){
+export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean){
   const causeDescription = descriptions.getDescription(cause, 30);
   let res=""
-  res+="If you die"
+  res+=useLifeExpectancy ? "If you can avoid the deaths" : "If you die"
+  const responsibility= useLifeExpectancy ? 
+    (proportion*total).toFixed(2).replace(/\.?0+$/,"") :
+    (proportion*100).toFixed(1).replace(/\.?0+$/,"")
   let buttonCounter=0
   let buttonCodes: string[]=[]
   if(cause!=="any cause"){
@@ -417,7 +476,7 @@ export function getUnexplainedStatement(prob: number, cause: string, description
       res+=" from "+ createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
-  res+=", there is <strong>" +(prob*100).toFixed(1).replace(/\.?0+$/,"")+ "%</strong> probability that the "
+  res+= useLifeExpectancy ? "where the " : ", there is" + responsibility +" probability that the "
   buttonCounter+=1
   res+=createButton("best explanation", buttonCounter)
   buttonCodes.push("optimizabilities")
@@ -425,6 +484,9 @@ export function getUnexplainedStatement(prob: number, cause: string, description
   buttonCounter+=1;
   res+=createButton("Unknown", buttonCounter)
   buttonCodes.push("interpretation#unexplained")
+  if(useLifeExpectancy){
+    res+=", you will live " + responsibility + " years longer"
+  }
   res+="."
   return {
       textWithButtons: res,
