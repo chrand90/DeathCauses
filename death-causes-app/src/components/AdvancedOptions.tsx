@@ -7,7 +7,7 @@ import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
-import { Threading } from "../stores/AdvancedOptionsStore";
+import { EVALUATION_UNIT, Threading } from "../stores/AdvancedOptionsStore";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import "./AdvancedOptions.css";
@@ -60,10 +60,10 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   handleAgeChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { name: factorname } = ev.currentTarget;
     const value = ev.currentTarget.value;
-    if(factorname==="ageFrom"){
+    if (factorname === "ageFrom") {
       this.props.store.advancedOptionsStore.setAgeFrom(value);
     }
-    else if(factorname==="ageTo"){
+    else if (factorname === "ageTo") {
       this.props.store.advancedOptionsStore.setAgeTo(value);
     }
   }
@@ -94,7 +94,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
 
   ageFromRow() {
     let style: FormControlStyle = {};
-    if (this.props.store.advancedOptionsStore.validities["ageFrom"].status==="Error"){
+    if (this.props.store.advancedOptionsStore.validities["ageFrom"].status === "Error") {
       style["borderColor"] = ERROR_COLOR;
     }
     if (!this.props.store.advancedOptionsStore.ageFromSet) {
@@ -124,11 +124,11 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 
   handleSubmit() {
-    if(this.props.store.advancedOptionsStore.submittable){
+    if (this.props.store.advancedOptionsStore.submittable) {
       this.props.store.advancedOptionsStore.submitOptions();
       this.props.store.computationStore.reset();
     }
-    if(Object.keys(this.props.store.computationStore.submittedFactorAnswers).length>0){
+    if (Object.keys(this.props.store.computationStore.submittedFactorAnswers).length > 0) {
       this.props.store.computationStore.compute();
     }
   }
@@ -138,7 +138,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 
   ageToRow() {
-    const style= this.props.store.advancedOptionsStore.validities["ageTo"].status==="Error" ? 
+    const style = this.props.store.advancedOptionsStore.validities["ageTo"].status === "Error" ?
       ERROR_STYLE : {};
     return (
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
@@ -253,6 +253,36 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     );
   }
 
+  evaluationUnitRow() {
+    const value = this.props.store.advancedOptionsStore.evaluationUnit
+    return (
+      <div style={{ marginLeft: "20px", marginRight: "20px" }}>
+        <Form.Row>
+          <Col>
+            <Form.Label>Evaluation method</Form.Label>
+          </Col>
+          <Col>
+            <InputGroup>
+              <div style={{ maxWidth: "100px" }}>
+                <Form.Control
+                  as="select"
+                  defaultValue={EVALUATION_UNIT.PROBAIBILITY}
+                  name={"test"}
+                  value={value}
+                  onChange={() => { console.log("hej") }}
+                >
+                  {(Object.keys(EVALUATION_UNIT) as (keyof typeof EVALUATION_UNIT)[]).map(key => {
+                  return <option value = {EVALUATION_UNIT[key]}>{EVALUATION_UNIT[key]} </option> 
+                })}
+                </Form.Control>
+              </div>
+            </InputGroup>
+          </Col>
+        </Form.Row>
+      </div>
+    )
+  }
+
   render() {
     let errorMessage: string = "";
     Object.entries(this.props.store.advancedOptionsStore.validities).forEach(
@@ -290,6 +320,8 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
             <hr></hr>
             {this.ageToRow()}
             <hr></hr>
+            {this.evaluationUnitRow()}
+            <hr></hr>
             {this.threadingRow()}
           </div>
         </Collapse>
@@ -298,5 +330,5 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 }
 
-const AdvancedOptionsMenu= withStore(observer(AdvancedOptionsMenuWithoutStore)) 
+const AdvancedOptionsMenu = withStore(observer(AdvancedOptionsMenuWithoutStore))
 export default AdvancedOptionsMenu;

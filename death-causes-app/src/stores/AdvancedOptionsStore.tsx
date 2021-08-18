@@ -16,6 +16,11 @@ export interface ValidityDic {
   [key: string]: InputValidity;
 }
 
+export enum EVALUATION_UNIT {
+  PROBAIBILITY = "Probability",
+  YEARS_LOST = "Years lost"
+}
+
 export default class AdvancedOptionsStore {
   ageFromSet: boolean;
   ageFrom: string;
@@ -27,6 +32,7 @@ export default class AdvancedOptionsStore {
   submittedAgeFromSet: boolean;
   computationStateStore: ComputationStateStore;
   baseAgeFrom: null | string;
+  evaluationUnit: EVALUATION_UNIT;
 
   constructor(computationStateStore: ComputationStateStore) {
     this.ageFrom = "0";
@@ -39,6 +45,7 @@ export default class AdvancedOptionsStore {
     this.submittedThreading = this.threading;
     this.submittedAgeFromSet = true;
     this.computationStateStore = computationStateStore;
+    this.evaluationUnit =  EVALUATION_UNIT.PROBAIBILITY
     makeObservable(this, {
       ageFrom: observable,
       ageFromSet: observable,
@@ -49,6 +56,7 @@ export default class AdvancedOptionsStore {
       submittedAgeTo: observable,
       submittedAgeFromSet: observable,
       submittedThreading: observable,
+      evaluationUnit: observable,
       changedSetting: computed,
       validities: computed,
       submittable: computed,
