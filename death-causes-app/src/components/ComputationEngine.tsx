@@ -1,6 +1,7 @@
 import Descriptions from "../models/Descriptions";
 import { CauseGrouping } from "../models/RelationLinks";
-import { BestValues, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
+import { MULTIFACTOR_GAIN } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -97,8 +98,20 @@ function makeRowSquare(
         
         innerCauses.forEach((innerCause:string)=>{
             let width=widthOfEachInnerCause[innerCause];
-            const statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions, useLifeExpectancy)
-            const longStatement=combinedBestValues?.getLongConsensusStatement(
+            let longStatement: LongConsensus | undefined;
+            let statement: string | undefined;
+            if(innerCause===MULTIFACTOR_GAIN){
+                statement=descriptions.getDescription(MULTIFACTOR_GAIN, 20)
+                longStatement=getMultifactorGainStatement(
+                    totalProb>1e-8 ? width/totalProb : 0,
+                    totalProb,
+                    parent,
+                    descriptions
+                )
+            }
+            else{
+                statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions, useLifeExpectancy)
+                longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
                 totalProb>1e-8 ? width/totalProb : 0,
                 totalProb,
@@ -106,6 +119,8 @@ function makeRowSquare(
                 descriptions,
                 useLifeExpectancy,
                 );
+            }
+            
             squares.push({
                 name: parent,
                 cause: innerCause,

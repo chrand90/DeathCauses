@@ -25,7 +25,7 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
     const valInYears =
       props.store.computationStore.lifeExpectancies[index+0] -
       props.store.computationStore.lifeExpectancies[index+1];
-    console.log(props.store.computationStore.lifeExpectancies[index+0], props.store.computationStore.lifeExpectancies[index+1])
+    //console.log(props.store.computationStore.lifeExpectancies[index+0], props.store.computationStore.lifeExpectancies[index+1])
     const absDiff=Math.abs(valInYears)
     const sign=Math.sign(valInYears)
     const prefix = sign>0 ? "+":""

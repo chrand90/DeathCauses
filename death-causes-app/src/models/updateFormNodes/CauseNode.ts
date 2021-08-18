@@ -36,7 +36,7 @@ export default class CauseNode extends FormUpdater {
     riskFactors: string[]
   ) {
     super(ancestors, ageFrom, ageTo);
-    console.log(cause.deathCauseName, ": ", riskFactors);
+    //console.log(cause.deathCauseName, ": ", riskFactors);
     this.cause = cause;
     this.baseInnerCauseObject = Object.fromEntries(
       riskFactors.map((d) => [d, 0])

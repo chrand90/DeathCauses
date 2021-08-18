@@ -1,3 +1,4 @@
+import { MULTIFACTOR_GAIN } from "./updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 
 interface DescriptionNode {
   descriptions: string[],
@@ -41,6 +42,11 @@ export default class Descriptions {
               this.optimizabilities[nodeName]=nodeDescriptions.optimizability;
             }
         })
+        this.colors[MULTIFACTOR_GAIN]="#fcfcfc"
+        this.descriptions[MULTIFACTOR_GAIN]=["Multiple factors", "Leftover"]
+        this.optimizabilities[MULTIFACTOR_GAIN]=0
+
+
         this.initializeOptimizabilityClasses();
     }
 

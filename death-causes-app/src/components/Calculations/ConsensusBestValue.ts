@@ -1,6 +1,7 @@
 import Descriptions, { OptimizabilityToNodes } from "../../models/Descriptions";
 import { FactorAnswers } from "../../models/Factors";
 import RelationLinks from "../../models/RelationLinks";
+import { MULTIFACTOR_GAIN } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import {
   DimensionStatus,
   StochasticStatus,
@@ -216,14 +217,17 @@ export class BestValues {
     causeName: string, 
     factorName: string, 
     factorNameDescription: string, 
-    causeDescription: string): { res: string; buttonCodes: string[]; buttonCounter: number; } {
+    causeDescription: string,
+    optimizability: number): { res: string; buttonCodes: string[]; buttonCounter: number; } {
       let buttonCodes:string[]=[];
       const gain =
         "<strong>" +
-        (yearsLost * 1).toFixed(2).replace(/\.?0+$/, "") +
+        formatYearsLost(yearsLost) +
         "</strong>";
       let buttonCounter=0;
-      let res = "If you can avoid the deaths"
+      let res = "If you "
+      res+= optimizability>50 ? "can" : "could"
+      res+=" avoid the deaths"
       if(causeDescription.length>0){
         buttonCounter += 1;
         res+=" from " + createButton(causeDescription, buttonCounter)
@@ -236,7 +240,9 @@ export class BestValues {
       buttonCounter += 1;
       res +=  createButton(factorNameDescription, buttonCounter)
       buttonCodes.push(factorName);
-      res+=", you will live "+gain + " years longer"
+      res+=", you "
+      res+=optimizability>50 ? "will" : "would"
+      res+=" live "+gain + " longer"
       return {res, buttonCodes, buttonCounter}
   }
 
@@ -261,7 +267,8 @@ export class BestValues {
         causeName, 
         factorName,
         factorNameDescription, 
-        causeDescription
+        causeDescription,
+        descriptions.optimizabilities[factorName]
       ) :
       this.makeConsensusOpenerProbability(
         proportion, 
@@ -293,6 +300,7 @@ export class BestValues {
       console.log("factoranswers:")
       console.log(this.factorAnswers)
     }
+
     const factorAnswer = this.factorAnswers[factorName];
     if (factorAnswer.dimension === DimensionStatus.SINGLE) {
       res =
@@ -465,9 +473,9 @@ function listFormatting(factors: string[], finalword: string = "or") {
 export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean){
   const causeDescription = descriptions.getDescription(cause, 30);
   let res=""
-  res+=useLifeExpectancy ? "If you can avoid the deaths" : "If you die"
+  res+=useLifeExpectancy ? "If you could avoid the deaths" : "If you die"
   const responsibility= useLifeExpectancy ? 
-    (proportion*total).toFixed(2).replace(/\.?0+$/,"") :
+    formatYearsLost(proportion*total) :
     (proportion*100).toFixed(1).replace(/\.?0+$/,"")
   let buttonCounter=0
   let buttonCodes: string[]=[]
@@ -476,7 +484,7 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
       res+=" from "+ createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
-  res+= useLifeExpectancy ? "where the " : ", there is" + responsibility +" probability that the "
+  res+= useLifeExpectancy ? " where the " : ", there is" + responsibility +" probability that the "
   buttonCounter+=1
   res+=createButton("best explanation", buttonCounter)
   buttonCodes.push("optimizabilities")
@@ -485,9 +493,38 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
   res+=createButton("Unknown", buttonCounter)
   buttonCodes.push("interpretation#unexplained")
   if(useLifeExpectancy){
-    res+=", you will live " + responsibility + " years longer"
+    res+=", you would live " + responsibility + " longer"
   }
   res+="."
+  return {
+      textWithButtons: res,
+      buttonCodes:  buttonCodes
+  };    
+}
+
+function formatYearsLost(years: number){
+  return years.toFixed(2).replace(/\.?0+$/,"")+ " years"
+}
+
+export function getMultifactorGainStatement(proportion: number, total: number, cause: string, descriptions: Descriptions){
+  const causeDescription = descriptions.getDescription(cause, 30);
+  let res=""
+  res+= "If you could avoid <i>all</i> deaths" 
+  const responsibility= formatYearsLost(proportion*total)
+  const totalYears= formatYearsLost(total);
+  let buttonCounter=0
+  let buttonCodes: string[]=[]
+  if(cause!=="any cause"){
+      buttonCounter+=1
+      res+=" from "+ createButton(causeDescription, buttonCounter);
+      buttonCodes.push(cause)
+  }
+  res+= ", you would live " + totalYears + " longer."
+  res+=" That is <strong>"+ responsibility + "</strong> longer than the sum of all the other squares. "
+  buttonCounter+=1
+  res+=createButton("Why", buttonCounter)
+  buttonCodes.push("interpretation#multiple-factors")
+  res+= "."
   return {
       textWithButtons: res,
       buttonCodes:  buttonCodes

@@ -167,8 +167,6 @@ export default class RelationLinks {
     this.initializeSuperInheritanceLists();
     this.initializeSortedNodes();
     this.deathCauseNesting= this.makeNesting();
-    console.log("nesting")
-    console.log(this.deathCauseNesting)
   }
 
   initializeReverseNodeTypeOrder() {
