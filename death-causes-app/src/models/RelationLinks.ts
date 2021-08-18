@@ -159,6 +159,7 @@ export default class RelationLinks {
   deathCauseDescendants: NodeDic = {};
   sortedNodes: StratifiedTopologicalSorting = {};
   deathCauseNesting: DeathCauseHierarchy[];
+  deathCauseCategoryAncestors: NodeDic ={};
 
   constructor(jsonObject: RelationLinkJson) {
     this.initializeReverseNodeTypeOrder();
@@ -246,6 +247,26 @@ export default class RelationLinks {
     return candidates[0];
   }
 
+  findRiskFactors(nodeName: string): string[]{
+    if (this.nodeType[nodeName] === NodeType.CONDITION || 
+        this.nodeType[nodeName] === NodeType.COMPUTED_FACTOR || 
+        this.nodeType[nodeName] === NodeType.INPUT) {
+      return [];
+    } else {
+      let riskFactors = this.ancestorList[nodeName].map(
+        (ancestor: string) => {
+          if(this.nodeType[ancestor] === NodeType.CAUSE_CATEGORY){
+            return this.findRiskFactors(ancestor)
+          }
+          else{
+            return [ancestor]
+          }
+        }
+      );
+      return ([] as string[]).concat(...riskFactors);
+    }
+  }
+
   findCauseCategoryDescendants(nodeName: string): string[] {
     if (this.nodeType[nodeName] === NodeType.CAUSE) {
       return [];
@@ -260,12 +281,6 @@ export default class RelationLinks {
       }
       return ([] as string[]).concat(...categoryDescendants);
     }
-  }
-
-  findImmediateCauseCategoryDescendants(nodeName: string): string[] {
-    return this.descendantList[nodeName].filter(
-      (d) => this.nodeType[d] === NodeType.CAUSE_CATEGORY
-    );
   }
 
   getNestedNodes(nodeName: string, level: number): DeathCauseHierarchy[]{
@@ -639,13 +654,12 @@ export default class RelationLinks {
     return Object.keys(this.nodeType).sort();
   }
 
-  getNestedListOfDeathCauses(){
-    const takenCategories=new Set<string>();
-    
-  }
-
   getSuperDescendantCount(node: string) {
     return this.superDescendantCount[node];
+  }
+
+  getSuperDescendants(node: string): string[] {
+    return this.superDescendantList[node];
   }
 
   getDeathCauseDescendants(node: string): string[] {

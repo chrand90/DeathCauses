@@ -1,12 +1,14 @@
 import * as d3 from "d3";
 import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
+import { nodeModuleNameResolver } from "typescript";
 import Descriptions from "../models/Descriptions";
 import {
   CauseGrouping,
   CauseToParentMapping,
   ParentToCausesMapping
 } from "../models/RelationLinks";
+import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
 import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
@@ -150,7 +152,7 @@ export default class BarChart {
 
   constructor(
     element: HTMLElement | null,
-    database: DataSet,
+    database: DataSet | LifeExpectancyContributions,
     descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
@@ -439,7 +441,7 @@ export default class BarChart {
       .style("fill", NOT_CLICKABLE_GRAY);
   }
 
-  make(dataset: DataSet, diseaseToWidth: string | null) {
+  make(dataset: DataSet | LifeExpectancyContributions, diseaseToWidth: string | null) {
     const vis = this;
 
     const {
@@ -809,8 +811,145 @@ export default class BarChart {
       .lower();
   }
 
+  computeMergedAndUnmergedSquares(
+    dataset: DataSet | LifeExpectancyContributions,
+    removed: string[],
+    added: string[],
+    diseaseToWidth: string | null,
+    oldCollectedGroups: CauseGrouping
+  ){
+    if(this.useLifeExpectancy){
+      const replacementCauseToParent: CauseToParentMapping= {}
+      const replacementCauseToParentNoMerge: CauseToParentMapping = {}
+      const finalCauseToParent: CauseToParentMapping = {}
+      Object.keys(this.grouping.parentToCauses).filter(
+        nodeName => !added.includes(nodeName)
+      ).forEach(nodeName => {
+        replacementCauseToParent[nodeName]=nodeName;
+        replacementCauseToParentNoMerge[nodeName]=nodeName;
+        finalCauseToParent[nodeName]=nodeName;
+      })
+      removed.forEach(removedNode => {
+        replacementCauseToParent[removedNode]=added[0]
+        replacementCauseToParentNoMerge[removedNode]=removedNode
+      })
+      finalCauseToParent[added[0]]=added[0];
+      const replacementGrouping:CauseGrouping = {
+        parentToCauses: {}, 
+        causeToParent: replacementCauseToParent
+      }
+      const replacementGroupingNoMerge = {
+        parentToCauses: {}, 
+        causeToParent: replacementCauseToParentNoMerge
+      }
+      const finalGrouping = {
+        parentToCauses: {},
+        causeToParent: finalCauseToParent
+      }
+      const structureIfNotMerged: {[key:string]: CauseGrouping}={}
+      structureIfNotMerged[added[0]]=replacementGroupingNoMerge
+      let data= Object.entries(dataset as LifeExpectancyContributions).filter(
+        ([causeOrCategoryName, dataRow]) => {
+          const notHidden= causeOrCategoryName in this.grouping.parentToCauses 
+          const aboutToBeHidden= removed.includes(causeOrCategoryName)
+          const aboutToBeUnhidden = added.includes(causeOrCategoryName)
+          return (notHidden || aboutToBeHidden) && !aboutToBeUnhidden
+        }
+      ).map(  ([causeOrCategoryName, dataRow]) => { 
+        return dataRow;
+      }); 
+      let { allSquares: dataSquares, totalProbs } = make_squares(
+        data,
+        diseaseToWidth,
+        replacementGrouping,
+        this.descriptions,
+        this.useLifeExpectancy
+      );
+      let { allSquares: noMergeSquares} = make_squares(
+        data,
+        diseaseToWidth,
+        replacementGrouping,
+        this.descriptions,
+        this.useLifeExpectancy,
+        structureIfNotMerged
+      );
+      let finalData= Object.entries(dataset as LifeExpectancyContributions).filter(
+        ([causeOrCategoryName, dataRow]) => {
+          return causeOrCategoryName in this.grouping.parentToCauses 
+        }
+      ).map( ([causeOrCategoryName, dataRow]) => { 
+        return dataRow;
+      }); 
+      let { allSquares: finalSquares, totalProbs: finalProbs} = make_squares(
+        finalData,
+        diseaseToWidth,
+        finalGrouping,
+        this.descriptions,
+        this.useLifeExpectancy
+      );
+      return {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs}
+    }
+    else{
+      const notToBeMerged = getSubCollectGroup(
+        oldCollectedGroups,
+        removed,
+        added[0]
+      );
+      let { allSquares: dataSquares, totalProbs } = make_squares(
+        dataset as DataSet,
+        diseaseToWidth,
+        this.grouping,
+        this.descriptions,
+        this.useLifeExpectancy
+      );
+      let { allSquares: noMergeSquares} = make_squares(
+        dataset as DataSet,
+        diseaseToWidth,
+        this.grouping,
+        this.descriptions,
+        this.useLifeExpectancy,
+        notToBeMerged
+      );
+      return {noMergeSquares, dataSquares, totalProbs, finalSquares: null, finalProbs: null}
+
+    }
+  }
+
+  prepareStepBeforeTransition(finalSquares: SquareSection[], finalProbs: DataRow[], diseaseToWidth: string | null, durationPerTransition: number){
+    return (designConstants: DesignConstants, callback:any) => { 
+      const newMaxX = this.transitionXAxis(
+        finalSquares,
+        designConstants,
+        durationPerTransition
+      );
+      this.currentMax = newMaxX;
+      const gsFinalDataLifeExpectancy = this.svg
+        .selectAll(".causebar")
+        .data(finalSquares, function (d: any) {
+          return d.name + "." + d.cause;
+        });
+      gsFinalDataLifeExpectancy
+      .transition("bars_x_change")
+      .duration(durationPerTransition*3/5)
+      .attr("x", (d: any) => this.xscale(d.x0))
+      .attr("width", (d: any) =>
+        Math.max(0, this.xscale(d.x) - this.xscale(d.x0))
+      )
+      .end()
+      .then(() => {
+        this.recalibrate_ybars(finalProbs, designConstants);
+        this.reArrangeBars(
+          finalProbs,
+          durationPerTransition*2/5,
+          designConstants,
+          diseaseToWidth,
+          callback)
+     });
+    };
+  }
+
   collapseCats(
-    dataset: DataSet,
+    dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -818,33 +957,26 @@ export default class BarChart {
     durationPerTransition: number = 1000
   ) {
     this.disableExpandCollectButtons(removed);
-    const { allSquares: dataSquares, totalProbs } = make_squares(
+    const {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs} = this.computeMergedAndUnmergedSquares(
       dataset,
-      diseaseToWidth,
-      this.grouping,
-      this.descriptions,
-      this.useLifeExpectancy
-    );
-    const notToBeMerged = getSubCollectGroup(
-      oldCollectedGroups,
       removed,
-      added[0]
-    );
-    const { allSquares: noMergeSquares, totalProbs: notUsed } = make_squares(
-      dataset,
+      added,
       diseaseToWidth,
-      this.grouping,
-      this.descriptions,
-      this.useLifeExpectancy,
-      notToBeMerged
-    );
+      oldCollectedGroups
+    )
+    
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
       totalProbs,
       removed,
       added[0],
       this.yBars
     );
-    const sortedTotalsFinal = copyOfSortedDataset(totalProbs, "totalProb");
+
+    const sortedTotals = copyOfSortedDataset(totalProbs, "totalProb")
+
+    const sortedTotalsFinal = this.useLifeExpectancy ? 
+      copyOfSortedDataset(finalProbs as DataRow[], "totalProb") :
+      sortedTotals
 
     const vis = this;
     let designConstants = this.setHeightAndGetDesignConstants(
@@ -852,6 +984,10 @@ export default class BarChart {
     );
 
     this.recalibrate_ybars(sortedTotalsWithRemovedCats, designConstants);
+
+    const stepBeforeSorting = this.useLifeExpectancy ? 
+      this.prepareStepBeforeTransition(finalSquares as SquareSection[], sortedTotalsFinal, diseaseToWidth, durationPerTransition) : 
+      (designConstants: any, callback: any) => {callback()}
 
     this.instantUpdateOfRects(
       sortedTotalsWithRemovedCats,
@@ -894,12 +1030,12 @@ export default class BarChart {
               .end()
               .then(() => {
                 this.currentMax = newMaxX;
-                let newN = sortedTotalsFinal.length;
+                let newN = sortedTotals.length;
                 designConstants =
                   DESIGN === "WIDE"
                     ? wideDesignConstants(newN, vis.width)
                     : longDesignConstants(newN, vis.width, vis.simpleVersion);
-                this.recalibrate_ybars(sortedTotalsFinal, designConstants);
+                this.recalibrate_ybars(sortedTotals, designConstants);
                 const gsWithFinalData = vis.svg
                   .selectAll(".causebar")
                   .data(dataSquares, function (d: any) {
@@ -919,21 +1055,26 @@ export default class BarChart {
                   designConstants,
                   diseaseToWidth,
                   () => {
-                    vis.svg.attr("height", designConstants.totalheightWithXBar);
-                    this.instantUpdateOfRects(
-                      sortedTotalsFinal,
+                    stepBeforeSorting(
                       designConstants,
-                      diseaseToWidth
+                      () => {
+                        vis.svg.attr("height", designConstants.totalheightWithXBar);
+                        this.instantUpdateOfRects(
+                          sortedTotalsFinal,
+                          designConstants,
+                          diseaseToWidth
+                        );
+                        this.insertPercentageText(sortedTotalsFinal);
+                        this.reMapFitScreenButtons(
+                          sortedTotalsFinal,
+                          sortedTotalsFinal.map((d, i) => i),
+                          diseaseToWidth
+                        );
+                        this.transitionsFinished += 1;
+                      }
                     );
-                    this.insertPercentageText(sortedTotalsFinal);
-                    this.reMapFitScreenButtons(
-                      sortedTotalsFinal,
-                      sortedTotalsFinal.map((d, i) => i),
-                      diseaseToWidth
-                    );
-                    this.transitionsFinished += 1;
                   }
-                );
+                )
               });
           });
       }
@@ -1054,7 +1195,7 @@ export default class BarChart {
   }
 
   expandCats(
-    dataset: DataSet,
+    dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -1064,7 +1205,7 @@ export default class BarChart {
     this.chainedTransitionInProgress = true;
     this.disableExpandCollectButtons(removed);
     const { allSquares: dataSquares, totalProbs } = make_squares(
-      dataset,
+      dataset as DataSet,
       diseaseToWidth,
       this.grouping,
       this.descriptions,
@@ -1075,7 +1216,7 @@ export default class BarChart {
       allSquares: noMergeSquares,
       totalProbs: noMergeTotals,
     } = make_squares(
-      dataset,
+      dataset as DataSet,
       diseaseToWidth,
       oldCollectedGroups,
       this.descriptions,
@@ -1192,7 +1333,7 @@ export default class BarChart {
   }
 
   async changeCats(
-    dataset: DataSet,
+    dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
     newCollectedGroups: CauseGrouping,
     durationIfNoWait: number = 700
@@ -1227,20 +1368,40 @@ export default class BarChart {
   }
 
   computeRankAndSquares(
-    data: DataRow[],
+    data: DataRow[] | LifeExpectancyContributions,
     diseaseToWidth: string | null
   ): {
     dataSortedTotal: DataRow[];
     dataSquares: SquareSection[];
     dataIds: number[];
   } {
-    const { allSquares: dataSquares, totalProbs } = make_squares(
-      data,
-      diseaseToWidth,
-      this.grouping,
-      this.descriptions,
-      this.useLifeExpectancy
-    );
+    let totalProbs: DataRow[];
+    let dataSquares: SquareSection[];
+    if(this.useLifeExpectancy){
+      let dataset= Object.entries(data as LifeExpectancyContributions).filter(
+        ([causeOrCategoryName, dataRow]) => {
+          return causeOrCategoryName in this.grouping.parentToCauses
+        }
+      ).map(  ([causeOrCategoryName, dataRow]) => { 
+        return dataRow;
+      }); 
+      ({ allSquares: dataSquares, totalProbs } = make_squares(
+        dataset,
+        diseaseToWidth,
+        undefined,
+        this.descriptions,
+        this.useLifeExpectancy
+      ));
+    }
+    else{
+      ({ allSquares: dataSquares, totalProbs } = make_squares(
+        data as DataSet,
+        diseaseToWidth,
+        this.grouping,
+        this.descriptions,
+        this.useLifeExpectancy
+      ));
+    }
     const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
     const dataIds = dataSortedTotal.map((v: any, index: number) => {
       return index;
@@ -1249,7 +1410,7 @@ export default class BarChart {
   }
 
   async update(
-    dataset: DataSet,
+    dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
     instantDiseaseToWidthColoring: boolean = false,
     durationPerTransition: number = 500
@@ -1312,7 +1473,12 @@ export default class BarChart {
             this.xscale(Math.min(d.totalProb, this.currentMax)) as number
         )
         .text(function (d: any) {
-          return (d.totalProb * 100).toPrecision(3) + "%";
+          if(this.useLifeExpectancy){
+            return (d.totalProb).toPrecision(3)
+          }
+          else{
+            return (d.totalProb * 100).toPrecision(3) + "%";
+          }
         });
     }
 

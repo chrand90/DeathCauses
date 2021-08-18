@@ -14,7 +14,7 @@ import { ComputedFactorClasses } from "./ComputedFactors";
 import { ConditionClasses } from "./ConditionNodes";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
-import riskFactorContributionsLifeExpectancy from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
+import riskFactorContributionsLifeExpectancy, { LifeExpectancyContributions } from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
 import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
 import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
@@ -98,7 +98,7 @@ export default class UpdateFormController {
         rfgNames.push(conditionName + "." + ancestors.join("-"))
         rfgNodes.push(riskFactorGroupNode)
       })
-      const causeNode=new CauseNode(rfgNames, this.ageFrom, this.ageTo, this.conditions[conditionName])
+      const causeNode=new CauseNode(rfgNames, this.ageFrom, this.ageTo, this.conditions[conditionName], this.rdat.findRiskFactors(conditionName))
       const conditionNode= ConditionClasses[conditionName](
         rdat.getAncestors(conditionName), 
         this.ageFrom,
@@ -134,12 +134,12 @@ export default class UpdateFormController {
           ancestors = ancestors.concat(causeToRFGNames[causeOrCategory])
         }
       })
-      this.formUpdaters.push(new CauseNode(ancestors, this.ageFrom, this.ageTo, deathCause))
+      this.formUpdaters.push(new CauseNode(ancestors, this.ageFrom, this.ageTo, deathCause, this.rdat.findRiskFactors(deathCause.deathCauseName)))
       this.formUpdaterNames.push(deathCause.deathCauseName);
     });
   }
 
-  computeInnerProbabilities(): DataRow[] {
+  computeInnerProbabilities(): DataRow[] | LifeExpectancyContributions {
     // Promise<DataRow[]> {
     if (this.allComputedNodes === null) {
       throw Error("It is not possible to compute survival data before calling compute()")
@@ -148,8 +148,8 @@ export default class UpdateFormController {
       const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
         return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
       })
-      if(this.useLifeExpectancy){
-        return riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+      if(this.useLifeExpectancy){ 
+        return riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.rdat)
       }
       else{
         return riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)

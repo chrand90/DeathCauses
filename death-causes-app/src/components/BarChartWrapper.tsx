@@ -5,6 +5,7 @@ import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 import "./BarChartWrapper.css";
 import { useHistory } from 'react-router';
+import { LifeExpectancyContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -12,7 +13,7 @@ enum LatestChange {
 }
 
 interface BarChartWrapperProps {
-	database: DataSet;
+	database: DataSet | LifeExpectancyContributions;
 	simpleVersion?: boolean;
 }
 

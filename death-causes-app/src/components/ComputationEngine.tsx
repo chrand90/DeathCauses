@@ -169,10 +169,10 @@ function makeRowSquare(
     return {squares, totalProb};
 }
 
-function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping){
+function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping | undefined){
     let parentToRows: ParentToDataRows={}
     res_dat.forEach((datRow) => {
-        const parent=grouping.causeToParent[datRow.name]
+        const parent=grouping ? grouping.causeToParent[datRow.name] : datRow.name;
         if(parent in parentToRows){
             parentToRows[parent].push(datRow)
         }
@@ -187,12 +187,11 @@ function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping){
 function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
-    grouping: CauseGrouping,
+    grouping: CauseGrouping | undefined,
     descriptions: Descriptions,
     useLifeExpectancy: boolean,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
-
 {
     let parentToRows= computeParentToRows(res_dat, grouping);
     let max: number | null=null; 
