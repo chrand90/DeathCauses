@@ -1,7 +1,6 @@
 import * as d3 from "d3";
 import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
-import { nodeModuleNameResolver } from "typescript";
 import Descriptions from "../models/Descriptions";
 import {
   CauseGrouping,
@@ -11,7 +10,7 @@ import {
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
-import { ALTERNATING_COLORS, LINK_COLOR } from "./Helpers";
+import { ALTERNATING_COLORS, formatYears, LINK_COLOR } from "./Helpers";
 import { DataRow, DataSet } from "./PlottingData";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
@@ -78,7 +77,8 @@ const sameConstants = {
 function longDesignConstants(
   n: number,
   width: number,
-  simplifiedVersion: boolean
+  simplifiedVersion: boolean,
+  useLifeExpectancy: boolean
 ): DesignConstants {
   const heightScale = simplifiedVersion ? 1.25 : 1;
   const xbarheightScale = simplifiedVersion ? 0 : 1;
@@ -97,7 +97,9 @@ function longDesignConstants(
     width: width,
     textTranslation: "translate(" + 10 + "," + -BARHEIGHT / 8 + ")",
     textAnchor: "start",
-    airToTheRight: simplifiedVersion ? 1 : 80,
+    airToTheRight: simplifiedVersion ? 
+      ( useLifeExpectancy ? 80 : 50 ) : 
+      ( useLifeExpectancy ? 100 : 80)
   };
 }
 
@@ -206,7 +208,7 @@ export default class BarChart {
     let designConstants =
       DESIGN === "WIDE"
         ? wideDesignConstants(1, vis.width)
-        : longDesignConstants(1, vis.width, vis.simpleVersion);
+        : longDesignConstants(1, vis.width, vis.simpleVersion, vis.useLifeExpectancy);
     if (!this.simpleVersion) {
       vis.svg
         .append("text")
@@ -214,7 +216,7 @@ export default class BarChart {
         .attr("y", XBARHEIGHT / 2)
         .attr("font-size", 20)
         .attr("text-anchor", "middle")
-        .text(this.useLifeExpectancy ? "Years lost to cause" : "Probability of dying of cause");
+        .text(this.useLifeExpectancy ? "Time lost to cause" : "Probability of dying of cause");
       vis.xAxisGroup = vis.svg
         .append("g")
         .attr("transform", `translate(0,${XBARHEIGHT})`);
@@ -432,12 +434,12 @@ export default class BarChart {
       )
       .text(function (d: any) {
         if(vis.useLifeExpectancy){
-          return (d.totalProb).toPrecision(3)
+          return formatYears(d.totalProb, false)
         }
         return (d.totalProb * 100).toPrecision(3) + "%";
       })
       .style("text-anchor", "start")
-      .attr("transform", "translate(" + 5 + "," + BARHEIGHT / 2 + ")")
+      .attr("transform", "translate(" + 5 + "," + BARHEIGHT / 2 * (this.simpleVersion ? 1.8 : 1) + ")")
       .style("fill", NOT_CLICKABLE_GRAY);
   }
 
@@ -454,7 +456,7 @@ export default class BarChart {
     let designConstants =
       DESIGN === "WIDE"
         ? wideDesignConstants(n, vis.width)
-        : longDesignConstants(n, vis.width, vis.simpleVersion);
+        : longDesignConstants(n, vis.width, vis.simpleVersion, vis.useLifeExpectancy);
     vis.svg.attr("height", designConstants.totalheightWithXBar);
 
     //Setting the mapping disease -> y value
@@ -490,9 +492,11 @@ export default class BarChart {
           );
         });
       this.makeButtons(dtextGroups, designConstants);
+    }
 
-      this.insertPercentageText(dataSortedTotal);
+    this.insertPercentageText(dataSortedTotal);
 
+    if(!this.simpleVersion){
       this.makeFitScreenButtons(
         dataIds,
         dataSortedTotal,
@@ -1145,7 +1149,7 @@ export default class BarChart {
                 designConstants =
                   DESIGN === "WIDE"
                     ? wideDesignConstants(newN, vis.width)
-                    : longDesignConstants(newN, vis.width, vis.simpleVersion);
+                    : longDesignConstants(newN, vis.width, vis.simpleVersion, vis.useLifeExpectancy);
                 this.recalibrate_ybars(sortedTotals, designConstants);
                 const gsWithFinalData = vis.svg
                   .selectAll(".causebar")
@@ -1280,7 +1284,7 @@ export default class BarChart {
     let designConstants =
       DESIGN === "WIDE"
         ? wideDesignConstants(n, this.width)
-        : longDesignConstants(n, this.width, this.simpleVersion);
+        : longDesignConstants(n, this.width, this.simpleVersion, this.useLifeExpectancy);
     this.svg.attr("height", designConstants.totalheightWithXBar);
     return designConstants;
   }
@@ -1534,7 +1538,7 @@ export default class BarChart {
       )
       .text( (d: any) => {
         if(this.useLifeExpectancy){
-          return (d.totalProb).toPrecision(3)
+          return formatYears(d.totalProb, false)
         }
         else{
           return (d.totalProb * 100).toPrecision(3) + "%";
@@ -1565,7 +1569,7 @@ export default class BarChart {
     const designConstants =
       DESIGN === "WIDE"
         ? wideDesignConstants(n, vis.width)
-        : longDesignConstants(n, vis.width, vis.simpleVersion);
+        : longDesignConstants(n, vis.width, vis.simpleVersion, vis.useLifeExpectancy);
 
     //Updating the disease-to-y mapping (this.yBars)
     if (!this.simpleVersion) {
@@ -1590,10 +1594,7 @@ export default class BarChart {
       durationPerTransition
     );
 
-    if (!this.simpleVersion) {
-      //Updating X-axis
-      this.updatePercentagesXaxis(dataSortedTotal, durationPerTransition)
-    }
+    this.updatePercentagesXaxis(dataSortedTotal, durationPerTransition)
 
     gs.transition("bars_x_change")
       .duration(durationPerTransition)

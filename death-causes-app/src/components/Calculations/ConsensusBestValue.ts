@@ -9,6 +9,7 @@ import {
 } from "../../models/updateFormNodes/UpdateForm";
 import { LocationAndValue } from "../database/InterpolationLocation";
 import { WeightedLocationAndValue } from "../database/InterpolationTable";
+import { formatYears } from "../Helpers";
 
 enum Flank {
   NEITHER = "neither",
@@ -222,7 +223,7 @@ export class BestValues {
       let buttonCodes:string[]=[];
       const gain =
         "<strong>" +
-        formatYearsLost(yearsLost) +
+        formatYears(yearsLost) +
         "</strong>";
       let buttonCounter=0;
       let res = "If you "
@@ -300,11 +301,14 @@ export class BestValues {
       console.log("factoranswers:")
       console.log(this.factorAnswers)
     }
-
+    let unit=descriptions.getBaseUnit(factorName)
+    if(unit!==""){
+      unit=" "+unit
+    }
     const factorAnswer = this.factorAnswers[factorName];
     if (factorAnswer.dimension === DimensionStatus.SINGLE) {
       res =
-        res + ". Your " + factorNameDescription + " is " + factorAnswer.value;
+        res + ". Your " + factorNameDescription + " is " + factorAnswer.value + unit;
     }
     if (
       !(factorName in this.optimals) ||
@@ -332,7 +336,7 @@ export class BestValues {
         const minAnswer = min.toFixed(2).replace(/\.?0+$/, "");
         const maxAnswer = max.toFixed(2).replace(/\.?0+$/, "");
         if (minAnswer === maxAnswer) {
-          res = res + ". Your " + factorNameDescription + " is " + minAnswer;
+          res = res + ". Your " + factorNameDescription + " is " + minAnswer + unit;
         } else {
           res =
             res +
@@ -342,6 +346,7 @@ export class BestValues {
             minAnswer +
             " and " +
             maxAnswer +
+            unit +
             " depending on your age";
         }
       }
@@ -354,7 +359,7 @@ export class BestValues {
       if (factorAnswerFlank === Flank.NEITHER) {
         res = res + ". That is extremely close to the "+optimalButtonSingular;
       } else if (stability === FlankStability.STABLE) {
-        res = res + ". The "+optimalButtonSingular+" is <strong>" + minVal + "</strong>";
+        res = res + ". The "+optimalButtonSingular+" is <strong>" + minVal + "</strong>" + unit;
       } else {
         res =
           res +
@@ -362,11 +367,12 @@ export class BestValues {
           minVal +
           " and " +
           maxVal +
+          unit +
           " depending on age, subcause, and/or other risk factors";
       }
     } else {
       if (this.optimals[factorName].every((d) => d === firstEntry)) {
-        res = res + ". The "+optimalButtonSingular+" is " + firstEntry;
+        res = res + ". The "+optimalButtonSingular+" is " + firstEntry + unit;
       } else {
         res =
           res +
@@ -475,7 +481,7 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
   let res=""
   res+=useLifeExpectancy ? "If you could avoid the deaths" : "If you die"
   const responsibility= useLifeExpectancy ? 
-    formatYearsLost(proportion*total) :
+    formatYears(proportion*total) :
     (proportion*100).toFixed(1).replace(/\.?0+$/,"")
   let buttonCounter=0
   let buttonCodes: string[]=[]
@@ -484,7 +490,7 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
       res+=" from "+ createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
-  res+= useLifeExpectancy ? " where the " : ", there is" + responsibility +" probability that the "
+  res+= useLifeExpectancy ? " where the " : ", there is " + responsibility +"% probability that the "
   buttonCounter+=1
   res+=createButton("best explanation", buttonCounter)
   buttonCodes.push("optimizabilities")
@@ -508,8 +514,7 @@ function formatYearsLost(years: number){
 
 export function getMultifactorGainStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, multiFactorType: MultifactorGainType){
   const causeDescription = descriptions.getDescription(cause, 30);
-  const responsibility= formatYearsLost(proportion*total)
-  const totalYears= formatYearsLost(total);
+  const responsibility= formatYears(proportion*total)
   let buttonCounter=0
   let buttonCodes: string[]=[]
   

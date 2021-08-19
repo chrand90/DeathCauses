@@ -32,6 +32,7 @@ export default class Descriptions {
     colors: NodeToString={};
     optimizabilities: NodeToOptimizability={};
     optimClasses: OptimizabilityToNodes={};
+    baseUnit: NodeToString={};
 
     constructor(descriptionsJson: DescriptionsJson){
         this.colors["Unexplained"]="#FFFFFF";
@@ -41,6 +42,7 @@ export default class Descriptions {
             if(nodeDescriptions.optimizability){
               this.optimizabilities[nodeName]=nodeDescriptions.optimizability;
             }
+            this.baseUnit[nodeName]= nodeDescriptions.baseUnit ? nodeDescriptions.baseUnit : ""
         })
         this.colors[MultifactorGainType.KNOWN]="#f7f7f5";
         this.colors[MultifactorGainType.UNKNOWN]="#fcfcfa";
@@ -85,6 +87,16 @@ export default class Descriptions {
           return nodes.length>0;
         })
       return Object.fromEntries(resAsLists);
+    }
+
+    getBaseUnit(nodeName: string){
+      if(nodeName in this.baseUnit){
+        if(this.baseUnit[nodeName].includes("=")){
+          return ""
+        }
+        return this.baseUnit[nodeName]
+      }
+      return ""
     }
 
     getDescription(nodeName: string, maxSize:number=20): string{
