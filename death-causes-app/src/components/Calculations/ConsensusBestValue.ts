@@ -1,7 +1,7 @@
 import Descriptions, { OptimizabilityToNodes } from "../../models/Descriptions";
 import { FactorAnswers } from "../../models/Factors";
 import RelationLinks from "../../models/RelationLinks";
-import { MULTIFACTOR_GAIN } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { MultifactorGainType } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import {
   DimensionStatus,
   StochasticStatus,
@@ -506,24 +506,40 @@ function formatYearsLost(years: number){
   return years.toFixed(2).replace(/\.?0+$/,"")+ " years"
 }
 
-export function getMultifactorGainStatement(proportion: number, total: number, cause: string, descriptions: Descriptions){
+export function getMultifactorGainStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, multiFactorType: MultifactorGainType){
   const causeDescription = descriptions.getDescription(cause, 30);
-  let res=""
-  res+= "If you could avoid <i>all</i> deaths" 
   const responsibility= formatYearsLost(proportion*total)
   const totalYears= formatYearsLost(total);
   let buttonCounter=0
   let buttonCodes: string[]=[]
+  
+  let res="There is a "
+  buttonCounter+=1
+  res+=createButton("bonus", buttonCounter)
+  buttonCodes.push("interpretation#multiple-factors")
+  res+=" from avoiding "
+  if(multiFactorType === MultifactorGainType.KNOWN){
+    res+=" multiple factors "
+  }
+  else{
+    res+=" both known and unknown factors "
+  }
+  res+="at the same time. "
+  res+= "If you avoided <i>all</i> deaths" 
+  
   if(cause!=="any cause"){
       buttonCounter+=1
       res+=" from "+ createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
-  res+= ", you would live " + totalYears + " longer."
-  res+=" That is <strong>"+ responsibility + "</strong> longer than the sum of all the other squares. "
-  buttonCounter+=1
-  res+=createButton("Why", buttonCounter)
-  buttonCodes.push("interpretation#multiple-factors")
+  if(multiFactorType === MultifactorGainType.KNOWN){
+    res+=" where the "
+    buttonCounter+=1
+    res+=createButton("best explanation", buttonCounter)
+    buttonCodes.push("interpretation#best-explanation")
+    res+=" is a known factor"
+  }
+  res+= ", the bonus would be <strong>"+ responsibility + "</strong>."
   res+= "."
   return {
       textWithButtons: res,

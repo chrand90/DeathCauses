@@ -25,7 +25,10 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	const [chart, setChart] = useState<BarChart | null>(null);
 
 	const rerouter = (modelPage: string) => {
-		if(modelPage.length>0){
+		if(modelPage.substring(0,1)==="#"){
+			history.push("/model"+modelPage)
+		}
+		else if(modelPage.length>0 && modelPage.substring(0,1)!=="#"){
 			history.push("/model/"+modelPage)
 		}
 		else{

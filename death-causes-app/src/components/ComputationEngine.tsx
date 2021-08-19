@@ -1,6 +1,6 @@
 import Descriptions from "../models/Descriptions";
 import { CauseGrouping } from "../models/RelationLinks";
-import { MULTIFACTOR_GAIN } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { MultifactorGainType } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
@@ -100,13 +100,24 @@ function makeRowSquare(
             let width=widthOfEachInnerCause[innerCause];
             let longStatement: LongConsensus | undefined;
             let statement: string | undefined;
-            if(innerCause===MULTIFACTOR_GAIN){
-                statement=descriptions.getDescription(MULTIFACTOR_GAIN, 20)
+            if(innerCause===MultifactorGainType.KNOWN){
+                statement=descriptions.getDescription(MultifactorGainType.KNOWN, 20)
                 longStatement=getMultifactorGainStatement(
                     totalProb>1e-8 ? width/totalProb : 0,
                     totalProb,
                     parent,
-                    descriptions
+                    descriptions,
+                    MultifactorGainType.KNOWN
+                )
+            }
+            else if(innerCause===MultifactorGainType.UNKNOWN){
+                statement=descriptions.getDescription(MultifactorGainType.UNKNOWN, 20)
+                longStatement=getMultifactorGainStatement(
+                    totalProb>1e-8 ? width/totalProb : 0,
+                    totalProb,
+                    parent,
+                    descriptions,
+                    MultifactorGainType.UNKNOWN
                 )
             }
             else{

@@ -149,7 +149,9 @@ export default class UpdateFormController {
         return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
       })
       if(this.useLifeExpectancy){ 
-        return riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.rdat)
+        const res=riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.rdat)
+        console.log(res)
+        return res;
       }
       else{
         return riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)

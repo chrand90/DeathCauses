@@ -184,7 +184,7 @@ export default class BarChart {
     this.hideAllToolTips = this.hideAllToolTips.bind(this);
     this.redirectPage = redirectPage;
     if (simpleVersion) {
-      this.grouping = simplifyGrouping(collectedGroups);
+      this.grouping = simplifyGrouping(collectedGroups, useLifeExpectancy);
     } else {
       this.grouping = collectedGroups;
     }
@@ -1722,9 +1722,15 @@ function getSubCollectGroup(
   return res;
 }
 
-function simplifyGrouping(grouping: CauseGrouping): CauseGrouping {
+function simplifyGrouping(grouping: CauseGrouping, useLifeExpectancy: boolean=false): CauseGrouping {
+  
   let parentToCauses: ParentToCausesMapping = {};
   let causeToParent: CauseToParentMapping = {};
+  if(useLifeExpectancy){
+    parentToCauses["any cause"]=["any cause"]
+    causeToParent["any cause"]="any cause"
+    return { parentToCauses, causeToParent }
+  }
   const allCauses = Object.keys(grouping.causeToParent);
   parentToCauses["any cause"] = allCauses;
   allCauses.forEach((d) => {
