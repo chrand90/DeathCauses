@@ -7,7 +7,6 @@ import RootStore, { withStore } from "./stores/rootStore";
 import { hideAllToolTips } from "./components/Helpers";
 import InternalRedirectButton from "./components/InternalRedirectButton";
 import { NodeType } from "./models/RelationLinks";
-import { isConstructorDeclaration } from "typescript";
 
 enum LoadingStatus {
   LOADING = "loading",

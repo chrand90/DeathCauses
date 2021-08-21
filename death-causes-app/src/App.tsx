@@ -4,6 +4,7 @@ import { Container } from 'react-bootstrap';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AboutEntry from "./AboutEntry";
 import AboutPage from "./AboutPage";
+import RelationLinkWrapper from "./components/RelationLinkVizWrapper";
 import { ContactPage } from './ContactPage';
 import ICDPage from "./ICDpage";
 import Main from './Main';
@@ -34,6 +35,10 @@ class AppWithoutObserver extends React.Component {
             <Route exact path="/ICD">
               <Navigation fullWidth={true} />
               <ICDPage />
+            </Route>
+            <Route exact path="/relations">
+              <Navigation fullWidth={true} />
+              <RelationLinkWrapper />
             </Route>
             <Route exact path="/contact">
               <Navigation fullWidth={true} />

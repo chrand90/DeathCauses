@@ -30,8 +30,6 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
   constructor(props: QuestionMenuProps) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
-
-
   }
 
   componentDidMount(){
