@@ -5,6 +5,7 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import AboutEntry from "./AboutEntry";
 import AboutPage from "./AboutPage";
 import { ContactPage } from './ContactPage';
+import ICDPage from "./ICDpage";
 import Main from './Main';
 import Navigation from './NavBar';
 import { store, StoreContext } from "./stores/rootStore";
@@ -29,6 +30,10 @@ class AppWithoutObserver extends React.Component {
             <Route exact path="/model">
               <Navigation fullWidth={true} />
               <AboutEntry />
+            </Route>
+            <Route exact path="/ICD">
+              <Navigation fullWidth={true} />
+              <ICDPage />
             </Route>
             <Route exact path="/contact">
               <Navigation fullWidth={true} />
