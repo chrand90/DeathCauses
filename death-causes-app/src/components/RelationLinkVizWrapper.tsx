@@ -76,7 +76,9 @@ const RelationLinkWrapper = observer((props: RelationLinkWrapperProps) => { //cl
 				variant="link"
 				onClick={()=> onRedirectToLibrary(store.relationLinkVizStore.elementInFocus)}> 
 				{store.loadedDataStore.descriptions.getDescription(store.relationLinkVizStore.elementInFocus, DESCRIPTION_LENGTH)} </Button></p>
-		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
+				<div style={{overflowX:"auto", width: "100%"}}>
+					<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
+				</div>
 		</div>
 	)
 

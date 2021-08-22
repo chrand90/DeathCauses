@@ -6,7 +6,7 @@ export const LINK_COLOR = "#0000EE";
 export const SAVE_FILE_NAME ="personalData.json"
 export const QUERY_STRING_START = "?inputData="
 
-const toolTipNamesShowHide=['.stip','.clicktip','.d3-tip','buttontip']
+const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
 
 

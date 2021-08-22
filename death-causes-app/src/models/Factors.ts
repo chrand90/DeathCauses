@@ -284,10 +284,10 @@ class Factors {
     return this.factorOrder;
   }
 
-  getHelpJson(factorname: string): string {
+  getHelpJson(factorname: string): string | null{
     return this.factorList[factorname].helpJson
       ? (this.factorList[factorname].helpJson as string)
-      : "No help available";
+      : null;
   }
 
   getFactorsAsStateObject() {

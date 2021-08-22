@@ -83,7 +83,8 @@ class QuestionListFrameWithoutStore extends React.Component<QuestionListFramePro
             onClick={this.props.onSubmit}
             style={buttonStyle}
             disabled={
-              !this.props.store.factorInputStore.submittable ||
+              !this.props.store.factorInputStore.submittable || 
+              !this.props.store.loadedDataStore.loadedVizWindowData ||
               this.props.store.computationStateStore.computationState === ComputationState.RUNNING
             }
           >
@@ -124,7 +125,7 @@ class QuestionListFrameWithoutStore extends React.Component<QuestionListFramePro
         }}
       >
         <Card.Header>
-          <div className="d-flex justify-content-between">
+          <div className="d-flex justify-content-between flex-wrap">
             <div>
               <Button onClick={()=> this.props.store.questionProgressStore.switchView(QuestionView.NOTHING)}>
                 Back to the questions
@@ -136,7 +137,7 @@ class QuestionListFrameWithoutStore extends React.Component<QuestionListFramePro
         </Card.Header>
         <Card.Body>{this.props.children}</Card.Body>
         <Card.Footer>
-          <ButtonToolbar className="justify-content-between">
+          <ButtonToolbar className="d-flex justify-content-between flex-wrap">
             <ButtonGroup>
               <Button onClick={() => this.toggleSaveMenu()}>Save personal data</Button>
             </ButtonGroup>

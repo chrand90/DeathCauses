@@ -1,4 +1,4 @@
-.d3-tip {
+.barplottip {
   line-height: 1;
   padding: 6px;
   background: rgba(255, 255, 255, 0.75);
@@ -9,13 +9,15 @@
   border-style: solid;
   font-size: 14px;
   font-weight: 500;
+  position: absolute;
+  transform: translate(-50%,0)
   }
   
   /* Creates a small triangle extender for the tooltip 
   */
-  .d3-tip:before {
+  .barplottip:before {
     box-sizing: border-box;
-    display: inline;
+    display: block;
     font-size: 12px;
     width: 100%;
     line-height: 1;
@@ -25,7 +27,7 @@
     text-align: center
   }
 
-  .d3-tip.n:before {
+  .barplottip:before {
     margin: -1px 0 0 0;
     top: 100%;
     left: 0;

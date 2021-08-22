@@ -34,7 +34,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     this.state = {
       riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
       survivalCurveData: this.props.store.computationStore.survivalCurveData,
-      summaryViewData: null
+      summaryViewData: this.props.store.computationStore.summaryView
     }
   }
 
