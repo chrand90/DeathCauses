@@ -92,7 +92,7 @@
       }
       
       .buttontip.n:before {
-        top: 31px;
+        top: calc(100% - 2px);
         left: 0;
       }
   

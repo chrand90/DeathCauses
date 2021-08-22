@@ -60,6 +60,9 @@ export default class LoadedDataStore {
     const promiseOfRelationLinks= this.makePromiseOfRelationsLinks();
     const promiseOfDatabase = this.makePromiseOfDataBase();
     const promiseOfConditions=this.makePromiseOfConditions();
+    const artificialWaiting= new Promise<number>( (res) => {
+      setTimeout(()=>{ res(9)},5000)
+    })
     Promise.all([promiseOfFactors, promiseOfDescriptions]).then(() => {
       factorInputStore.attachLoadedData();
       questionProgressStore.attachLoadedData();

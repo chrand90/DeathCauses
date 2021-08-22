@@ -21,6 +21,7 @@ class MainWithoutObserver extends React.Component<MainProps> {
       styleObject["overflow"] = "auto"
     } else {
       styleObject["overflow"] = "hidden"
+      styleObject["minHeight"]="350px"
     }
     return (
       <div className="Main">

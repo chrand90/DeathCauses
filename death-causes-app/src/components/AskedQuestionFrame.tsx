@@ -61,7 +61,8 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
   getMovingOnButton(){
     const disabled=(this.props.validity !== undefined  && 
         this.props.validity.status === "Error") || 
-      this.props.store.computationStateStore.computationState===ComputationState.RUNNING
+      this.props.store.computationStateStore.computationState===ComputationState.RUNNING ||
+      !this.props.store.loadedDataStore.loadedVizWindowData
     let buttonStyle: FormControlStyle={};
     let onClick: (ev: React.FormEvent) => void;
     let buttonText: string;
@@ -95,9 +96,10 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
 
 
   render() {
+    const minHeight = this.props.store.uIStore.windowWidth<501 ? "360px" : "300px"
     return (
       <div>
-      <Card style={{ marginBottom: "20px", minHeight: "300px", maxHeight:"300px",maxWidth:"500px",marginRight:"auto", marginLeft:"auto" }}>
+      <Card style={{ marginBottom: "20px", minHeight: minHeight,maxWidth:"500px",marginRight:"auto", marginLeft:"auto" }}>
         <Card.Header>
         <div className="d-flex justify-content-between">
           <div>
@@ -113,7 +115,7 @@ class AskedQuestionFramedWithoutStore extends React.Component<AskedQuestionProps
         </Card.Header>
         <Card.Body>{this.props.children}</Card.Body>
         <Card.Footer>
-          <ButtonToolbar className="justify-content-between">
+          <ButtonToolbar className="d-flex justify-content-between flex-wrap">
             <ButtonGroup>
               <Button
                 disabled={!this.previousPossible()}

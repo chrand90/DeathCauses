@@ -57,7 +57,7 @@ class QuestionOptionsWithoutStore extends React.Component<
       factorMaskings,
     } = this.props.store.loadedDataStore.factors.simulateFactorAnswersAndMaskings();
     this.props.store.factorInputStore.setFactorAnswers(factorAnswers, factorMaskings)
-    this.props.store.questionProgressStore.finishQuestionnaire();
+    this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
   }
 
   render() {
@@ -67,7 +67,7 @@ class QuestionOptionsWithoutStore extends React.Component<
           <Dropdown.Item onClick={this.startOverQuestionnaire}>
             Start over
           </Dropdown.Item>
-          <Dropdown.Item onClick={this.props.store.questionProgressStore.finishQuestionnaire} disabled={this.props.disableGoToEnd}>
+          <Dropdown.Item onClick={this.props.store.questionProgressStore.finishQuestionnaireStartOverview} disabled={this.props.disableGoToEnd}>
             Go to end
           </Dropdown.Item>
           <Dropdown.Item onClick={this.insertRandom}>

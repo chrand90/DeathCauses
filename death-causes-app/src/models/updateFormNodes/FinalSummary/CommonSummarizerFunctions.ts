@@ -1,9 +1,11 @@
 import CauseNodeResult from "../CauseNodeResult";
 import survivalCurve from "./SurvivalCurve";
 
-export function computeProbOfNotDying(causeNodeResults: CauseNodeResult[]){
+export function computeProbOfNotDying(causeNodeResults: CauseNodeResult[], withoutIndex: number[] = []){
 
-    const deathCauseProbabilities= causeNodeResults.map((causeNodeResult: CauseNodeResult) => {
+    const deathCauseProbabilities= causeNodeResults.filter((causeNodeResult, index) => {
+        return !withoutIndex.includes(index)
+    }).map((causeNodeResult: CauseNodeResult) => {
         return causeNodeResult.probs;
     })
 
@@ -16,11 +18,19 @@ export function computeProbOfNotDying(causeNodeResults: CauseNodeResult[]){
     return totalProbabilityOfNotDying
 }
 
-export function probOfStillBeingAlive(causeNodeResults: CauseNodeResult[]){
-    const probOfNotDying= computeProbOfNotDying(causeNodeResults);
+export function probOfStillBeingAlive(causeNodeResults: CauseNodeResult[], withoutIndex: number[]=[]){
+    const probOfNotDying= computeProbOfNotDying(causeNodeResults, withoutIndex);
     const survivalCurve: number[]=[1]
     for (let i = 1; i <= probOfNotDying.length; i++) {
         survivalCurve.push(survivalCurve[i - 1] * probOfNotDying[i-1])
     }
     return survivalCurve
 }
+
+export function calculateLifeExpectancy(survivalCurve: number[], ageFrom: number): number {
+    const probabilityOfOutLiving=survivalCurve[survivalCurve.length-1]
+    const z= probabilityOfOutLiving > 1e-7 ? survivalCurve[survivalCurve.length-1]/survivalCurve[survivalCurve.length-2] : 0
+    const lifeExpectancy=ageFrom+survivalCurve.slice(1).reduce((a,b)=> a+b,0)+probabilityOfOutLiving*1/(1-z)
+    return lifeExpectancy
+}
+

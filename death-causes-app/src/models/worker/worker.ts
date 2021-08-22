@@ -5,6 +5,7 @@ import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
+import { LifeExpectancyContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController from "../updateFormNodes/UpdateFormController";
 

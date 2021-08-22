@@ -62,7 +62,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
       this.props.store.questionProgressStore.hasBeenAnswered,
       this.props.store.questionProgressStore.currentFactor
     );
-    if (this.props.store.factorInputStore.submittable) {
+    if (this.props.store.factorInputStore.submittable && this.props.store.loadedDataStore.loadedVizWindowData) {
       this.props.store.questionProgressStore.nextQuestion(this.props.store.factorInputStore.factorMaskings);
       this.props.store.computationStore.compute(this.props.store.factorInputStore.computeSubmittedAnswers());
       if(this.props.store.uIStore.visualization===Visualization.NO_GRAPH){
@@ -71,7 +71,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
     }
   }
 
-  getHelpText(factorName: string): string {
+  getHelpText(factorName: string): string | null{
     return this.props.store.loadedDataStore.factors.getHelpJson(factorName);
   }
 
@@ -142,14 +142,6 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
       }
     }
   }
-
-
-
-
-
-
-
-
 
   getQuestionToAnswer() {
     if (this.props.store.questionProgressStore.answeringProgress === AnswerProgress.FINISHED) {

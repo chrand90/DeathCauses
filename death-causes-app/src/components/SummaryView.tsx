@@ -55,9 +55,11 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
         const lifeExpentancy = summaryViewData.lifeExpentancyData.lifeExpentancy.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
         const textColor = summaryViewData.lifeExpentancyData.lifeExpentancy > 70 ? "green" : "red"
 
+        const colwidth= this.props.store.uIStore.windowWidth>501 ? "70%" : "100%" 
+
         return (
             <Fragment>
-                <Col className="mx-auto my-1" style={{ width: "70%" }}>
+                <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
                             <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
@@ -73,11 +75,11 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         </CardBody>
                     </Card>
                 </Col>
-                <Col className="mx-auto my-1" style={{ width: "70%" }}>
-                    <Card className="bg-light " style={{}}>
+                <Col className="mx-auto my-1" style={{ width: colwidth }}>
+                    <Card className="bg-light ">
                         <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
                         <CardBody>
-                            <p className="mx-5">The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
+                            <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
                             <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} simpleVersion={true} />
                         </CardBody>
                     </Card>

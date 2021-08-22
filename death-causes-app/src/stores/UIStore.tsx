@@ -26,7 +26,6 @@ export default class UIStore {
     this.visualization=Visualization.NO_GRAPH;
     this.windowWidth=getWindowWidth();
     this.tooltipHider=() => {
-      console.log("calling empty tooltiphider")
     };
     makeObservable(this, {
         windowWidth: observable,
@@ -43,7 +42,6 @@ export default class UIStore {
   }
 
   setToolTipHider(tooltipHider: () => void){
-    console.log("set tooltiphider")
     this.tooltipHider=tooltipHider;
   }
 

@@ -3,6 +3,7 @@ import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData"
 import { DataRow } from "../components/PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
+import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
@@ -24,7 +25,7 @@ export default class ComputationStore {
   submittedFactorAnswers: FactorAnswers;
   loadedDataStore: LoadedDataStore;
   advancedOptionsStore: AdvancedOptionsStore;
-  riskFactorContributions: DataRow[];
+  riskFactorContributions: DataRow[] | LifeExpectancyContributions;
   survivalCurveData: SurvivalCurveData[];
   singeThreadComputeController: UpdateFormController | null;
   computationStateStore: ComputationStateStore;

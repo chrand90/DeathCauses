@@ -1,16 +1,16 @@
 import { DataRow } from "../../../components/PlottingData";
 import CauseNodeResult from "../CauseNodeResult";
 import { FactorAnswerChanges } from "../FactorAnswersToUpdateForm";
-import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { calculateLifeExpectancy, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 import riskFactorContributions from "./RiskFactorContributions";
 import { EVALUATION_UNIT } from "../../../stores/AdvancedOptionsStore";
 
 export default function computeSummaryView(causeNodeResults: CauseNodeResult[], ageFrom: number, ageTo: number, changes: FactorAnswerChanges, evaluationUnit: EVALUATION_UNIT): SummaryViewData {
     let ages: number[] = Array.from({ length: ageTo - ageFrom + 1 }, (_, i) => ageFrom + i)
 
-    const lifeExpentancy = calculateLifeExpentancy(causeNodeResults, ages)
     const survivalProbs = probOfStillBeingAlive(causeNodeResults)
-    const costOfDeathcauses: DataPoint[] = computeCostOfDeathcauses(causeNodeResults, ages, lifeExpentancy, survivalProbs, evaluationUnit)
+    const lifeExpentancy = calculateLifeExpectancy(survivalProbs, ageFrom)
+    const costOfDeathcauses: DataPoint[] = computeCostOfDeathcauses(causeNodeResults, ageFrom, lifeExpentancy, survivalProbs, evaluationUnit)
 
     let innerCauses = riskFactorContributions(causeNodeResults, ageFrom, ageTo)
 
@@ -22,15 +22,16 @@ export default function computeSummaryView(causeNodeResults: CauseNodeResult[], 
     };
 }
 
-const computeCostOfDeathcauses = (causeNodeResults: CauseNodeResult[], ages: number[], lifeExpentancy: number, survivalProbs: number[], evaluationUnit: EVALUATION_UNIT): DataPoint[] => {
+const computeCostOfDeathcauses = (causeNodeResults: CauseNodeResult[], ageFrom: number, lifeExpentancy: number, survivalProbs: number[], evaluationUnit: EVALUATION_UNIT): DataPoint[] => {
     let costOfDeathcauses: DataPoint[] = []
 
     if (evaluationUnit === EVALUATION_UNIT.YEARS_LOST) {
         for (let i = 0; i < causeNodeResults.length; i++) {
             let deathCauseNodeResultCopy = causeNodeResults.slice()
             let removedDeathCause = deathCauseNodeResultCopy.splice(i, 1)
-            let lifeExpentancyIgnoringCause = calculateLifeExpentancy(deathCauseNodeResultCopy, ages)
-            costOfDeathcauses.push({ name: removedDeathCause[0].name, value: lifeExpentancyIgnoringCause - lifeExpentancy })
+            const survivalProbsIgnoringCause = probOfStillBeingAlive(causeNodeResults)
+            let lifeExpectancyIgnoringCause = calculateLifeExpectancy(survivalProbsIgnoringCause, ageFrom)
+            costOfDeathcauses.push({ name: removedDeathCause[0].name, value: lifeExpectancyIgnoringCause - lifeExpentancy })
         }
     } else if (evaluationUnit === EVALUATION_UNIT.PROBAIBILITY) {
         causeNodeResults.forEach(cause => { 
@@ -58,7 +59,7 @@ export interface LifeExpentancyData {
     probabilities: number[]
 }
 
-function calculateLifeExpentancy(causeNodeResults: CauseNodeResult[], ages: number[]): number {
+function calculateLifeExpentancy2(causeNodeResults: CauseNodeResult[], ages: number[]): number {
     const deathCauseProbabilities = causeNodeResults.map((causeNodeResult: CauseNodeResult) => {
         return causeNodeResult.probs;
     })
