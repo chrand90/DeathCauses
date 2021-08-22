@@ -1,6 +1,7 @@
 import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { DataRow } from "../../components/PlottingData";
+import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
@@ -42,20 +43,20 @@ class computations {
     );
   }
 
-  processData(data: FactorAnswers) {
+  processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     if(this.computer===null){
       return {survivalData: [], innerCauses: [], summaryView: null};
     }
     else{
-      return this.computer.computeAll(data);
+      return this.computer.computeAll(data, evaluationUnit);
     }
   }
 }
 
 let c = new computations();
 
-export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[], summaryView: SummaryViewData | null} {
-  return c.processData(data);
+export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT):{survivalData: SurvivalCurveData[], innerCauses: DataRow[], summaryView: SummaryViewData | null} {
+  return c.processData(data, evaluationUnit);
 }
 
 export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson, ageFrom: number | null, ageTo: number) {

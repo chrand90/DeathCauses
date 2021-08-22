@@ -5,6 +5,7 @@ import DeathCause, {
 } from "../../components/database/Deathcause";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
 import { DataRow } from "../../components/PlottingData";
+import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { NodeType } from "../RelationLinks";
@@ -159,27 +160,9 @@ export default class UpdateFormController {
     //this.computeAverage(factorAnswers)
   }
 
-  computeAll(factorAnswers: FactorAnswers) {
+  computeAll(factorAnswers: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     this.compute(factorAnswers)
-    return { survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities(), summaryView: this.computeSummaryViewData() }
-  }
-
-  computeAverage(factorAnswers: FactorAnswers) {
-    let avgFactorAnswers: FactorAnswers = {}
-    Object.entries(factorAnswers).forEach(([factorName, factorObject]) => {
-      if (factorName === "Age" || factorName === "Sex") {
-        avgFactorAnswers[factorName] = factorAnswers[factorName]
-        return;
-      }
-      avgFactorAnswers[factorName] = ""
-    })
-    let avgRes: UpdateDic = new FactorAnswersToUpdateForm().update(avgFactorAnswers);
-    this.formUpdaters.forEach((formUpdater, i) => {
-      avgRes[this.formUpdaterNames[i]] = formUpdater.update(avgRes);
-    });
-    const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
-      return (avgRes![deathcause.deathCauseName].value as CauseNodeResult)
-    })
+    return { survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities(), summaryView: this.computeSummaryViewData(evaluationUnit) }
   }
 
   computeSurvivalData(): SurvivalCurveData[] {
@@ -193,13 +176,13 @@ export default class UpdateFormController {
     return survivalCurve(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
   }
 
-  computeSummaryViewData(): SummaryViewData {
+  computeSummaryViewData(evaluationUnit: EVALUATION_UNIT): SummaryViewData {
     if (this.allComputedNodes === null) {
       throw Error("It is not possible to compute survival data before calling compute()")
     }
     const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
       return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
     })
-    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo, this.inputFactorTreater.getRecentChanges())
+    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo, this.inputFactorTreater.getRecentChanges(), evaluationUnit)
   }
 }

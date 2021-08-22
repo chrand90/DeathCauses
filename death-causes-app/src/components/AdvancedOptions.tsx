@@ -21,9 +21,6 @@ import {
 
 
 const ERROR_STYLE = { borderColor: ERROR_COLOR };
-const INPUT_NOT_WHOLE = "Input should be a whole number";
-
-
 interface AdvancedOptionsProps {
   store: RootStore
 }
@@ -34,7 +31,6 @@ enum CollapseStatus {
 }
 
 interface AdvancedOptionsStates {
-  open: boolean;
   collapseStatus: CollapseStatus;
 }
 
@@ -47,7 +43,6 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     super(props);
 
     this.state = {
-      open: false,
       collapseStatus: CollapseStatus.CLOSED,
     };
     this.handleAgeChange = this.handleAgeChange.bind(this);
@@ -55,6 +50,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleRadioChange = this.handleRadioChange.bind(this);
     this.setToDefault = this.setToDefault.bind(this);
+    this.handleUpdateEvaluationUnit = this.handleUpdateEvaluationUnit.bind(this);
   }
 
   handleAgeChange(ev: React.ChangeEvent<HTMLInputElement>): void {
@@ -77,6 +73,11 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   handleAgeFromSetting(e: React.ChangeEvent<HTMLInputElement>): void {
     const checked = e.currentTarget.checked;
     this.props.store.advancedOptionsStore.setAgeFromSet(!checked)
+  }
+
+  handleUpdateEvaluationUnit(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value as EVALUATION_UNIT
+    this.props.store.advancedOptionsStore.setEvaluationUnit(value)
   }
 
   sameAsInputAgeFrom() {
@@ -263,13 +264,13 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
           </Col>
           <Col>
             <InputGroup>
-              <div style={{ maxWidth: "100px" }}>
+              <div style={{ maxWidth: "100%" }}>
                 <Form.Control
                   as="select"
                   defaultValue={EVALUATION_UNIT.PROBAIBILITY}
                   name={"test"}
                   value={value}
-                  onChange={() => { console.log("hej") }}
+                  onChange={this.handleUpdateEvaluationUnit}
                 >
                   {(Object.keys(EVALUATION_UNIT) as (keyof typeof EVALUATION_UNIT)[]).map(key => {
                   return <option value = {EVALUATION_UNIT[key]}>{EVALUATION_UNIT[key]} </option> 
@@ -297,15 +298,15 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
         style={{ paddingRight: "20px", paddingLeft: "40px", textAlign: "left" }}
       >
         <Button
-          onClick={() => this.setState({ open: !this.state.open })}
+          onClick={() => this.setState({ collapseStatus: this.state.collapseStatus === CollapseStatus.CLOSED ? CollapseStatus.OPEN : CollapseStatus.CLOSED })}
           variant="link"
           className="collapsebutton"
-          style={this.state.open ? {} : { backgroundColor: "white" }}
+          style={this.state.collapseStatus === CollapseStatus.OPEN ? {} : { backgroundColor: "white" }}
         >
-          {this.state.open ? "\u25BC" : "\u25B6"} Advanced Options
+          {this.state.collapseStatus === CollapseStatus.OPEN ? "\u25BC" : "\u25B6"} Advanced Options
         </Button>
         <Collapse
-          in={this.state.open}
+          in={this.state.collapseStatus === CollapseStatus.OPEN}
           onEntered={() => {
             this.setState({ collapseStatus: CollapseStatus.OPEN });
           }}

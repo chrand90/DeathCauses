@@ -1,9 +1,8 @@
+import { Condition, ConditionJson, default as DeathCause, default as Deathcause, RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
+import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
-import DeathCause, { Condition, ConditionJson, DeathCauseJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
-import Deathcause from "../components/database/Deathcause";
-import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 
 export interface LoadedFactors {
     factors: Factors;
@@ -53,10 +52,6 @@ async function loadFromFile<T>(filename: string){
         }
     );
     return (prom as T);
-}
-
-function later<T>(delay: number, value:T) {
-    return new Promise<T>(resolve => setTimeout(resolve, delay, value));
 }
 
 export async function loadFactors():Promise<LoadedFactors> {

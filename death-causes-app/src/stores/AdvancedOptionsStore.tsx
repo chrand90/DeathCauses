@@ -9,8 +9,6 @@ export enum Threading {
 }
 const INPUT_NOT_WHOLE = "Input should be a whole number";
 
-const DEFAULT_AGE_TO = "120";
-const DEFAULT_THREADING = Threading.MULTI;
 
 export interface ValidityDic {
   [key: string]: InputValidity;
@@ -21,42 +19,52 @@ export enum EVALUATION_UNIT {
   YEARS_LOST = "Years lost"
 }
 
+const DEFAULT_VALUES = {
+  AGE_TO: "120",
+  THREADING: Threading.MULTI,
+  EVALUATION_UNIT: EVALUATION_UNIT.PROBAIBILITY
+}
+
+//todo: Why do we have ageFrom, ageTo etc that is used for rendering the advanced options menu in a store? 
 export default class AdvancedOptionsStore {
   ageFromSet: boolean;
   ageFrom: string;
   ageTo: string;
   threading: Threading;
+  evaluationUnit: EVALUATION_UNIT;
   submittedAgeFrom: number;
   submittedAgeTo: number;
   submittedThreading: Threading;
   submittedAgeFromSet: boolean;
+  submittedEvaluationUnit: EVALUATION_UNIT;
   computationStateStore: ComputationStateStore;
   baseAgeFrom: null | string;
-  evaluationUnit: EVALUATION_UNIT;
 
   constructor(computationStateStore: ComputationStateStore) {
     this.ageFrom = "0";
     this.ageFromSet = false;
-    this.ageTo = DEFAULT_AGE_TO;
-    this.threading = DEFAULT_THREADING;
+    this.ageTo = DEFAULT_VALUES.AGE_TO;
+    this.threading = DEFAULT_VALUES.THREADING;
     this.baseAgeFrom = null;
+    this.evaluationUnit = EVALUATION_UNIT.PROBAIBILITY
+    this.submittedEvaluationUnit = EVALUATION_UNIT.PROBAIBILITY
     this.submittedAgeFrom = 0;
-    this.submittedAgeTo = parseInt(DEFAULT_AGE_TO);
+    this.submittedAgeTo = parseInt(DEFAULT_VALUES.AGE_TO);
     this.submittedThreading = this.threading;
     this.submittedAgeFromSet = true;
     this.computationStateStore = computationStateStore;
-    this.evaluationUnit =  EVALUATION_UNIT.PROBAIBILITY
     makeObservable(this, {
       ageFrom: observable,
       ageFromSet: observable,
       ageTo: observable,
       baseAgeFrom: observable,
       threading: observable,
+      evaluationUnit: observable,
       submittedAgeFrom: observable,
       submittedAgeTo: observable,
       submittedAgeFromSet: observable,
       submittedThreading: observable,
-      evaluationUnit: observable,
+      submittedEvaluationUnit: observable,
       changedSetting: computed,
       validities: computed,
       submittable: computed,
@@ -64,6 +72,7 @@ export default class AdvancedOptionsStore {
       setAgeTo: action,
       setThreading: action,
       setDefault: action.bound,
+      setEvaluationUnit: action,
       submitOptions: action,
       updateFactorAnswers: action.bound,
     });
@@ -102,7 +111,8 @@ export default class AdvancedOptionsStore {
       this.ageFrom !== this.submittedAgeFrom.toString() ||
       this.ageTo !== this.submittedAgeTo.toString() ||
       this.threading !== this.submittedThreading ||
-      this.ageFromSet !== this.submittedAgeFromSet
+      this.ageFromSet !== this.submittedAgeFromSet || 
+      this.evaluationUnit !== this.submittedEvaluationUnit
     );
   }
 
@@ -146,6 +156,10 @@ export default class AdvancedOptionsStore {
     }
   }
 
+  setEvaluationUnit(unit: EVALUATION_UNIT) {
+    this.evaluationUnit = unit;
+  }
+
   setAgeFrom(ageFrom: string) {
     this.ageFrom = ageFrom;
   }
@@ -163,6 +177,7 @@ export default class AdvancedOptionsStore {
     this.ageFromSet = false;
     this.ageTo = "120";
     this.threading = Threading.MULTI;
+    this.evaluationUnit = DEFAULT_VALUES.EVALUATION_UNIT
   }
 
   submitOptions() {
@@ -170,14 +185,16 @@ export default class AdvancedOptionsStore {
     this.submittedAgeTo = parseInt(this.ageTo);
     this.submittedThreading = this.threading;
     this.submittedAgeFromSet = this.ageFromSet;
+    this.submittedEvaluationUnit = this.evaluationUnit;
   }
 
   optionsEqualToDefault() {
     return (
       this.ageFrom === this.baseAgeFrom &&
-      this.ageTo === DEFAULT_AGE_TO &&
-      this.threading === DEFAULT_THREADING &&
-      this.ageFromSet === false
+      this.ageTo === DEFAULT_VALUES.AGE_TO &&
+      this.threading === DEFAULT_VALUES.THREADING &&
+      this.ageFromSet === false &&
+      this.evaluationUnit === DEFAULT_VALUES.EVALUATION_UNIT
     );
   }
 }

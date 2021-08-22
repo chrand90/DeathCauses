@@ -33,7 +33,7 @@ export default abstract class FormUpdater {
       }
       return this.ancestors.every( (ancestor:string) => {
         if(!(ancestor in allPreviousUpdateForms)){
-          throw ancestor+' not found in the updatedic'           
+          throw new Error(ancestor+' not found in the updatedic')
         }
         return allPreviousUpdateForms[ancestor].change===ChangeStatus.UNCHANGED
       })
@@ -42,7 +42,7 @@ export default abstract class FormUpdater {
     isMissing(allPreviousUpdateForms: UpdateDic): boolean {
       return !this.ancestors.every( (ancestor:string) => {
         if(!(ancestor in allPreviousUpdateForms)){
-          throw ancestor+' not found in the updatedic'           
+          throw new Error(ancestor+' not found in the updatedic')
         }
           return allPreviousUpdateForms[ancestor].missing===MissingStatus.NONMISSING
       })
@@ -53,10 +53,10 @@ export default abstract class FormUpdater {
         return allPreviousUpdateForms[nodename]
       }
       else if(!this.ancestors.includes(nodename)){
-        throw "The requested factor "+ nodename+ " was not present in its ancestors,"+this.ancestors.toString()
+        throw new Error("The requested factor "+ nodename+ " was not present in its ancestors,"+this.ancestors.toString())
       }
       else{
-        throw "The requested factor "+nodename+ " was not present in the updatedic."
+        throw new Error("The requested factor "+nodename+ " was not present in the updatedic.")
       }
     }
 

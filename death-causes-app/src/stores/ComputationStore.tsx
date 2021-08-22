@@ -110,7 +110,7 @@ export default class ComputationStore {
     }
     this.computationStateStore.setComputationState(ComputationState.RUNNING);
     
-    if (this.advancedOptionsStore.threading === Threading.SINGLE) {
+    if (this.advancedOptionsStore.submittedThreading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities();
       console.log(innerprobabilities);
@@ -122,14 +122,14 @@ export default class ComputationStore {
       if (survivalCurveData !== undefined) {
         this.survivalCurveData = survivalCurveData;
       }
-      const summaryViewData = this.singeThreadComputeController?.computeSummaryViewData();
+      const summaryViewData = this.singeThreadComputeController?.computeSummaryViewData(this.advancedOptionsStore.submittedEvaluationUnit);
       if (summaryViewData !== undefined) {
         this.summaryView = summaryViewData;
       }
       this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
     } else {
       worker.processData(
-        toJS(this.submittedFactorAnswers)
+        toJS(this.submittedFactorAnswers), this.advancedOptionsStore.submittedEvaluationUnit
       ).then( action("INserting results", ({ survivalData, innerCauses, summaryView}) => {
         this.survivalCurveData = survivalData;
         this.riskFactorContributions = innerCauses;
