@@ -64,7 +64,6 @@ export default class AdvancedOptionsStore {
   get validities(): ValidityDic {
     let ageFromValidity = this.makeInputValidity(this.ageFrom);
     let ageToValidity = this.makeInputValidity(this.ageTo);
-    console.log("computing validities");
     if (
       ageFromValidity.status === "Success" &&
       ageToValidity.status === "Success" &&

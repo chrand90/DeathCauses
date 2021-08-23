@@ -37,7 +37,7 @@ export default class BarChartStore {
       this.collectedCategories=newCats
 		}
 		else{
-			console.log("Tried to remove a category that wasnt collapsed... Ignored.")
+			console.warn("Tried to remove a category that wasnt collapsed... Ignored.")
 		}
 	}
 
@@ -67,7 +67,6 @@ export default class BarChartStore {
 	}
 
   setDiseaseToWidth(newDiseaseToWidth: null | string){
-	console.log("receives", newDiseaseToWidth, "in setDiseaseToWidth and curret diseastToWidth is", this.diseaseToWidth)
     this.latestChange=LatestChange.FITSCREEN;
     this.diseaseToWidth=newDiseaseToWidth
   }

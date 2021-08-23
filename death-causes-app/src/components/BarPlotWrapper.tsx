@@ -23,7 +23,6 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   // const { width } = useWindowSize();
 
   useEffect(() => {
-    console.log("dataset changed");
     if (props.data && chartArea.current) {
       updateChart()
     }

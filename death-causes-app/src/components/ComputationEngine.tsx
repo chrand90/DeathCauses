@@ -101,7 +101,7 @@ function makeRowSquare(
             let longStatement: LongConsensus | undefined;
             let statement: string | undefined;
             if(innerCause===MultifactorGainType.KNOWN){
-                statement=descriptions.getDescription(MultifactorGainType.KNOWN, 20)
+                statement=descriptions.getDescription(MultifactorGainType.KNOWN, 40)
                 longStatement=getMultifactorGainStatement(
                     totalProb>1e-8 ? width/totalProb : 0,
                     totalProb,
@@ -111,7 +111,7 @@ function makeRowSquare(
                 )
             }
             else if(innerCause===MultifactorGainType.UNKNOWN){
-                statement=descriptions.getDescription(MultifactorGainType.UNKNOWN, 20)
+                statement=descriptions.getDescription(MultifactorGainType.UNKNOWN,40)
                 longStatement=getMultifactorGainStatement(
                     totalProb>1e-8 ? width/totalProb : 0,
                     totalProb,

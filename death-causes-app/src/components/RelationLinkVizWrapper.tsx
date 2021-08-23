@@ -42,7 +42,6 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 	}
 
 	useEffect(() => {
-		console.log('width changed');
 		if (chart) {
 			chart.clear();
 			createNewChart();
@@ -52,14 +51,11 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 	useEffect(() => {
 		createNewChart();
 		return () => {
-			console.log("indside unmounter hook");
-			console.log(chart);
 			chart?.clear();
 		}
 	}, [store.loadedDataStore.loadedRelationLinks]);
 
 	useEffect(() => {
-		console.log('dataset changed');
 		if (chart) {
 			chart.update(store.relationLinkVizStore.elementInFocus);
 		}
@@ -76,9 +72,16 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 					Relation between risk factors and death causes
 				</h1>
 				<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
-					{store.loadedDataStore.rdat.getAllPossibleNodes().map((d:string) => {
-						return <option value={d}>{store.loadedDataStore.descriptions.getDescription(d,DESCRIPTION_LENGTH)}</option>
-					})}
+					{store.loadedDataStore.rdat.getAllPossibleNodes().map(
+						(d:string) => {
+							return [d,store.loadedDataStore.descriptions.getDescription(d,DESCRIPTION_LENGTH)]
+						}
+					 ).sort(function(a,b){return a[1].localeCompare(b[1])}).map(
+						 ([nodeComputationName, nodeHumanName]) => {
+							return <option value={nodeComputationName}>{nodeHumanName}</option>
+						 }
+					 )
+					}
 					</select> in the model</p>
 				<p> Visit its page in the library <Button 
 					className="text-link-button" 
@@ -86,7 +89,7 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 					onClick={()=> onRedirectToLibrary(store.relationLinkVizStore.elementInFocus)}> 
 					{store.loadedDataStore.descriptions.getDescription(store.relationLinkVizStore.elementInFocus, DESCRIPTION_LENGTH)} </Button></p>
 			</Container>
-			<div style={{overflowX:"auto", width: "100%"}}>
+			<div style={{overflowX:"auto", width: "100%", maxWidth:"1600px", margin:"auto"}}>
 				<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
 			</div>
 		</div>

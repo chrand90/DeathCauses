@@ -53,8 +53,6 @@ export default class RelationLinkViz {
     changeElementInFocus: (d: string) => void
   ) {
     this.width = getDivWidth(canvas);
-    console.log("wdth");
-    console.log(this.width);
     this.rdat = rdat;
     this.descriptions=descriptions;
     this.changeElementInFocus = changeElementInFocus;
@@ -251,8 +249,6 @@ export default class RelationLinkViz {
       })
       .on("click", function(e: MouseEvent, d: ArrowPlottingObject) {
         var bbox= this.getBBox()
-        console.log(bbox)
-        console.log(e)
         var x = e.clientX; //x position within the elemen
         var y = e.clientY; //y position within the element.
         const cleanedFrom=d.from.replace("*","")
@@ -326,7 +322,6 @@ export default class RelationLinkViz {
   }
 
   clear() {
-    console.log("inside clear");
     d3.select(".arrowexplanation").remove();
     d3.select("svg").remove();
   }

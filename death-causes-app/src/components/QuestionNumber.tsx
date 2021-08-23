@@ -75,7 +75,6 @@ class SimpleNumericQuestionWithoutStore extends React.PureComponent<
   }
 
   render() {
-    console.log("Renders Question" + this.props.name);
 
     const {
       formControlStyle,

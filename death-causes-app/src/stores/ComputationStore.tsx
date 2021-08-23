@@ -114,7 +114,6 @@ export default class ComputationStore {
     if (this.advancedOptionsStore.threading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities();
-      console.log(innerprobabilities);
       if (innerprobabilities !== undefined) {
         //will be undefined if data hasnt loaded yet.
         this.riskFactorContributions = innerprobabilities;

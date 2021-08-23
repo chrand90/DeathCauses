@@ -124,12 +124,10 @@ export default class FactorInputStore {
     const rawValue = ev.currentTarget.value;
     const factorname = name;
     const value = rawValue ? rawValue : "";
-    console.log("called change wrapper with " + factorname + "=" + value);
     this.inputChange(factorname, value);
   }
 
   inputChange(factorname: string, value: string) {
-    console.log("entered input change");
     const newFactorAnswers = { ...this.factorAnswers, [factorname]: value };
     this.factorAnswers = newFactorAnswers;
     const possiblyNewMasks:
