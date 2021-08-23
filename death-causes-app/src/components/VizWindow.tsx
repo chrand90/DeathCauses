@@ -121,7 +121,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
             Visualization.SUMMARY_VIEW
           ].map((d: string) => {
             return (
-              <Tab eventKey={d} title={d} id="viz-tab"></Tab>
+              <Tab eventKey={d} title={d}></Tab>
             );
           })}
         </Tabs>

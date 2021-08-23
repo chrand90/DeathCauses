@@ -42,6 +42,7 @@ export default class BarChartStore {
 	}
 
   collectParentCategory(category: string){
+	  console.log("collects", category)
 		const parent=this.loadedDataStore.rdat.getParentCategory(category)
 		let noLongerNeedsToBeCollapsed: string[];
 		let newCats:string[]=[...this.collectedCategories]
@@ -66,9 +67,10 @@ export default class BarChartStore {
 	}
 
   setDiseaseToWidth(newDiseaseToWidth: null | string){
+	console.log("receives", newDiseaseToWidth, "in setDiseaseToWidth and curret diseastToWidth is", this.diseaseToWidth)
     this.latestChange=LatestChange.FITSCREEN;
     this.diseaseToWidth=newDiseaseToWidth
-	}
+  }
 
   get explicitCollectedGroups(){
     return this.loadedDataStore.rdat.makeCollectedGroups(this.collectedCategories);

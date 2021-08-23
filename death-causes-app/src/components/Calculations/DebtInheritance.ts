@@ -68,6 +68,9 @@ export function computeUsAndSs(
   valueStore: BestValues,
   ageIndex: number
 ) {
+  if(riskRatioTable.factorNames.includes("BMI") && riskRatioTable.factorNames.includes("HCVStatus")){
+    console.log("debug location")
+  }
   let UDic: SetToNumber = {};
   let SDic: SetToNumber = {};
   if (freeFactors.length > 0) {
@@ -106,6 +109,9 @@ export function computeUsAndSs(
     SDic[""] = UDic[""];
   }
   let RRmax = UDic[freeFactors.sort().join(",")];
+  if(Object.keys(SDic).length===2 && Math.min(...Object.values(SDic))<-0.1){
+    console.log("debug location")
+  }
   return { UDic, SDic, RRmax };
 }
 
@@ -178,6 +184,7 @@ function extractValue(weightedLocs: WeightedLocationAndValue[]):number{
     vals.push(locationAndValue.getValue())
     total+=weight*vals[vals.length-1]
   })
+  console.log(vals)
   let denom=weights.reduce((a,b)=>a+b,0)
   if(denom>1e-8){
     return total/denom;

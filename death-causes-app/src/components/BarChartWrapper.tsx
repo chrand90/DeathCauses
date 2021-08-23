@@ -40,6 +40,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 
 	useEffect(() => {
 		if(chart){
+			console.log("the latest change was ", store.barChartStore.latestChange)
 			if(store.barChartStore.latestChange===LatestChange.GROUPING){
 				chart.changeCats(database, store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups)
 			}

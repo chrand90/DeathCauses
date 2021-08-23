@@ -92,14 +92,16 @@ export default class InterpolationTableCell {
       ? parseStringToPolynomial(cell.interpolation_polynomial)
       : undefined;
 
+    this.lowerTruncation = this.initializeTruncation(cell.lower_truncation, lowerTruncationFromTable)
+    this.upperTruncation = this.initializeTruncation(cell.upper_truncation, upperTruncationFromTable)
+  
+
     this.min = this.initializeCellMin(cell.min);
 
     this.truncate =
       (cell.lower_truncation || cell.upper_truncation || lowerTruncationFromTable || upperTruncationFromTable) ? true : false;
 
-    this.lowerTruncation = this.initializeTruncation(cell.lower_truncation, lowerTruncationFromTable)
-    this.upperTruncation = this.initializeTruncation(cell.upper_truncation, upperTruncationFromTable)
-
+    
     this.fixedMins = this.initializeCellFixedMin(cell.fixed_mins);
   }
 
@@ -145,6 +147,7 @@ export default class InterpolationTableCell {
       );
       min.setWithVarNameButInterpolationX(oldMinObject.minLocation);
       min.setAllNonInterpolationsWithDomains(this.nonInterpolationDomains);
+      min.truncateValue(this.lowerTruncation, this.upperTruncation);
       return min;
     } else if (this.interpolationPolynomial) {
       //the only reason for no min object to exist here is if a domain is infinite
@@ -158,6 +161,7 @@ export default class InterpolationTableCell {
       this.value
     );
     min.setAllNonInterpolationsWithDomains(this.nonInterpolationDomains);
+    min.truncateValue(this.lowerTruncation, this.upperTruncation);
     return min;
   }
 
@@ -338,6 +342,7 @@ export default class InterpolationTableCell {
     if (numberOfFixed === numberOfInterpolationVariables) {
       let value = this.evaluate(fixedInterpolationFactorAnswers);
       let min = fixedInterpolationFactorAnswers.makeChildWithValue(value);
+      min.truncateValue(this.lowerTruncation, this.upperTruncation);
       return min;
     }
     //In this case it means that we need to look at fixedmins.
@@ -363,6 +368,8 @@ export default class InterpolationTableCell {
       )
     );
     candidates.sort(locationAndValueSorter);
-    return candidates[0];
+    const lowestPoint=candidates[0]
+    lowestPoint.truncateValue(this.lowerTruncation, this.upperTruncation)
+    return lowestPoint;
   }
 }

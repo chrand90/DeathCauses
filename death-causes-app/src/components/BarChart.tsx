@@ -598,9 +598,10 @@ export default class BarChart {
     diseaseToWidth: string | null,
     designConstants: DesignConstants
   ) {
+    console.log("initializing fitscreenbuttons with ", diseaseToWidth)
     const vis = this;
     const rectButtons = vis.svg
-      .selectAll("fitscreenButtons")
+      .selectAll(".fitscreenButtons")
       .data(dataIds, function (i: any) {
         return i;
       })
@@ -619,6 +620,7 @@ export default class BarChart {
       .style("cursor", "pointer")
       .on("click", (e: Event, i: number) => {
         e.stopPropagation();
+        console.log("click on ", dataSortedTotal[i].name, " from makeFitScreenButton and the current fitToWidth is ", diseaseToWidth)
         const clickedDisease = dataSortedTotal[i].name;
         if (clickedDisease === diseaseToWidth) {
           this.setDiseaseToWidth(null);
@@ -1429,11 +1431,18 @@ export default class BarChart {
                           designConstants,
                           diseaseToWidth
                         );
+                        const ids=sortedTotalsFinal.map((d, i) => i)
+                        vis.makeFitScreenButtons(
+                          ids,
+                          sortedTotalsFinal,
+                          diseaseToWidth,
+                          designConstants
+                        )
                         vis.reMapFitScreenButtons(
                           sortedTotalsFinal,
-                          sortedTotalsFinal.map((d, i) => i),
+                          ids,
                           diseaseToWidth
-                        );
+                        )
                         vis.transitionsFinished += 1;
                       }
                     );
@@ -1607,12 +1616,12 @@ export default class BarChart {
         designConstants,
         diseaseToWidth,
         () => {
-          this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
           this.instantUpdateOfRects(
             dataSortedTotal,
             designConstants,
             diseaseToWidth
           );
+          this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
         },
         durationPerTransition
       );
@@ -1624,6 +1633,7 @@ export default class BarChart {
     dataIds: number[],
     diseaseToWidth: string | null
   ) {
+    console.log("remapping fitscreen buttons with ", diseaseToWidth)
     this.svg
       .selectAll<any, any>(".fitscreenButtons")
       .data(dataIds, function (i: any) {
@@ -1631,6 +1641,7 @@ export default class BarChart {
       })
       .on("click", (e: Event, i: number) => {
         e.stopPropagation();
+        console.log("click on ", dataSortedTotal[i].name, " and the current fitToWidth is ", diseaseToWidth)
         const clickedDisease = dataSortedTotal[i].name;
         if (clickedDisease === diseaseToWidth) {
           this.setDiseaseToWidth(null);
