@@ -3,6 +3,7 @@ import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGrou
 import { DataRow } from "../../components/PlottingData";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
+import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
 import { LifeExpectancyContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
@@ -28,6 +29,7 @@ class computations {
       );
     });
     const descriptions= new Descriptions(rawDescriptions);
+    const optimizabilities= new Optimizabilities(rawDescriptions)
     const conditions:{[k:string]:Condition}={};
     Object.entries(rawConditions).forEach(([conditionName, conditionObject]) => {
         conditions[conditionName]=new Condition(conditionObject, conditionName);
@@ -39,7 +41,8 @@ class computations {
       deathcauses,
       deathCauseCategories,
       descriptions,
-      conditions
+      conditions,
+      optimizabilities
     );
   }
 

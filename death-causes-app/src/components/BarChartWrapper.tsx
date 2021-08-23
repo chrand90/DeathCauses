@@ -6,6 +6,7 @@ import { DataSet } from './PlottingData';
 import "./BarChartWrapper.css";
 import { useHistory } from 'react-router';
 import { LifeExpectancyContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
+import { KnowledgeableOptimizabilities } from '../models/Optimizabilities';
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -37,14 +38,18 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 		
 	}
 
+	const newOptims = () => {
+		return new KnowledgeableOptimizabilities(store.loadedDataStore.optimizabilities, store.computationStore.submittedFactorAnswers)
+	}
+
 
 	useEffect(() => {
 		if(chart){
 			if(store.barChartStore.latestChange===LatestChange.GROUPING){
-				chart.changeCats(database, store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups)
+				chart.changeCats(database, store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups, newOptims())
 			}
 			else{
-				chart.update(database, store.barChartStore.diseaseToWidth, true);
+				chart.update(database, store.barChartStore.diseaseToWidth, newOptims(), true);
 			}
 		}
 	}, [store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups])
@@ -61,6 +66,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			store.barChartStore.collectParentCategory,
 			rerouter,
 			store.loadedDataStore.rdat.getPossibleExpansions(),
+			newOptims(),
 			props.simpleVersion ? props.simpleVersion : false
 		));
 	}
@@ -84,7 +90,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 
 	useEffect(() => {
 		if (chart) {
-			chart.update(database, store.barChartStore.diseaseToWidth);
+			chart.update(database, store.barChartStore.diseaseToWidth, newOptims());
 		}
 	}, [database]);
 

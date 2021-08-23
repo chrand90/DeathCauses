@@ -3,6 +3,7 @@ import DeathCause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGrou
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
+import Optimizabilities from "../models/Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import ComputationStore from "./ComputationStore";
 import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions, loadLifeExpectancies, loadICD } from "./DataLoading";
@@ -30,6 +31,7 @@ export default class LoadedDataStore {
   loadedICD: boolean;
   loadedRelationLinks: boolean;
   icdDict: {[cause:string]: string[]};
+  optimizabilities: Optimizabilities;
 
   constructor() {
     this.factors= new Factors([] as InputJson);
@@ -42,6 +44,7 @@ export default class LoadedDataStore {
     this.deathCauses= [];
     this.deathCauseCategories=[];
     this.descriptions=new Descriptions({} as DescriptionsJson);
+    this.optimizabilities=new Optimizabilities({} as DescriptionsJson);
     this.rawDescriptions={} as DescriptionsJson
     this.conditions={} as {[conditionName:string]: Condition};
     this.rawConditions={} as ConditionJson
@@ -132,6 +135,7 @@ export default class LoadedDataStore {
       loadDescriptions().then((loadedDescriptions: LoadedDescriptions ) => {
         this.descriptions=loadedDescriptions.descriptions;
         this.rawDescriptions=loadedDescriptions.rawDescriptions;
+        this.optimizabilities=loadedDescriptions.optimizabilities;
         resolve(true);
       })
     })

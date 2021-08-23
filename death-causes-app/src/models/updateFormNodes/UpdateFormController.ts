@@ -7,6 +7,7 @@ import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
 import { DataRow } from "../../components/PlottingData";
 import Descriptions from "../Descriptions";
 import { FactorAnswers } from "../Factors";
+import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { NodeType } from "../RelationLinks";
 import CauseNode from "./CauseNode";
 import CauseNodeResult from "./CauseNodeResult";
@@ -18,6 +19,7 @@ import riskFactorContributionsLifeExpectancy, { LifeExpectancyContributions } fr
 import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
 import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
+import OptimizabilitiesNode from "./OptimizabilitiesNode";
 import RiskFactorGroupNode from "./RiskFactorGroupNode";
 import { UpdateDic } from "./UpdateForm";
 
@@ -33,6 +35,7 @@ export default class UpdateFormController {
   allComputedNodes: UpdateDic | null;
   rdat: RelationLinks;
   conditions: {[conditionName: string]: Condition};
+  optimizabilityNode: OptimizabilitiesNode;
   useLifeExpectancy: boolean;
 
   constructor(
@@ -43,6 +46,7 @@ export default class UpdateFormController {
     deathCauseCategories: RiskFactorGroupsContainer[],
     descriptions: Descriptions,
     conditions: {[conditionName: string]: Condition},
+    optimizabilities: Optimizabilities,
     useLifeExpectancy=true
   ) {
     this.rdat=rdat;
@@ -53,6 +57,7 @@ export default class UpdateFormController {
     this.ageTo = ageTo;
     this.deathCauses = deathCauses;
     this.deathCauseCategories = deathCauseCategories;
+    this.optimizabilityNode=new OptimizabilitiesNode(optimizabilities);
     this.conditions=conditions;
     this.useLifeExpectancy=useLifeExpectancy;
     this.initialize(rdat, descriptions);
@@ -61,13 +66,11 @@ export default class UpdateFormController {
 
   initializeRiskFactorGroupNode(rfg: RiskFactorGroup, descriptions: Descriptions){
     const ancestors = [...Array.from(rfg.getAllFactorsInGroup())];
-    const optims = descriptions.getOptimizabilityClasses(ancestors);
     const riskFactorGroupNode = new RiskFactorGroupNode(
       ancestors,
       this.ageFrom,
       this.ageTo,
-      rfg,
-      optims
+      rfg
     );
     return {riskFactorGroupNode, ancestors}
   }
@@ -161,6 +164,7 @@ export default class UpdateFormController {
 
   compute(factorAnswers: FactorAnswers) {
     let res: UpdateDic = this.inputFactorTreater.update(factorAnswers);
+    res["optimizabilities"]=this.optimizabilityNode.compute(factorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
     });

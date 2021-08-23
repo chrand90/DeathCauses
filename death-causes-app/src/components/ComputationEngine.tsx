@@ -1,4 +1,5 @@
 import Descriptions from "../models/Descriptions";
+import { KnowledgeableOptimizabilities } from "../models/Optimizabilities";
 import { CauseGrouping } from "../models/RelationLinks";
 import { MultifactorGainType } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
@@ -53,6 +54,7 @@ function makeRowSquare(
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
     descriptions: Descriptions,
+    optimizabilities: KnowledgeableOptimizabilities,
     useLifeExpectancy: boolean,
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
@@ -91,7 +93,7 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return descriptions.optimizabilities[a]-descriptions.optimizabilities[b]
+                return optimizabilities.getOptimizability(a)-optimizabilities.getOptimizability(b)
             })
         }
         
@@ -129,6 +131,7 @@ function makeRowSquare(
                 parent,
                 descriptions,
                 useLifeExpectancy,
+                optimizabilities
                 );
             }
             
@@ -164,7 +167,7 @@ function makeRowSquare(
         let innerCauses=Object.keys(widthOfEachInnerCause)
         if(combinedBestValues){
             innerCauses.sort((a,b) => {
-                return descriptions.optimizabilities[a]-descriptions.optimizabilities[b]
+                return optimizabilities.getOptimizability(a)-optimizabilities.getOptimizability(b)
             })
         }
         innerCauses.forEach(innerCause=>{
@@ -215,6 +218,7 @@ function make_squares(
     setToWidth: string | null, 
     grouping: CauseGrouping | undefined,
     descriptions: Descriptions,
+    optimizabilities: KnowledgeableOptimizabilities,
     useLifeExpectancy: boolean,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
@@ -236,6 +240,7 @@ function make_squares(
             !(parent in noMergeAcross),
             parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
             descriptions,
+            optimizabilities,
             useLifeExpectancy
         )
         squareSections.push(squares)

@@ -149,7 +149,8 @@ export default class ComputationStore {
         this.loadedDataStore.deathCauses,
         this.loadedDataStore.deathCauseCategories,
         this.loadedDataStore.descriptions,
-        this.loadedDataStore.conditions
+        this.loadedDataStore.conditions,
+        this.loadedDataStore.optimizabilities
       );
     } else {
       worker.initializeObject(

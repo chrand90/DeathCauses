@@ -115,6 +115,7 @@ class SmokeCumulative extends FormUpdater {
 
 class SmokeTypicalAmount extends FormUpdater{
     compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
+        const Smoking=this.getNode(allPreviousUpdateForms, "Smoking").value as string;
         const SmokingStopped=this.getNode(allPreviousUpdateForms, "SmokingStopped").value as number;
         const SmokingPastAmount=this.getNode(allPreviousUpdateForms, "SmokePastAmount").value as number;
         const SmokeIntensity=this.getNode(allPreviousUpdateForms, "SmokeIntensity").value as number;
@@ -127,18 +128,27 @@ class SmokeTypicalAmount extends FormUpdater{
                 if(ageFrom+i<age-SmokingStopped-SmokeDuration){
                     newValue.push(0)
                 }
+                else if(Smoking==="Current smoker"){
+                    newValue.push(SmokeIntensity)
+                }
                 else{
-                    newValue.push(pastAverage)
+                    newValue.push(SmokingPastAmount)
                 }
             }
             else{
-                if(SmokeIntensity>0.01){
-                    let proportion= SmokeDuration/(SmokeDuration+ageFrom+i-age)
-                    newValue.push(proportion*pastAverage+(1-proportion)*SmokeIntensity)
+                if(Smoking==="Current smoker"){
+                    newValue.push(SmokeIntensity)
                 }
                 else{
-                    newValue.push(pastAverage);
+                    newValue.push(SmokingPastAmount)
                 }
+                // if(SmokeIntensity>-0.01){
+                //     let proportion= SmokeDuration/(SmokeDuration+ageFrom+i-age)
+                //     newValue.push(proportion*pastAverage+(1-proportion)*SmokeIntensity)
+                // }
+                // else{
+                //     newValue.push(pastAverage);
+                //}
             }
         }
         return {...this.ChangedAndMissing(),

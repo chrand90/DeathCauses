@@ -32,7 +32,7 @@ parser.add_argument('--guided', action='store_true', default=False,
 parser.add_argument('--Rpath', type=str, default="Rscript",
                         help="the path to the R executable.")
 			   
-parser.add_argument('--nodes', type=str, nargs="+", help="list of nodes to recompute html files for")
+parser.add_argument('--nodes', type=str, nargs="*", help="list of nodes to recompute html files for")
 
 options=parser.parse_args()
 

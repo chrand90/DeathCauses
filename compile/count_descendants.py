@@ -24,15 +24,21 @@ def count_descendants(forward_relations, nodeName):
         return [nodeName]
     descendants=forward_relations[nodeName]["descendants"]
     list_of_descendants=[count_descendants(forward_relations, descendant ) for descendant in descendants]
-    return [m for d_descendants in list_of_descendants for m in d_descendants]
+    possibly_with_duplicates=[m for d_descendants in list_of_descendants for m in d_descendants]
+    return list(set(possibly_with_duplicates))
 
 def compute_optimizability(relations, nodeName, factors):
-    t = relations[nodeName]["type"]
-    if t == "Input factor":
+    if "optimizability" in factors[nodeName]:
         return factors[nodeName]["optimizability"]
     ancestors = relations[nodeName]["ancestors"]
-    optimizabilities = [compute_optimizability(relations, ancestor, factors) for ancestor in ancestors]
-    return max(optimizabilities)
+    optimizability_candidates=[]
+    for ancestor in ancestors:
+        perhaps_candidate=compute_optimizability(relations, ancestor, factors)
+        if isinstance(perhaps_candidate, dict):
+            optimizability_candidates.append(perhaps_candidate["default"])
+        else:
+            optimizability_candidates.append(perhaps_candidate)
+    return max(optimizability_candidates)
 
 
 if __name__=="__main__":
