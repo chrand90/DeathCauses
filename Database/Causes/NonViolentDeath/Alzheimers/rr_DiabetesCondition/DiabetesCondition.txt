@@ -1,0 +1,6 @@
+# the quotient is taken from https://jnnp.bmj.com/content/91/11/1201?s=08#DC1 
+#
+#
+DiabetesCondition	RR
+No	1.0
+Yes	1.69

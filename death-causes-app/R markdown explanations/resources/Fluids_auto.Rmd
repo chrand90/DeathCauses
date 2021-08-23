@@ -44,7 +44,7 @@ The unit of the input is **Liters**, but can be changed to any of the units belo
 
 * US Cups (1 US Cups = 4.23 Liters)
 
-The answer has to be larger than 0 Liters. The answer is recommended to be larger than 0 Liters. Anything that is drunk counts as liquid, including alcoholic beverages.
+The answer has to be larger than 0 Liters. Anything that is drunk counts as liquid, including alcoholic beverages.
 
 
 ### Optimizability

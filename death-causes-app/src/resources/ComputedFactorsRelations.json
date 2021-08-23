@@ -5,6 +5,12 @@
     "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."],
     "baseUnit":"years"
   },
+  "SmokeDurationCumulative": {
+    "type":"Computed factor",
+    "ancestors":["Smoking", "SmokeDuration"],
+    "descriptions":["Projected smoke dur.","Cumulative smoke duration","Total time you have smoked per year", "Smoke dur. a"],
+    "baseUnit":"years"
+  },
   "PhysicalTotal": {
     "type": "Computed factor",
     "ancestors": ["PhysicalMedium", "PhysicalHard"],
@@ -26,7 +32,7 @@
       "SmokeIntensity",
       "SmokeDuration"
     ],
-    "descriptions": ["Cummulative smoking", "Total amount smoked in life", "Smoke total"],
+    "descriptions": ["Cumulative smoking", "Total amount smoked in life", "Smoke total"],
     "baseUnit":"cig-years"
   },
   "SmokeTypicalAmount": {

@@ -93,9 +93,9 @@ $$
 
 #### Coffee consumption
 
-Coffee consumption is a risk factor for Pancreas cancer.
+[Coffee consumption](/model/Caffeine) is a risk factor for Pancreas cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'raw')
@@ -111,9 +111,9 @@ plotSpecificPlots(dat, 'PancreasCancer', c('Caffeine'),'interpolated')
 
 #### Diabetes diagnosis
 
-Diabetes diagnosis is a risk factor for Pancreas cancer.
+[Diabetes diagnosis](/model/DiabetesStatus) is a risk factor for Pancreas cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'PancreasCancer', c('DiabetesStatus'),'raw')

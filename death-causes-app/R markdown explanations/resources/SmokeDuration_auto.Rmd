@@ -34,6 +34,7 @@ Time span of smoking period is a **input factor**. It means that it is one of th
 
 Time span of smoking period is used by the model in the following places
 
+* [Cumulative smoke duration](/model/SmokeDurationCumulative)
 * [Total amount smoked in life](/model/SmokeCumulative)
 * [Smoking average](/model/SmokeTypicalAmount)
 

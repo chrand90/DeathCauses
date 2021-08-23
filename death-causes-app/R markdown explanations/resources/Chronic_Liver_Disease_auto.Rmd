@@ -41,8 +41,8 @@ Chronic liver disease is part of the following death cause categories
 In the model Chronic liver disease has the following [risk factors](/model/intro#risk-factor)
 
 * [BMI](/model/BMI)
-* [Alcohol consumption](/model/Drinking) (Alcohol)
 * [HCV diagnosis](/model/HCVStatus) (HCV)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
 
 #### Number of deaths
 
@@ -99,15 +99,15 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{BMI}} \cdot P_{\text{Alcohol,HCV}}
+P=P_{\text{BMI}} \cdot P_{\text{HCV,Alcohol}}
 $$
 
 
 #### BMI
 
-BMI is a risk factor for Chronic liver disease.
+[BMI](/model/BMI) is a risk factor for Chronic liver disease.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'raw')
@@ -125,7 +125,7 @@ plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('BMI'),'interpolated')
 
 Alcohol consumption and HCV diagnosis are a group of risk factors for Chronic liver disease.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Chronic_Liver_Disease', c('Drinking','HCVStatus'),'raw')

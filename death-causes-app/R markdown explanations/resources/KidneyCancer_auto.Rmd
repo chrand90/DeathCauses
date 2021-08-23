@@ -84,9 +84,9 @@ $$
 
 #### BMI
 
-BMI is a risk factor for Kidney cancer.
+[BMI](/model/BMI) is a risk factor for Kidney cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'KidneyCancer', c('BMI'),'raw')

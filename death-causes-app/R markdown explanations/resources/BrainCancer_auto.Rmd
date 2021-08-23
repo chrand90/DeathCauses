@@ -104,9 +104,9 @@ $$
 
 #### Head traumas
 
-Head traumas is a risk factor for Brain cancer.
+[Head traumas](/model/HeadTrauma) is a risk factor for Brain cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BrainCancer', c('HeadTrauma'),'raw')

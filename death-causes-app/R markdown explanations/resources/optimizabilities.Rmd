@@ -74,6 +74,7 @@ Members:
 * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
 * [Pesticide exposure](/model/PesticideExposure)
 * [Time span of smoking period](/model/SmokeDuration)
+* [Total time you have smoked per year](/model/SmokeDurationCumulative)
 * [Amount smoked in the past](/model/SmokePastAmount)
 * [Time since you stopped smoking per year](/model/SmokeSinceStop)
 * [Smoking status](/model/Smoking)
@@ -98,6 +99,7 @@ Description: It is possible to change, and it can be changed now or very soon.
 Members:
 
 * [Coffee consumption](/model/Caffeine)
+* [Cognitive activity](/model/CognitiveActivity)
 * [Alcohol consumption](/model/Drinking)
 * [Fish consumption](/model/Fish)
 * [Fluids intake](/model/Fluids)

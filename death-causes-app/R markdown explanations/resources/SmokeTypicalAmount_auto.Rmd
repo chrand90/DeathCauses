@@ -44,6 +44,7 @@ Average amount smoked in smoking period is computed with the following factors
 
 Average amount smoked in smoking period is used by the model in the following places
 
+* [Bladder cancer](/model/BladderCancer)
 * [Lung cancer](/model/LungCancer)
 * [Coronary heart disease](/model/Ischemic)
 * [COPD](/model/COPD)

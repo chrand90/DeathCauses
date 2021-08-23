@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Alzheimers is a **death cause**. It means that there is a certain probability that one dies from this.
 
@@ -34,7 +34,8 @@ Alzheimers is part of the following death cause categories
 
 In the model Alzheimers has the following [risk factors](/model/intro#risk-factor)
 
-* [Coffee consumption](/model/Caffeine) (Coffee)
+* [Cognitive activity](/model/CognitiveActivity) (Cognitivity)
+* [Diabetes condition](/model/DiabetesCondition) (Diabetes)
 * [Fish consumption](/model/Fish) (Fish)
 * [Vegetable consumption](/model/Vegetables) (Vegetables)
 
@@ -73,39 +74,64 @@ The definition of dying from Alzheimers is to get any of the following ICD codes
 The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-RR=RR_{\text{Coffee}} \cdot RR_{\text{Fish}} \cdot RR_{\text{Vegetables}}
+RR=RR_{\text{Cognitivity}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Fish}} \cdot RR_{\text{Vegetables}}
 $$
 
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Fish}} \cdot P_{\text{Vegetables}}
+P=P_{\text{Cognitivity}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Fish}} \cdot P_{\text{Vegetables}}
 $$
 
 
-#### Coffee consumption
+#### Cognitive activity
 
-Coffee consumption is a risk factor for Alzheimers.
+[Cognitive activity](/model/CognitiveActivity) is a risk factor for Alzheimers.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+In the meta-analysis by @Yu1201, it was estimated that cognitive activity could reduce Alzheimers by a factor 0.53. The main paper in the meta-analysis was @Wilson1911, who
+
+1. used a scale for cognitive activity that we imitate in the input factor [Cognitive activity](/model/CognitiveActivity). Its 10th percentile is 2.2, its 90th percentile is 4.0 and its mean is 3.2.
+2. assumes the Hazard ratio(HR) has the relationship $HR(x)=a\cdot \exp(b\cdot x)$ where $x$ is their definition of cognitive activity.
+
+In the paper by @Wilson1911, they have $b=log(0.58)$, but we will not use that fact because we have more faith in the factor 0.53. Therefore, ee assume that $HR(2.2)=1$ and $HR(4.0)=0.53$ and reestimate $a$ and $b$ using the assumption $HR(x)=a\cdot \exp(b\cdot x)$. That leads to the estimates
+
+$$
+b=-0.3527102\\
+\frac{1}{3.2-2.2}\int_{2.2}^{3.2} a\cdot \exp(b\cdot x) \text{ d}x=0.8426725\\
+\frac{1}{4.0-3.2}\int_{3.2}^4 a\cdot \exp(b\cdot x) \text{ d}x=0.612333
+$$
+
+We therefore obtain the risk ratios below
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plotSpecificPlots(dat, 'Alzheimers', c('Caffeine'),'raw')
+plotSpecificPlots(dat, 'Alzheimers', c('CognitiveActivity'),'raw')
 ```
 
 
-Because the variable Coffee consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+Because the variable Cognitive activity is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plotSpecificPlots(dat, 'Alzheimers', c('Caffeine'),'interpolated')
+plotSpecificPlots(dat, 'Alzheimers', c('CognitiveActivity'),'interpolated')
+```
+
+
+#### Diabetes condition
+
+[Diabetes condition](/model/DiabetesCondition) is a risk factor for Alzheimers.
+
+@Yu1201 estimated that having diabetes increases risk of Alzheimers by a factor 1.69.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('DiabetesCondition'),'raw')
 ```
 
 
 #### Fish consumption
 
-Fish consumption is a risk factor for Alzheimers.
+[Fish consumption](/model/Fish) is a risk factor for Alzheimers.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+It seems that Omega-3 intake could be the real reason, but the results are not as clear [@wu2015omega]. We therefore use the fish consumption effects from @wu2015omega, where they estimate a minimum risk ratio of 0.64 and a 11% decrease per 100 grams of fish consumed per week. Those numbers indicates a line of exponential decrease from 0 grams of fish at $RR=1.0$ to $\log(0.64)/\log(0.89)\cdot 100=382$ grams of fish. Dividing this line into arbitrary segments, we obtain the distrubtion below.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'raw')
@@ -121,9 +147,9 @@ plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'interpolated')
 
 #### Vegetable consumption
 
-Vegetable consumption is a risk factor for Alzheimers.
+[Vegetable consumption](/model/Vegetables) is a risk factor for Alzheimers.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Alzheimers', c('Vegetables'),'raw')

@@ -9,7 +9,7 @@ output:
 bibliography: references.bib
 link-citations: true
 nocite: |
-   @cho2004alcohol, @eskelinen2010caffeine, @dahlberg2004guns, @campbell2007intimate, @black2011national, @kellermann1993gun, @anglemyer2014accessability, @samad2005meta, @liu2016leisure, @mctiernan2019physical, @Kyui2016physical, @schwingshackl2018food, @piazza2012examining, @hackshaw2018low, @shields2013smoking, @roerecke2014alcohol, @malyutina2002relation, @CDCreport, @ICDcodes, @eide1995sequential, @di2020attributable
+   @cho2004alcohol, @eskelinen2010caffeine, @dahlberg2004guns, @campbell2007intimate, @black2011national, @kellermann1993gun, @anglemyer2014accessability, @samad2005meta, @liu2016leisure, @mctiernan2019physical, @Kyui2016physical, @schwingshackl2018food, @piazza2012examining, @hackshaw2018low, @shields2013smoking, @roerecke2014alcohol, @malyutina2002relation, @CDCreport, @ICDcodes, @eide1995sequential, @di2020attributable, @Yu1201, @Wilson1911, @wu2015omega, @michaud1999fluid, @baris2009case, @pitard2001cigar, @BURGER2013234, @saginala2020epidemiology
 ---
 
 

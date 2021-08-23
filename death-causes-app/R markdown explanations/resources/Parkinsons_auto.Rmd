@@ -88,9 +88,9 @@ $$
 
 #### Coffee consumption
 
-Coffee consumption is a risk factor for Parkinsons.
+[Coffee consumption](/model/Caffeine) is a risk factor for Parkinsons.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Parkinsons', c('Caffeine'),'raw')
@@ -106,9 +106,9 @@ plotSpecificPlots(dat, 'Parkinsons', c('Caffeine'),'interpolated')
 
 #### Family history parkinsons
 
-Family history parkinsons is a risk factor for Parkinsons.
+[Family history parkinsons](/model/FamilyHistoryParkinson) is a risk factor for Parkinsons.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Parkinsons', c('FamilyHistoryParkinson'),'raw')
@@ -117,9 +117,9 @@ plotSpecificPlots(dat, 'Parkinsons', c('FamilyHistoryParkinson'),'raw')
 
 #### Pesticide exposure
 
-Pesticide exposure is a risk factor for Parkinsons.
+[Pesticide exposure](/model/PesticideExposure) is a risk factor for Parkinsons.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Parkinsons', c('PesticideExposure'),'raw')

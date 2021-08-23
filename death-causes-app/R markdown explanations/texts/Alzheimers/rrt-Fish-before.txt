@@ -1,0 +1,2 @@
+It seems that Omega-3 intake could be the real reason, but the results are not as clear [@wu2015omega]. We therefore use the fish consumption effects from @wu2015omega, where they estimate a minimum risk ratio of 0.64 and a 11% decrease per 100 grams of fish consumed per week. Those numbers indicates a line of exponential decrease from 0 grams of fish at $RR=1.0$ to $\log(0.64)/\log(0.89)\cdot 100=382$ grams of fish. Dividing this line into arbitrary segments, we obtain the distrubtion below.
+

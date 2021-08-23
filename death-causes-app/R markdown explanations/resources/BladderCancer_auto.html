@@ -29,7 +29,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-<p><em>[auto-generated file]</em></p>
+<p><em>[partly auto-generated file]</em></p>
 <p>Bladder cancer is a <strong>death cause</strong>. It means that there is a certain probability that one dies from this.</p>
 <div id="alternative-names" class="section level4">
 <h4>Alternative names:</h4>
@@ -51,7 +51,9 @@ blockquote{
 <p>In the model Bladder cancer has the following <a href="/model/intro#risk-factor">risk factors</a></p>
 <ul>
 <li><a href="/model/Fluids">Fluids intake</a> (Fluids)</li>
-<li><a href="/model/SmokeCumulative">Total amount smoked in life</a> (Smoke total)</li>
+<li><a href="/model/SmokeSinceStop">Time since smoking per year</a> (Smoke end a.)</li>
+<li><a href="/model/SmokeDurationCumulative">Cumulative smoke duration</a> (Smoke dur. a)</li>
+<li><a href="/model/SmokeTypicalAmount">Smoking average</a> (Smoke avg.)</li>
 </ul>
 </div>
 <div id="number-of-deaths" class="section level4">
@@ -83,34 +85,45 @@ C67: Malignant neoplasm of bladder (100.0%)
 <h4>Interaction</h4>
 <p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke total}}
+RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke dur. a,Smoke end a.}} \cdot RR_{\text{Smoke avg.}}
 \]</span></p>
 <p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
 <p><span class="math display">\[
-P=P_{\text{Fluids}} \cdot P_{\text{Smoke total}}
+P=P_{\text{Fluids}} \cdot P_{\text{Smoke end a.,Smoke dur. a,Smoke avg.}}
 \]</span></p>
 </div>
 <div id="fluids-intake" class="section level4">
 <h4>Fluids intake</h4>
-<p>Fluids intake is a risk factor for Bladder cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
+<p><a href="/model/Fluids">Fluids intake</a> is a risk factor for Bladder cancer.</p>
+<p>Higher fluid intake decreases the risk of bladder cancer. We use the numbers from <span class="citation">Michaud et al. (<a href="#ref-michaud1999fluid" role="doc-biblioref">1999</a>)</span> who found a significant dose-response relationship. Interestingly, when the analysis was conducted separately for each type of fluid, only water was significant. However, we will not use this fact, because the other beverages may be equally beneficial, which would also make sense if the authors’ argumentation, “fluid intake is good because it increases urination and thereby bladder cancer risk”, is correct.</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Because the variable Fluids intake is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
 </div>
-<div id="total-amount-smoked-in-life" class="section level4">
-<h4>Total amount smoked in life</h4>
-<p>Total amount smoked in life is a risk factor for Bladder cancer.</p>
-<p>Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model</p>
+<div id="cumulative-smoke-duration-time-since-smoking-per-year" class="section level4">
+<h4>Cumulative smoke duration, Time since smoking per year</h4>
+<p>Cumulative smoke duration and Time since smoking per year are a group of risk factors for Bladder cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
-<p>Because the variable Total amount smoked in life is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p>Because the variables Cumulative smoke duration and Time since smoking per year are numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
 <p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+</div>
+<div id="smoking-average" class="section level4">
+<h4>Smoking average</h4>
+<p><a href="/model/SmokeTypicalAmount">Smoking average</a> is a risk factor for Bladder cancer.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)</p>
+<p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>Because the variable Smoking average is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="BladderCancer_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
 </div>
 <div id="references" class="section level2 unnumbered">
 <h2 class="unnumbered">References</h2>
 <div id="refs" class="references hanging-indent">
 <div id="ref-ICDcodes">
 <p>“ICD Order Files 2014.” n.d. <a href="https://www.cdc.gov/nchs/icd/icd10cm.htm">https://www.cdc.gov/nchs/icd/icd10cm.htm</a>.</p>
+</div>
+<div id="ref-michaud1999fluid">
+<p>Michaud, Dominique S, Donna Spiegelman, Steven K Clinton, Eric B Rimm, Gary C Curhan, Walter C Willett, and Edward L Giovannucci. 1999. “Fluid Intake and the Risk of Bladder Cancer in Men.” <em>New England Journal of Medicine</em> 340 (18): 1390–7.</p>
 </div>
 <div id="ref-CDCreport">
 <p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>

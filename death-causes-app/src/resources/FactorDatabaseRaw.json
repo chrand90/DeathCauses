@@ -219,6 +219,17 @@
         "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc.",
         "optimizability":90
     },
+    {"factorname":"CognitiveActivity",
+        "descriptions":["Cognitive activity", "Cognitivity"],
+        "baseUnit":"",
+        "type":"number",
+        "question":"How cognitively active are you on a scale from 1 to 5, where 1 is 'very little' and 5 is 'very much'",
+        "placeholder":"Value",
+        "recommendedDomain":{"min":1 ,"max":5},
+        "requiredDomain":{"min":1, "max":5},
+        "helpJson":"Cognitively active is measured by how often you do the following activities: reading, playing cognitive games such as chess, attend cultural events, etc. If you do all these things daily, you should answer 5 and if you only rarely do them, you should answer 1. 80% of (older) people are between 2.2 and 4.",
+        "optimizability":90
+    },
     {"factorname":"Fish",
         "descriptions":["Fish consumption","Fish"],
         "baseUnit":"1 fish=100 grams",

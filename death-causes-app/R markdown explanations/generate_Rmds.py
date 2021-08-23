@@ -384,10 +384,12 @@ def make_reference_section_for_rrt(title,rrt,location_node,f):
 def make_header_of_rrt_section(rrt, f):
     factornames_raw = rrt["riskFactorNames"]
     factornames=[get_description(factor_name,30) for factor_name in factornames_raw]
+    factornames_to_factornames_raw={full:raw for raw, full in zip(factornames_raw, factornames)}
     factornames.sort()
+    links=["["+fname+"](/model/"+factornames_to_factornames_raw[fname]+")" for fname in factornames]
     header = ", ".join(factornames)
     f.write("\n#### " + header + "\n\n")
-    factorstring=header
+    factorstring=', '.join(links)
     if len(factornames) > 1:
         factorstring = ', '.join(factornames[:-1]) + " and " + factornames[-1]
     return factornames, factornames_raw, header, factorstring
@@ -397,17 +399,18 @@ def make_section_for_rrt(title, rrt, node_name, f):
     list_for_r_code=["'"+factorname+"'" for factorname in factornames_raw]
     factorstring_raw="-".join(sorted(factornames_raw))
     text_available= get_text(node_name,"rrt-"+factorstring_raw)
+    if len(factornames) > 1:
+        multivariate = True
+        f.write(factorstring + " are a group of risk factors for " + title + ".\n\n")
+    else:
+        multivariate = False
+        f.write(factorstring + " is a risk factor for " + title + ".\n\n")
     if text_available:
         f.write(text_available)
     else:
-        if len(factornames) > 1:
-            multivariate = True
-            f.write(factorstring + " are a group of risk factors for " + title + ".\n\n")
-        else:
-            multivariate = False
-            f.write(factorstring + " is a risk factor for " + title + ".\n\n")
+        
         f.write("Below is a plot of the risk ratios we have " +
-                "taken from the literature adjusted to fit the model\n\n")
+                "taken from the literature (possibly adjusted to fit the model)\n\n")
     f.write(BEGINNING_OF_RCODE)
     f.write("plotSpecificPlots(dat, '"+node_name+"', c(" + ','.join(list_for_r_code) + "),'raw')\n")
     f.write(END_OF_RCODE)
@@ -527,12 +530,16 @@ def make_options_section(factor_node, node_name, f):
     add_text_if_there(f,node_name, "options", "after")
 
 def write_domain(factor_node, domain, f):
+    if factor_node["placeholder"] and factor_node["placeholder"]!="Value" and factor_node["placeholder"]!="Number":
+        unit=" "+factor_node["placeholder"]
+    else:
+        unit=""
     if "min" in factor_node[domain]:
-        f.write(" larger than "+str(factor_node[domain]["min"])+" "+factor_node["placeholder"])
+        f.write(" larger than "+str(factor_node[domain]["min"])+unit)
         if "max" in factor_node[domain]:
             f.write(" and")
     if "max" in factor_node[domain]:
-        f.write(" smaller than "+str(factor_node[domain]["max"])+" "+factor_node["placeholder"])
+        f.write(" smaller than "+str(factor_node[domain]["max"])+unit)
     f.write(". ")
 
 def make_limits_section(factor_node, node_name, f):
@@ -544,8 +551,9 @@ def make_limits_section(factor_node, node_name, f):
             f.write("The answer has to be")
             write_domain(factor_node, "requiredDomain",f)
         if "recommendedDomain" in factor_node:
-             f.write("The answer is recommended to be")
-             write_domain(factor_node, "recommendedDomain", f)
+            if "requiredDomain" not in factor_node or factor_node["requiredDomain"]!=factor_node["recommendedDomain"]:
+                f.write("The answer is recommended to be")
+                write_domain(factor_node, "recommendedDomain", f)
     add_text_if_there(f, node_name, "limits", "after")
 
 def make_helpjson_section(factor_node, node_name, f):
@@ -580,13 +588,14 @@ def make_guidance_section(node_name, title, f):
         f.write("The user input is a typed number and should answer the question\n\n")
     f.write("> "+factor_node["question"]+"?\n\n")
     if factor_node["type"]=="number":
-        f.write("The unit of the input is **"+factor_node["placeholder"]+"**")
-        if "units" in factor_node:
-            f.write(", but can be changed to any of the units below\n\n")
-            make_units_table(factor_node,f)
-            f.write("\n")
-        else:
-            f.write(".\n\n")
+        if factor_node["placeholder"] and factor_node["placeholder"]!="Value" and factor_node["placeholder"]!="Number":
+            f.write("The unit of the input is **"+factor_node["placeholder"]+"**")
+            if "units" in factor_node:
+                f.write(", but can be changed to any of the units below\n\n")
+                make_units_table(factor_node,f)
+                f.write("\n")
+            else:
+                f.write(".\n\n")
         make_limits_section(factor_node, node_name, f)
     elif factor_node["type"] == "string":
         make_options_section(factor_node, node_name, f)

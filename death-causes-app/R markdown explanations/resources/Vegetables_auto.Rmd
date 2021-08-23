@@ -46,7 +46,7 @@ The unit of the input is **Servings**, but can be changed to any of the units be
 
 * Grams (1 Servings = 100.0 Grams)
 
-The answer has to be larger than 0 Servings. The answer is recommended to be larger than 0 Servings. A serving is 100 grams (=0.22 pounds) of culinary vegetables. Even though tomatoes and pumpkins are botanically speaking berry and fruits, they are still culinary vegetables because they are used as such.
+The answer has to be larger than 0 Servings. A serving is 100 grams (=0.22 pounds) of culinary vegetables. Even though tomatoes and pumpkins are botanically speaking berry and fruits, they are still culinary vegetables because they are used as such.
 
 
 ### Optimizability
