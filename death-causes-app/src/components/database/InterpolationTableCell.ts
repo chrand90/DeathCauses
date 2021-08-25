@@ -75,9 +75,6 @@ export default class InterpolationTableCell {
     upperTruncationFromTable: number | null=null
   ) {
     const intPol=interpolationVariables.indexToName;
-    if(intPol.includes("Drinking") && intPol.includes("SmokeIntensity")){
-      console.log("debug location")
-    }
     this.interpolationVariables = interpolationVariables;
     this.nonInterpolationVariables = nonInterpolationVariables;
     this.interpolationDomains = cell.interpolation_domains
@@ -333,9 +330,6 @@ export default class InterpolationTableCell {
 
   getMin(fixedInterpolationFactorAnswers: Location): LocationAndValue {
     const intPol=this.interpolationVariables.indexToName;
-    if(intPol.includes("Drinking") && intPol.includes("SmokeIntensity") && fixedInterpolationFactorAnswers.setInterpolationVariables.length>1){
-      console.log("debug location")
-    }
     const numberOfFixed = fixedInterpolationFactorAnswers.getNumberOfFixedInterpolationVariables();
     const numberOfInterpolationVariables = this.interpolationVariables.getLength();
     if (numberOfFixed === 0) {

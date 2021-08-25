@@ -62,7 +62,7 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
       })
       .map((nestedList) => {
         return (
-          <li>
+          <li key={nestedList.key}>
             {this.linkButton(
               this.props.store.loadedDataStore.descriptions.getDescription(
                 nestedList.key,
@@ -102,7 +102,7 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
     return (
       <ul>
         {nodeInfos.map(({ longName, shortName }) => {
-          return <li> {this.linkButton(longName, shortName)} </li>;
+          return <li key={shortName}> {this.linkButton(longName, shortName)} </li>;
         })}
       </ul>
     );
@@ -139,7 +139,7 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
           <h4>General concepts</h4>
           <ul>
             {SPECIAL_PAGES.map(({ linkText, direct, prefix }) => {
-              return <li> {this.linkButton(linkText, direct, null, prefix)} </li>;
+              return <li key={direct}> {this.linkButton(linkText, direct, null, prefix)} </li>;
             })}
           </ul>
           <h4>Death causes</h4>
