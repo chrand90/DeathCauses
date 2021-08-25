@@ -40,16 +40,19 @@ Fruits and vegetables consumption is computed with the following factors
 
 Fruits and vegetables consumption is used by the model in the following places
 
-* The death causes of the category *[Heart disease](/model/HeartDiseases)
+* as a risk factor for [Heart disease](/model/HeartDiseases)
+
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fruits and vegetables consumption is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fruits and vegetables consumption is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 
 
-#### Computation
+### Computation
 
 [Place explanation for how Fruits and vegetables consumption is computed here]
 

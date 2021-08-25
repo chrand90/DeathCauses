@@ -39,6 +39,8 @@
 <li><a href="#decomposition-of-n-factors">Decomposition of <span class="math inline">\(n\)</span> factors</a></li>
 <li><a href="#optimal-values">Optimal values</a></li>
 </ul></li>
+<li><a href="#no-confidence-intervals">No confidence intervals</a></li>
+<li><a href="#no-validation">No validation</a></li>
 </ul></li>
 <li><a href="#glossary">Glossary</a></li>
 <li><a href="#references">References</a></li>
@@ -300,6 +302,29 @@ V(i)=\sum_{I\subseteq J_k, k\in I} \frac{S(I|J_1 \cup \cdots \cup J_{k-1})}{|I|}
 </ul>
 </div>
 </div>
+<div id="no-confidence-intervals" class="section level2">
+<h2>No confidence intervals</h2>
+<p>We do not compute confidence intervals on any of the estimates of the model. It is theoretically possible because all the risk ratios and population estimates comes with confidence intervals. However, it probably won’t be a future feature of the model; the nature of the model means that we would have to compute the confidence intervals using simulation techniques, which requires many more computations. At the time of writing, the pre-computation step takes around 30 seconds, the pre-computed data is around 0.5 MB, and the website spends around 1 second to evaluate the user’s data. Proper confidence interval estimation with simulation techniques would multiply all three numbers by a factor 100, and that would necessitate a different, more costly set-up. Besides, the bias and variance reduction from our use of <a href="#smoothing">smoothing techniques</a> makes the confidence intervals less interesting.</p>
+<p>Let us consider how big the confidence intervals would be if we computed them (and if we didn’t smooth the risk ratios). In the literature the confidence intervals of risk ratios are generally quite large and compared to the uncertainty on the population estimates, they are responsible for most of the uncertainty of the model. Often, a confidence interval of a risk ratio used by the model says 1) that an effect could be at least twice as big, and 2) the effect could be close to non-existent. Therefore, a rule of thumb could be that most of the <a href="#decomposition">decomposed</a> probabilities could be at least twice as big or half the size of their computed value. The probability of dying of a cause is basically a product of such risk ratios and so it also has a good amount of uncertainty. The uncertainty depends on several factor but if we should make a rule of thumb, it would be at least <span class="math inline">\(\pm1/3\)</span> if there is one risk factor and at least <span class="math inline">\(\pm 1/2\)</span> if there are more than one risk factor. The life expectancy would have a relatively small confidence interval because there are so many causes. Perhaps just <span class="math inline">\(\pm 1\)</span> year.</p>
+</div>
+<div id="no-validation" class="section level2">
+<h2>No validation</h2>
+<p>The model is not formally validated. All the incoming data and risk ratios are approved in peer-reviewed journals, but the way we combine the data has no checks yet. We of course appeal to the reasonability of the combination described in this document. Our model can also be compared to the studies below</p>
+<div id="expected-lifetime-studies" class="section level4">
+<h4>Expected lifetime studies</h4>
+<p>There are studies that examine the relationship between several risk factors and expected lifetime. In <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span> they build a model on the data from a prospective cohort study. They found, among other things, that smoking 20 cigarettes a day shortens your life with 6.5 years if you are a 30 year-old Finnish man who often drinks, prefers low-fat or no spread over butter, drinks skimmed milk, rarely eats vegetables or fruits, without a family history of heart attacks in young persons, is inactive, feels stressed most of the time, lowly educated, satisfied with his accomplishments, has strenuous work, has a spouse with whom he often argues, has improving financial status, feels it is impossible to obtain his goals, doesn’t have good friends and don’t have diabetes. We can’t match this exact profile on our website, but if we take the nearest values, we end up at 4.2 years (at the time of writing, 24/08-2021). There is a difference between 6.5 years and 4.2 years and possible explanations could be</p>
+<ul>
+<li>Our model doesn’t include all relevant risk factors for smoking yet.</li>
+<li>There is a difference between the baselines. For example, the Finnish non-smoker had an expected lifetime of 86.8 years, whereas the equivalent person in our model was an American non-smoker with expected lifetime 80.8.</li>
+<li>The two estimates are adjusted differently for confounding factors. The estimate from <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span> were adjusted for the risk factors mentioned above whereas, in our model, the different risk ratios are not adjusted for the same risk factors.</li>
+</ul>
+<p>There are similar studies, see the discussion in <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span>.</p>
+</div>
+<div id="global-disease-burden-project" class="section level4">
+<h4>Global disease burden project</h4>
+<p>The <a href="http://www.healthdata.org/gbd/2019">Global disease burden(GBD) project</a> aims to describe how many deaths each risk factor is responsible for worldwide <span class="citation">(Murray et al. <a href="#ref-gbd2019" role="doc-biblioref">2020</a>)</span>. The database is a giant version of the data we have collected. They have age-adjusted death rates and risk factor distributions for all countries, and not just the US. They also have a big curated list of risk ratios and compute some themselves (which we have used in for example <a href="/model/ColonCancer#total-physical-activity-time">Colon Cancer</a>). The risk ratios are directed more towards population-level concerns such as tobacco, sanitation and vitamin deficiencies whereas our model focuses on risk factors relevant for an individual in a developed country. Their computations are also focused on population-level risks making it hard to compare any numbers. However, one of their products, <a href="https://vizhub.healthdata.org/gbd-compare/">GBD compare</a>, can be used to compare the significance of the risk factors in GBD to their significance in our model.</p>
+</div>
+</div>
 </div>
 <div id="glossary" class="section level1">
 <h1>Glossary</h1>
@@ -368,8 +393,14 @@ OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}\approx \frac{p_1}{p_2}=RR
 <div id="ref-eskelinen2010caffeine">
 <p>Eskelinen, Marjo H, and Miia Kivipelto. 2010. “Caffeine as a Protective Factor in Dementia and Alzheimer’s Disease.” <em>Journal of Alzheimer’s Disease</em> 20 (s1): S167–S174.</p>
 </div>
+<div id="ref-finland2020">
+<p>Härkänen, Tommi, Kari Kuulasmaa, Laura Sares-Jäske, Pekka Jousilahti, Markku Peltonen, Katja Borodulin, Paul Knekt, and Seppo Koskinen. 2020. “Estimating Expected Life-Years and Risk Factor Associations with Mortality in Finland: Cohort Study.” <em>BMJ Open</em> 10 (3). <a href="https://doi.org/10.1136/bmjopen-2019-033741">https://doi.org/10.1136/bmjopen-2019-033741</a>.</p>
+</div>
 <div id="ref-kellermann1993gun">
 <p>Kellermann, Arthur L., Frederick P. Rivara, Norman B. Rushforth, Joyce G. Banton, Donald T. Reay, Jerry T. Francisco, Ana B. Locci, Janice Prodzinski, Bela B. Hackman, and Grant Somes. 1993. “Gun Ownership as a Risk Factor for Homicide in the Home.” <em>New England Journal of Medicine</em> 329 (15): 1084–91. <a href="https://doi.org/10.1056/NEJM199310073291506">https://doi.org/10.1056/NEJM199310073291506</a>.</p>
+</div>
+<div id="ref-gbd2019">
+<p>Murray, Christopher J L, Aleksandr Y Aravkin, Peng Zheng, Cristiana Abbafati, and et al. 2020. “Global Burden of 87 Risk Factors in 204 Countries and Territories, 1990–2019: A Systematic Analysis for the Global Burden of Disease Study 2019.” <em>The Lancet</em> 396 (10258): 1223–49. <a href="https://doi.org/https://doi.org/10.1016/S0140-6736(20)30752-2">https://doi.org/https://doi.org/10.1016/S0140-6736(20)30752-2</a>.</p>
 </div>
 <div id="ref-CDCreport">
 <p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>

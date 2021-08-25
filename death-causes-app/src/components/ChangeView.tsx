@@ -23,6 +23,12 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
   const historySize = props.store.computationStore.allChanges.length;
 
   const getLifeExpectancyEffect = (index: number) => {
+    if(props.store.computationStore.lifeExpectancies.length<2){
+      return {
+        describ: "No changes yet",
+        sign:0
+      }
+    }
     const valInYears =
       props.store.computationStore.lifeExpectancies[index+0] -
       props.store.computationStore.lifeExpectancies[index+1];

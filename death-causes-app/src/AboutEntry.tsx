@@ -26,6 +26,8 @@ const SPECIAL_PAGES: PageInfo[] = [
   { linkText: "Optimizabilities", direct: "optimizabilities" },
   { linkText: "All references", direct: "references" },
   { linkText: "List of ICD codes", direct: "ICD", prefix:"/"},
+  { linkText: "Relations", direct:"relations", prefix: "/"},
+  { linkText: "Advanced options", direct:"advancedOptions"}
 ];
 
 interface AboutEntryProps extends RouteComponentProps {

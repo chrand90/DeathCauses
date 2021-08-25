@@ -1,0 +1,41 @@
+---
+title: "Advanced options"
+output:
+  html_document:
+    toc: yes
+    theme: null
+    template: null
+    self_contained: false
+    pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+  
+  
+<style type="text/css">
+
+body{
+  background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+  
+</style>
+
+## Computation Period
+
+The computation period is the list of ages where the website computes probabilities of dying. The lowest age on the list is called "startAge" and the largest is called "endAge". 
+
+The standard range is from the [input age](/model/Age) to 120. However, interesting things can come from changing the computation period. For example
+
+* Set the endAge to your current age plus 5 and examine your immediate dangers.
+* Set the startAge to 0 and the endAge to your current age and see what you have survived so far.
+* If you are very old, you may live past 120 with a relatively high probability. You can then increase the endAge so that there is a higher chance that you will die in the computation period and thereby get more precise estimates.
+
+Changing the computation period doesn't have a good, intuitive meaning when the [evaluation unit](#evaluation-unit) is "Years lost" or on [Life expectancy](/model/interpretation#life-expectancy). The reason is that the program assume that the mortality rate at endAge continues indefinitely when computing expected lifetimes.
+
+## Evaluation unit
+
+## Threading
+
+The bulk of the computations can run on the main UI-thread (One thread) or on a separate thread (Two threads). If possible, always use the setting 'Two threads' because it won't freeze the screen when running the main computations. We only use the setting 'One thread' for debugging but we have kept it in production because there is a chance that the 'Two threads' won't work on your browser. 

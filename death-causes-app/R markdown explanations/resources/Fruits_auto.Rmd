@@ -32,7 +32,7 @@ Fruit consumption is a **input factor**. It means that it is one of the inputs f
 
 Fruit consumption is used by the model in the following places
 
-* [Greens consumption](/model/Greens)
+* to compute [Greens consumption](/model/Greens)
 
 #### Guidance
 
@@ -44,12 +44,14 @@ The unit of the input is **Servings**, but can be changed to any of the units be
 
 * Grams (1 Servings = 100.0 Grams)
 
-The answer has to be larger than 0 Servings. A standard fruit serving weighs 100 grams. An average apple is almost 200 grams.
+The answer has to be larger than 0 Servings.A standard fruit serving weighs 100 grams. An average apple is almost 200 grams.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fruit consumption is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fruit consumption is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

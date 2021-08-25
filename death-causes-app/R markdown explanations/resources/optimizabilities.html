@@ -41,8 +41,8 @@ blockquote{
 </ol>
 <div id="risk-factors" class="section level2">
 <h2>Risk factors</h2>
-<div id="category-1" class="section level4">
-<h4>Category 1</h4>
+<div id="category-1" class="section level3">
+<h3>Category 1</h3>
 <p>Description: It is impossible to change and it has never been in your control</p>
 <p>Members:</p>
 <ul>
@@ -52,8 +52,8 @@ blockquote{
 <li><a href="/model/Sex">Biological sex</a></li>
 </ul>
 </div>
-<div id="category-2" class="section level4">
-<h4>Category 2</h4>
+<div id="category-2" class="section level3">
+<h3>Category 2</h3>
 <p>Description: It is impossible to change, but it could have been the consequence of your actions</p>
 <p>Members:</p>
 <ul>
@@ -65,55 +65,75 @@ blockquote{
 <li><a href="/model/HeadTrauma">Head traumas</a></li>
 </ul>
 </div>
-<div id="category-3" class="section level4">
-<h4>Category 3</h4>
+<div id="category-3" class="section level3">
+<h3>Category 3</h3>
 <p>Description: It is impossible to change now, but it has once definitely been in your control</p>
 <p>Members:</p>
 <ul>
 <li><a href="/model/IndoorTanning">Time spent indoor tanning</a></li>
-<li><a href="/model/OralContraceptiveStatus">Oral contraceptives</a></li>
-<li><a href="/model/OralContraceptiveStopped">Time since taking oral contraceptives</a></li>
+<li><a href="/model/OralContraceptiveEver">Ever used oral contraceptives</a></li>
 <li><a href="/model/PesticideExposure">Pesticide exposure</a></li>
-<li><a href="/model/SmokeDuration">Time span of smoking period</a></li>
 <li><a href="/model/SmokePastAmount">Amount smoked in the past</a></li>
-<li><a href="/model/SmokeSinceStop">Time since you stopped smoking per year</a></li>
-<li><a href="/model/Smoking">Smoking status</a></li>
-<li><a href="/model/SmokingStopped">Time since you stopped smoking</a></li>
 </ul>
 </div>
-<div id="category-4" class="section level4">
-<h4>Category 4</h4>
+<div id="category-4" class="section level3">
+<h3>Category 4</h3>
 <p>Description: It is possible to change, but it will take a lot of time.</p>
 <p>Members:</p>
 <ul>
 <li><a href="/model/BMI">BMI</a></li>
+<li><a href="/model/DiabetesCondition">Diabetes condition</a></li>
 <li><a href="/model/Waist">Waist circumference</a></li>
 <li><a href="/model/WaistMale">Waist circumference male equivalence</a></li>
 </ul>
 </div>
-<div id="category-5" class="section level4">
-<h4>Category 5</h4>
+<div id="category-5" class="section level3">
+<h3>Category 5</h3>
 <p>Description: It is possible to change, and it can be changed now or very soon.</p>
 <p>Members:</p>
 <ul>
 <li><a href="/model/Caffeine">Coffee consumption</a></li>
+<li><a href="/model/CognitiveActivity">Cognitive activity</a></li>
 <li><a href="/model/Drinking">Alcohol consumption</a></li>
 <li><a href="/model/Fish">Fish consumption</a></li>
 <li><a href="/model/Fluids">Fluids intake</a></li>
 <li><a href="/model/Fruits">Fruit consumption</a></li>
 <li><a href="/model/Greens">Fruits and vegetables consumption</a></li>
 <li><a href="/model/MaxDrinking">Peak Alcohol consumption</a></li>
-<li><a href="/model/OralContraceptiveEver">Ever used oral contraceptives</a></li>
-<li><a href="/model/OralContraceptiveSinceStop">Time since taking OCP per year</a></li>
 <li><a href="/model/OralContraceptiveTillStop">Time till stopping oral contraceptives</a></li>
 <li><a href="/model/PhysicalHard">Hard physical activity time</a></li>
 <li><a href="/model/PhysicalMedium">Medium physical activity time</a></li>
 <li><a href="/model/PhysicalTotal">Total time doing physical activity</a></li>
 <li><a href="/model/RedMeat">Red meat consumption</a></li>
-<li><a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
 <li><a href="/model/SmokeIntensity">Current smoking amount</a></li>
-<li><a href="/model/SmokeTypicalAmount">Average amount smoked in smoking period</a></li>
 <li><a href="/model/Vegetables">Vegetable consumption</a></li>
+</ul>
+</div>
+<div id="category-mixed" class="section level3">
+<h3>Category Mixed</h3>
+<ul>
+<li>4 if <a href="/model/OralContraceptiveStatus">Oral contraceptives</a>=‘Current user’, else 3
+<ul>
+<li><a href="/model/OralContraceptiveSinceStop">Time since taking OCP per year</a></li>
+<li><a href="/model/OralContraceptiveStopped">Time since taking oral contraceptives</a></li>
+</ul></li>
+<li>5 if <a href="/model/OralContraceptiveStatus">Oral contraceptives</a>=‘Current user’, else 3
+<ul>
+<li><a href="/model/OralContraceptiveStatus">Oral contraceptives</a></li>
+</ul></li>
+<li>5 if <a href="/model/Smoking">Smoking status</a>=‘Current smoker’, else 3
+<ul>
+<li><a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
+<li><a href="/model/SmokeDurationCumulative">Total time you have smoked per year</a></li>
+<li><a href="/model/SmokeTypicalAmount">Average amount smoked in smoking period</a></li>
+<li><a href="/model/Smoking">Smoking status</a></li>
+</ul></li>
+<li>4 if <a href="/model/Smoking">Smoking status</a>=‘Current smoker’, else 3
+<ul>
+<li><a href="/model/SmokeDuration">Time span of smoking period</a></li>
+<li><a href="/model/SmokeSinceStop">Time since you stopped smoking per year</a></li>
+<li><a href="/model/SmokingStopped">Time since you stopped smoking</a></li>
+</ul></li>
 </ul>
 </div>
 </div>

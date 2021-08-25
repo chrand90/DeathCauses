@@ -40,9 +40,9 @@ Breast cancer is part of the following death cause categories
 In the model Breast cancer has the following [risk factors](/model/intro#risk-factor)
 
 * [Alcohol consumption](/model/Drinking) (Alcohol)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop) (OCP end a.)
-* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
 * [Biological sex](/model/Sex) (Sex)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
+* [Time since taking OCP per year](/model/OralContraceptiveSinceStop) (OCP end a.)
 
 #### Number of deaths
 
@@ -86,7 +86,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Alcohol}} \cdot P_{\text{OCP end a.,OCP ever,Sex}}
+P=P_{\text{Alcohol}} \cdot P_{\text{Sex,OCP ever,OCP end a.}}
 $$
 
 

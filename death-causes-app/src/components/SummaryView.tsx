@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { observer } from "mobx-react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import { CardBody, CardHeader } from "reactstrap";
+import { CardBody, CardHeader, CardTitle } from "reactstrap";
 import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import RootStore, { withStore } from "../stores/rootStore";
 import BarChartWrapper from "./BarChartWrapper";
@@ -69,8 +69,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
+                        <CardHeader><h4>Effect of your change of input</h4></CardHeader>
                         <CardBody>
-                            <p>Effect of your change of input</p>
                             <ChangeView></ChangeView>
                         </CardBody>
                     </Card>

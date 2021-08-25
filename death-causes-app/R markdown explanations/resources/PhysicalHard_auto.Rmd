@@ -35,8 +35,8 @@ Hard physical activity time is a **input factor**. It means that it is one of th
 
 Hard physical activity time is used by the model in the following places
 
-* [Coronary heart disease](/model/Ischemic)
-* [Total physical activity time](/model/PhysicalTotal)
+* as a risk factor for [Coronary heart disease](/model/Ischemic)
+* to compute [Total physical activity time](/model/PhysicalTotal)
 
 #### Guidance
 
@@ -48,12 +48,14 @@ The unit of the input is **Minutes**, but can be changed to any of the units bel
 
 * Hours (1 Hours = 60 Minutes)
 
-The answer has to be larger than 0 Minutes. The answer is recommended to be larger than 0 Minutes and smaller than 1000 Minutes. High physical activities make you lose your breath and includes running, playing high-intensity sports etc.
+The answer has to be larger than 0 Minutes.The answer is recommended to be larger than 0 Minutes and smaller than 1000 Minutes, because that is where the model is most accurate.High physical activities make you lose your breath and includes running, playing high-intensity sports etc.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Hard physical activity time is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Hard physical activity time is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

@@ -37,7 +37,7 @@ The different optimizabilities are
 
 ## Risk factors
 
-#### Category 1
+### Category 1
 
 Description: It is impossible to change and it has never been in your control
 
@@ -49,7 +49,7 @@ Members:
 * [Biological sex](/model/Sex)
 
 
-#### Category 2
+### Category 2
 
 Description: It is impossible to change, but it could have been the consequence of your actions
 
@@ -63,36 +63,31 @@ Members:
 * [Head traumas](/model/HeadTrauma)
 
 
-#### Category 3
+### Category 3
 
 Description: It is impossible to change now, but it has once definitely been in your control
 
 Members:
 
 * [Time spent indoor tanning](/model/IndoorTanning)
-* [Oral contraceptives](/model/OralContraceptiveStatus)
-* [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver)
 * [Pesticide exposure](/model/PesticideExposure)
-* [Time span of smoking period](/model/SmokeDuration)
-* [Total time you have smoked per year](/model/SmokeDurationCumulative)
 * [Amount smoked in the past](/model/SmokePastAmount)
-* [Time since you stopped smoking per year](/model/SmokeSinceStop)
-* [Smoking status](/model/Smoking)
-* [Time since you stopped smoking](/model/SmokingStopped)
 
 
-#### Category 4
+### Category 4
 
 Description: It is possible to change, but it will take a lot of time.
 
 Members:
 
 * [BMI](/model/BMI)
+* [Diabetes condition](/model/DiabetesCondition)
 * [Waist circumference](/model/Waist)
 * [Waist circumference male equivalence](/model/WaistMale)
 
 
-#### Category 5
+### Category 5
 
 Description: It is possible to change, and it can be changed now or very soon.
 
@@ -106,14 +101,28 @@ Members:
 * [Fruit consumption](/model/Fruits)
 * [Fruits and vegetables consumption](/model/Greens)
 * [Peak Alcohol consumption](/model/MaxDrinking)
-* [Ever used oral contraceptives](/model/OralContraceptiveEver)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
 * [Time till stopping oral contraceptives](/model/OralContraceptiveTillStop)
 * [Hard physical activity time](/model/PhysicalHard)
 * [Medium physical activity time](/model/PhysicalMedium)
 * [Total time doing physical activity](/model/PhysicalTotal)
 * [Red meat consumption](/model/RedMeat)
-* [Total amount smoked in life](/model/SmokeCumulative)
 * [Current smoking amount](/model/SmokeIntensity)
-* [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
 * [Vegetable consumption](/model/Vegetables)
+
+
+### Category Mixed 
+
+* 4 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+  * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* 5 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Oral contraceptives](/model/OralContraceptiveStatus)
+* 5 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Total amount smoked in life](/model/SmokeCumulative)
+  * [Total time you have smoked per year](/model/SmokeDurationCumulative)
+  * [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
+  * [Smoking status](/model/Smoking)
+* 4 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Time span of smoking period](/model/SmokeDuration)
+  * [Time since you stopped smoking per year](/model/SmokeSinceStop)
+  * [Time since you stopped smoking](/model/SmokingStopped)

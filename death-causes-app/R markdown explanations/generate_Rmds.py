@@ -37,7 +37,6 @@ with open("resources/references.bib", "r") as f:
         if l.startswith("@"):
             b=l.split("{")[1]
             references.append(b.split(",")[0].strip())
-print(references)
 
 start_walk_loc = os.path.join( "texts")
 list_of_files = os.walk(start_walk_loc)
@@ -72,13 +71,52 @@ def get_all_descriptions(name):
         return all_descriptions_of_node + [name]
 
 def get_optimizability(node_name):
-    return descriptions[node_name]["optimizability"]
+    if isinstance(descriptions[node_name]["optimizability"], dict):
+        return descriptions[node_name]["optimizability"]["default"] 
+    else:
+        return descriptions[node_name]["optimizability"]
+
+def linked(node_name, length=20):
+    return "["+get_description(node_name, length)+"](/model/"+node_name+")"
+
+
+def has_alternative_optimizabilities(node_name):
+    return isinstance(descriptions[node_name]["optimizability"], dict)
+
+
+def get_alternative_values(node_name):
+    if has_alternative_optimizabilities(node_name):
+        vals=[descriptions[node_name]["optimizability"]["default"]]
+        explanations=["default"]
+        for factorName, valueDic in descriptions[node_name]["optimizability"]["conditionals"].items():
+            for affectingValue, resultingOptim in valueDic.items():
+                explanations.append(linked(factorName) + "='" + affectingValue+"'")
+                vals.append(resultingOptim)
+        full_explanations=list(zip(vals,explanations))
+        full_explanations.sort()
+        full_explanations_dic={explan: val for val, explan in full_explanations}
+        key=':'.join([str(a)+'-'+str(b) for a,b in full_explanations])
+        return full_explanations_dic, key
+    return [],[]
+
+def translate_conditionals(conditionals):
+    parts=[]
+    for factorName, valueDic in conditionals.items():
+        for affectingValue, resultingOptim in valueDic.items():
+            parts.append(linked(factorName) + "='" + affectingValue+"' in which case the optimizability is ["+str(OPTIM_DIC[resultingOptim])+"](/model/optimizabilities#category-"+str(OPTIM_DIC[resultingOptim])+")")
+    return ", or ".join(parts)
+
+def get_optimizability_addendum(node_name):
+    if has_alternative_optimizabilities(node_name):
+        return "(unless "+translate_conditionals(descriptions[node_name]["optimizability"]["conditionals"])+")"
+    return ""
 
 def get_factors_of_certain_optimizability(optim):
     res=[]
     for node_name,descrip_node in descriptions.items():
         if "optimizability" in descrip_node:
-            if descrip_node["optimizability"]==optim:
+            optim_candidate=get_optimizability(node_name)
+            if optim_candidate==optim:
                 res.append(node_name)
     return res
 
@@ -336,7 +374,7 @@ def make_list_of_deathcause_categories(node_name, title, f, add_itself=False):
         f.write("\n#### Categories\n\n")
         f.write(title + " is " + itself_string + "part of the following death cause categories\n\n")
         for ancestor in ancestors:
-            f.write("* [" + get_description(ancestor, 40) + "](/model/" + ancestor + ")\n")
+            f.write("* "+linked(ancestor,40)+"\n")
 
 def make_number_of_deaths_section(title, node_name, f, condition=False):
     if condition:
@@ -442,18 +480,18 @@ def make_list_of_death_cause_children(node_name, title,f):
     f.write(title+" consists of the following causes\n\n")
     for child, is_category in get_death_cause_children(node_name):
         if is_category:
-            f.write("* The death causes of the category ["+get_description(child, 25)+"](/model/"+child+")\n")
+            f.write("* The death causes of the category "+linked(child,25)+"\n")
         else:
-            f.write("* ["+get_description(child, 30)+"](/model/"+child+")\n")
+            f.write("* "+ linked(child,30)+"\n")
 
 def make_list_of_descendants(node_name, title, f):
     f.write("\n#### Uses\n\n")
     f.write(title + " is used by the model in the following places\n\n")
     for child, category in get_children(node_name):
-        if category=="Death cause category":
-            f.write("* The death causes of the category *["+get_description(child, 25)+"](/model/"+child+")")
+        if category=="Death cause category" or category=="Death cause" or category=="Condition":
+            f.write("* as a risk factor for "+linked(child,25)+"\n")
         else:
-            f.write("* ["+get_description(child, 30)+"](/model/"+child+")\n")
+            f.write("* to compute " + linked(child,30)+"\n")
 
 def make_list_of_special_factors(node_name, title, spfgs, f):
     ancestors = []
@@ -477,7 +515,7 @@ def make_list_of_input_factors(node_name, title, f):
     f.write("\n#### Input\n\n")
     f.write(title + " is computed with the following factors\n\n")
     for ancestor in ancestors:
-        f.write("* [" + get_description(ancestor, 30) + "](/model/" + ancestor + ")\n")
+        f.write("* "+linked(ancestor,30)+"\n")
 
 
 def make_list_of_risk_factors(node_name, title, rfgs, f):
@@ -495,15 +533,16 @@ def make_list_of_risk_factors(node_name, title, rfgs, f):
             if short_name != long_name:
                 f.write(" ("+short_name + ")")
             if location_node != node_name:
-                f.write(" inherited from [" + get_description(location_node, 22) + "](/model/" + location_node + ")")
+                f.write(" inherited from "+linked(location_node,22))
             f.write("\n")
+        
         return True
     else:
         f.write(title + " has no [risk factors](/model/intro#risk-factor) in the model (yet).\n")
         return False
 
 def make_computation_section(node_name, title, f):
-    f.write("\n#### Computation\n\n")
+    f.write("\n### Computation\n\n")
     text_available= get_text(node_name,"computation")
     if text_available:
         f.write(text_available)
@@ -529,6 +568,7 @@ def make_options_section(factor_node, node_name, f):
         f.write("* "+option+"\n")
     add_text_if_there(f,node_name, "options", "after")
 
+
 def write_domain(factor_node, domain, f):
     if factor_node["placeholder"] and factor_node["placeholder"]!="Value" and factor_node["placeholder"]!="Number":
         unit=" "+factor_node["placeholder"]
@@ -540,7 +580,6 @@ def write_domain(factor_node, domain, f):
             f.write(" and")
     if "max" in factor_node[domain]:
         f.write(" smaller than "+str(factor_node[domain]["max"])+unit)
-    f.write(". ")
 
 def make_limits_section(factor_node, node_name, f):
     text_available = get_text(node_name, "limits")
@@ -550,10 +589,12 @@ def make_limits_section(factor_node, node_name, f):
         if "requiredDomain" in factor_node:
             f.write("The answer has to be")
             write_domain(factor_node, "requiredDomain",f)
+            f.write(".")
         if "recommendedDomain" in factor_node:
             if "requiredDomain" not in factor_node or factor_node["requiredDomain"]!=factor_node["recommendedDomain"]:
                 f.write("The answer is recommended to be")
                 write_domain(factor_node, "recommendedDomain", f)
+                f.write(", because that is where the model is most accurate.")
     add_text_if_there(f, node_name, "limits", "after")
 
 def make_helpjson_section(factor_node, node_name, f):
@@ -572,10 +613,15 @@ def make_optimizability_section(node_name, title, f):
     if text_available: 
         f.write(text_available)
     else:
-        f.write("The optimizability of "+title+ " is "+str(OPTIM_DIC[optim])+". This means that it can be interpreted as\n\n")
-    f.write("> *")
-    f.write(OPTIM_DESCRIPTION_DIC[optim])
-    f.write("*\n\n")
+        f.write("The optimizability of "+title+ " is ["+str(OPTIM_DIC[optim])+"](/model/optimizabilities#category-"+str(OPTIM_DIC[optim])+")"+get_optimizability_addendum(node_name))
+        if has_alternative_optimizabilities(node_name):
+            f.write(".")
+        else: 
+            f.write(". This means that it can be interpreted as\n\n")
+    if not has_alternative_optimizabilities(node_name):
+        f.write("\n\n> *")
+        f.write(OPTIM_DESCRIPTION_DIC[optim]+"*")
+    f.write("\n\n")
     add_text_if_there(f,node_name, "optimizability", "after")
 
 def make_guidance_section(node_name, title, f):
@@ -725,12 +771,34 @@ def createOptimizabilities():
         for optim in range(1,6):
             f.write(str(optim)+". "+OPTIM_DESCRIPTION_DIC[optim]+"\n")
         f.write("\n\n## Risk factors")
+        with_conditionals={}
         for optim in range(1,6):
-            f.write("\n\n#### Category "+str(optim)+"\n\n")
+            f.write("\n\n### Category "+str(optim)+"\n\n")
             f.write("Description: " + OPTIM_DESCRIPTION_DIC[optim]+"\n\n")
             f.write("Members:\n\n")
             for factor in sorted(get_factors_of_certain_optimizability(OPTIM_REVERSE_DIC[optim])):
-                f.write("* ["+get_description(factor,40)+"](/model/"+ factor+")\n")
+                if has_alternative_optimizabilities(factor):
+                    factor_optim_dic, key=get_alternative_values(factor)
+                    if key in with_conditionals:
+                        with_conditionals[key].append((factor_optim_dic, factor))
+                    else:
+                        with_conditionals[key]=[(factor_optim_dic, factor)]
+                else:
+                    f.write("* "+linked(factor,40)+"\n")
+        print("with_conditionals", with_conditionals)
+        if len(with_conditionals)>0:
+            f.write("\n\n### Category Mixed \n\n")
+            for mixed_optim_key, factor_list in with_conditionals.items():
+                explanation=factor_list[0][0]
+                res=""
+                for explan, optimVal in explanation.items():
+                    if explan!="default":
+                        res+=str(OPTIM_DIC[optimVal])+ " if "+explan
+                res+=", else "+str(OPTIM_DIC[explanation["default"]])
+                f.write("* "+res+"\n")
+                for  _, factor in factor_list:
+                    f.write("  * "+linked(factor, 40)+"\n")
+
 
 def createReferences():
     with open(os.path.join("resources","references.Rmd"), "w") as f:

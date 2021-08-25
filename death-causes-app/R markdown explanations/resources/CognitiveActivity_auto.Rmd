@@ -33,7 +33,7 @@ Cognitive activity is a **input factor**. It means that it is one of the inputs 
 
 Cognitive activity is used by the model in the following places
 
-* [Alzheimers](/model/Alzheimers)
+* as a risk factor for [Alzheimers](/model/Alzheimers)
 
 #### Guidance
 
@@ -41,12 +41,14 @@ The user input is a typed number and should answer the question
 
 > How cognitively active are you on a scale from 1 to 5, where 1 is 'very little' and 5 is 'very much'?
 
-The answer has to be larger than 1 and smaller than 5. Cognitively active is measured by how often you do the following activities: reading, playing cognitive games such as chess, attend cultural events, etc. If you do all these things daily, you should answer 5 and if you only rarely do them, you should answer 1. 80% of (older) people are between 2.2 and 4.
+The answer has to be larger than 1 and smaller than 5.Cognitively active is measured by how often you do the following activities: reading, playing cognitive games such as chess, attend cultural events, etc. If you do all these things daily, you should answer 5 and if you only rarely do them, you should answer 1. 80% of (older) people are between 2.2 and 4.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Cognitive activity is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Cognitive activity is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

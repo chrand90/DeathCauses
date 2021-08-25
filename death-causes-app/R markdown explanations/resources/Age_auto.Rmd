@@ -39,12 +39,14 @@ The unit of the input is **Years**, but can be changed to any of the units below
 
 * Days (1 Years = 365.25 Days)
 
-The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years. Input you age rounded down to the nearest whole number. 
+The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.Input you age rounded down to the nearest whole number. 
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Age is 1. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Age is [1](/model/optimizabilities#category-1). This means that it can be interpreted as
+
+
 
 > *It is impossible to change and it has never been in your control*
 

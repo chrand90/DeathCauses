@@ -176,7 +176,7 @@ export default class FactorInputStore {
   updateAgeValidity(){
     if(this.validities["Age"].status!=="Error"){
       const newValue=parseFloat(this.factorAnswers["Age"] as string)
-      if(newValue>=this.advancedOptionsStore.submittedAgeTo){
+      if(newValue>=this.advancedOptionsStore.submittedAgeTo && !this.advancedOptionsStore.ageFromSet){
         this.validities["Age"]= {
           status: "Error",
           message: "Can't be higher than endAge."

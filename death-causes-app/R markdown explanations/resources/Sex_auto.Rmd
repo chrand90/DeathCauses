@@ -32,14 +32,14 @@ Biological sex is a **input factor**. It means that it is one of the inputs from
 
 Biological sex is used by the model in the following places
 
-* [Breast cancer](/model/BreastCancer)
-* [Cervix cancer](/model/CervixCancer)
-* [Liver cancer](/model/LiverCancer)
-* [Ovary cancer](/model/OvaryCancer)
-* [Prostate cancer](/model/ProstateCancer)
-* [Uterus cancer](/model/UterusCancer)
-* [Childbirth](/model/Childbirth)
-* [Waist circumference as male](/model/WaistMale)
+* as a risk factor for [Breast cancer](/model/BreastCancer)
+* as a risk factor for [Cervix cancer](/model/CervixCancer)
+* as a risk factor for [Liver cancer](/model/LiverCancer)
+* as a risk factor for [Ovary cancer](/model/OvaryCancer)
+* as a risk factor for [Prostate cancer](/model/ProstateCancer)
+* as a risk factor for [Uterus cancer](/model/UterusCancer)
+* as a risk factor for [Childbirth](/model/Childbirth)
+* to compute [Waist circumference as male](/model/WaistMale)
 
 #### Guidance
 
@@ -55,7 +55,9 @@ The user has the following answer options
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Biological sex is 1. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Biological sex is [1](/model/optimizabilities#category-1). This means that it can be interpreted as
+
+
 
 > *It is impossible to change and it has never been in your control*
 

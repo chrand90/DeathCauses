@@ -169,6 +169,8 @@ export default class RiskRatioGroupNode extends FormUpdater {
             .getFactorNamesWithoutAge()
             .filter((factorName: string) => {
               return nodes.includes(factorName);
+            }).filter(factorName => {
+              return !previouslyCountouredFactors.includes(factorName);
             });
             const { SDic, RRmax } = computeUsAndSs(
               rrt,
@@ -184,7 +186,9 @@ export default class RiskRatioGroupNode extends FormUpdater {
             })
           }
         );
-        previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=>d!=="Age"))
+        previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=> {
+          return d!=="Age" && !previouslyCountouredFactors.includes(d)
+        }))
         optimToSdics[optimValue]=RRresults;
       }
     );

@@ -28,7 +28,7 @@ Race is a **input factor**. It means that it is one of the inputs from the user 
 
 Race is used by the model in the following places
 
-* [Skin cancer](/model/SkinCancer)
+* as a risk factor for [Skin cancer](/model/SkinCancer)
 
 #### Guidance
 
@@ -46,7 +46,9 @@ The user has the following answer options
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Race is 1. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Race is [1](/model/optimizabilities#category-1). This means that it can be interpreted as
+
+
 
 > *It is impossible to change and it has never been in your control*
 

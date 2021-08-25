@@ -34,7 +34,7 @@ Time spent indoor tanning is a **input factor**. It means that it is one of the 
 
 Time spent indoor tanning is used by the model in the following places
 
-* [Skin cancer](/model/SkinCancer)
+* as a risk factor for [Skin cancer](/model/SkinCancer)
 
 #### Guidance
 
@@ -44,11 +44,13 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Hours**.
 
-The answer has to be larger than 0 Hours. The answer is recommended to be larger than 0 Hours and smaller than 60 Hours. 
+The answer has to be larger than 0 Hours.The answer is recommended to be larger than 0 Hours and smaller than 60 Hours, because that is where the model is most accurate.
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time spent indoor tanning is 3. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time spent indoor tanning is [3](/model/optimizabilities#category-3). This means that it can be interpreted as
+
+
 
 > *It is impossible to change now, but it has once definitely been in your control*
 

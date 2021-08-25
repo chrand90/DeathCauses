@@ -122,26 +122,17 @@ class SmokeTypicalAmount extends FormUpdater{
         const SmokeDuration=this.getNode(allPreviousUpdateForms, "SmokeDuration").value as number;
         const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
         let newValue: number[]=[];
-        const pastAverage=SmokeDuration*SmokingPastAmount/(Math.max(1,SmokeDuration))
         for(let i=0; i<ageTo-ageFrom+1; i++){
-            if(ageFrom+i<=age){
-                if(ageFrom+i<age-SmokingStopped-SmokeDuration){
-                    newValue.push(0)
-                }
-                else if(Smoking==="Current smoker"){
-                    newValue.push(SmokeIntensity)
-                }
-                else{
-                    newValue.push(SmokingPastAmount)
-                }
+            if(ageFrom+i<age-SmokingStopped-SmokeDuration){
+                newValue.push(0)
+            }
+            else if(Smoking==="Current smoker"){
+                newValue.push(SmokeIntensity)
             }
             else{
-                if(Smoking==="Current smoker"){
-                    newValue.push(SmokeIntensity)
-                }
-                else{
-                    newValue.push(SmokingPastAmount)
-                }
+                newValue.push(SmokingPastAmount)
+            }
+
                 // if(SmokeIntensity>-0.01){
                 //     let proportion= SmokeDuration/(SmokeDuration+ageFrom+i-age)
                 //     newValue.push(proportion*pastAverage+(1-proportion)*SmokeIntensity)
@@ -149,7 +140,6 @@ class SmokeTypicalAmount extends FormUpdater{
                 // else{
                 //     newValue.push(pastAverage);
                 //}
-            }
         }
         return {...this.ChangedAndMissing(),
             type: TypeStatus.NUMERIC,

@@ -15,6 +15,21 @@ export class ContactPage extends React.Component {
                         <ContactCard description="Codebase." name="Christian Andersen" imageUrl="https://mdbootstrap.com/img/Photos/Avatars/img%20(31).jpg" />
                     </CardDeck>
                 </Row>
+                
+                <div style={{textAlign: "left"}}>
+                    <h5>Thanks for</h5>
+                    <h6>Database</h6>
+                    <ul>
+                        <li>Maria Vendelbo Nielsen (HPV Vaccine)</li>
+                    </ul>
+                    <h6>Feedback</h6>
+                    <ul>
+                        <li>Anna Lauridsen</li>
+                        <li>Henrik Vendelbo Nielsen</li>
+                        <li>Signe Vendelbo Nielsen</li>
+                        <li>Århus Esperantoforening</li>
+                    </ul>
+                </div>
             </Container>
         );
     }

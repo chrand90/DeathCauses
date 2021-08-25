@@ -44,17 +44,15 @@ Total amount smoked in life is computed with the following factors
 
 Total amount smoked in life is used by the model in the following places
 
-* [Bronchitis](/model/Bronchitis)
+* as a risk factor for [Bronchitis](/model/Bronchitis)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total amount smoked in life is 5. This means that it can be interpreted as
-
-> *It is possible to change, and it can be changed now or very soon.*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total amount smoked in life is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [5](/model/optimizabilities#category-5)).
 
 
-#### Computation
+### Computation
 
 [Place explanation for how Total amount smoked in life is computed here]
 

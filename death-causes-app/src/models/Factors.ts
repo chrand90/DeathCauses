@@ -218,7 +218,9 @@ class Factors {
     return factorAnswers;
   }
 
-  simulateFactorAnswersAndMaskings() {
+  simulateFactorAnswersAndMaskings(
+    simulateMissing: boolean=true
+  ) {
     let factorMaskings: FactorMaskings = {};
     let factorAnswers = this.initializedFactorAnswers();
     let factorMaskingCandidate: FactorMaskings | "nothing changed";
@@ -228,7 +230,12 @@ class Factors {
           factorMaskings[factorName].effectiveValue
         );
       } else {
-        factorAnswers[factorName] = factorobject.simulateValue();
+        if(simulateMissing && Math.random()<0.9){
+          factorAnswers[factorName]=""
+        }
+        else{
+          factorAnswers[factorName] = factorobject.simulateValue();
+        }        
       }
       if (factorobject.factorType === "string") {
         factorMaskingCandidate = this.updateMasked(

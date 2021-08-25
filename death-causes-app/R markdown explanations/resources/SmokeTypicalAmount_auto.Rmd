@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Average amount smoked in smoking period is a **computed factor**. It means that it can be determined with total certainty from the user input.
 
@@ -44,23 +44,23 @@ Average amount smoked in smoking period is computed with the following factors
 
 Average amount smoked in smoking period is used by the model in the following places
 
-* [Bladder cancer](/model/BladderCancer)
-* [Lung cancer](/model/LungCancer)
-* [Coronary heart disease](/model/Ischemic)
-* [COPD](/model/COPD)
+* as a risk factor for [Bladder cancer](/model/BladderCancer)
+* as a risk factor for [Lung cancer](/model/LungCancer)
+* as a risk factor for [Coronary heart disease](/model/Ischemic)
+* as a risk factor for [COPD](/model/COPD)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Average amount smoked in smoking period is 5. This means that it can be interpreted as
-
-> *It is possible to change, and it can be changed now or very soon.*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Average amount smoked in smoking period is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [5](/model/optimizabilities#category-5)).
 
 
-#### Computation
+### Computation
 
-[Place explanation for how Average amount smoked in smoking period is computed here]
+If one's [Smoking status](/model/Smoking) is 'Current smoker' this factor is equal to [Current smoking amount](/model/SmokeIntensity). If one is a 'Former smoker', it is equal to how much one smoked in the past. That is [Past smoking amount](/model/SmokePastAmount). If one is a 'never smoker', it is equal to 0. 
 
+If the user has changed the advanced settings such that the [computation period](/model/advancedOptions#computation-period) starts before he or she began smoking, this factor will be 0. This is why computation of Average smoking also uses [Time since smoking](/model/SmokingStopped) and [Time span of smoking period](/model/SmokeDuration). 
 
+This factor potentially changes over time (because one can set the start of the computation period before start of smoking), so we compute a value for every year. 
 
 ## References

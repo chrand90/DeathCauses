@@ -124,7 +124,7 @@ plotSpecificPlots(dat, 'ColonCancer', c('Drinking'),'interpolated')
 
 [Total physical activity time](/model/PhysicalTotal) is a risk factor for Colon cancer.
 
-It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar [@samad2005meta]. We therefore obtain the [risk ratios](#risk-ratio) from @Kyui2016physical, where they estimated a [dose-response](#dose-response) relationship based on total physical activity in a [meta analysis](#meta-analysis). They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).
+It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar [@samad2005meta]. We therefore obtain the [risk ratios](#risk-ratio) from @kyui2016physical, where they estimated a [dose-response](#dose-response) relationship based on total physical activity in a [meta analysis](#meta-analysis). They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'ColonCancer', c('PhysicalTotal'),'raw')
