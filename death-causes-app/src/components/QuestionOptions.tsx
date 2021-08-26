@@ -36,6 +36,7 @@ class QuestionOptionsWithoutStore extends React.Component<
     };
     this.startOverQuestionnaire=this.startOverQuestionnaire.bind(this);
     this.insertRandom = this.insertRandom.bind(this);
+    this.insertRandomInUnanswered=this.insertRandomInUnanswered.bind(this);
   }
 
   toggleInputFileCard() {
@@ -60,23 +61,35 @@ class QuestionOptionsWithoutStore extends React.Component<
     this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
   }
 
+  insertRandomInUnanswered() {
+    const {
+      factorAnswers,
+      factorMaskings,
+    } = this.props.store.loadedDataStore.factors.simulateNonAnswered(this.props.store.factorInputStore.factorAnswers);
+    this.props.store.factorInputStore.setFactorAnswers(factorAnswers, factorMaskings)
+    this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
+  }
+
   render() {
     return (
       <div>
         <DropdownButton id="dropdown-basic-button" title="Options" size="sm">
-          <Dropdown.Item onClick={this.startOverQuestionnaire}>
+          <Dropdown.Item onClick={this.startOverQuestionnaire} id="startover">
             Start over
           </Dropdown.Item>
-          <Dropdown.Item onClick={this.props.store.questionProgressStore.finishQuestionnaireStartOverview} disabled={this.props.disableGoToEnd}>
+          <Dropdown.Item onClick={this.props.store.questionProgressStore.finishQuestionnaireStartOverview} disabled={this.props.disableGoToEnd} id="gotoend">
             Go to end
           </Dropdown.Item>
-          <Dropdown.Item onClick={this.insertRandom}>
+          <Dropdown.Item onClick={this.insertRandom} id="random-everything">
             Randomize everything
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => this.toggleInputFileCard()}>
+          <Dropdown.Item onClick={this.insertRandomInUnanswered} id="random-unanswered">
+            Randomize unanswered
+          </Dropdown.Item>
+          <Dropdown.Item onClick={() => this.toggleInputFileCard()} id="uselocalfile">
             Use local file
           </Dropdown.Item>
-          <Dropdown.Item onClick={() => this.toggleSaveFileCard()}>
+          <Dropdown.Item onClick={() => this.toggleSaveFileCard()} id="savedata">
             Save your input data
           </Dropdown.Item>
         </DropdownButton>

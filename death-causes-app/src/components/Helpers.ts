@@ -8,7 +8,8 @@ export const QUERY_STRING_START = "?inputData="
 
 const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
-
+export const DEATHCAUSES_COLOR= "#94c5b1"
+export const DEATHCAUSES_LIGHT="#c5ded4"
 
 
 

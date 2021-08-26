@@ -77,9 +77,9 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 </Col>
                 <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="bg-light ">
-                        <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
+                        <CardHeader><h4>Risk Factors</h4></CardHeader>
                         <CardBody>
-                            <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
+                            <p>The bar below represents all the time you lose to known risk factors.</p>
                             <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} simpleVersion={true} />
                         </CardBody>
                     </Card>

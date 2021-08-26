@@ -18,6 +18,7 @@ class AppWithoutObserver extends React.Component {
 
     return (
       <StoreContext.Provider value={store}>
+        <script data-goatcounter="https://deathcauses.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
         <BrowserRouter>
           <Switch>
             <Route exact path="/">
