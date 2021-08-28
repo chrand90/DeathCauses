@@ -55,3 +55,17 @@ npm-debug.log
 #the extra copy of causes.json and other similar files
 /compile/*.json
 .Rproj.user
+
+.metadata
+/compile/Critical Points
+comp
+compile/test.R
+compile/W_matrix.txt
+Database/ICD dictionary
+death-causes-app/R markdown explanations/resources/libs
+death-causes-app/src/.prettierrc
+Resources/description of model/overview/
+Reportgeneration/DatabaseVisualization/RRtablePlotting/.gitignore
+death-causes-app/R markdown explanations/resources/test.R
+*empty-anchor.js
+*header-attrs.js

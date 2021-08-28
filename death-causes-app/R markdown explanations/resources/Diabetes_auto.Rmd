@@ -120,9 +120,9 @@ $$
 
 #### Diabetes condition
 
-Diabetes condition is a risk factor for Diabetes.
+[Diabetes condition](/model/DiabetesCondition) is a risk factor for Diabetes.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Diabetes', c('DiabetesCondition'),'raw')

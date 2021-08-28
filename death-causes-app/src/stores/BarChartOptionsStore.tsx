@@ -37,11 +37,12 @@ export default class BarChartStore {
       this.collectedCategories=newCats
 		}
 		else{
-			console.log("Tried to remove a category that wasnt collapsed... Ignored.")
+			console.warn("Tried to remove a category that wasnt collapsed... Ignored.")
 		}
 	}
 
   collectParentCategory(category: string){
+	  console.log("collects", category)
 		const parent=this.loadedDataStore.rdat.getParentCategory(category)
 		let noLongerNeedsToBeCollapsed: string[];
 		let newCats:string[]=[...this.collectedCategories]
@@ -68,7 +69,7 @@ export default class BarChartStore {
   setDiseaseToWidth(newDiseaseToWidth: null | string){
     this.latestChange=LatestChange.FITSCREEN;
     this.diseaseToWidth=newDiseaseToWidth
-	}
+  }
 
   get explicitCollectedGroups(){
     return this.loadedDataStore.rdat.makeCollectedGroups(this.collectedCategories);

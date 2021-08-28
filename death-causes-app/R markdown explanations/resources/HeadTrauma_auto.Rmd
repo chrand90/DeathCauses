@@ -42,7 +42,7 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Concussions**.
 
-The answer has to be larger than 0 Concussions. The answer is recommended to be larger than 0 Concussions. 
+The answer has to be larger than 0 Concussions. 
 
 ### Optimizability
 

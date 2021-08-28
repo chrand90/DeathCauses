@@ -42,6 +42,7 @@ Time since you stopped smoking per year is computed with the following factors
 
 Time since you stopped smoking per year is used by the model in the following places
 
+* [Bladder cancer](/model/BladderCancer)
 * [Lung cancer](/model/LungCancer)
 * [Coronary heart disease](/model/Ischemic)
 * [COPD](/model/COPD)

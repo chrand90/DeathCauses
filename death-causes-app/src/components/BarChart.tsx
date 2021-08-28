@@ -600,7 +600,7 @@ export default class BarChart {
   ) {
     const vis = this;
     const rectButtons = vis.svg
-      .selectAll("fitscreenButtons")
+      .selectAll(".fitscreenButtons")
       .data(dataIds, function (i: any) {
         return i;
       })
@@ -1429,11 +1429,18 @@ export default class BarChart {
                           designConstants,
                           diseaseToWidth
                         );
+                        const ids=sortedTotalsFinal.map((d, i) => i)
+                        vis.makeFitScreenButtons(
+                          ids,
+                          sortedTotalsFinal,
+                          diseaseToWidth,
+                          designConstants
+                        )
                         vis.reMapFitScreenButtons(
                           sortedTotalsFinal,
-                          sortedTotalsFinal.map((d, i) => i),
+                          ids,
                           diseaseToWidth
-                        );
+                        )
                         vis.transitionsFinished += 1;
                       }
                     );
@@ -1607,12 +1614,12 @@ export default class BarChart {
         designConstants,
         diseaseToWidth,
         () => {
-          this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
           this.instantUpdateOfRects(
             dataSortedTotal,
             designConstants,
             diseaseToWidth
           );
+          this.reMapFitScreenButtons(dataSortedTotal, dataIds, diseaseToWidth);
         },
         durationPerTransition
       );

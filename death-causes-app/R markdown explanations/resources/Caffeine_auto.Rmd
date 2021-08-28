@@ -33,7 +33,6 @@ Coffee consumption is a **input factor**. It means that it is one of the inputs 
 
 Coffee consumption is used by the model in the following places
 
-* [Alzheimers](/model/Alzheimers)
 * [Liver cancer](/model/LiverCancer)
 * [Pancreas cancer](/model/PancreasCancer)
 * [Uterus cancer](/model/UterusCancer)

@@ -33,8 +33,8 @@ Diabetes condition is a **condition**. It means that the model computes probabil
 
 In the model Diabetes condition has the following [risk factors](/model/intro#risk-factor)
 
-* [BMI](/model/BMI)
 * [Waist circumference as male](/model/WaistMale) (Waist (male))
+* [BMI](/model/BMI)
 
 #### Special factors
 
@@ -46,6 +46,7 @@ In the model Diabetes condition has the following [special factors](/model/intro
 
 Diabetes condition is used by the model in the following places
 
+* [Alzheimers](/model/Alzheimers)
 * [Diabetes](/model/Diabetes)
 
 #### Prevalence
@@ -75,15 +76,15 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{BMI,Waist (male)}}
+P=P_{\text{Waist (male),BMI}}
 $$
 
 
 #### BMI
 
-BMI is a risk factor for Diabetes condition.
+[BMI](/model/BMI) is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'raw')
@@ -99,9 +100,9 @@ plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'interpolated')
 
 #### Waist circumference as male
 
-Waist circumference as male is a risk factor for Diabetes condition.
+[Waist circumference as male](/model/WaistMale) is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'raw')

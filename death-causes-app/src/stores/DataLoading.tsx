@@ -65,6 +65,11 @@ export async function loadFactors():Promise<LoadedFactors> {
     return {factors: factors, rawFactorInput: inputJson}
 }
 
+export async function loadICD():Promise<{[cause: string]: string[]}> {
+    const loadedICD=await loadFromFile<{[cause:string]:string[]}>("ICDMinimum.json")
+    return loadedICD
+}
+
 export async function loadConditions():Promise<LoadedConditions> {
     const rawConditions= await loadFromFile<ConditionJson>("Conditions.json")
     const conditions:{[k:string]:Condition}={}

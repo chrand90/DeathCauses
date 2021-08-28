@@ -26,7 +26,7 @@ Total amount smoked in life is a **computed factor**. It means that it can be de
 
 #### Alternative names:
 * Smoke total
-* Cummulative smoking
+* Cumulative smoking
 * Total amount smoked in life
 * SmokeCumulative
 
@@ -44,7 +44,6 @@ Total amount smoked in life is computed with the following factors
 
 Total amount smoked in life is used by the model in the following places
 
-* [Bladder cancer](/model/BladderCancer)
 * [Bronchitis](/model/Bronchitis)
 
 

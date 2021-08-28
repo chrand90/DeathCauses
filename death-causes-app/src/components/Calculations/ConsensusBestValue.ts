@@ -298,8 +298,8 @@ export class BestValues {
     }
     if(!(factorName in this.factorAnswers)){
       console.error("The factor "+factorName+" was not in factoranswers")
-      console.log("factoranswers:")
-      console.log(this.factorAnswers)
+      console.error("factoranswers:")
+      console.error(this.factorAnswers)
     }
     let unit=descriptions.getBaseUnit(factorName)
     if(unit!==""){
@@ -549,7 +549,7 @@ export function getMultifactorGainStatement(proportion: number, total: number, c
   return {
       textWithButtons: res,
       buttonCodes:  buttonCodes
-  };    
+  };
 }
 
 export function mergeBestValues(bestValues: BestValues[]): BestValues {

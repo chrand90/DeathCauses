@@ -1,7 +1,7 @@
 import { autorun, IReactionDisposer } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Form, Tab, Tabs } from "react-bootstrap";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
@@ -59,7 +59,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     }
   }
 
-
+  //this wrapping in a div is necesseray to secure  smoother transition
   renderAdvancedOptionsMenu() {
     return (
       <div>
@@ -68,105 +68,78 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     );
   }
 
-  renderDataBoundedGraph(
-    visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH
-  ) {
-    switch (visualization) {
+  waitingMessage(){
+    return (<p>Input your age to get started</p>)
+  }
+
+  isResultsComputed(){
+    switch (this.props.store.uIStore.visualization) {
       case Visualization.BAR_GRAPH: {
-        return (
-          <div>
-            {this.state.riskFactorContributions.length>0 || Object.keys(this.state.riskFactorContributions).length>0 ? (
-              <BarChartWrapper
-                database={this.state.riskFactorContributions}
-              />
-            ) : (
-              "Input age to get started" 
-            )}
-          </div>
-        );
+        return this.state.riskFactorContributions.length>0 || Object.keys(this.state.riskFactorContributions).length>0;
+      }
+      case Visualization.SUMMARY_VIEW: {
+        return this.state.summaryViewData !== null
       }
       case Visualization.SURVIVAL_GRAPH: {
-        return <BarPlotWrapper data={this.state.survivalCurveData} />;
+        return true;
+      }
+      default: {
+        return false;
       }
     }
   }
 
   renderChosenGraph() {
-    switch (this.props.store.uIStore.visualization) {
-      case Visualization.BAR_GRAPH:
-      case Visualization.SURVIVAL_GRAPH: {
-        return (
-          <div>
-            {this.renderAdvancedOptionsMenu()}
-            {this.renderDataBoundedGraph(this.props.store.uIStore.visualization)}
-          </div>
-        );
-      }
-      case Visualization.RELATION_GRAPH: {
-        return (
-          <RelationLinkVizWrapper/>
-        );
-      }
-      case Visualization.NO_GRAPH: {
-        return "Input an age to get started";
-      }
-      case Visualization.SUMMARY_VIEW: {
-        if (this.state.summaryViewData === null) {
-          return (<h3>Answer questions and compute to show results</h3>)
+    if(this.isResultsComputed()){
+      switch (this.props.store.uIStore.visualization) {
+        case Visualization.BAR_GRAPH: {
+          return <BarChartWrapper database={this.state.riskFactorContributions}/>
         }
-        return (
-          <SummaryView data={this.state.summaryViewData}/>
-        )
-      }
-      default: {
-        return <p>'No visualizations'</p>;
+        case Visualization.SUMMARY_VIEW: {
+          return <SummaryView data={this.state.summaryViewData}/>
+        }
+        case Visualization.SURVIVAL_GRAPH: {
+          return <BarPlotWrapper data={this.state.survivalCurveData} />
+        }
       }
     }
+    return this.waitingMessage();
   }
 
   renderSelectOption() {
     const orgval = this.props.store.uIStore.visualization;
     return (
-      <Form>
-        <Form.Group className="visualisation">
-          <Form.Row>
-            <select
-              value={orgval}
-              onChange={(ev) => {
-                const val = ev.currentTarget.value;
-                this.props.store.uIStore.setVisualization(
-                  val as Visualization
-                );
-              }}
-            >
-              {[
-                Visualization.SURVIVAL_GRAPH,
-                Visualization.RELATION_GRAPH,
-                Visualization.BAR_GRAPH,
-                Visualization.SUMMARY_VIEW
-
-              ].map((d: string) => {
-                return (
-                  <option value={d} key={d}>
-                    {d}
-                  </option>
-                );
-              })}
-            </select>
-          </Form.Row>
-        </Form.Group>
-      </Form>
+      <div>
+        <Tabs
+        id="select-visualization"
+        activeKey={this.props.store.uIStore.visualization}
+        onSelect={(k:any) => this.props.store.uIStore.setVisualization(k)}
+        className="mb-3"
+        >
+          {[Visualization.SURVIVAL_GRAPH,
+            Visualization.BAR_GRAPH,
+            Visualization.SUMMARY_VIEW
+          ].map((d: string) => {
+            return (
+              <Tab eventKey={d} title={d}></Tab>
+            );
+          })}
+        </Tabs>
+      </div>
     );
   }
 
   render(): React.ReactNode {
     return (
-      <div onClick={() => {
-        this.props.store.uIStore.tooltipHider()
-      }}>
-        <h4> Visualization Menu </h4>
+      <div 
+        onClick={() => {
+          this.props.store.uIStore.tooltipHider()
+        }}
+        style={{paddingTop:"18px"}}
+      >
+        <h3> Visualization </h3>
         {this.renderSelectOption()}
-        <hr></hr>
+        {this.renderAdvancedOptionsMenu()}
         {this.renderChosenGraph()}
       </div>
     );

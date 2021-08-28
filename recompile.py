@@ -31,6 +31,8 @@ parser.add_argument('--guided', action='store_true', default=False,
                         help="Will guide you to make sure that the proper setup is used")
 parser.add_argument('--Rpath', type=str, default="Rscript",
                         help="the path to the R executable.")
+			   
+parser.add_argument('--nodes', type=str, nargs="+", help="list of nodes to recompute html files for")
 
 options=parser.parse_args()
 
@@ -52,8 +54,14 @@ if yes_no("Do you wish to recompute all json files? [y/n]"):
 if options.guided:
 	print("A list of certainly required R packages can be found in Reportgeneration/DatabaseVisualization/RRtablePlotting/DESCRIPTION and possibly required packages can be found in \"death-causes-app/R markdown explanations/installed_packages.csv\"")
 	yes_no_continue("Are you happy with using this command to invoke R notebooks: '"+options.Rpath+"'?[y/n]", "Make sure to add the correct argument to --Rpath for this recompiler")
-	
-if yes_no("Do you wish to recompute all html help files? [y/n]"):
+
+if options.nodes:
+	subprocess.run(["python","generate_Rmds.py"], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations"))
+	for node in options.nodes:
+		l=node+"_auto.Rmd"
+		command= '"rmarkdown::render(\'{filename}\')"'.format(filename=l)
+		subprocess.run([options.Rpath, "-e", command], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations","resources"))
+elif yes_no("Do you wish to recompute all html help files? [y/n]"):
 	subprocess.run(["python","generate_Rmds.py"], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations"))
 	for l in os.listdir(os.path.join("death-causes-app","R markdown explanations","resources")):
 		if l.endswith(".Rmd"):
@@ -61,8 +69,9 @@ if yes_no("Do you wish to recompute all html help files? [y/n]"):
 			print("cwd",  os.path.join("death-causes-app", "R markdown explanations", "resources"))
 			print(command)
 			subprocess.run([options.Rpath, "-e", command], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations","resources"))
-		
-yes_no_continue("do you want to see the changes on the development server by creating a new server now? [y/n]", "ending script then...")
-subprocess.run(["npm", "run", "start-dev"], shell=True, cwd=os.path.join("death-causes-app"))
+	
+if options.guided:	
+	yes_no_continue("do you want to see the changes on the development server by creating a new server now? [y/n]", "ending script then...")
+	subprocess.run(["npm", "run", "start-dev"], shell=True, cwd=os.path.join("death-causes-app"))
 	
 	

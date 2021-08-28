@@ -24,10 +24,10 @@ export default class Navigation extends React.Component<NavigationProp> {
                 <Navbar.Collapse id="responsive-navbar-nav" className="" >
                     <Nav className="ml-auto" variant="pills" >
                         <Nav.Item className="px-2">
-                            <NavLink to="/model" className="nav-link" activeClassName="nav-link active">About the Model</NavLink>
+                            <NavLink to="/model" className="nav-link" id="nav-link-header" activeClassName="nav-link active">About the Model</NavLink>
                         </Nav.Item>
                         <Nav.Item className="px-2">
-                            <NavLink to="/contact" className="nav-link" activeClassName="nav-link active">Contact</NavLink>
+                            <NavLink to="/contact" className="nav-link" id="nav-link-header" activeClassName="nav-link active">Contact</NavLink>
                         </Nav.Item>
                     </Nav>
                 </Navbar.Collapse>

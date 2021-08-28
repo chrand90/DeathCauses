@@ -40,9 +40,9 @@ Breast cancer is part of the following death cause categories
 In the model Breast cancer has the following [risk factors](/model/intro#risk-factor)
 
 * [Alcohol consumption](/model/Drinking) (Alcohol)
-* [Biological sex](/model/Sex) (Sex)
-* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
 * [Time since taking OCP per year](/model/OralContraceptiveSinceStop) (OCP end a.)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver) (OCP ever)
+* [Biological sex](/model/Sex) (Sex)
 
 #### Number of deaths
 
@@ -86,15 +86,15 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Alcohol}} \cdot P_{\text{Sex,OCP ever,OCP end a.}}
+P=P_{\text{Alcohol}} \cdot P_{\text{OCP end a.,OCP ever,Sex}}
 $$
 
 
 #### Alcohol consumption
 
-Alcohol consumption is a risk factor for Breast cancer.
+[Alcohol consumption](/model/Drinking) is a risk factor for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'raw')
@@ -112,7 +112,7 @@ plotSpecificPlots(dat, 'BreastCancer', c('Drinking'),'interpolated')
 
 Ever used oral contraceptives and Time since taking OCP per year are a group of risk factors for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('OralContraceptiveEver','OralContraceptiveSinceStop'),'raw')
@@ -128,9 +128,9 @@ plotSpecificPlots(dat, 'BreastCancer', c('OralContraceptiveEver','OralContracept
 
 #### Biological sex
 
-Biological sex is a risk factor for Breast cancer.
+[Biological sex](/model/Sex) is a risk factor for Breast cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BreastCancer', c('Sex'),'raw')

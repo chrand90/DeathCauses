@@ -13,7 +13,6 @@ const toolTipsOpacity=['.arrowexplanation']
 
 
 export function getDivWidth(div: HTMLElement | null): number {
-  console.log(div);
   if (div === null) {
     return 0;
   }

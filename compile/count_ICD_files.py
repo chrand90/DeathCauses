@@ -8,6 +8,7 @@ import age_numbers
 ICD_DESTINATION_FILE="../death-causes-app/src/resources/ICD.json"
 TOTAL_DEATHS_DESTINATION_FILE="../death-causes-app/src/resources/totalDeaths.json"
 LIFE_TABLE_FILE="../death-causes-app/src/resources/lifeTable.json"
+RAW_ICDS="../death-causes-app/src/resources/ICDMinimum.json"
 
 def extract_icd_code(file_name):
     return file_name.split(os.sep)[-1].split(".")[0]
@@ -139,7 +140,8 @@ def run():
         f.write(json.dumps(cause_to_total))
     with open(LIFE_TABLE_FILE, "w") as f:
         f.write(json.dumps(compute_life_tables(per_age_group_totals)))
-
+    with open(RAW_ICDS, "w") as f:
+        f.write(json.dumps(cause_to_icds))
 
 
 

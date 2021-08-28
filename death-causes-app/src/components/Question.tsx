@@ -336,7 +336,7 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
           className="inline-text-button"
           onClick={() => {
             this.props.store.relationLinkVizStore.setElementInFocus(this.props.name)
-            this.props.store.uIStore.setVisualization(Visualization.RELATION_GRAPH)
+            this.props.history.push("/relations")
           }}
         >
           {this.props.descendantDeathCauses.length} death cause

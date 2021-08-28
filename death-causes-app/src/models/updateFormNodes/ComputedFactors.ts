@@ -26,6 +26,31 @@ class SmokeSinceStop extends FormUpdater{
     }
 }
 
+class SmokeDurationCumulative extends FormUpdater{
+
+    compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
+        const SmokeDuration = this.getNode(allPreviousUpdateForms, "SmokeDuration").value as number;
+        const SmokingStatus= this.getNode(allPreviousUpdateForms, "Smoking").value as string;
+        const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
+        const newValue: number[]=[];
+        for(let i=0; i<ageTo-ageFrom+1; i++){
+            if(SmokingStatus==="Current smoker"){
+                newValue.push(Math.max(0,i+SmokeDuration+(ageFrom-age)));
+            }
+            else{
+                newValue.push(SmokeDuration);
+            }
+            
+        }
+        return {...this.ChangedAndMissing(),
+            type: TypeStatus.NUMERIC,
+            dimension: DimensionStatus.YEARLY,
+            random: StochasticStatus.DETERMINISTIC,
+            value: newValue
+        }
+    }
+}
+
 class PhysicalTotal extends FormUpdater{
 
     compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
@@ -197,6 +222,7 @@ function packConstructor(classDefinition: any): (ancestors: string[], ageFrom: n
 
 export const ComputedFactorClasses: FormUpdaterInitializers={
     "SmokeSinceStop": packConstructor(SmokeSinceStop),
+    "SmokeDurationCumulative": packConstructor(SmokeDurationCumulative),
     "PhysicalTotal": packConstructor(PhysicalTotal),
     "SmokeCumulative": packConstructor(SmokeCumulative),
     "SmokeTypicalAmount": packConstructor(SmokeTypicalAmount),

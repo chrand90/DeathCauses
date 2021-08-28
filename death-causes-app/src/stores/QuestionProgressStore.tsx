@@ -36,6 +36,7 @@ export default class QuestionProgressStore {
       nextQuestion:action,
       startOverQuestionnaire: action.bound,
       finishQuestionnaire: action.bound,
+      finishQuestionnaireStartOverview: action.bound,
       previousQuestion: action.bound,
     });
   }

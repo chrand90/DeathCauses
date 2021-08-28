@@ -1,5 +1,9 @@
+#From wu et. al 2015(Omega-3 fatty acids intake and risks of dementia and Alzheimers disease: a meta-analysis), where we take the relation 0.89^x and make bins.
+#
 Fish	RR
-0	1.0
-0,0.75	0.6
-0.75,1.5	0.4
-1.5+	0.4
+0	1.0(0)
+0,1	0.9439320
+1,2	0.8400995
+2,3	0.7476885
+3,3.82	0.6723341
+3.82+	0.6400000

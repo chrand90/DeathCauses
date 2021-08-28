@@ -38,12 +38,12 @@ Liver cancer is part of the following death cause categories
 
 In the model Liver cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [BMI](/model/BMI)
 * [HCV diagnosis](/model/HCVStatus) (HCV)
+* [BMI](/model/BMI)
 * [Coffee consumption](/model/Caffeine) (Coffee)
 * [Diabetes diagnosis](/model/DiabetesStatus) (Diabetes)
-* [Biological sex](/model/Sex) (Sex)
 * [Alcohol consumption](/model/Drinking) (Alcohol)
+* [Biological sex](/model/Sex) (Sex)
 
 #### Number of deaths
 
@@ -89,7 +89,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Sex,Alcohol}}
+P=P_{\text{HCV,BMI}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Alcohol,Sex}}
 $$
 
 
@@ -97,7 +97,7 @@ $$
 
 BMI and HCV diagnosis are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'raw')
@@ -113,9 +113,9 @@ plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'interpolated')
 
 #### Coffee consumption
 
-Coffee consumption is a risk factor for Liver cancer.
+[Coffee consumption](/model/Caffeine) is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'raw')
@@ -131,9 +131,9 @@ plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'interpolated')
 
 #### Diabetes diagnosis
 
-Diabetes diagnosis is a risk factor for Liver cancer.
+[Diabetes diagnosis](/model/DiabetesStatus) is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
@@ -144,7 +144,7 @@ plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
 
 Alcohol consumption and Biological sex are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Drinking','Sex'),'raw')

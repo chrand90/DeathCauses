@@ -42,10 +42,10 @@ In the model Coronary heart disease has the following [risk factors](/model/intr
 * [Coffee consumption](/model/Caffeine) (Coffee)
 * [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Peak Alcohol consumption](/model/MaxDrinking) (Peak alcohol)
-* [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
 * [Total physical activity time](/model/PhysicalTotal) (Phys. total)
-* [Age](/model/Age)
+* [Hard physical activity time](/model/PhysicalHard) (Phys. Hard)
 * [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+* [Age](/model/Age)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
 * [Greens consumption](/model/Greens) (Greens) inherited from [Heart disease](/model/HeartDiseases)
 
@@ -113,15 +113,15 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. Hard,Phys. total}} \cdot P_{\text{Age,Smoke end a.,Smoke avg.}} \cdot P_{\text{Greens}}
+P=P_{\text{Coffee}} \cdot P_{\text{Alcohol,Peak alcohol}} \cdot P_{\text{Phys. total,Phys. Hard}} \cdot P_{\text{Smoke end a.,Age,Smoke avg.}} \cdot P_{\text{Greens}}
 $$
 
 
 #### Coffee consumption
 
-Coffee consumption is a risk factor for Coronary heart disease.
+[Coffee consumption](/model/Caffeine) is a risk factor for Coronary heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'raw')
@@ -136,6 +136,8 @@ plotSpecificPlots(dat, 'Ischemic', c('Caffeine'),'interpolated')
 
 
 #### Alcohol consumption
+
+[Alcohol consumption](/model/Drinking) is a risk factor for Coronary heart disease.
 
 If you drink a moderate amount of alcohol, you decrease the risk of dying from coronary heart disease, but this benefit can be erased from binge drinking (which we call Peak alcohol consumption).  @roerecke2014alcohol have made a meta-analysis dose-response curve for alcohol consumption and ischemic heart disease mortalitiy, which we will use. They also show that heavy binge drinking can eliminate the benefit for people with an average alcohol consumption of 1 unit per day. To quantify the binge drinking we use the numbers from @malyutina2002relation, which is one of the studies included in the meta analysis of @roerecke2014alcohol. Because the study from @malyutina2002relation is not a meta-analysis, it has a higher variance and therefore we can therefore presume that it is reason why the data has a maximum between 5.7 to 8.6 drinks is an artifact. This artifact is smoothed out by our interpolation method. 
 
@@ -152,6 +154,8 @@ plotSpecificPlots(dat, 'Ischemic', c('Drinking'),'interpolated')
 
 
 #### Peak Alcohol consumption
+
+[Peak Alcohol consumption](/model/MaxDrinking) is a risk factor for Coronary heart disease.
 
 See [Peak alcohol](#drinking)
 
@@ -171,7 +175,7 @@ plotSpecificPlots(dat, 'Ischemic', c('MaxDrinking'),'interpolated')
 
 Hard physical activity time and Total physical activity time are a group of risk factors for Coronary heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'raw')
@@ -186,6 +190,8 @@ plotSpecificPlots(dat, 'Ischemic', c('PhysicalTotal','PhysicalHard'),'interpolat
 
 
 #### Age, Smoking average
+
+Age and Smoking average are a group of risk factors for Coronary heart disease.
 
 See [Smoking average, Time since smoking per year](#smoking-average-time-since-smoking-per-year)
 
@@ -202,6 +208,8 @@ plotSpecificPlots(dat, 'Ischemic', c('SmokeTypicalAmount','Age'),'interpolated')
 
 
 #### Smoking average, Time since smoking per year
+
+Smoking average and Time since smoking per year are a group of risk factors for Coronary heart disease.
 
 We use the [meta analysis](#meta-analysis) of cohort studies by @hackshaw2018low to get age-specific risk ratios for different amounts of smoking. They computed a joint [risk ratio](#risk-ratio) using estimates that were adjusted for different other [risk factors](#risk-factors). Only age was a common adjusting risk factor in all the studies. The meta analysis focused on low-intensity smokers which means that they estimated the risk ratio when smoking just one cigarette per day and this is great because it seems that even a little smoking is harmful to the heart. To take into account smoking cessation we multiplied the numbers from @hackshaw2018low with the smoking cessation estimates from @shields2013smoking. @shields2013smoking perfectly quantifies the drop in risk ratio of dying from coronary heart disease as more times passes since one stopped smoking, but unfortunately, they have not stratified on amount smoked, but instead put all former smokers in the same category. For us to obtain pseudo-stratified data we do the following. Let
 

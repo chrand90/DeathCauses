@@ -168,7 +168,6 @@ export class InterpolationTable {
           fixedLocation.setInterpolationVariables.toString()
       );
     }
-    mins[0].truncateValue(this.lowerTruncation, this.upperTruncation);
     return mins[0]
   }
 

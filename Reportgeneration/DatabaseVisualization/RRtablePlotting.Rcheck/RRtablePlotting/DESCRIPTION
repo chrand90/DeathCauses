@@ -1,0 +1,23 @@
+Package: RRtablePlotting
+Title: Plots Risk ratio tables of the Causes.json format of chrand90
+        Deathcauses
+Version: 1.0.0
+Authors@R: 
+    person(given = "Svend",
+           family = "V. Nielsen",
+           role = c("aut", "cre"),
+           email = "svendvendelbonielsen@gmail.com")
+Description: This package can plot interpolated risk ratio tables and raw risk ratio tables of the deathcauses program from github chrand90. 
+License: MIT License (only applies to the R package and not the
+        associated files of chrand90 Deathcauses)
+Encoding: UTF-8
+LazyData: true
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.1
+Imports: rjson (>= 0.2.20), stringr (>= 1.4.0), grid, gridExtra, dplyr,
+        ggplot2, magrittr
+NeedsCompilation: no
+Packaged: 2021-07-06 23:14:45 UTC; Karamel
+Author: Svend V. Nielsen [aut, cre]
+Maintainer: Svend V. Nielsen <svendvendelbonielsen@gmail.com>
+Built: R 4.0.5; ; 2021-07-06 23:14:54 UTC; windows

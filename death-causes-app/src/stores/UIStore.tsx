@@ -2,7 +2,6 @@ import { makeObservable, observable, action, computed } from "mobx";
 import { hideAllToolTips } from "../components/Helpers";
 
 export enum Visualization {
-  RELATION_GRAPH = "Relation graph",
   BAR_GRAPH = "Risk factor contributions",
   NO_GRAPH = "Nothing",
   SURVIVAL_GRAPH = "Survival curve",
