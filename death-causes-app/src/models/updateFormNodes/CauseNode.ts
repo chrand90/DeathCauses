@@ -32,12 +32,14 @@ export default class CauseNode extends FormUpdater {
     ancestors: string[],
     ageFrom: number | null,
     ageTo: number,
-    cause: DeathCause
+    cause: DeathCause,
+    riskFactors: string[]
   ) {
     super(ancestors, ageFrom, ageTo);
+    //console.log(cause.deathCauseName, ": ", riskFactors);
     this.cause = cause;
     this.baseInnerCauseObject = Object.fromEntries(
-      cause.getAllFactorNamesWithoutAge().map((d) => [d, 0])
+      riskFactors.map((d) => [d, 0])
     );
   }
 
@@ -85,9 +87,6 @@ export default class CauseNode extends FormUpdater {
 
   computeTotalRR(optimsToSDicStratifiedByRFG: OptimsToSDics[]){
     let totalRR=1;
-    if(optimsToSDicStratifiedByRFG.length>0 && Object.keys(optimsToSDicStratifiedByRFG[0]).length===0){
-      console.log("debug location");
-    }
     optimsToSDicStratifiedByRFG.forEach((optimDividedResult: OptimsToSDics) => {
       const numericOptims=Object.keys(optimDividedResult).map(s=>+s)
       const maxOptim=numericOptims[numericOptims.length-1]

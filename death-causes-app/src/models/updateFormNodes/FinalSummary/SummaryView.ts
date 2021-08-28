@@ -1,24 +1,25 @@
 import { DataRow } from "../../../components/PlottingData";
 import CauseNodeResult from "../CauseNodeResult";
 import { FactorAnswerChanges } from "../FactorAnswersToUpdateForm";
-import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { calculateLifeExpectancy, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 import riskFactorContributions from "./RiskFactorContributions";
 
 export default function computeSummaryView(causeNodeResults: CauseNodeResult[], ageFrom: number, ageTo: number, changes: FactorAnswerChanges): SummaryViewData {
     let ages: number[] = Array.from({ length: ageTo - ageFrom + 1 }, (_, i) => ageFrom + i)
 
-    const lifeExpentancy = calculateLifeExpentancy(causeNodeResults, ages)
+    const survivalProbs = probOfStillBeingAlive(causeNodeResults)
+    const lifeExpentancy = calculateLifeExpectancy(survivalProbs, ageFrom)
 
     let yearsLostToDeathCause: { name: string, value: number }[] = []
 
     for (let i = 0; i < causeNodeResults.length; i++) {
         let deathCauseNodeResultCopy = causeNodeResults.slice()
         let removedDeathCause = deathCauseNodeResultCopy.splice(i, 1)
-        let lifeExpentancyIgnoringCause = calculateLifeExpentancy(deathCauseNodeResultCopy, ages)
+        let survivalProbsCopy= probOfStillBeingAlive(removedDeathCause)
+        let lifeExpentancyIgnoringCause = calculateLifeExpectancy(survivalProbsCopy, ageFrom)
         yearsLostToDeathCause.push({ name: removedDeathCause[0].name, value: lifeExpentancyIgnoringCause - lifeExpentancy })
     }
 
-    const survivalProbs = probOfStillBeingAlive(causeNodeResults)
     let probabiliiesOfDyingOfEachDeathCause: { name: string, value: number }[] = []
 
     causeNodeResults.forEach(cause => {
@@ -55,7 +56,7 @@ export interface LifeExpentancyData {
     probabilities: number[]
 }
 
-function calculateLifeExpentancy(causeNodeResults: CauseNodeResult[], ages: number[]): number {
+function calculateLifeExpentancy2(causeNodeResults: CauseNodeResult[], ages: number[]): number {
     const deathCauseProbabilities = causeNodeResults.map((causeNodeResult: CauseNodeResult) => {
         return causeNodeResult.probs;
     })

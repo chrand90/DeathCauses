@@ -15,13 +15,14 @@ import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import "./VizWindow.css";
 import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
+import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 
 interface VizWindowProps {
   store: RootStore;
 }
 
 interface VizWindowStates {
-  riskFactorContributions: DataRow[];
+  riskFactorContributions: DataRow[] | LifeExpectancyContributions;
   survivalCurveData: SurvivalCurveData[];
   summaryViewData: SummaryViewData | null;
 }
@@ -74,12 +75,12 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       case Visualization.BAR_GRAPH: {
         return (
           <div>
-            {this.state.riskFactorContributions.length>0 ? (
+            {this.state.riskFactorContributions.length>0 || Object.keys(this.state.riskFactorContributions).length>0 ? (
               <BarChartWrapper
                 database={this.state.riskFactorContributions}
               />
             ) : (
-              "Input age to get started"
+              "Input age to get started" 
             )}
           </div>
         );

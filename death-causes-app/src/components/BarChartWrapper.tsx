@@ -5,6 +5,7 @@ import BarChart from './BarChart';
 import { DataSet } from './PlottingData';
 import "./BarChartWrapper.css";
 import { useHistory } from 'react-router';
+import { LifeExpectancyContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -12,7 +13,7 @@ enum LatestChange {
 }
 
 interface BarChartWrapperProps {
-	database: DataSet;
+	database: DataSet | LifeExpectancyContributions;
 	simpleVersion?: boolean;
 }
 
@@ -24,7 +25,10 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	const [chart, setChart] = useState<BarChart | null>(null);
 
 	const rerouter = (modelPage: string) => {
-		if(modelPage.length>0){
+		if(modelPage.substring(0,1)==="#"){
+			history.push("/model"+modelPage)
+		}
+		else if(modelPage.length>0 && modelPage.substring(0,1)!=="#"){
 			history.push("/model/"+modelPage)
 		}
 		else{
@@ -72,7 +76,6 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 
 
 	useEffect(() => {
-		console.log('width changed');
 		if (chart) {
 			chart.clear();
 			createNewChart();
@@ -81,7 +84,6 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 
 	useEffect(() => {
 		if (chart) {
-			console.log("updating graphics based on database")
 			chart.update(database, store.barChartStore.diseaseToWidth);
 		}
 	}, [database]);
