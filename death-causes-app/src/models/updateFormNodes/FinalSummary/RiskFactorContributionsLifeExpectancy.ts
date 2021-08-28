@@ -1,9 +1,10 @@
 import { BestValues, mergeBestValues } from "../../../components/Calculations/ConsensusBestValue";
 import { DataRow } from "../../../components/PlottingData";
+import { EVALUATION_UNIT } from "../../../stores/AdvancedOptionsStore";
 import { ProbabilityKeyValue } from "../../ProbabilityKeyValue";
 import RelationLinks, { NodeType } from "../../RelationLinks";
 import CauseNodeResult from "../CauseNodeResult"
-import { calculateLifeExpectancy, computeProbOfNotDying, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { calculateLifeExpectancy, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 
 export interface LifeExpectancyContributions {
     [key: string]: DataRow

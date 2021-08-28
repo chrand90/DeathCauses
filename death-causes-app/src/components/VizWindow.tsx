@@ -16,13 +16,14 @@ import "./VizWindow.css";
 import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { WrappedLifeExpectancyContributions } from "../models/updateFormNodes/UpdateFormController";
 
 interface VizWindowProps {
   store: RootStore;
 }
 
 interface VizWindowStates {
-  riskFactorContributions: DataRow[] | LifeExpectancyContributions;
+  riskFactorContributions: WrappedLifeExpectancyContributions;
   survivalCurveData: SurvivalCurveData[];
   summaryViewData: SummaryViewData | null;
 }
@@ -75,9 +76,10 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       case Visualization.BAR_GRAPH: {
         return (
           <div>
-            {this.state.riskFactorContributions.length>0 || Object.keys(this.state.riskFactorContributions).length>0 ? (
+            {Object.keys(this.state.riskFactorContributions.data).length>0 ? (
               <BarChartWrapper
-                database={this.state.riskFactorContributions}
+                database={this.state.riskFactorContributions.data}
+                evaluationUnit={this.state.riskFactorContributions.evaluationUnit}
               />
             ) : (
               "Input age to get started" 

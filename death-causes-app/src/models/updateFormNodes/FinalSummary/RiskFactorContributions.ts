@@ -1,11 +1,13 @@
 import { DataRow } from "../../../components/PlottingData";
 import { ProbabilityKeyValue } from "../../ProbabilityKeyValue";
 import CauseNodeResult from "../CauseNodeResult"
-import { computeProbOfNotDying, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { LifeExpectancyContributions } from "./RiskFactorContributionsLifeExpectancy";
 
-export default function riskFactorContributions(causeNodeResults: CauseNodeResult[], ageFrom:number, ageTo:number): DataRow[]{
+export default function riskFactorContributions(causeNodeResults: CauseNodeResult[], ageFrom:number, ageTo:number): LifeExpectancyContributions {
 
     const survivalProb=probOfStillBeingAlive(causeNodeResults);
+
     let res= causeNodeResults.map((causeNodeRes: CauseNodeResult) =>{
         const weightOfYears=causeNodeRes.probs.map((prob,i) => {
             return prob*survivalProb[i];
@@ -35,7 +37,8 @@ export default function riskFactorContributions(causeNodeResults: CauseNodeResul
         }
         
     })
-    return res;
+
+    return Object.fromEntries(res.map(element => [element.name, element]));
 
 }
 

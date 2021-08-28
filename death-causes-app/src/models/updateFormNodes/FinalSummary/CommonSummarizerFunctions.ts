@@ -1,5 +1,4 @@
 import CauseNodeResult from "../CauseNodeResult";
-import survivalCurve from "./SurvivalCurve";
 
 export function computeProbOfNotDying(causeNodeResults: CauseNodeResult[], withoutIndex: number[] = []){
 

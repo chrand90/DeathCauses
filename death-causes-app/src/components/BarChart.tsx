@@ -8,6 +8,7 @@ import {
   ParentToCausesMapping
 } from "../models/RelationLinks";
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
 import { ALTERNATING_COLORS, formatYears, LINK_COLOR } from "./Helpers";
@@ -155,6 +156,7 @@ export default class BarChart {
   constructor(
     element: HTMLElement | null,
     database: DataSet | LifeExpectancyContributions,
+    evaluationUnit: EVALUATION_UNIT,
     descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
@@ -166,8 +168,7 @@ export default class BarChart {
       collapsables: { [key: string]: string[] };
       expandables: { [key: string]: string[] };
     },
-    simpleVersion: boolean = false,
-    useLifeExpectancy: boolean =true,
+    simpleVersion: boolean = false
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
@@ -186,11 +187,11 @@ export default class BarChart {
     this.hideAllToolTips = this.hideAllToolTips.bind(this);
     this.redirectPage = redirectPage;
     if (simpleVersion) {
-      this.grouping = simplifyGrouping(collectedGroups, useLifeExpectancy);
+      this.grouping = simplifyGrouping(collectedGroups, evaluationUnit === EVALUATION_UNIT.YEARS_LOST);
     } else {
       this.grouping = collectedGroups;
     }
-    this.useLifeExpectancy=useLifeExpectancy;
+    this.useLifeExpectancy=evaluationUnit === EVALUATION_UNIT.YEARS_LOST;
     this.buttonTipText = this.buttonTipText.bind(this);
 
     const vis = this;
@@ -1508,8 +1509,11 @@ export default class BarChart {
       ));
     }
     else{
+      let dataset= Object.entries(data as LifeExpectancyContributions).map(  ([causeOrCategoryName, dataRow]) => { 
+        return dataRow;
+      }); 
       ({ allSquares: dataSquares, totalProbs } = make_squares(
-        data as DataSet,
+        dataset,
         diseaseToWidth,
         this.grouping,
         this.descriptions,
