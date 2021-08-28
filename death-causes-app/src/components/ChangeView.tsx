@@ -7,6 +7,7 @@ import Popover from "react-bootstrap/Popover";
 import { FactorAnswerChange, FactorAnswerChanges, FactorAnswersToUpdateForm } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
 import { Shadowing } from "../stores/ComputationStore";
 import RootStore, { withStore } from "../stores/rootStore";
+import { formatYears } from "./Helpers";
 
 const NEGATIVE_COLOR="#e30000"
 const POSITIVE_COLOR="#00e300"
@@ -25,45 +26,22 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
     const valInYears =
       props.store.computationStore.lifeExpectancies[index+0] -
       props.store.computationStore.lifeExpectancies[index+1];
-    console.log(props.store.computationStore.lifeExpectancies[index+0], props.store.computationStore.lifeExpectancies[index+1])
+    //console.log(props.store.computationStore.lifeExpectancies[index+0], props.store.computationStore.lifeExpectancies[index+1])
     const absDiff=Math.abs(valInYears)
     const sign=Math.sign(valInYears)
-    const prefix = sign>0 ? "+":""
-    if(absDiff>1){
-        return {
-            describ:prefix+valInYears.toFixed(1) + " years",
-            sign: sign}
+    const prefix = sign>0 ? "+":"-"
+    const formatedAbsoluteValue= formatYears(absDiff)
+    if(formatedAbsoluteValue!=="0"){
+      return {
+        describ: prefix+formatedAbsoluteValue,
+        sign: sign
+      }
     }
-    if(absDiff>1/12){
-        return {
-            describ:prefix+(valInYears*12).toFixed(1)+" months",
-            sign: sign}
-    }
-    if(absDiff>1/365){
-        return {
-        describ: prefix+(valInYears*365).toFixed(1)+" days",
-        sign:sign}
-    }
-    if(absDiff>1/365/24){
-        return {
-            describ: prefix+(valInYears*24*365).toFixed(1)+ " hours",
-            sign: sign}
-    }
-    if(absDiff>1/365/24/60){
-        return {
-            describ: prefix+(valInYears*24*365*60).toFixed(0)+ " minutes",
-            sign:sign
-        }
-    }
-    if(absDiff>1/365/24/60/60*6){
-        return {
-            describ: prefix+parseFloat((valInYears*24*365*60*60).toPrecision(1)).toFixed(0)+ " seconds",
-            sign: sign
-        }
-    }
-    return {
+    else{
+      return {
         describ: "Very small or none",
         sign:0}
+    }
   };
   const shadowing= props.store.computationStore.factorShadowing
   const showShadowing = (

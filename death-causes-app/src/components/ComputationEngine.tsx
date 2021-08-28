@@ -1,6 +1,7 @@
 import Descriptions from "../models/Descriptions";
 import { CauseGrouping } from "../models/RelationLinks";
-import { BestValues, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
+import { MultifactorGainType } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "./PlottingData";
 
 export interface SquareSection {
@@ -51,7 +52,8 @@ function makeRowSquare(
     max: number | null,
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
-    descriptions: Descriptions
+    descriptions: Descriptions,
+    useLifeExpectancy: boolean,
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -82,7 +84,7 @@ function makeRowSquare(
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
             x: zeroTruncater(unexplained*totalProb)*rescaler,
-            longComparison: getUnexplainedStatement(unexplained, parent, descriptions)
+            longComparison: getUnexplainedStatement(unexplained,totalProb, parent, descriptions, useLifeExpectancy)
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
@@ -96,12 +98,40 @@ function makeRowSquare(
         
         innerCauses.forEach((innerCause:string)=>{
             let width=widthOfEachInnerCause[innerCause];
-            const statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions)
-            const longStatement=combinedBestValues?.getLongConsensusStatement(
+            let longStatement: LongConsensus | undefined;
+            let statement: string | undefined;
+            if(innerCause===MultifactorGainType.KNOWN){
+                statement=descriptions.getDescription(MultifactorGainType.KNOWN, 20)
+                longStatement=getMultifactorGainStatement(
+                    totalProb>1e-8 ? width/totalProb : 0,
+                    totalProb,
+                    parent,
+                    descriptions,
+                    MultifactorGainType.KNOWN
+                )
+            }
+            else if(innerCause===MultifactorGainType.UNKNOWN){
+                statement=descriptions.getDescription(MultifactorGainType.UNKNOWN, 20)
+                longStatement=getMultifactorGainStatement(
+                    totalProb>1e-8 ? width/totalProb : 0,
+                    totalProb,
+                    parent,
+                    descriptions,
+                    MultifactorGainType.UNKNOWN
+                )
+            }
+            else{
+                statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions, useLifeExpectancy)
+                longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
                 totalProb>1e-8 ? width/totalProb : 0,
+                totalProb,
                 parent,
-                descriptions );
+                descriptions,
+                useLifeExpectancy,
+                );
+            }
+            
             squares.push({
                 name: parent,
                 cause: innerCause,
@@ -165,10 +195,10 @@ function makeRowSquare(
     return {squares, totalProb};
 }
 
-function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping){
+function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping | undefined){
     let parentToRows: ParentToDataRows={}
     res_dat.forEach((datRow) => {
-        const parent=grouping.causeToParent[datRow.name]
+        const parent=grouping ? grouping.causeToParent[datRow.name] : datRow.name;
         if(parent in parentToRows){
             parentToRows[parent].push(datRow)
         }
@@ -183,11 +213,11 @@ function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping){
 function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
-    grouping: CauseGrouping,
+    grouping: CauseGrouping | undefined,
     descriptions: Descriptions,
+    useLifeExpectancy: boolean,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
-
 {
     let parentToRows= computeParentToRows(res_dat, grouping);
     let max: number | null=null; 
@@ -205,7 +235,8 @@ function make_squares(
             max, 
             !(parent in noMergeAcross),
             parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
-            descriptions
+            descriptions,
+            useLifeExpectancy
         )
         squareSections.push(squares)
         totalProbs.push({

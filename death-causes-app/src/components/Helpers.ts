@@ -27,6 +27,31 @@ export function getDivWidth(div: HTMLElement | null): number {
   return Math.round(Number(width));
 }
 
+export function formatYears(years: number, fullUnit: boolean=true){
+  if(years>1){
+    return +years.toFixed(1) + " years"
+  }
+  if(years>1/12){
+    const unit = fullUnit ? "months" : "mths."
+    return (years*12).toFixed(1)+" "+unit
+  }
+  if(years>1/365){
+    return (years*365).toFixed(1)+" days"
+  }
+  if(years>1/365/24){
+    return (years*24*365).toFixed(1)+ " hours"
+  }
+  if(years>1/365/24/60){
+    const unit = fullUnit ? "minutes" : "min."
+    return (years*24*365*60).toFixed(0)+ " "+unit
+  }
+  if(years>1/365/24/60/60*6){
+    const unit = fullUnit ? "seconds" : "s"
+    return parseFloat((years*24*365*60*60).toPrecision(1)).toFixed(0)+ " "+unit
+  }
+  return "0"
+}
+
 export function customPrecision(inputNumber: number | string, digits: number): string{
   let s: string;
   let n: number;
