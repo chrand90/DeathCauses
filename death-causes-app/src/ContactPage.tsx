@@ -40,7 +40,7 @@ export class ContactPage extends React.Component<any, ContactPageStates> {
                 </div>
 
                 <Row  className="justify-content-center mx-auto">
-                <Card className="mx-5" style={{ width: "33rem", borderColor: DEATHCAUSES_COLOR, marginBottom:"40px", borderWidth: "8px" }}>
+                <Card className="mx-auto" style={{ width: "80%",maxWidth:"800px", minWidth:"250px", borderColor: DEATHCAUSES_COLOR, marginBottom:"40px", borderWidth: "8px" }}>
                     <Card.Body >
                         <p className="justify-content-between"><strong>Twitter:</strong>
                         <Button variant="link" onClick={
@@ -68,6 +68,7 @@ export class ContactPage extends React.Component<any, ContactPageStates> {
                     <h6>Feedback</h6>
                     <ul>
                         <li>Anna Lauridsen</li>
+                        <li>Louise Hørning Møller</li>
                         <li>Henrik Vendelbo Nielsen</li>
                         <li>Signe Vendelbo Nielsen</li>
                         <li>Århus Esperantoforening</li>

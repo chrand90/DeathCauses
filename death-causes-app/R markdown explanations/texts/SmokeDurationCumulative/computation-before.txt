@@ -1,0 +1,1 @@
+If one's [Smoking status](/model/Smoking) is 'Former smoker' this factor is equal to [Smoke duration](/model/SmokeDuration). If one is a 'Current smoker', it is equal to Smoke duration plus the number of years since the user's []current age](/model/Age).

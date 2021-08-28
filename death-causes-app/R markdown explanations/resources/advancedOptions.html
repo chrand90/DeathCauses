@@ -6,12 +6,14 @@
   <meta name="generator" content="pandoc" />
   <title>Advanced options</title>
   <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
   </style>
-  <script src="advancedOptions_files/accessible-code-block-0.0.1/empty-anchor.js"></script>
+  <script src="advancedOptions_files/header-attrs-2.8/header-attrs.js"></script>
 </head>
 <body>
 <div id="header">
@@ -42,10 +44,11 @@ blockquote{
 <li>Set the startAge to 0 and the endAge to your current age and see what you have survived so far.</li>
 <li>If you are very old, you may live past 120 with a relatively high probability. You can then increase the endAge so that there is a higher chance that you will die in the computation period and thereby get more precise estimates.</li>
 </ul>
-<p>Changing the computation period doesn’t have a good, intuitive meaning when the <a href="#evaluation-unit">evaluation unit</a> is “Years lost” or on <a href="/model/interpretation#life-expectancy">Life expectancy</a>. The reason is that the program assume that the model assume that the mortality rate at endAge continues indefinitely when computing expected lifetimes.</p>
+<p>Changing the computation period doesn’t have a good, intuitive meaning when the <a href="#evaluation-unit">evaluation unit</a> is “Years lost” or on <a href="/model/interpretation#life-expectancy">Life expectancy</a>. The reason is that the program computes life expectancy using all ages from startAge to infinity (after endAge it assumes that the rates are constant).</p>
 </div>
 <div id="evaluation-unit" class="section level2">
 <h2>Evaluation unit</h2>
+<p>[in construction]</p>
 </div>
 <div id="threading" class="section level2">
 <h2>Threading</h2>

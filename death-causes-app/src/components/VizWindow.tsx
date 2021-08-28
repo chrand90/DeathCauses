@@ -9,7 +9,7 @@ import AdvancedOptionsMenu from "./AdvancedOptions";
 import BarChartWrapper from "./BarChartWrapper";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import { hideAllToolTips } from "./Helpers";
+import { DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, hideAllToolTips } from "./Helpers";
 import { DataRow } from "./PlottingData";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
 import "./VizWindow.css";

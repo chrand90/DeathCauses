@@ -6,8 +6,8 @@ export default function survivalCurve(causeNodeResults: CauseNodeResult[], ageFr
 
     const survivalProb=probOfStillBeingAlive(causeNodeResults); //contains a 1 in the first entry. 
     let res: SurvivalCurveData[]=[]
-    for (let i = 1; i < survivalProb.length; i++) {
-        res.push({age: i+ageFrom, prob: survivalProb[i]});
+    for (let i = 0; i < survivalProb.length-1; i++) {
+        res.push({age: i+ageFrom, prob: survivalProb[i+1]});
     }
     return res;
 }

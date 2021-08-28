@@ -129,7 +129,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
                 ? this.props.store.factorInputStore.activelyIgnored[factorName]
                 : false
             }
-            descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
+            descendantDeathCauses={this.props.store.loadedDataStore.factors.getDeathCauseDescendants(
               factorName
             )}
           />

@@ -13,7 +13,7 @@ interface InputValidities {
   [key: string]: InputValidity;
 }
 
-interface IgnoreList {
+export interface IgnoreList {
   [key: string]: boolean;
 }
 

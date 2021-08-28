@@ -65,7 +65,9 @@ class QuestionOptionsWithoutStore extends React.Component<
     const {
       factorAnswers,
       factorMaskings,
-    } = this.props.store.loadedDataStore.factors.simulateNonAnswered(this.props.store.factorInputStore.factorAnswers);
+    } = this.props.store.loadedDataStore.factors.simulateNonAnswered(
+      this.props.store.factorInputStore.factorAnswers, 
+      this.props.store.factorInputStore.activelyIgnored);
     this.props.store.factorInputStore.setFactorAnswers(factorAnswers, factorMaskings)
     this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
   }

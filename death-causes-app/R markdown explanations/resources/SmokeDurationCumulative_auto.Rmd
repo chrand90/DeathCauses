@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Total time you have smoked per year is a **computed factor**. It means that it can be determined with total certainty from the user input.
 
@@ -52,8 +52,6 @@ Total time you have smoked per year is used by the model in the following places
 
 ### Computation
 
-[Place explanation for how Total time you have smoked per year is computed here]
-
-
+If one's [Smoking status](/model/Smoking) is 'Former smoker' this factor is equal to [Smoke duration](/model/SmokeDuration). If one is a 'Current smoker', it is equal to Smoke duration plus the number of years since the user's []current age](/model/Age).
 
 ## References

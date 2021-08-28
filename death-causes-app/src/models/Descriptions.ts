@@ -40,8 +40,8 @@ export default class Descriptions {
         })
         this.colors[MultifactorGainType.KNOWN]="#f7f7f5";
         this.colors[MultifactorGainType.UNKNOWN]="#fcfcfa";
-        this.descriptions[MultifactorGainType.KNOWN]=["Multiple known factors", "Known factors", "Knowns"]
-        this.descriptions[MultifactorGainType.UNKNOWN]=["Multiple factors", "Unknown factors", "Unknowns"]
+        this.descriptions[MultifactorGainType.KNOWN]=["Multiple known factors bonus", "Known factors", "Knowns"]
+        this.descriptions[MultifactorGainType.UNKNOWN]=["Multiple factors bonus", "Unknown factors", "Unknowns"]
     }
 
     getColor(nodeName: string){

@@ -6,13 +6,15 @@
   <meta name="generator" content="pandoc" />
   <title>Interpretation</title>
   <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-AMS_CHTML-full" type="text/javascript"></script>
-  <script src="interpretation_files/accessible-code-block-0.0.1/empty-anchor.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="interpretation_files/header-attrs-2.8/header-attrs.js"></script>
 </head>
 <body>
 <div id="header">
@@ -22,9 +24,10 @@
 <ul>
 <li><a href="#probabilities-and-general-assumptions">Probabilities and general assumptions</a></li>
 <li><a href="#life-expectancy">Life expectancy</a></li>
-<li><a href="#years-lost-to-cause">Years lost to cause</a><ul>
+<li><a href="#years-lost-to-cause">Years lost to cause</a>
+<ul>
 <li><a href="#years-lost-because-of-a-risk-factor">Years lost because of a risk factor</a></li>
-<li><a href="#multiple-factors">Multiple factors</a></li>
+<li><a href="#multiple-factor-bonus">Multiple factor bonus</a></li>
 </ul></li>
 <li><a href="#best-explanation">Best explanation</a></li>
 <li><a href="#optimal-values">Optimal values</a></li>
@@ -79,12 +82,13 @@ blockquote{
 <p>The number of years lost to a death cause, is defined as the increase in life expectancy if that cause didn’t exist. For example, if the user loses 1.93 years to <a href="/model/Cancer">cancer</a>, it means that the user would - on average - live 1.93 years longer in the imaginary world where cancer is nonfatal. It may very well happen that the user doesn’t even die of cancer and in these cases the user doesn’t lose any lifetime to cancer. However, there are many other possible futures where the user dies sooner because of cancer and if we take the average across all possible futures, it will amount to 1.93 years.</p>
 <div id="years-lost-because-of-a-risk-factor" class="section level3">
 <h3>Years lost because of a risk factor</h3>
-<p>The number of years lost to a cause <em>because of a risk factor</em> has to be interpreted in a way that may be unexpected. One might think that the number should be the increase in life expectancy if the user obtained the <a href="#optimal-value">optimal value</a> of the risk factor, but that is not exactly how we compute it. Instead, the number of years lost to a cause because of a risk factor is the increase in life expectancy if the user avoids having that risk factor as the <a href="#best-explanation">best explanation</a> of the death cause. One way to avoid that a risk factor is the best explanation of one’s death is, of course, to have the optimal value of that risk factor. However, the optimal value would also prevent deaths where the risk factor was one of the true explanations, but not <em>the</em> best explanation. The amount gained from</p>
-<p>The reason why we focus on the best explanation and not just one of the true explanations is that it is <a href="/model/notwritten">easier to plot</a>.</p>
+<p>The number of years lost to a cause <em>because of a risk factor</em> has to be interpreted in a way that may be unexpected. One might think that the number should be the increase in life expectancy if the user obtained the <a href="#optimal-value">optimal value</a> of the risk factor, but that is not exactly how we compute it. Instead, the number of years lost to a cause because of a risk factor is the increase in life expectancy if the user avoids having that risk factor as the <a href="#best-explanation">best explanation</a> of the death cause. One way to avoid that a risk factor is the best explanation of one’s death is, of course, to have the optimal value of that risk factor. However, the optimal value would also prevent deaths where the risk factor was one of the true explanations, but not <em>the</em> best explanation.</p>
+<p>If we focused on the true explanations, the years lost to different risk factors should overlap because they would refer to the same death. When we let the deaths of a risk factor be only the deaths where that risk factor is the best explanation, it makes sense to add the years lost different risk factors.</p>
 </div>
-<div id="multiple-factors" class="section level3">
-<h3>Multiple factors</h3>
-<p>Sometimes the program will say that a user loses lifetime to <em>multiple factors</em>. To see this, imagine that for lung cancer, you lose 1 month to smoking and 1 month to <a href="#unexplained">unknown risk factors</a>. One might think that you would then lose 2 months to both risk factors as a whole, but you actually lose a little bit more than 2 months. The reason is that when you avoid the deaths of say, smoking, there is one less reason for you to die. Death is unavoidable, so all the other reasons, such as dying from lung cancer because of unknown factors, become slightly more probable. When dying from lung cancer from unknown factors is more likely, the significance of avoiding it becomes greater and so the increase in life expectancy from avoiding it becomes more than 1 month. To account for this extra risk, we put it into the category labeled “multiple factors”.</p>
+<div id="multiple-factor-bonus" class="section level3">
+<h3>Multiple factor bonus</h3>
+<p>Sometimes the program will say that a user loses lifetime to <em>multiple factors</em> or <em>multiple unknown factors</em>. To see why this is necessary, imagine that for lung cancer, you lose 1 month to smoking and 1 month to <a href="#unexplained">unknown risk factors</a>. One might think that you would then lose 2 months to both risk factors as a whole, but you actually lose a little bit more than 2 months. The reason is that when you avoid the deaths of say, smoking, there is one less reason for you to die. Death is unavoidable, so all the other reasons, such as dying from lung cancer because of unknown factors, become slightly more probable. When dying from lung cancer from unknown factors is more likely, the significance of avoiding it becomes greater and so the increase in life expectancy from avoiding it becomes more than 1 month. It is similar to how interests accumulate in an untouched savings account; Every time you receive interests the amount is larger than last time because you collect interests on the interests.</p>
+<p>The extra lifetime gained when avoiding deaths from more than one risk factor is what we call a <em>bonus</em>. When the bonus comes from adding known factors (that is, everything except the <a href="#unexplained">unknown factor</a>), we call it “Multiple known factors”, and when it comes from adding the unknown factor with the known factors, we call it simply “Multiple factors”.</p>
 </div>
 </div>
 <div id="best-explanation" class="section level2">

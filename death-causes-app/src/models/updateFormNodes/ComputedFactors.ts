@@ -84,6 +84,7 @@ class Greens extends FormUpdater{
 class SmokeCumulative extends FormUpdater {
 
     compute(allPreviousUpdateForms: UpdateDic):UpdateForm{
+        const Smoking = this.getNode(allPreviousUpdateForms, "Smoking").value as string;
         const SmokingStopped=this.getNode(allPreviousUpdateForms, "SmokingStopped").value as number;
         const SmokingPastAmount=this.getNode(allPreviousUpdateForms, "SmokePastAmount").value as number;
         const SmokeIntensity=this.getNode(allPreviousUpdateForms, "SmokeIntensity").value as number;
@@ -91,17 +92,30 @@ class SmokeCumulative extends FormUpdater {
         const {ageFrom, ageTo, age} = this.getAges(allPreviousUpdateForms);
         let newValue: number[]=[];
         for(let i=0; i<ageTo-ageFrom+1; i++){
-            if(ageFrom+i<age){
-                if(ageFrom+i<age-SmokingStopped){
-                    const smokeStart=age-SmokingStopped-SmokeDuration
-                    newValue.push(Math.max(0,SmokingPastAmount*(ageFrom+i-smokeStart)/SmokeDuration))
+            if(ageFrom+i<age){ //we are in the past
+                if(Smoking==="Current smoker"){
+                    newValue.push(Math.max(0, SmokeIntensity*(SmokeDuration-(age-ageFrom-i))))
+                }
+                else if(Smoking==="Former smoker"){
+                    if(ageFrom+i<age-SmokingStopped){
+                        newValue.push(Math.max(0, SmokingPastAmount*(SmokeDuration-(age-SmokingStopped-ageFrom-i))))
+                    }
+                    else{
+                        newValue.push(SmokingPastAmount * SmokeDuration)
+                    }
+                }
+                else{
+                    newValue.push(0)
+                }
+            }
+            else{
+                if(Smoking === "Current smoker"){
+                    newValue.push(SmokeDuration*SmokeIntensity+SmokeIntensity*(ageFrom+i-age));
                 }
                 else{
                     newValue.push(SmokeDuration*SmokingPastAmount)
                 }
-            }
-            else{
-                newValue.push(SmokeDuration*SmokingPastAmount+SmokeIntensity*(ageFrom+i-age));
+                
             }
         }
         return {...this.ChangedAndMissing(),

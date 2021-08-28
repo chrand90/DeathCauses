@@ -6,12 +6,14 @@
   <meta name="generator" content="pandoc" />
   <title>Total time you have smoked per year</title>
   <style type="text/css">
-      code{white-space: pre-wrap;}
-      span.smallcaps{font-variant: small-caps;}
-      span.underline{text-decoration: underline;}
-      div.column{display: inline-block; vertical-align: top; width: 50%;}
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
   </style>
-  <script src="SmokeDurationCumulative_auto_files/accessible-code-block-0.0.1/empty-anchor.js"></script>
+  <script src="SmokeDurationCumulative_auto_files/header-attrs-2.8/header-attrs.js"></script>
 </head>
 <body>
 <div id="header">
@@ -26,7 +28,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-<p><em>[auto-generated file]</em></p>
+<p><em>[partly auto-generated file]</em></p>
 <p>Total time you have smoked per year is a <strong>computed factor</strong>. It means that it can be determined with total certainty from the user input.</p>
 <div id="alternative-names" class="section level4">
 <h4>Alternative names:</h4>
@@ -56,10 +58,10 @@ blockquote{
 <div id="optimizability" class="section level3">
 <h3>Optimizability</h3>
 <p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time you have smoked per year is <a href="/model/optimizabilities#category-3">3</a>(unless <a href="/model/Smoking">Smoking status</a>=‘Current smoker’ in which case the optimizability is <a href="/model/optimizabilities#category-5">5</a>).</p>
-<div id="computation" class="section level4">
-<h4>Computation</h4>
-<p>[Place explanation for how Total time you have smoked per year is computed here]</p>
 </div>
+<div id="computation" class="section level3">
+<h3>Computation</h3>
+<p>If one’s <a href="/model/Smoking">Smoking status</a> is ‘Former smoker’ this factor is equal to <a href="/model/SmokeDuration">Smoke duration</a>. If one is a ‘Current smoker’, it is equal to Smoke duration plus the number of years since the user’s []current age](/model/Age).</p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

@@ -26,7 +26,7 @@ const SPECIAL_PAGES: PageInfo[] = [
   { linkText: "Optimizabilities", direct: "optimizabilities" },
   { linkText: "All references", direct: "references" },
   { linkText: "List of ICD codes", direct: "ICD", prefix:"/"},
-  { linkText: "Relations", direct:"relations", prefix: "/"},
+  { linkText: "Graphical overview", direct:"relations", prefix: "/"},
   { linkText: "Advanced options", direct:"advancedOptions"}
 ];
 
@@ -133,6 +133,8 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
             Read first: {this.linkButton("Theory", "intro", "22px")}
             {" or "}
             {this.linkButton("Interpretation", "interpretation", "22px")}
+            {" or "}
+            see the {this.linkButton("Graphical overview", "relations", "22px", "/")}.
           </p>
           <hr></hr>
           <h3>All pages</h3>

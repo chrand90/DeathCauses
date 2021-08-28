@@ -9,6 +9,7 @@ import StringFactorPermanent from "./FactorString";
 import InputJson from "./FactorJsonInput";
 import RelationLinks from "./RelationLinks";
 import FactorString from "./FactorString";
+import { IgnoreList } from "../stores/FactorInputStore";
 
 export interface FactorAnswers {
   [id: string]: string | number;
@@ -250,7 +251,7 @@ class Factors {
     return { factorAnswers, factorMaskings };
   }
 
-  simulateNonAnswered(oldFactorAnswers: FactorAnswers) {
+  simulateNonAnswered(oldFactorAnswers: FactorAnswers, ignored: IgnoreList) {
     let factorMaskings: FactorMaskings = {};
     let factorAnswers = this.initializedFactorAnswers();
     let factorMaskingCandidate: FactorMaskings | "nothing changed";
@@ -259,16 +260,17 @@ class Factors {
         factorAnswers[factorName] = String(
           factorMaskings[factorName].effectiveValue
         );
-      } else if (
-        factorName in oldFactorAnswers &&
-        oldFactorAnswers[factorName] !== "" &&
-        ( factorobject.factorType !== "string" ||
-          oldFactorAnswers[factorName] in (factorobject as FactorString).options)
-      ) {
-        factorAnswers[factorName] = oldFactorAnswers[factorName];
-      } else {
-        factorAnswers[factorName] = factorobject.simulateValue();
-      }
+      }else{
+        const isIgnored=factorName in ignored && ignored[factorName]
+        const numericNonMissing=factorName in oldFactorAnswers && oldFactorAnswers[factorName] !== ""
+        const stringNonMissing=( factorobject.factorType !== "string" ||
+        (factorobject as FactorString).options.includes(oldFactorAnswers[factorName] as string))
+        if(isIgnored || (numericNonMissing && stringNonMissing)){
+          factorAnswers[factorName] = oldFactorAnswers[factorName];
+        } else {
+          factorAnswers[factorName] = factorobject.simulateValue();
+        }
+      } 
       if (factorobject.factorType === "string") {
         factorMaskingCandidate = this.updateMasked(
           factorAnswers,
@@ -352,6 +354,10 @@ class Factors {
 
   getScalingFactor(name: string, unitName: string): number {
     return this.factorList[name].getScalingFactor(unitName);
+  }
+
+  getDescendants(factorName: string){
+    return this.factorList[factorName].getDeathCauseDescendants();
   }
 }
 

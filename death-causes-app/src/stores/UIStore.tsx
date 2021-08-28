@@ -2,7 +2,8 @@ import { makeObservable, observable, action, computed } from "mobx";
 import { hideAllToolTips } from "../components/Helpers";
 
 export enum Visualization {
-  BAR_GRAPH = "Risk factor contributions",
+  BAR_GRAPH = "Death causes",
+  CONDITIONS = "Conditions",
   NO_GRAPH = "Nothing",
   SURVIVAL_GRAPH = "Survival curve",
   SUMMARY_VIEW = "Summary"
@@ -10,10 +11,10 @@ export enum Visualization {
 
 
 function getWindowWidth(){
-    return Math.max(
-        document.documentElement.clientWidth,
-        window.innerWidth || 0
-      )
+  return Math.max(
+      document.documentElement.clientWidth,
+      window.innerWidth || 0
+  )
 }
 
 export default class UIStore {

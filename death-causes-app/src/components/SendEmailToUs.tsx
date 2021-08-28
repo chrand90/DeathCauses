@@ -22,7 +22,7 @@ class SendEmailWithoutStore extends React.Component<SendEmailProps, any> {
       <Button
         onClick={this.props.store.sendEmailStore.sendForm}
         style={{ backgroundColor: this.getSubmitColor() }}
-        disabled={this.props.store.sendEmailStore.message.length > 10000}
+        disabled={this.props.store.sendEmailStore.message.length > 10000 || this.props.store.sendEmailStore.email.length>1000 || this.props.store.sendEmailStore.username.length>1000}
       >
         Send
       </Button>
@@ -62,15 +62,16 @@ class SendEmailWithoutStore extends React.Component<SendEmailProps, any> {
         return (
             <div>
                 <span style={{color: ERROR_COLOR}}>Something went wrong</span>
+                {" "}
                 {this.exitButton()}
             </div>
         )
     }
-
-
   }
 
   render() {
+    const textColor=this.props.store.sendEmailStore.sendStatus===SendStatus.SUCCESS ? SUCCESS_COLOR :
+      (this.props.store.sendEmailStore.sendStatus === SendStatus.ERROR ? ERROR_COLOR : "");
     return (
       <Modal show={true} onHide={() => this.props.toggler()}>
         <Modal.Header closeButton>
@@ -82,6 +83,7 @@ class SendEmailWithoutStore extends React.Component<SendEmailProps, any> {
             <Form.Control
               type="text"
               value={this.props.store.sendEmailStore.username}
+              style={{color:textColor}}
               onChange={this.props.store.sendEmailStore.inputChangeWrapper}
               name={"username"}
             />
@@ -89,6 +91,7 @@ class SendEmailWithoutStore extends React.Component<SendEmailProps, any> {
             <Form.Control
               type="text"
               value={this.props.store.sendEmailStore.email}
+              style={{color:textColor}}
               onChange={this.props.store.sendEmailStore.inputChangeWrapper}
               name={"email"}
             />
@@ -96,9 +99,9 @@ class SendEmailWithoutStore extends React.Component<SendEmailProps, any> {
             <Form.Control
               as="textarea"
               value={this.props.store.sendEmailStore.message}
+              style={{color:textColor,  minHeight: "200px"}}
               onChange={this.props.store.sendEmailStore.inputChangeWrapper}
               name={"message"}
-              style={{ minHeight: "200px" }}
             />
           </Form>
         </Modal.Body>

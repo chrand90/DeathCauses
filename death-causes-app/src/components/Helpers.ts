@@ -70,9 +70,11 @@ export function customPrecision(inputNumber: number | string, digits: number): s
   }
   const beforeAndAfterComma=s.split(".")
   if(beforeAndAfterComma.length===1){
-    return s
+    console.log("returning without comma")
+    return beforeAndAfterComma[0]
   }
-  return beforeAndAfterComma[0]+'.'+beforeAndAfterComma[1].replace(/0+$/,"")
+  const suffix=beforeAndAfterComma[1].replace(/0+$/,"")
+  return beforeAndAfterComma[0]+ (suffix.length>0 ? '.'+suffix : "")
 }
 
 

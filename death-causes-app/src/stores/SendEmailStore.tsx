@@ -72,9 +72,6 @@ export default class SendEmailStore {
     }, (error) => {
         this.sendStatus=SendStatus.ERROR
         console.error(error.text);
-        setTimeout(() => {
-            this.sendStatus=SendStatus.PREPARTION
-        }, 5000)
     });    
   }
 

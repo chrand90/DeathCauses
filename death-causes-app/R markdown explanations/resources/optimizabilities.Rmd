@@ -22,11 +22,9 @@ blockquote{
 </style>
 _[partly auto-generated file]_
 
-Every risk factor is assigned an *optimizability* that describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+The measure *optimizability* describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
 
-The optimizabilities are used to [decompose](/model/intro#decomposition) the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. If some factors have the same optimizability, we use [another method](/model/intro#decomposing-two-equally-optimizable-factors).
-
-The different optimizabilities are
+For most risk factors the optimizability is always the same but for some, the optimizability depends on other factors. For example, current smokers can still improve their average smoking amount, but former smokers can't. Therefore, the optimizability of [average smoking amount](/model/SmokeTypicalAmount) depends on one's [smoking status](/model/Smoking).The different optimizabilities are
 
 1. It is impossible to change and it has never been in your control
 2. It is impossible to change, but it could have been the consequence of your actions

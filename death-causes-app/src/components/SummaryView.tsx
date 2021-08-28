@@ -25,7 +25,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
             if(age===""){
                 return(
                     <p>
-                        The average life expectancy from birth is: {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
+                        The average life expectancy from birth is {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
                     </p>
                 )
             }
@@ -36,7 +36,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 }
                 return (
                     <p>
-                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is: {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
+                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
                     </p>
                 )
             }
@@ -62,22 +62,25 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
-                            <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
+                            <h3>Your life expectancy is <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
                             <p></p>
                             {this.lifeExpectancySentence()}
-                            <RangeSliders summaryViewData={summaryViewData}/>
+                            
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
-                        <CardHeader><h4>Effect of your change of input</h4></CardHeader>
                         <CardBody>
-                            <ChangeView></ChangeView>
+                        <ChangeView />
+                        </CardBody>
+                    </Card>
+                    <Card className="my-1 mx-auto bg-light " style={{}}>
+                        <CardBody>
+                        <RangeSliders summaryViewData={summaryViewData}/>
                         </CardBody>
                     </Card>
                 </Col>
                 <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="bg-light ">
-                        <CardHeader><h4>Risk Factors</h4></CardHeader>
                         <CardBody>
                             <p>The bar below represents all the time you lose to known risk factors.</p>
                             <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} simpleVersion={true} />
