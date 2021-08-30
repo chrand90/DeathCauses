@@ -11,11 +11,12 @@ import {
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
-import { ALTERNATING_COLORS, formatYears, LINK_COLOR } from "./Helpers";
+import { ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "./Helpers";
 import { DataRow, DataSet } from "./PlottingData";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
+const ALTERNATING_COLORS_BARCHART=[ALTERNATING_COLORS[1], DEATHCAUSES_LIGHT]
 let DESIGN = "LONG";
 const BARHEIGHT = 50;
 const XBARHEIGHT = 80;
@@ -23,7 +24,7 @@ const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
 const NOT_CLICKABLE_GRAY = "#b8b8b8";
-const SELECTED_DISEASE_COLOR = "#a3e3f0";
+const SELECTED_DISEASE_COLOR = DEATHCAUSES_DARK;
 const WIDTH_PROPORTION= 0.95
 const STIP_MAX_WIDTH=150;
 const CLICKTIP_MAX_WIDTH=250;
@@ -811,7 +812,7 @@ export default class BarChart {
         if (diseaseToWidth && d.name === diseaseToWidth) {
           return SELECTED_DISEASE_COLOR;
         }
-        return ALTERNATING_COLORS[i % 2];
+        return ALTERNATING_COLORS_BARCHART[i % 2];
       })
       .style("opacity", 0.5)
       .lower();

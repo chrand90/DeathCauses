@@ -10,6 +10,7 @@ const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
 export const DEATHCAUSES_COLOR= "#94c5b1"
 export const DEATHCAUSES_LIGHT="#c5ded4"
+export const DEATHCAUSES_DARK="#80b19d"
 
 
 
