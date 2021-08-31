@@ -1,4 +1,5 @@
 import { DataRow } from "../../../components/PlottingData";
+import RelationLinks from "../../RelationLinks";
 import CauseNodeResult from "../CauseNodeResult";
 import { ConditionNodeResult, DimensionStatus, ProbabilityObject, TypeStatus, UpdateDic, UpdateForm } from "../UpdateForm";
 import { computeProbOfNotDying, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
@@ -9,9 +10,14 @@ export interface ConditionsRes {
     probOfHavingWhileDying: {[conditionName: string]: DataRow}
 }
 
+interface stringToNum {
+    [key:string]: number
+}
+
 export function conditionsContributions(
     causeNodeResults: CauseNodeResult[], 
-    conditionNodes: UpdateDic
+    conditionNodes: UpdateDic,
+    rdat: RelationLinks
     ): ConditionsRes{
 
     const notDyingProb= computeProbOfNotDying(causeNodeResults);
@@ -24,16 +30,21 @@ export function conditionsContributions(
     const averageProportion: {[conditionName: string] : DataRow}={};
     const probOfHavingWhileDying: {[conditionName: string] : DataRow}={};
     Object.entries(conditionNodes).forEach(([key, conditionNode]) => {
+        const ancestors=rdat.getAncestors(key)
+        const basicInnerCauses=Object.fromEntries(
+            ancestors.map(ancestor => [ancestor, 0.0])
+        )
+        basicInnerCauses["Unspecified"]=0.0
         if(conditionNode.type===TypeStatus.STRING){
             if(conditionNode.dimension === DimensionStatus.YEARLY){
-                averageProportion[key]=yearlyConstants(conditionNode.value as string[], survivalWeights, key);
-                probOfHavingWhileDying[key]=yearlyConstants(conditionNode.value as string[], deathWeights, key);
+                averageProportion[key]=yearlyConstants(conditionNode.value as string[], survivalWeights, key, basicInnerCauses);
+                probOfHavingWhileDying[key]=yearlyConstants(conditionNode.value as string[], deathWeights, key, basicInnerCauses);
             }
             if(conditionNode.value as string ==="Yes"){
                 averageProportion[key] = {
                     totalProb: 1.0,
                     name: key,
-                    innerCauses: {Unspecified: 1.0}
+                    innerCauses: {...basicInnerCauses, Unspecified: 1.0}
                 }
                 probOfHavingWhileDying[key]=averageProportion[key];
             }
@@ -41,11 +52,11 @@ export function conditionsContributions(
         else{
             //in this case there are some for every 
             if(conditionNode.dimension === DimensionStatus.YEARLY){
-                averageProportion[key]=randomYearlyConstants(conditionNode.value as ConditionNodeResult, survivalWeights, key);
-                probOfHavingWhileDying[key]=randomYearlyConstants(conditionNode.value as ConditionNodeResult, deathWeights, key);
+                averageProportion[key]=randomYearlyConstants(conditionNode.value as ConditionNodeResult, survivalWeights, key, basicInnerCauses);
+                probOfHavingWhileDying[key]=randomYearlyConstants(conditionNode.value as ConditionNodeResult, deathWeights, key, basicInnerCauses);
             }
             else{
-                averageProportion[key] =randomSingleConstant(conditionNode.value as ConditionNodeResult, key);
+                averageProportion[key] =randomSingleConstant(conditionNode.value as ConditionNodeResult, key, basicInnerCauses);
                 probOfHavingWhileDying[key]=averageProportion[key];
             }
         }
@@ -55,7 +66,7 @@ export function conditionsContributions(
 
 
 
-function yearlyConstants(constants: string[], multiplier: number[], conditionName: string): DataRow {
+function yearlyConstants(constants: string[], multiplier: number[], conditionName: string, basicInnerCauses: stringToNum): DataRow {
     let res=0;
     for(let i=0; i<constants.length; i++){
         if(constants[i]==="Yes"){
@@ -65,20 +76,20 @@ function yearlyConstants(constants: string[], multiplier: number[], conditionNam
     return {
         name: conditionName,
         totalProb: res,
-        innerCauses: {Unspecified: 1}
+        innerCauses: {...basicInnerCauses, Unspecified: 1}
     }
 }
 
-function randomSingleConstant(constants: ConditionNodeResult, conditionName:string): DataRow{
+function randomSingleConstant(constants: ConditionNodeResult, conditionName:string, basicInnerCauses: stringToNum): DataRow{
     return {
         name: conditionName,
         totalProb: (constants.probs as ProbabilityObject)["Yes"],
-        innerCauses: constants.perYearInnerCauses as {[k: string]: number},
+        innerCauses: {...basicInnerCauses, ...constants.perYearInnerCauses as {[k: string]: number}},
         comparisonWithBestValues: constants.bestValues
     }
 }
 
-function randomYearlyConstants(constants: ConditionNodeResult, multiplier: number[], conditionName: string): DataRow {
+function randomYearlyConstants(constants: ConditionNodeResult, multiplier: number[], conditionName: string,basicInnerCauses: stringToNum): DataRow {
     let res=0;
     
     let innerCauses= Object.fromEntries(
@@ -109,7 +120,7 @@ function randomYearlyConstants(constants: ConditionNodeResult, multiplier: numbe
     return {
         name: conditionName,
         totalProb: res,
-        innerCauses: innerCauses,
+        innerCauses: {...basicInnerCauses, ...innerCauses},
         comparisonWithBestValues: constants.bestValues
     }
 }

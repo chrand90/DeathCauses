@@ -1,18 +1,20 @@
 import * as d3 from "d3";
 import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
-import Descriptions from "../models/Descriptions";
-import Optimizabilities, { KnowledgeableOptimizabilities } from "../models/Optimizabilities";
+import Descriptions from "../../models/Descriptions";
+import Optimizabilities, { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
 import {
   CauseGrouping,
   CauseToParentMapping,
   ParentToCausesMapping
-} from "../models/RelationLinks";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+} from "../../models/RelationLinks";
+import { LifeExpectancyContributions } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { ConditionVizFlavor } from "../../stores/UIStore";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
-import { ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "./Helpers";
-import { DataRow, DataSet } from "./PlottingData";
+import { ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "../Helpers";
+import { DataRow, DataSet } from "../PlottingData";
+import BarChartSettings from "./BarChartSettings";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
@@ -148,11 +150,12 @@ export default class BarChart {
   chainedTransitionInProgress: boolean;
   transitionsOrdered: number;
   transitionsFinished: number;
+  barChartSettings: BarChartSettings;
   simpleVersion: boolean;
+  useLifeExpectancy: boolean;
   clickedSquareSection: SquareSection | null = null;
   buttonTipTimeOut: NodeJS.Timeout | undefined = undefined;
   widthButtonTipTimeOut: NodeJS.Timeout | undefined = undefined;
-  useLifeExpectancy: boolean;
 
   constructor(
     element: HTMLElement | null,
@@ -169,8 +172,7 @@ export default class BarChart {
       expandables: { [key: string]: string[] };
     },
     optimizabilities: KnowledgeableOptimizabilities,
-    simpleVersion: boolean = false,
-    useLifeExpectancy: boolean =true,
+    barChartSettings: BarChartSettings,
   ) {
     //Initializers
     this.yBars = d3.scaleBand();
@@ -185,17 +187,13 @@ export default class BarChart {
     this.chainedTransitionInProgress = false;
     this.transitionsFinished = 0;
     this.transitionsOrdered = 0;
-    this.simpleVersion = simpleVersion;
+    this.barChartSettings= barChartSettings;
+    this.simpleVersion = barChartSettings.simpleVersion;
+    this.useLifeExpectancy=barChartSettings.getUseLifeExpectancy();
     this.hideAllToolTips = this.hideAllToolTips.bind(this);
     this.redirectPage = redirectPage;
-    if (simpleVersion) {
-      this.grouping = simplifyGrouping(collectedGroups, useLifeExpectancy);
-    } else {
-      this.grouping = collectedGroups;
-    }
-    this.useLifeExpectancy=useLifeExpectancy;
+    this.grouping=collectedGroups;
     this.buttonTipText = this.buttonTipText.bind(this);
-
     const vis = this;
     vis.element = element;
     vis.width = getDivWidth(element) * WIDTH_PROPORTION;
@@ -219,7 +217,7 @@ export default class BarChart {
         .attr("y", XBARHEIGHT / 2)
         .attr("font-size", 20)
         .attr("text-anchor", "middle")
-        .text(this.useLifeExpectancy ? "Time lost to cause" : "Probability of dying of cause");
+        .text(this.barChartSettings.getHeader());
       vis.xAxisGroup = vis.svg
         .append("g")
         .attr("transform", `translate(0,${XBARHEIGHT})`);
@@ -291,6 +289,16 @@ export default class BarChart {
       .attr("transform", designConstants.textTranslation)
       .call(insertBB);
 
+      if(this.barChartSettings.makeExpandButtons){
+        this.makeCollectAndExpandButtons(dtextGroups, designConstants)
+      }
+    }
+    
+    makeCollectAndExpandButtons(
+      dtextGroups: d3.Selection<any, any, any, any>,
+    designConstants: DesignConstants
+    ){
+    const vis= this
     const collectButtons = dtextGroups
       .append("g")
       .attr("class", "dtextGroupCollect")
@@ -453,7 +461,7 @@ export default class BarChart {
       dataSortedTotal,
       dataSquares,
       dataIds,
-    } = this.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities);
+    } = this.barChartSettings.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities, this.grouping)
 
     const n = dataSortedTotal.length;
     let designConstants =
@@ -818,206 +826,6 @@ export default class BarChart {
       .lower();
   }
 
-  computeExpandSquares(
-    dataset: DataSet | LifeExpectancyContributions,
-    removed: string[],
-    added: string[],
-    diseaseToWidth: string | null,
-    oldCollectedGroups: CauseGrouping,
-    optimizabilities: KnowledgeableOptimizabilities
-  ){
-    if(this.useLifeExpectancy){
-      const showingInheritanceCauseToParent: CauseToParentMapping={};
-      const directCauseToParent: CauseToParentMapping = {}
-      Object.keys(oldCollectedGroups.parentToCauses).forEach( nodeName => { 
-        if(!removed.includes(nodeName)){
-          showingInheritanceCauseToParent[nodeName]=nodeName
-          directCauseToParent[nodeName]=nodeName
-        }        
-      })
-      added.forEach( addedNode => {
-        showingInheritanceCauseToParent[addedNode]=removed[0]
-        directCauseToParent[addedNode]=addedNode
-      })
-      const showInheritanceGrouping: CauseGrouping= {
-        causeToParent: showingInheritanceCauseToParent,
-        parentToCauses: {}
-      }
-      const directGrouping: CauseGrouping = {
-        causeToParent: directCauseToParent,
-        parentToCauses: {}
-      }
-      const data=Object.entries(dataset as LifeExpectancyContributions).filter(
-        ([causeName, datrow]) => {
-          return causeName in this.grouping.parentToCauses
-        }
-      ).map(([causeName, datrow])=> {
-        return datrow
-      })
-      const structureIfNotMerged:{[key:string]: CauseGrouping}={};
-      structureIfNotMerged[removed[0]]=directGrouping;
-      const { allSquares: dataSquares, totalProbs } = make_squares(
-        data,
-        diseaseToWidth,
-        directGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      );
-      const {allSquares: noMergeSquares, totalProbs: noMergeTotals} = make_squares(
-        data,
-        diseaseToWidth,
-        showInheritanceGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy,
-        structureIfNotMerged
-      )
-      const {allSquares: preSquares, totalProbs: preTotals} = make_squares(
-        data,
-        diseaseToWidth,
-        showInheritanceGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      )
-      return {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares, preTotals}
-    }
-    else{
-      const { allSquares: dataSquares, totalProbs } = make_squares(
-        dataset as DataSet,
-        diseaseToWidth,
-        this.grouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      );
-      const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
-      const {
-        allSquares: noMergeSquares,
-        totalProbs: noMergeTotals,
-      } = make_squares(
-        dataset as DataSet,
-        diseaseToWidth,
-        oldCollectedGroups,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy,
-        notToBeMerged
-      );
-      return {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares: null, preTotals: null}
-    }
-  }
-
-  computeCollapseSquares(
-    dataset: DataSet | LifeExpectancyContributions,
-    removed: string[],
-    added: string[],
-    diseaseToWidth: string | null,
-    oldCollectedGroups: CauseGrouping,
-    optimizabilities: KnowledgeableOptimizabilities
-  ){
-    if(this.useLifeExpectancy){
-      const replacementCauseToParent: CauseToParentMapping= {}
-      const replacementCauseToParentNoMerge: CauseToParentMapping = {}
-      const finalCauseToParent: CauseToParentMapping = {}
-      Object.keys(this.grouping.parentToCauses).filter(
-        nodeName => !added.includes(nodeName)
-      ).forEach(nodeName => {
-        replacementCauseToParent[nodeName]=nodeName;
-        replacementCauseToParentNoMerge[nodeName]=nodeName;
-        finalCauseToParent[nodeName]=nodeName;
-      })
-      removed.forEach(removedNode => {
-        replacementCauseToParent[removedNode]=added[0]
-        replacementCauseToParentNoMerge[removedNode]=removedNode
-      })
-      finalCauseToParent[added[0]]=added[0];  
-      const replacementGrouping:CauseGrouping = {
-        parentToCauses: {}, 
-        causeToParent: replacementCauseToParent
-      }
-      const replacementGroupingNoMerge = {
-        parentToCauses: {}, 
-        causeToParent: replacementCauseToParentNoMerge
-      }
-      const finalGrouping = {
-        parentToCauses: {},
-        causeToParent: finalCauseToParent
-      }
-      const structureIfNotMerged: {[key:string]: CauseGrouping}={}
-      structureIfNotMerged[added[0]]=replacementGroupingNoMerge
-      let data= Object.entries(dataset as LifeExpectancyContributions).filter(
-        ([causeOrCategoryName, dataRow]) => {
-          const notHidden= causeOrCategoryName in this.grouping.parentToCauses 
-          const aboutToBeHidden= removed.includes(causeOrCategoryName)
-          const aboutToBeUnhidden = added.includes(causeOrCategoryName)
-          return (notHidden || aboutToBeHidden) && !aboutToBeUnhidden
-        }
-      ).map(  ([causeOrCategoryName, dataRow]) => { 
-        return dataRow;
-      }); 
-      let { allSquares: dataSquares, totalProbs } = make_squares(
-        data,
-        diseaseToWidth,
-        replacementGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      );
-      let { allSquares: noMergeSquares} = make_squares(
-        data,
-        diseaseToWidth,
-        replacementGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy,
-        structureIfNotMerged
-      );
-      let finalData= Object.entries(dataset as LifeExpectancyContributions).filter(
-        ([causeOrCategoryName, dataRow]) => {
-          return causeOrCategoryName in this.grouping.parentToCauses 
-        }
-      ).map( ([causeOrCategoryName, dataRow]) => { 
-        return dataRow;
-      }); 
-      let { allSquares: finalSquares, totalProbs: finalProbs} = make_squares(
-        finalData,
-        diseaseToWidth,
-        finalGrouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      );
-      return {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs}
-    }
-    else{
-      const notToBeMerged = getSubCollectGroup(
-        oldCollectedGroups,
-        removed,
-        added[0]
-      );
-      let { allSquares: dataSquares, totalProbs } = make_squares(
-        dataset as DataSet,
-        diseaseToWidth,
-        this.grouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      );
-      let { allSquares: noMergeSquares} = make_squares(
-        dataset as DataSet,
-        diseaseToWidth,
-        this.grouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy,
-        notToBeMerged
-      );
-      return {noMergeSquares, dataSquares, totalProbs, finalSquares: null, finalProbs: null}
-
-    }
-  }
 
   prepareStepBeforeExpandTransition(preSquares: SquareSection[], preTotals: DataRow[], durationPerTransition: number){
     return (designConstants: DesignConstants, callback: any) => {
@@ -1088,12 +896,13 @@ export default class BarChart {
     durationPerTransition: number = 1000
   ) {
     this.disableExpandCollectButtons(removed);
-    const {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs} = this.computeCollapseSquares(
+    const {noMergeSquares, dataSquares, totalProbs, finalSquares, finalTotals} = this.barChartSettings.computeCollapseSquares(
       dataset,
       removed,
       added,
       diseaseToWidth,
       oldCollectedGroups,
+      this.grouping,
       optimizabilities
     )
     
@@ -1107,7 +916,7 @@ export default class BarChart {
     const sortedTotals = copyOfSortedDataset(totalProbs, "totalProb")
 
     const sortedTotalsFinal = this.useLifeExpectancy ? 
-      copyOfSortedDataset(finalProbs as DataRow[], "totalProb") :
+      copyOfSortedDataset(finalTotals as DataRow[], "totalProb") :
       sortedTotals
 
     const vis = this;
@@ -1337,16 +1146,17 @@ export default class BarChart {
   ) {
     this.chainedTransitionInProgress = true;
     this.disableExpandCollectButtons(removed);
-    const {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares, preTotals} = this.computeExpandSquares(
+    const {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares, preTotals} = this.barChartSettings.computeExpandSquares(
       dataset,
       removed,
       added,
       diseaseToWidth,
       oldCollectedGroups,
+      this.grouping,
       optimizabilities
     )
 
-    const preStep = this.useLifeExpectancy ? 
+    const preStep = this.barChartSettings.getUseLifeExpectancy() ? 
       this.prepareStepBeforeExpandTransition(preSquares as SquareSection[], preTotals as DataRow[], durationPerTransition) :
       (designConstants: DesignConstants, callback:any) => {callback()}
 
@@ -1510,51 +1320,6 @@ export default class BarChart {
     }
   }
 
-  computeRankAndSquares(
-    data: DataRow[] | LifeExpectancyContributions,
-    diseaseToWidth: string | null,
-    optimizabilities: KnowledgeableOptimizabilities
-  ): {
-    dataSortedTotal: DataRow[];
-    dataSquares: SquareSection[];
-    dataIds: number[];
-  } {
-    let totalProbs: DataRow[];
-    let dataSquares: SquareSection[];
-    if(this.useLifeExpectancy){
-      let dataset= Object.entries(data as LifeExpectancyContributions).filter(
-        ([causeOrCategoryName, dataRow]) => {
-          return causeOrCategoryName in this.grouping.parentToCauses
-        }
-      ).map(  ([causeOrCategoryName, dataRow]) => { 
-        return dataRow;
-      }); 
-      ({ allSquares: dataSquares, totalProbs } = make_squares(
-        dataset,
-        diseaseToWidth,
-        undefined,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      ));
-    }
-    else{
-      ({ allSquares: dataSquares, totalProbs } = make_squares(
-        data as DataSet,
-        diseaseToWidth,
-        this.grouping,
-        this.descriptions,
-        optimizabilities,
-        this.useLifeExpectancy
-      ));
-    }
-    const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
-    const dataIds = dataSortedTotal.map((v: any, index: number) => {
-      return index;
-    });
-    return { dataSortedTotal, dataSquares, dataIds };
-  }
-
   updatePercentagesXaxis(dataTotals: DataRow[], durationPerTransition: number){
     this.svg
       .selectAll<any, any>(".ptext")
@@ -1596,7 +1361,7 @@ export default class BarChart {
       dataSortedTotal,
       dataSquares,
       dataIds,
-    } = this.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities);
+    } = this.barChartSettings.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities, this.grouping);
 
     const n = dataSortedTotal.length;
     const designConstants =
@@ -1737,38 +1502,4 @@ function getBooleanSet(oldGrouping: CauseGrouping, newGrouping: CauseGrouping) {
   return { removed, added };
 }
 
-function getSubCollectGroup(
-  groupingWithSubGroups: CauseGrouping,
-  subGroupNames: string[],
-  bigGroupName: string
-): { [key: string]: CauseGrouping } {
-  let parentToCauses: ParentToCausesMapping = {};
-  let causeToParent: CauseToParentMapping = {};
-  subGroupNames.forEach((subGroupName: string) => {
-    let children = groupingWithSubGroups.parentToCauses[subGroupName];
-    parentToCauses[subGroupName] = children;
-    children.forEach((child: string) => {
-      causeToParent[child] = subGroupName;
-    });
-  });
-  let res: { [key: string]: CauseGrouping } = {};
-  res[bigGroupName] = { parentToCauses, causeToParent };
-  return res;
-}
 
-function simplifyGrouping(grouping: CauseGrouping, useLifeExpectancy: boolean=false): CauseGrouping {
-  
-  let parentToCauses: ParentToCausesMapping = {};
-  let causeToParent: CauseToParentMapping = {};
-  if(useLifeExpectancy){
-    parentToCauses["any cause"]=["any cause"]
-    causeToParent["any cause"]="any cause"
-    return { parentToCauses, causeToParent }
-  }
-  const allCauses = Object.keys(grouping.causeToParent);
-  parentToCauses["any cause"] = allCauses;
-  allCauses.forEach((d) => {
-    causeToParent[d] = "any cause";
-  });
-  return { parentToCauses, causeToParent };
-}

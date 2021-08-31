@@ -98,3 +98,11 @@ export function hexToRgb(hex:string) {
     b: parseInt(result[3], 16)
   } : null;
 }
+
+export function createHandleChangeFunction<T>(changeElementInFocus: (d:T) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
+	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value: string = event.currentTarget.value;
+		changeElementInFocus(value as unknown as T);
+	}
+	return handleChangeFunction
+}

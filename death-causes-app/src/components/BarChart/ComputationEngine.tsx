@@ -1,9 +1,11 @@
-import Descriptions from "../models/Descriptions";
-import { KnowledgeableOptimizabilities } from "../models/Optimizabilities";
-import { CauseGrouping } from "../models/RelationLinks";
-import { MultifactorGainType } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "./Calculations/ConsensusBestValue";
-import { DataRow, DataSet } from "./PlottingData";
+import Descriptions from "../../models/Descriptions";
+import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
+import { CauseGrouping } from "../../models/RelationLinks";
+import { MultifactorGainType } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { ConditionVizFlavor } from "../../stores/UIStore";
+import BarChartSettings from "./BarChartSettings";
+import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "../Calculations/ConsensusBestValue";
+import { DataRow, DataSet } from "../PlottingData";
 
 export interface SquareSection {
     name: string,
@@ -53,9 +55,8 @@ function makeRowSquare(
     max: number | null,
     mergeAcross: boolean,
     structureIfNotMerged: CauseGrouping,
-    descriptions: Descriptions,
     optimizabilities: KnowledgeableOptimizabilities,
-    useLifeExpectancy: boolean,
+    barChartSettings: BarChartSettings
     ):{squares:SquareSection[], totalProb:number}{
     let squares=[];
     let rescaler=1
@@ -86,7 +87,7 @@ function makeRowSquare(
             cause: 'Unexplained',
             x0:zeroTruncater(explainedSoFar)*rescaler,
             x: zeroTruncater(unexplained*totalProb)*rescaler,
-            longComparison: getUnexplainedStatement(unexplained,totalProb, parent, descriptions, useLifeExpectancy)
+            longComparison: getUnexplainedStatement(unexplained,totalProb, parent, barChartSettings.descriptions, barChartSettings.getUseLifeExpectancy(), barChartSettings.getConditionVizFlavor())
         });
         explainedSoFar=unexplained*totalProb;
         let widthOfEachInnerCause=getOccurences(datRows);
@@ -103,35 +104,36 @@ function makeRowSquare(
             let longStatement: LongConsensus | undefined;
             let statement: string | undefined;
             if(innerCause===MultifactorGainType.KNOWN){
-                statement=descriptions.getDescription(MultifactorGainType.KNOWN, 80)
+                statement=barChartSettings.descriptions.getDescription(MultifactorGainType.KNOWN, 80)
                 longStatement=getMultifactorGainStatement(
                     totalProb>1e-8 ? width/totalProb : 0,
                     totalProb,
                     parent,
-                    descriptions,
+                    barChartSettings.descriptions,
                     MultifactorGainType.KNOWN
                 )
             }
             else if(innerCause===MultifactorGainType.UNKNOWN){
-                statement=descriptions.getDescription(MultifactorGainType.UNKNOWN,80)
+                statement=barChartSettings.descriptions.getDescription(MultifactorGainType.UNKNOWN,80)
                 longStatement=getMultifactorGainStatement(
                     totalProb>1e-8 ? width/totalProb : 0,
                     totalProb,
                     parent,
-                    descriptions,
+                    barChartSettings.descriptions,
                     MultifactorGainType.UNKNOWN
                 )
             }
             else{
-                statement=combinedBestValues?.getConsensusStatement(innerCause, descriptions, useLifeExpectancy)
+                statement=combinedBestValues?.getConsensusStatement(innerCause, barChartSettings.descriptions, barChartSettings.getUseLifeExpectancy())
                 longStatement=combinedBestValues?.getLongConsensusStatement(
                 innerCause,
                 totalProb>1e-8 ? width/totalProb : 0,
                 totalProb,
                 parent,
-                descriptions,
-                useLifeExpectancy,
-                optimizabilities
+                barChartSettings.descriptions,
+                barChartSettings.getUseLifeExpectancy(),
+                optimizabilities,
+                barChartSettings.getConditionVizFlavor()
                 );
             }
             
@@ -217,9 +219,8 @@ function make_squares(
     res_dat: DataSet, 
     setToWidth: string | null, 
     grouping: CauseGrouping | undefined,
-    descriptions: Descriptions,
     optimizabilities: KnowledgeableOptimizabilities,
-    useLifeExpectancy: boolean,
+    barChartSettings: BarChartSettings,
     noMergeAcross: {[key:string]: CauseGrouping}={}
 ):{allSquares: SquareSection[], totalProbs: DataRow[]}
 {
@@ -239,9 +240,8 @@ function make_squares(
             max, 
             !(parent in noMergeAcross),
             parent in noMergeAcross ? noMergeAcross[parent] : ({} as CauseGrouping),
-            descriptions,
             optimizabilities,
-            useLifeExpectancy
+            barChartSettings
         )
         squareSections.push(squares)
         totalProbs.push({

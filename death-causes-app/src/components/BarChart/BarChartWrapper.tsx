@@ -1,12 +1,15 @@
 import { observer } from 'mobx-react';
 import React, { useEffect, useRef, useState } from 'react';
-import { useStore } from '../stores/rootStore';
+import { useStore } from '../../stores/rootStore';
 import BarChart from './BarChart';
-import { DataSet } from './PlottingData';
+import { DataSet } from '../PlottingData';
 import "./BarChartWrapper.css";
 import { useHistory } from 'react-router';
-import { LifeExpectancyContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
-import { KnowledgeableOptimizabilities } from '../models/Optimizabilities';
+import { LifeExpectancyContributions } from '../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
+import { KnowledgeableOptimizabilities } from '../../models/Optimizabilities';
+import { Visualization } from '../../stores/UIStore';
+import BarChartSettings from './BarChartSettings';
+import "./BarChartWrapper.css";
 
 enum LatestChange {
 	FITSCREEN="fit screen to disease width",
@@ -15,7 +18,7 @@ enum LatestChange {
 
 interface BarChartWrapperProps {
 	database: DataSet | LifeExpectancyContributions;
-	simpleVersion?: boolean;
+	barChartSettings: BarChartSettings;
 }
 
 const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
@@ -46,28 +49,36 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	useEffect(() => {
 		if(chart){
 			if(store.barChartStore.latestChange===LatestChange.GROUPING){
-				chart.changeCats(database, store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups, newOptims())
+				chart.changeCats(
+					database, 
+					props.barChartSettings.getElementToWidth(store),
+					props.barChartSettings.getGrouping(store),
+					newOptims())
 			}
 			else{
-				chart.update(database, store.barChartStore.diseaseToWidth, newOptims(), true);
+				chart.update(
+					database, 
+					props.barChartSettings.getElementToWidth(store), 
+					newOptims(), 
+					true);
 			}
 		}
-	}, [store.barChartStore.diseaseToWidth, store.barChartStore.explicitCollectedGroups])
+	}, [store.barChartStore.diseaseToWidth, store.barChartStore.conditionToWidth, store.barChartStore.explicitCollectedGroups])
 
 	const createNewChart = function () {
 		setChart(new BarChart(
 			chartArea.current, 
 			database, 
 			store.loadedDataStore.descriptions, 
-			store.barChartStore.diseaseToWidth, 
-			store.barChartStore.setDiseaseToWidth, 
-			store.barChartStore.explicitCollectedGroups, 
+			props.barChartSettings.getElementToWidth(store),
+			props.barChartSettings.setElementToWidth(store),
+			props.barChartSettings.getGrouping(store),
 			store.barChartStore.expandCategory, 
 			store.barChartStore.collectParentCategory,
 			rerouter,
 			store.loadedDataStore.rdat.getPossibleExpansions(),
 			newOptims(),
-			props.simpleVersion ? props.simpleVersion : false
+			props.barChartSettings
 		));
 	}
 
@@ -86,11 +97,11 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			chart.clear();
 			createNewChart();
 		}
-	}, [store.uIStore.windowWidth])
+	}, [store.uIStore.windowWidth, store.uIStore.conditionVizFlavor])
 
 	useEffect(() => {
 		if (chart) {
-			chart.update(database, store.barChartStore.diseaseToWidth, newOptims());
+			chart.update(database, props.barChartSettings.getElementToWidth(store), newOptims());
 		}
 	}, [database]);
 

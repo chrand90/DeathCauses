@@ -42,6 +42,8 @@ export default class Descriptions {
         this.colors[MultifactorGainType.UNKNOWN]="#fcfcfa";
         this.descriptions[MultifactorGainType.KNOWN]=["Multiple known factors bonus", "Known factors", "Knowns"]
         this.descriptions[MultifactorGainType.UNKNOWN]=["Multiple factors bonus", "Unknown factors", "Unknowns"]
+        this.descriptions["Unspecified"]=["Unspecified"]
+        this.colors["Unspecified"]="#bdbdbd"
     }
 
     getColor(nodeName: string){
@@ -64,12 +66,17 @@ export default class Descriptions {
         }
         let candidateLength=0;
         let candidate=null;
-        this.descriptions[nodeName].forEach(desc => {
-          if(desc.length>= candidateLength && desc.length<=maxSize){
-            candidate=desc;
-            candidateLength=desc.length;
-          }
-        })
+        if(nodeName in this.descriptions){
+          this.descriptions[nodeName].forEach(desc => {
+            if(desc.length>= candidateLength && desc.length<=maxSize){
+              candidate=desc;
+              candidateLength=desc.length;
+            }
+          })
+        }
+        else{
+          console.error(`No description was found for ${nodeName}`)
+        }
         if(candidate){
           return candidate
         }

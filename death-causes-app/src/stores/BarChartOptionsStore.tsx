@@ -9,21 +9,25 @@ enum LatestChange {
 export default class BarChartStore {
   loadedDataStore: LoadedDataStore;
   diseaseToWidth: string | null;
+  conditionToWidth: string | null;
   collectedCategories: string[];
   latestChange: LatestChange;
 
   constructor(loadedDataStore: LoadedDataStore){
     this.loadedDataStore = loadedDataStore;
     this.diseaseToWidth=null;
+    this.conditionToWidth=null;
     this.collectedCategories=[];
     this.latestChange=LatestChange.FITSCREEN;
     makeObservable(this, {
       diseaseToWidth: observable,
       collectedCategories: observable,
+      conditionToWidth: observable,
       expandCategory: action.bound,
       collectParentCategory: action.bound,
       explicitCollectedGroups: computed,
-      setDiseaseToWidth: action.bound
+      setDiseaseToWidth: action.bound,
+      setConditionToWidth: action.bound
     });
   }
 
@@ -65,6 +69,10 @@ export default class BarChartStore {
     this.diseaseToWidth=newDiseaseToWidth
     this.collectedCategories=newCollectedGroups
 	}
+
+  setConditionToWidth(newConditionToWidth: null | string){
+    this.conditionToWidth=newConditionToWidth;
+  }
 
   setDiseaseToWidth(newDiseaseToWidth: null | string){
     this.latestChange=LatestChange.FITSCREEN;

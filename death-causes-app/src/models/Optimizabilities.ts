@@ -31,6 +31,7 @@ export default class Optimizabilities {
         })
         this.optimizabilities[MultifactorGainType.UNKNOWN]=0
         this.optimizabilities[MultifactorGainType.KNOWN]=5
+        this.optimizabilities["Unspecified"]=0
     }
 
 

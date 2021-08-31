@@ -6,7 +6,7 @@ import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
 import AdvancedOptionsMenu from "./AdvancedOptions";
-import BarChartWrapper from "./BarChartWrapper";
+import BarChartWrapper from "./BarChart/BarChartWrapper";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
 import { DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, hideAllToolTips } from "./Helpers";
@@ -18,6 +18,7 @@ import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryV
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
 import ConditionsViz from "./ConditionsViz";
+import DeathCauseBarChartSettings from "./BarChart/DeathCauseBarChartSettings";
 
 interface VizWindowProps {
   store: RootStore;
@@ -99,7 +100,11 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     if(this.isResultsComputed()){
       switch (this.props.store.uIStore.visualization) {
         case Visualization.BAR_GRAPH: {
-          return <BarChartWrapper database={this.state.riskFactorContributions}/>
+          return (
+          <BarChartWrapper 
+            database={this.state.riskFactorContributions}
+            barChartSettings={new DeathCauseBarChartSettings(false, true, this.props.store.loadedDataStore.descriptions)}
+          />)
         }
         case Visualization.SUMMARY_VIEW: {
           return <SummaryView data={this.state.summaryViewData}/>
@@ -148,7 +153,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         onClick={() => {
           this.props.store.uIStore.tooltipHider()
         }}
-        style={{paddingTop:"18px"}}
+        style={{paddingTop:"18px", minHeight:"calc(100vh - 72px)"}}
       >
         <h3> Visualization </h3>
         {this.renderSelectOption()}

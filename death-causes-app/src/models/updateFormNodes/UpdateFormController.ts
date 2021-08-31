@@ -193,7 +193,7 @@ export default class UpdateFormController {
           return [condition, this.allComputedNodes![condition]]
         })
       )
-      return conditionsContributions(finalNodeResults, conditionNodeResults);
+      return conditionsContributions(finalNodeResults, conditionNodeResults, this.rdat);
   }
 
   computeAverage(factorAnswers: FactorAnswers) {
