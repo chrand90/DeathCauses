@@ -1,12 +1,11 @@
-import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
 import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
-import { LifeExpectancyContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
-import UpdateFormController, { WrappedLifeExpectancyContributions } from "../updateFormNodes/UpdateFormController";
+import { FactorAnswerChanges } from "../updateFormNodes/FactorAnswersToUpdateForm";
+import { DeathCauseContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import UpdateFormController from "../updateFormNodes/UpdateFormController";
 
 class computations {
   computer: UpdateFormController | null;
@@ -46,7 +45,7 @@ class computations {
 
   processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     if(this.computer===null){
-      return {survivalData: [], innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, data: {}}, summaryView: null};
+      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}};
     }
     else{
       return this.computer.computeAll(data, evaluationUnit);
@@ -56,7 +55,7 @@ class computations {
 
 let c = new computations();
 
-export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT):{survivalData: SurvivalCurveData[], innerCauses: WrappedLifeExpectancyContributions, summaryView: SummaryViewData | null} {
+export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): {innerCauses: DeathCauseContributions, changes: FactorAnswerChanges} {
   return c.processData(data, evaluationUnit);
 }
 

@@ -2,6 +2,8 @@ import { autorun, IReactionDisposer } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
 import { Form } from "react-bootstrap";
+import { DeathCauseContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
@@ -9,23 +11,16 @@ import AdvancedOptionsMenu from "./AdvancedOptions";
 import BarChartWrapper from "./BarChartWrapper";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import { hideAllToolTips } from "./Helpers";
-import { DataRow } from "./PlottingData";
 import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
+import SummaryView from "./SummaryView";
 import "./VizWindow.css";
-import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { WrappedLifeExpectancyContributions } from "../models/updateFormNodes/UpdateFormController";
 
 interface VizWindowProps {
   store: RootStore;
 }
 
 interface VizWindowStates {
-  riskFactorContributions: WrappedLifeExpectancyContributions;
-  survivalCurveData: SurvivalCurveData[];
-  summaryViewData: SummaryViewData | null;
+  riskFactorContributions: DeathCauseContributions;
 }
 
 class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindowStates> {
@@ -35,8 +30,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     super(props);
     this.state = {
       riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-      survivalCurveData: this.props.store.computationStore.survivalCurveData,
-      summaryViewData: this.props.store.computationStore.summaryView
     }
   }
 
@@ -45,8 +38,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
         this.setState({
           riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-          survivalCurveData: this.props.store.computationStore.survivalCurveData,
-          summaryViewData: this.props.store.computationStore.summaryView
         }, () => {
           this.props.store.computationStateStore.setComputationState(ComputationState.READY);
         })
@@ -76,9 +67,9 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       case Visualization.BAR_GRAPH: {
         return (
           <div>
-            {Object.keys(this.state.riskFactorContributions.data).length>0 ? (
+            {Object.keys(this.state.riskFactorContributions.costPerCause).length>0 ? (
               <BarChartWrapper
-                database={this.state.riskFactorContributions.data}
+                database={this.state.riskFactorContributions.costPerCause}
                 evaluationUnit={this.state.riskFactorContributions.evaluationUnit}
               />
             ) : (
@@ -88,9 +79,13 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         );
       }
       case Visualization.SURVIVAL_GRAPH: {
-        return <BarPlotWrapper data={this.state.survivalCurveData} />;
+        return <BarPlotWrapper data={this.getSurvivalCurveInputData(this.state.riskFactorContributions)} />;
       }
     }
+  }
+
+  getSurvivalCurveInputData(riskFactorContributions: DeathCauseContributions): SurvivalCurveData[] {
+    return riskFactorContributions.ages.map((e, i) => {return {age: e, prob: riskFactorContributions.survivalProbs[i]}})
   }
 
   renderChosenGraph() {
@@ -113,11 +108,11 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         return "Input an age to get started";
       }
       case Visualization.SUMMARY_VIEW: {
-        if (this.state.summaryViewData === null) {
+        if (this.state.riskFactorContributions.costPerCause === null) {
           return (<h3>Answer questions and compute to show results</h3>)
         }
         return (
-          <SummaryView data={this.state.summaryViewData}/>
+          <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
         )
       }
       default: {

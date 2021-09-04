@@ -4,6 +4,7 @@ import DeathCause, {
   RiskFactorGroupsContainer
 } from "../../components/database/Deathcause";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
+import { LollipopChartInput, LollipopChartProbabilityInput, LollipopChartYearsLostInput } from "../../components/LollipopChartInput";
 import { DataRow } from "../../components/PlottingData";
 import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions from "../Descriptions";
@@ -13,10 +14,10 @@ import CauseNode from "./CauseNode";
 import CauseNodeResult from "./CauseNodeResult";
 import { ComputedFactorClasses } from "./ComputedFactors";
 import { ConditionClasses } from "./ConditionNodes";
-import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
+import { FactorAnswerChanges, FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
-import riskFactorContributionsLifeExpectancy, { LifeExpectancyContributions } from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
-import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
+import riskFactorContributionsLifeExpectancy, { DeathCauseContributions, DeathCauseContributionsAndChanges } from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { DataPoint, SummaryViewData } from "./FinalSummary/SummaryView";
 import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
 import RiskFactorGroupNode from "./RiskFactorGroupNode";
@@ -24,7 +25,7 @@ import { UpdateDic } from "./UpdateForm";
 
 export interface WrappedLifeExpectancyContributions {
   evaluationUnit: EVALUATION_UNIT,
-  data: LifeExpectancyContributions
+  data: DeathCauseContributions
 }
 
 export default class UpdateFormController {
@@ -145,7 +146,7 @@ export default class UpdateFormController {
     });
   }
 
-  computeInnerProbabilities(evaluationUnit: EVALUATION_UNIT): WrappedLifeExpectancyContributions {
+  computeInnerProbabilities(evaluationUnit: EVALUATION_UNIT): DeathCauseContributionsAndChanges {
     if (this.allComputedNodes === null) {
       throw Error("It is not possible to compute survival data before calling compute()")
     }
@@ -154,14 +155,20 @@ export default class UpdateFormController {
       return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
     })
     if (evaluationUnit === EVALUATION_UNIT.YEARS_LOST) {
-      const res = riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.rdat)
-      return {evaluationUnit: EVALUATION_UNIT.YEARS_LOST, data: res};
+      return {...riskFactorContributionsLifeExpectancy(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.rdat),
+         changes: this.inputFactorTreater.getRecentChanges()
+        }
     }
     else {
-      const res = riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
-      return {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, data: res}
+      return {...riskFactorContributions(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes)), 
+        changes: this.inputFactorTreater.getRecentChanges()
+      }
     }
   }
+
+  // computeFactorAnswerChanges(): FactorAnswerChanges {
+  //   return this.inputFactorTreater.getRecentChanges()
+  // }
 
   compute(factorAnswers: FactorAnswers) {
     let res: UpdateDic = this.inputFactorTreater.update(factorAnswers);
@@ -176,27 +183,33 @@ export default class UpdateFormController {
 
   computeAll(factorAnswers: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     this.compute(factorAnswers)
-    return { survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities(evaluationUnit), summaryView: this.computeSummaryViewData(evaluationUnit) }
+    let innerCauses = this.computeInnerProbabilities(evaluationUnit)
+    let changes: FactorAnswerChanges = this.inputFactorTreater.getRecentChanges()
+    return { innerCauses: innerCauses, changes: changes }
+    // return { survivalData: this.computeSurvivalData(), innerCauses: innerCauses, summaryView: this.computeSummaryViewData(innerCauses) }
   }
 
-  computeSurvivalData(): SurvivalCurveData[] {
-    //Promise<SurvivalCurveData[]>{
-    if (this.allComputedNodes === null) {
-      throw Error("It is not possible to compute survival data before calling compute()")
-    }
-    const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
-      return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
-    })
-    return survivalCurve(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
-  }
+  // computeSurvivalData(): SurvivalCurveData[] {
+  //   //Promise<SurvivalCurveData[]>{
+  //   if (this.allComputedNodes === null) {
+  //     throw Error("It is not possible to compute survival data before calling compute()")
+  //   }
+  //   const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
+  //     return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+  //   })
+  //   return survivalCurve(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo)
+  // }
 
-  computeSummaryViewData(evaluationUnit: EVALUATION_UNIT): SummaryViewData {
-    if (this.allComputedNodes === null) {
-      throw Error("It is not possible to compute survival data before calling compute()")
-    }
-    const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
-      return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
-    })
-    return computeSummaryView(finalNodeResults, this.formUpdaters[0].getAgeFrom(this.allComputedNodes), this.ageTo, this.inputFactorTreater.getRecentChanges(), evaluationUnit)
-  }
+  // computeSummaryViewData(innerCauses: LifeExpectancyContributions): SummaryViewData {
+  //   let tmp = {
+  //     lifeExpentancyData: {
+  //       lifeExpentancy: innerCauses.baseLifeExpectancy,
+  //       ages: innerCauses.ages,
+  //       probabilities: innerCauses.survivalProbs
+  //     },
+  //     changes: this.inputFactorTreater.getRecentChanges()
+  //   }
+
+  //   return tmp
+  // }
 }

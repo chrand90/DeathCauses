@@ -1,12 +1,14 @@
 import { observer } from "mobx-react"
-import React from "react"
-import { useRef } from "react"
-import { useEffect, useState } from "react"
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView"
+import React, { useEffect, useRef, useState } from "react"
 import RootStore, { withStore } from "../stores/rootStore"
 
+
+export interface RangeSliderInput {
+    ages: number[],
+    survivalProbs: number[]
+}
 interface RangeSlidersProps {
-    summaryViewData: null | SummaryViewData
+    data: RangeSliderInput
     store: RootStore
 }
 
@@ -16,8 +18,8 @@ enum SliderAnchor {
 }
 
 const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
-    const ages = props.summaryViewData!.lifeExpentancyData.ages
-    const survivalProbs = props.summaryViewData!.lifeExpentancyData.probabilities
+    const ages = props.data.ages
+    const survivalProbs = props.data.survivalProbs
 
     const [sliderAge, setSliderAge] = useState<number>(0)
     const [sliderProb, setSliderProb] = useState<number>(50)
@@ -38,7 +40,6 @@ const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
         sliderInCenter.current=SliderAnchor.AGE
         setSliderAge(ageValue)
         setSliderProb(survivalProbs[ages.findIndex(element => element === ageValue)] * 100)
-        // setSliderProb(Math.round(props.survivalProbs[props.ages.findIndex(element => element === ageValue)] * 1000) / 10)
     }
 
     const updateProbSlider = (value: number) => {

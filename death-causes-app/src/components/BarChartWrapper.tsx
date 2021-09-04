@@ -2,10 +2,10 @@ import { observer } from 'mobx-react';
 import React, { useEffect, useRef, useState } from 'react';
 import { useStore } from '../stores/rootStore';
 import BarChart from './BarChart';
-import { DataSet } from './PlottingData';
+import { DataRow, DataSet } from './PlottingData';
 import "./BarChartWrapper.css";
 import { useHistory } from 'react-router';
-import { LifeExpectancyContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
+import { DeathCauseContributions } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
 import { EVALUATION_UNIT } from '../stores/AdvancedOptionsStore';
 
 enum LatestChange {
@@ -14,7 +14,7 @@ enum LatestChange {
 }
 
 interface BarChartWrapperProps {
-	database: LifeExpectancyContributions;
+	database: {[key: string]: DataRow};
 	evaluationUnit: EVALUATION_UNIT;
 	simpleVersion?: boolean;
 }
@@ -86,7 +86,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	}, [store.uIStore.windowWidth, props.evaluationUnit])
 
 	useEffect(() => {
-		if (chart) {
+		if (chart && chart.useLifeExpectancy === (props.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST ) ) {
 			chart.update(database, store.barChartStore.diseaseToWidth); 
 		}
 	}, [database]);

@@ -3,7 +3,7 @@ import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData"
 import { DataRow } from "../components/PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { DeathCauseContributions, DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController, { WrappedLifeExpectancyContributions } from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
@@ -25,11 +25,9 @@ export default class ComputationStore {
   submittedFactorAnswers: FactorAnswers;
   loadedDataStore: LoadedDataStore;
   advancedOptionsStore: AdvancedOptionsStore;
-  riskFactorContributions: WrappedLifeExpectancyContributions;
-  survivalCurveData: SurvivalCurveData[];
+  riskFactorContributions: DeathCauseContributionsAndChanges;
   singeThreadComputeController: UpdateFormController | null;
   computationStateStore: ComputationStateStore;
-  summaryView: SummaryViewData | null;
   allChanges: FactorAnswerChanges[];
   lifeExpectancies: number[];
 
@@ -40,9 +38,7 @@ export default class ComputationStore {
   ) {
     this.computationStateStore = computationStateStore;
     this.submittedFactorAnswers = {};
-    this.riskFactorContributions = {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, data: {}};
-    this.survivalCurveData = [];
-    this.summaryView = null;
+    this.riskFactorContributions = {ages: [], survivalProbs: [], baseLifeExpectancy: 0, evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, costPerCause: {}, changes: {}};
     this.singeThreadComputeController = null;
     this.allChanges=[]
     this.lifeExpectancies=[70]
@@ -114,28 +110,20 @@ export default class ComputationStore {
     if (this.advancedOptionsStore.submittedThreading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities(this.advancedOptionsStore.submittedEvaluationUnit);
-      console.log(innerprobabilities);
+      // const factorAnswerChange = this.singeThreadComputeController?.computeFactorAnswerChanges()
+
       if (innerprobabilities !== undefined) {
         //will be undefined if data hasnt loaded yet.
         this.riskFactorContributions = innerprobabilities;
+        this.pushChanges(innerprobabilities)
+        this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }
-      const survivalCurveData = this.singeThreadComputeController?.computeSurvivalData();
-      if (survivalCurveData !== undefined) {
-        this.survivalCurveData = survivalCurveData;
-      }
-      const summaryViewData = this.singeThreadComputeController?.computeSummaryViewData(this.advancedOptionsStore.submittedEvaluationUnit);
-      if (summaryViewData !== undefined) {
-        this.summaryView = summaryViewData;
-      }
-      this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
     } else {
       worker.processData(
         toJS(this.submittedFactorAnswers), toJS(this.advancedOptionsStore.submittedEvaluationUnit)
-      ).then( action("INserting results", ({ survivalData, innerCauses, summaryView}) => { 
-        this.survivalCurveData = survivalData;
+      ).then( action("INserting results", ({ innerCauses}) => { 
         this.riskFactorContributions = innerCauses;
-        this.summaryView = summaryView
-        this.pushChanges(summaryView.changes, summaryView.lifeExpentancyData.lifeExpentancy)
+        this.pushChanges(innerCauses)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));
     }
@@ -167,9 +155,9 @@ export default class ComputationStore {
     }
   }
 
-  pushChanges(newChanges: FactorAnswerChanges, newLifeExpectancy: number){
-    this.allChanges.unshift(newChanges);
-    this.lifeExpectancies.unshift(newLifeExpectancy);
+  pushChanges(computationResults: DeathCauseContributionsAndChanges){
+    this.allChanges.unshift(computationResults.changes);
+    this.lifeExpectancies.unshift(computationResults.baseLifeExpectancy);
   }
 
   attachLoadedData() {

@@ -7,7 +7,7 @@ import {
   CauseToParentMapping,
   ParentToCausesMapping
 } from "../models/RelationLinks";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { InnerCause } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 import "./BarChart.css";
 import make_squares, { SquareSection } from "./ComputationEngine";
@@ -155,7 +155,7 @@ export default class BarChart {
 
   constructor(
     element: HTMLElement | null,
-    database: DataSet | LifeExpectancyContributions,
+    database: DataSet | InnerCause,
     evaluationUnit: EVALUATION_UNIT,
     descriptions: Descriptions,
     diseaseToWidth: string | null,
@@ -444,7 +444,7 @@ export default class BarChart {
       .style("fill", NOT_CLICKABLE_GRAY);
   }
 
-  make(dataset: DataSet | LifeExpectancyContributions, diseaseToWidth: string | null) {
+  make(dataset: DataSet | InnerCause, diseaseToWidth: string | null) {
     const vis = this;
 
     const {
@@ -817,7 +817,7 @@ export default class BarChart {
   }
 
   computeExpandSquares(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     removed: string[],
     added: string[],
     diseaseToWidth: string | null,
@@ -844,7 +844,7 @@ export default class BarChart {
         causeToParent: directCauseToParent,
         parentToCauses: {}
       }
-      const data=Object.entries(dataset as LifeExpectancyContributions).filter(
+      const data=Object.entries(dataset as InnerCause).filter(
         ([causeName, datrow]) => {
           return causeName in this.grouping.parentToCauses
         }
@@ -902,7 +902,7 @@ export default class BarChart {
   }
 
   computeCollapseSquares(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     removed: string[],
     added: string[],
     diseaseToWidth: string | null,
@@ -938,7 +938,7 @@ export default class BarChart {
       }
       const structureIfNotMerged: {[key:string]: CauseGrouping}={}
       structureIfNotMerged[added[0]]=replacementGroupingNoMerge
-      let data= Object.entries(dataset as LifeExpectancyContributions).filter(
+      let data= Object.entries(dataset as InnerCause).filter(
         ([causeOrCategoryName, dataRow]) => {
           const notHidden= causeOrCategoryName in this.grouping.parentToCauses 
           const aboutToBeHidden= removed.includes(causeOrCategoryName)
@@ -963,7 +963,7 @@ export default class BarChart {
         this.useLifeExpectancy,
         structureIfNotMerged
       );
-      let finalData= Object.entries(dataset as LifeExpectancyContributions).filter(
+      let finalData= Object.entries(dataset as InnerCause).filter(
         ([causeOrCategoryName, dataRow]) => {
           return causeOrCategoryName in this.grouping.parentToCauses 
         }
@@ -1065,7 +1065,7 @@ export default class BarChart {
   }
 
   collapseCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -1311,7 +1311,7 @@ export default class BarChart {
   }
 
   expandCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -1448,7 +1448,7 @@ export default class BarChart {
   }
 
   async changeCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     newCollectedGroups: CauseGrouping,
     durationIfNoWait: number = 700
@@ -1471,7 +1471,7 @@ export default class BarChart {
         duration
       );
     } else {
-      this.expandCats(
+      this.expandCats( 
         dataset,
         diseaseToWidth,
         oldCollectedGroups,
@@ -1483,7 +1483,7 @@ export default class BarChart {
   }
 
   computeRankAndSquares(
-    data: DataRow[] | LifeExpectancyContributions,
+    data: DataRow[] | InnerCause,
     diseaseToWidth: string | null
   ): {
     dataSortedTotal: DataRow[];
@@ -1493,7 +1493,7 @@ export default class BarChart {
     let totalProbs: DataRow[];
     let dataSquares: SquareSection[];
     if(this.useLifeExpectancy){
-      let dataset= Object.entries(data as LifeExpectancyContributions).filter(
+      let dataset= Object.entries(data as InnerCause).filter(
         ([causeOrCategoryName, dataRow]) => {
           return causeOrCategoryName in this.grouping.parentToCauses
         }
@@ -1509,7 +1509,7 @@ export default class BarChart {
       ));
     }
     else{
-      let dataset= Object.entries(data as LifeExpectancyContributions).map(  ([causeOrCategoryName, dataRow]) => { 
+      let dataset= Object.entries(data as InnerCause).map(  ([causeOrCategoryName, dataRow]) => { 
         return dataRow;
       }); 
       ({ allSquares: dataSquares, totalProbs } = make_squares(
@@ -1551,7 +1551,7 @@ export default class BarChart {
   }
 
   async update(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     instantDiseaseToWidthColoring: boolean = false,
     durationPerTransition: number = 500

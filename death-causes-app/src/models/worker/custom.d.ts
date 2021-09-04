@@ -1,8 +1,4 @@
 declare module 'comlink-loader!*' {
-
-  import { RelationLinkJson } from "../RelationLinks";
-
-  import { FactorAnswers } from "../Factors";
   class WebpackWorker extends Worker {
     constructor();
 
@@ -10,7 +6,7 @@ declare module 'comlink-loader!*' {
 
     // Add any custom functions to this class.
     // Make note that the return type needs to be wrapped in a promise.
-    processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): Promise<{ survivalData: SurvivalCurveData[], innerCauses:  LifeExpectancyContributions, summaryView: SummaryViewData | null }>; 
+    processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): Promise<{ innerCauses:  DeathCauseContributionsAndChanges}>; 
   }
 
   export = WebpackWorker;

@@ -1,71 +1,151 @@
-import * as d3 from "d3";
 import { observer } from "mobx-react";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment } from "react";
 import { Card, Col, Row } from "react-bootstrap";
 import { CardBody, CardHeader } from "reactstrap";
-import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
+import { NodeType } from "../models/RelationLinks";
+import { DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { DataPoint, LifeExpentancyData } from "../models/updateFormNodes/FinalSummary/SummaryView";
+import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import BarChartWrapper from "./BarChartWrapper";
 import ChangeView from "./ChangeView";
-import LollipopChart, { LollipopChartFormatting } from "./LollipopChart";
-import { probabilityLollipopChartFormatter } from "./ProbabilityLollipopChartFormatter";
-import RangeSliders from "./RangerSlidersSummaryView";
+import LollipopChart from "./LollipopChart";
+import { getLollipopChartFormatting } from "./LollipopChartFormatters";
+import RangeSliders, { RangeSliderInput } from "./RangerSlidersSummaryView";
 
 
 export interface SummaryViewProps {
-    store: RootStore
+    store: RootStore,
+    riskFactorContributions: DeathCauseContributionsAndChanges
 }
 
 export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
+    store = this.props.store
+    riskFactorContributions = this.props.riskFactorContributions
+    colwidth = this.store.uIStore.windowWidth>501 ? "70%" : "100%"
+    
+    getLollipopChartData(): DataPoint[] {
+        let data = this.props.store.computationStore.riskFactorContributions.costPerCause
+        let lollipopChartData: DataPoint[] = []
+        this.props.store.loadedDataStore.rdat.sortedNodes[NodeType.CAUSE].forEach(element => {
+            lollipopChartData.push({name: element, value: data[element].totalProb})
+        });
+        return lollipopChartData.sort((a,b) => b.value - a.value).slice(0,5);
+    }
+
+    getSurvivalCurveSlidersData(): RangeSliderInput {
+        return {
+            ages: this.riskFactorContributions.ages,
+            survivalProbs: [1, ...this.riskFactorContributions.survivalProbs]
+        }
+    }
 
     lifeExpectancySentence(){
-        if("Age" in this.props.store.computationStore.submittedFactorAnswers &&
-            this.props.store.loadedDataStore.loadedLifeExpectancies){
-            const age=this.props.store.computationStore.submittedFactorAnswers["Age"]
-            if(age===""){
-                return(
-                    <p>
-                        The average life expectancy from birth is: {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
-                    </p>
-                )
-            }
-            else{
-                const ageNumber= Math.floor(typeof age==="string" ? parseFloat(age) : age)
-                if(age>110){
-                    return null
-                }
-                return (
-                    <p>
-                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is: {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
-                    </p>
-                )
-            }
+        if(!("Age" in this.props.store.computationStore.submittedFactorAnswers) ||
+            !this.props.store.loadedDataStore.loadedLifeExpectancies) {
+                return null
         }
-        return null
+
+        const lifeExpentancy = this.riskFactorContributions.baseLifeExpectancy.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+        const age=this.props.store.computationStore.submittedFactorAnswers["Age"]
+        const ageNumber = age === "" ? 0: Math.floor(typeof age==="string" ? parseFloat(age) : age)
+        const textColor = this.riskFactorContributions.baseLifeExpectancy > this.props.store.loadedDataStore.lifeExpectancies[ageNumber] ? "green" : "red"
+        if(age===""){
+            return (
+                <Fragment>
+                <h3>
+                    Your life expectancy is:{" "}
+                    <span style={{ color: textColor }}>{lifeExpentancy}</span>{" "}
+                    years
+                </h3>
+                <p>
+                    The average life expectancy from birth is:{" "}
+                    {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(
+                    1
+                    )}
+                </p>
+                </Fragment>
+            );
+        }
+        else{
+            return (
+                <Fragment>
+                <h3>
+                    Your life expectancy is:{" "}
+                    <span style={{ color: textColor }}>{lifeExpentancy}</span>{" "}
+                    years
+                </h3>
+                {age < 110 && (<p>
+                    The average life expectancy for someone as{" "}
+                    {ageNumber > 83 ? "old" : "young"} as you is:{" "}
+                    {this.props.store.loadedDataStore.lifeExpectancies[
+                    ageNumber
+                    ].toFixed(1)}
+                </p>)}
+                </Fragment>
+            );
+        }
+    }
+
+    getLifeExpectancyHeader() {
+
+        return (
+          <Fragment>
+
+            {this.lifeExpectancySentence()}
+          </Fragment>
+        );
+    }
+
+    renderLollipopChart() {
+        const lollipopChartFormatting = getLollipopChartFormatting(this.riskFactorContributions.evaluationUnit)
+        return (
+        <Row className="mx-auto my-1" style={{ width: "70%" }}>
+                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <Card className="bg-light" style={{}}> 
+                            <CardHeader><h5 style={{ fontWeight: 600 }}>{lollipopChartFormatting.getHeaderTitle()}</h5></CardHeader>
+                            <LollipopChart data={this.getLollipopChartData()} formatting={lollipopChartFormatting}/>
+                        </Card>
+                    </Col>
+                </Row>
+        )
+    }
+
+    renderRiskFactorContributions() {
+        return (                
+            <Col className="mx-auto my-1" style={{ width: this.colwidth }}>
+                <Card className="bg-light ">
+                    <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
+                    <CardBody>
+                        <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
+                        <BarChartWrapper database={this.riskFactorContributions.costPerCause} evaluationUnit={this.riskFactorContributions.evaluationUnit} simpleVersion={true}/> 
+                    </CardBody>
+                </Card>
+            </Col>
+        )
     }
 
     render() {
-        if (this.props.store.computationStore.summaryView === null) {
+        console.log(this.props.store.computationStateStore.computationState)
+        if (this.props.store.computationStore.allChanges.length === 0) {
             return (
                 <div><span>Data not loaded</span></div>
             )
         }
-        let summaryViewData = this.props.store.computationStore.summaryView
-
-        const lifeExpentancy = summaryViewData.lifeExpentancyData.lifeExpentancy.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
-        const textColor = summaryViewData.lifeExpentancyData.lifeExpentancy > 70 ? "green" : "red"
-
-        const colwidth= this.props.store.uIStore.windowWidth>501 ? "70%" : "100%" 
+        console.log(this.getSurvivalCurveSlidersData())
+        console.log({
+            ages: this.riskFactorContributions.ages,
+            survivalProbs: [1, ...this.riskFactorContributions.survivalProbs]
+        })
+        console.log(this.props.riskFactorContributions)
 
         return (
             <Fragment>
-                <Col className="mx-auto my-1" style={{ width: colwidth }}>
+                <Col className="mx-auto my-1" style={{ width: this.colwidth }}> 
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
-                            <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
-                            <p></p>
                             {this.lifeExpectancySentence()}
-                            <RangeSliders summaryViewData={summaryViewData}/>
+                            <RangeSliders data={this.getSurvivalCurveSlidersData()}/>
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
@@ -75,23 +155,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         </CardBody>
                     </Card>
                 </Col>
-                <Col className="mx-auto my-1" style={{ width: colwidth }}>
-                    <Card className="bg-light ">
-                        <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
-                        <CardBody>
-                            <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
-                            <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions.data} evaluationUnit={this.props.store.computationStore.riskFactorContributions.evaluationUnit} simpleVersion={true}/> 
-                        </CardBody>
-                    </Card>
-                </Col>
-                <Row className="mx-auto my-1" style={{ width: "70%" }}>
-                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <Card className="bg-light" style={{}}> 
-                            <CardHeader><h5 style={{ fontWeight: 600 }}>Most likely cause of death</h5></CardHeader>
-                            <LollipopChart data={summaryViewData.costOfAllDeathcauses.sort((a,b) => b.value - a.value).slice(0,5)} descriptions={this.props.store.loadedDataStore.descriptions} formatting={probabilityLollipopChartFormatter}/>
-                        </Card>
-                    </Col>
-                </Row>
+                {this.renderRiskFactorContributions()}
+                {this.renderLollipopChart()}
             </Fragment>
         )
     }
