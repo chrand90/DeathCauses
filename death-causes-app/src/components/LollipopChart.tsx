@@ -300,16 +300,8 @@ const LollipopChart = observer((props: LollipopChartProps) => {
         tip
           .html(props.formatting.getTooltipText(d.value, d.name))
           .style('display', 'block')
-          .style(
-            'left',
-            (
-              bbox.x +
-              margin.left +
-              (width / 0.9) * 0.05 +
-              bbox.width
-            ).toString() + 'px'
-          )
-          .style('top', (bbox.y + margin.top).toString() + 'px');
+          .style("left", (bbox.x+margin.left+bbox.width/2).toString() + "px")
+          .style("top", (bbox.y-3).toString() + "px")
         d3.select(this).raise().style('fill', colors.barHighlight);
       })
       .on('mouseleave', function (e: Event, d: DataPoint) {

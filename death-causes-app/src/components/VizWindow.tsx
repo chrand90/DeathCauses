@@ -4,6 +4,7 @@ import React from "react";
 import { Tab, Tabs } from "react-bootstrap";
 import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
 import { DeathCauseContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
@@ -123,11 +124,11 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
           return (
           <BarChartWrapper 
             database={this.state.riskFactorContributions.costPerCause}
-            barChartSettings={new DeathCauseBarChartSettings(false, true, this.props.store.loadedDataStore.descriptions)}
+            barChartSettings={new DeathCauseBarChartSettings(false, this.props.store.computationStore.riskFactorContributions.evaluationUnit === EVALUATION_UNIT.YEARS_LOST, this.props.store.loadedDataStore.descriptions)}
           />)
         }
         case Visualization.SUMMARY_VIEW: {
-          return <SummaryView data={this.state.riskFactorContributions}/>
+          return <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
         }
         case Visualization.SURVIVAL_GRAPH: {
           return <BarPlotWrapper data={this.getSurvivalCurveInputData()} />

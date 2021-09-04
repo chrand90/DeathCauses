@@ -3,13 +3,10 @@ import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
 import Descriptions from "../../models/Descriptions";
 import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
+import { CauseGrouping } from "../../models/RelationLinks";
+import { InnerCause } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { ALTERNATING_COLORS, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "../Helpers";
-import {
-  CauseGrouping
-} from "../models/RelationLinks";
-import { InnerCause } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { DataRow, DataSet } from "../PlottingData";
-import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 import "./BarChart.css";
 import BarChartSettings from "./BarChartSettings";
 import { SquareSection } from "./ComputationEngine";
@@ -158,7 +155,6 @@ export default class BarChart {
   constructor(
     element: HTMLElement | null,
     database: DataSet | InnerCause,
-    evaluationUnit: EVALUATION_UNIT,
     descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,

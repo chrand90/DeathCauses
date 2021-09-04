@@ -11,6 +11,8 @@ import ChangeView from "./ChangeView";
 import LollipopChart from "./LollipopChart";
 import { getLollipopChartFormatting } from "./LollipopChartFormatters";
 import RangeSliders, { RangeSliderInput } from "./RangerSlidersSummaryView";
+import SimpleDeathCauseBarChartSettings from "./BarChart/SimpleDeathCauseBarChartSettings"
+import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 
 
 export interface SummaryViewProps {
@@ -19,9 +21,12 @@ export interface SummaryViewProps {
 }
 
 export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
-    store = this.props.store
-    riskFactorContributions = this.props.riskFactorContributions
-    colwidth = this.store.uIStore.windowWidth>501 ? "70%" : "100%"
+    colwidth = ""
+
+    constructor(props: SummaryViewProps) {
+        super(props)
+        this.colwidth = this.props.store.uIStore.windowWidth>501 ? "70%" : "100%"
+    }
     
     getLollipopChartData(): DataPoint[] {
         let data = this.props.store.computationStore.riskFactorContributions.costPerCause
@@ -34,8 +39,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
 
     getSurvivalCurveSlidersData(): RangeSliderInput {
         return {
-            ages: this.riskFactorContributions.ages,
-            survivalProbs: [1, ...this.riskFactorContributions.survivalProbs]
+            ages: this.props.riskFactorContributions.ages,
+            survivalProbs: [1, ...this.props.riskFactorContributions.survivalProbs]
         }
     }
 
@@ -45,10 +50,10 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 return null
         }
 
-        const lifeExpentancy = this.riskFactorContributions.baseLifeExpectancy.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
+        const lifeExpentancy = this.props.riskFactorContributions.baseLifeExpectancy.toLocaleString("en-US", { maximumFractionDigits: 1, minimumFractionDigits: 1 });
         const age=this.props.store.computationStore.submittedFactorAnswers["Age"]
         const ageNumber = age === "" ? 0: Math.floor(typeof age==="string" ? parseFloat(age) : age)
-        const textColor = this.riskFactorContributions.baseLifeExpectancy > this.props.store.loadedDataStore.lifeExpectancies[ageNumber] ? "green" : "red"
+        const textColor = this.props.riskFactorContributions.baseLifeExpectancy > this.props.store.loadedDataStore.lifeExpectancies[ageNumber] ? "green" : "red"
         if(age===""){
             return (
                 <Fragment>
@@ -97,7 +102,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
     }
 
     renderLollipopChart() {
-        const lollipopChartFormatting = getLollipopChartFormatting(this.riskFactorContributions.evaluationUnit)
+        const lollipopChartFormatting = getLollipopChartFormatting(this.props.riskFactorContributions.evaluationUnit)
         return (
         <Row className="mx-auto my-1" style={{ width: "70%" }}>
                     <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
@@ -111,13 +116,15 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
     }
 
     renderRiskFactorContributions() {
+        let barChartSettings = new SimpleDeathCauseBarChartSettings(this.props.riskFactorContributions.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST,
+            this.props.store.loadedDataStore.descriptions)
         return (                
             <Col className="mx-auto my-1" style={{ width: this.colwidth }}>
                 <Card className="bg-light ">
                     <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
                     <CardBody>
                         <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
-                        <BarChartWrapper database={this.riskFactorContributions.costPerCause} evaluationUnit={this.riskFactorContributions.evaluationUnit} simpleVersion={true}/> 
+                        <BarChartWrapper database={this.props.riskFactorContributions.costPerCause} barChartSettings={barChartSettings}/> 
                     </CardBody>
                 </Card>
             </Col>
@@ -133,8 +140,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
         }
         console.log(this.getSurvivalCurveSlidersData())
         console.log({
-            ages: this.riskFactorContributions.ages,
-            survivalProbs: [1, ...this.riskFactorContributions.survivalProbs]
+            ages: this.props.riskFactorContributions.ages,
+            survivalProbs: [1, ...this.props.riskFactorContributions.survivalProbs]
         })
         console.log(this.props.riskFactorContributions)
 

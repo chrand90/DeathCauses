@@ -3,8 +3,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useHistory } from 'react-router';
 import { KnowledgeableOptimizabilities } from '../../models/Optimizabilities';
 import { InnerCause } from '../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
+import { EVALUATION_UNIT } from '../../stores/AdvancedOptionsStore';
 import { useStore } from '../../stores/rootStore';
-import { EVALUATION_UNIT } from '../stores/AdvancedOptionsStore';
 import BarChart from './BarChart';
 import BarChartSettings from './BarChartSettings';
 import "./BarChartWrapper.css";
@@ -98,7 +98,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	}, [store.uIStore.windowWidth, store.computationStore.riskFactorContributions.evaluationUnit, store.uIStore.conditionVizFlavor])
 
 	useEffect(() => {
-		if (chart && chart.useLifeExpectancy && (store.computationStore.riskFactorContributions.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST ) ) {
+		if (chart && chart.useLifeExpectancy === (store.computationStore.riskFactorContributions.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST ) ) {
 			chart.update(database, props.barChartSettings.getElementToWidth(store), newOptims());
 		}
 	}, [database]);

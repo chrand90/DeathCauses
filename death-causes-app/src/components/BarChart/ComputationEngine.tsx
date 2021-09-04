@@ -1,11 +1,9 @@
-import Descriptions from "../../models/Descriptions";
 import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
 import { CauseGrouping } from "../../models/RelationLinks";
 import { MultifactorGainType } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { ConditionVizFlavor } from "../../stores/UIStore";
-import BarChartSettings from "./BarChartSettings";
 import { BestValues, getMultifactorGainStatement, getUnexplainedStatement, LongConsensus, mergeBestValues } from "../Calculations/ConsensusBestValue";
 import { DataRow, DataSet } from "../PlottingData";
+import BarChartSettings from "./BarChartSettings";
 
 export interface SquareSection {
     name: string,

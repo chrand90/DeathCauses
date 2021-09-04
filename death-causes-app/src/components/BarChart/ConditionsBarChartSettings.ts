@@ -1,13 +1,11 @@
 import Descriptions from "../../models/Descriptions";
 import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
 import { CauseGrouping, NodeType } from "../../models/RelationLinks";
-import { LifeExpectancyContributions } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import BarChartStore from "../../stores/BarChartOptionsStore";
+import { InnerCause } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import RootStore from "../../stores/rootStore";
-import { ConditionVizFlavor, Visualization } from "../../stores/UIStore";
-import { DataRow, DataSet } from "../PlottingData";
+import { ConditionVizFlavor } from "../../stores/UIStore";
+import { DataSet } from "../PlottingData";
 import BarChartSettings, { CollapseCatsData, ExpandCatsData } from "./BarChartSettings";
-import make_squares, { SquareSection } from "./ComputationEngine";
 
 export default class ConditionsBarChartSettings extends BarChartSettings{
     
@@ -46,11 +44,11 @@ export default class ConditionsBarChartSettings extends BarChartSettings{
         return this.conditionFlavor;
     }
 
-    computeExpandSquares(dataset: DataSet | LifeExpectancyContributions, removed: string[], added: string[], diseaseToWidth: string | null, oldCollectedGroups: CauseGrouping, newCollectedGroups: CauseGrouping, optimizabilities: KnowledgeableOptimizabilities): ExpandCatsData {
+    computeExpandSquares(dataset: DataSet | InnerCause, removed: string[], added: string[], diseaseToWidth: string | null, oldCollectedGroups: CauseGrouping, newCollectedGroups: CauseGrouping, optimizabilities: KnowledgeableOptimizabilities): ExpandCatsData {
         throw new Error("Conditions should never be expanded.");
     }
 
-    computeCollapseSquares(dataset: DataSet | LifeExpectancyContributions, removed: string[], added: string[], diseaseToWidth: string | null, oldCollectedGroups: CauseGrouping, newCollectedGroups: CauseGrouping, optimizabilities: KnowledgeableOptimizabilities): CollapseCatsData {
+    computeCollapseSquares(dataset: DataSet | InnerCause, removed: string[], added: string[], diseaseToWidth: string | null, oldCollectedGroups: CauseGrouping, newCollectedGroups: CauseGrouping, optimizabilities: KnowledgeableOptimizabilities): CollapseCatsData {
         throw new Error("Conditions should never be collapsed");
     }
     
