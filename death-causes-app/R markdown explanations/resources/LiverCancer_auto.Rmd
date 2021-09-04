@@ -97,7 +97,7 @@ $$
 
 BMI and HCV diagnosis are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'raw')
@@ -113,9 +113,9 @@ plotSpecificPlots(dat, 'LiverCancer', c('BMI','HCVStatus'),'interpolated')
 
 #### Coffee consumption
 
-Coffee consumption is a risk factor for Liver cancer.
+[Coffee consumption](/model/Caffeine) is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'raw')
@@ -131,9 +131,9 @@ plotSpecificPlots(dat, 'LiverCancer', c('Caffeine'),'interpolated')
 
 #### Diabetes diagnosis
 
-Diabetes diagnosis is a risk factor for Liver cancer.
+[Diabetes diagnosis](/model/DiabetesStatus) is a risk factor for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
@@ -144,7 +144,7 @@ plotSpecificPlots(dat, 'LiverCancer', c('DiabetesStatus'),'raw')
 
 Alcohol consumption and Biological sex are a group of risk factors for Liver cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'LiverCancer', c('Drinking','Sex'),'raw')

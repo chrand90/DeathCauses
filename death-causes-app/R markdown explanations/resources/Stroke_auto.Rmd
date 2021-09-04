@@ -133,9 +133,9 @@ $$
 
 #### Total physical activity time
 
-Total physical activity time is a risk factor for Stroke.
+[Total physical activity time](/model/PhysicalTotal) is a risk factor for Stroke.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Stroke', c('PhysicalTotal'),'raw')
@@ -151,9 +151,9 @@ plotSpecificPlots(dat, 'Stroke', c('PhysicalTotal'),'interpolated')
 
 #### Current smoking amount
 
-Current smoking amount is a risk factor for Stroke.
+[Current smoking amount](/model/SmokeIntensity) is a risk factor for Stroke.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Stroke', c('SmokeIntensity'),'raw')

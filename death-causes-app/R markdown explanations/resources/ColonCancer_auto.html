@@ -109,6 +109,7 @@ P=P_{\text{Alcohol}} \cdot P_{\text{Phys. total}} \cdot P_{\text{Red meat}}
 </div>
 <div id="alcohol-consumption" class="section level4">
 <h4>Alcohol consumption</h4>
+<p><a href="/model/Drinking">Alcohol consumption</a> is a risk factor for Colon cancer.</p>
 <p>Alcohol consumption is a known risk factor for colon cancer. We use the <a href="#meta-analysis">meta analysis</a> of cohort studies by <span class="citation">Cho et al. (<a href="#ref-cho2004alcohol" role="doc-biblioref">2004</a>)</span>. They computed a joint <a href="#risk-ratio">risk ratio</a> that were adjusted for many other <a href="#risk-factors">factors</a>, including physical activity and red meat consumed. This study is also ideal because it is a big meta analysis with data divided into many bins. They found that it was slightly better to drink a little(<span class="math inline">\(\text{RR}=0.94\)</span>) rather than nothing(<span class="math inline">\(\text{RR}=1.0\)</span>), but they thought it was an artifact of many former heavy drinkers who turned to abstinence. We therefore raise the risk ratio of the light drinkers to 1.0 as well.</p>
 <p><img src="ColonCancer_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
 <p>Because the variable Alcohol consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
@@ -116,13 +117,15 @@ P=P_{\text{Alcohol}} \cdot P_{\text{Phys. total}} \cdot P_{\text{Red meat}}
 </div>
 <div id="total-physical-activity-time" class="section level4">
 <h4>Total physical activity time</h4>
-<p>It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar <span class="citation">(Samad et al. <a href="#ref-samad2005meta" role="doc-biblioref">2005</a>)</span>. We therefore obtain the <a href="#risk-ratio">risk ratios</a> from <span class="citation">Kyu et al. (<a href="#ref-Kyui2016physical" role="doc-biblioref">2016</a>)</span>, where they estimated a <a href="#dose-response">dose-response</a> relationship based on total physical activity in a <a href="#meta-analysis">meta analysis</a>. They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).</p>
+<p><a href="/model/PhysicalTotal">Total physical activity time</a> is a risk factor for Colon cancer.</p>
+<p>It seems that both physical activity at work and in the spare time matters to prevent colorectal cancer and are similar <span class="citation">(Samad et al. <a href="#ref-samad2005meta" role="doc-biblioref">2005</a>)</span>. We therefore obtain the <a href="#risk-ratio">risk ratios</a> from <span class="citation">Kyu et al. (<a href="#ref-kyui2016physical" role="doc-biblioref">2016</a>)</span>, where they estimated a <a href="#dose-response">dose-response</a> relationship based on total physical activity in a <a href="#meta-analysis">meta analysis</a>. They did include studies which did not adjust for drinking and red meat consumption, but it should not be a big source of error since the factors are not causally connected (like for example BMI and physical activity would be).</p>
 <p><img src="ColonCancer_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
 <p>Because the variable Total physical activity time is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
 <p><img src="ColonCancer_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
 </div>
 <div id="red-meat-consumption" class="section level4">
 <h4>Red meat consumption</h4>
+<p><a href="/model/RedMeat">Red meat consumption</a> is a risk factor for Colon cancer.</p>
 <p>We use the risk ratios from <span class="citation">Schwingshackl et al. (<a href="#ref-schwingshackl2018food" role="doc-biblioref">2018</a>)</span>, which is a big dose-response meta analysis. Not all, but most of the big included studies in the meta analysis adjusted for physical activity and alcohol consumption, so it is very reasonable to use it in combination with our other risk factors</p>
 <p><img src="ColonCancer_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
 <p>Because the variable Red meat consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
@@ -137,7 +140,7 @@ P=P_{\text{Alcohol}} \cdot P_{\text{Phys. total}} \cdot P_{\text{Red meat}}
 <div id="ref-ICDcodes">
 <p>“ICD Order Files 2014.” n.d. <a href="https://www.cdc.gov/nchs/icd/icd10cm.htm">https://www.cdc.gov/nchs/icd/icd10cm.htm</a>.</p>
 </div>
-<div id="ref-Kyui2016physical">
+<div id="ref-kyui2016physical">
 <p>Kyu, Hmwe H, Victoria F Bachman, Lily T Alexander, John Everett Mumford, Ashkan Afshin, Kara Estep, J Lennert Veerman, et al. 2016. “Physical Activity and Risk of Breast Cancer, Colon Cancer, Diabetes, Ischemic Heart Disease, and Ischemic Stroke Events: Systematic Review and Dose-Response Meta-Analysis for the Global Burden of Disease Study 2013.” <em>BMJ</em> 354. <a href="https://doi.org/10.1136/bmj.i3857">https://doi.org/10.1136/bmj.i3857</a>.</p>
 </div>
 <div id="ref-piazza2012examining">

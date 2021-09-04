@@ -94,16 +94,12 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
       replaceLinks(){
           //push internal links (but not redirects)
         document.querySelectorAll("#aboutpage a:not(a[href^='#']):not(a[href*=':/'])").forEach(node => {
-            console.log("node")
-            console.log(node);
             node.addEventListener('click', (e: any) => {
               e.preventDefault();
               if(e!==null){
-                  console.log(e);
                   if(e.target!==null && "href" in e.target){
                     let path=e.target.href
                     let extracted=path.match(new RegExp(linkExtraction))[0]
-                    console.log(extracted)
                     this.props.history.push(extracted)
                   }
               }
@@ -111,12 +107,9 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
           })
           //open external links on a new page per default as to not erase data.
           document.querySelectorAll("#aboutpage a[href*=':/']").forEach(node => {
-            console.log("node")
-            console.log(node);
             node.addEventListener('click', (e: any) => {
               e.preventDefault();
               if(e!==null){
-                  console.log(e);
                   if(e.target!==null && "href" in e.target){
                     let path=e.target.href
                     window.open(path);
@@ -135,10 +128,6 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
           const reg= new RegExp(linkExtractionWithoutAnchor)
           const oldLink=prevProps.match.params.subpage.match(reg)
           const newLink=this.props.match.params.subpage.match(reg)
-          console.log(prevProps.match.params)
-          console.log(oldLink)
-          console.log(this.props.match.params)
-          console.log(newLink)
           if(oldLink && newLink && oldLink[0]!==newLink[0]){
             this.setState({status: LoadingStatus.LOADING}, 
                 () => {

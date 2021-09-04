@@ -4,10 +4,9 @@ import { Card, Col, Row } from "react-bootstrap";
 import { CardBody, CardHeader } from "reactstrap";
 import { NodeType } from "../models/RelationLinks";
 import { DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { DataPoint, LifeExpentancyData } from "../models/updateFormNodes/FinalSummary/SummaryView";
-import { ComputationState } from "../stores/ComputationStateStore";
+import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import RootStore, { withStore } from "../stores/rootStore";
-import BarChartWrapper from "./BarChartWrapper";
+import BarChartWrapper from "./BarChart/BarChartWrapper";
 import ChangeView from "./ChangeView";
 import LollipopChart from "./LollipopChart";
 import { getLollipopChartFormatting } from "./LollipopChartFormatters";
@@ -145,13 +144,16 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
                             {this.lifeExpectancySentence()}
-                            <RangeSliders data={this.getSurvivalCurveSlidersData()}/>
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
-                            <p>Effect of your change of input</p>
-                            <ChangeView></ChangeView>
+                        <ChangeView />
+                        </CardBody>
+                    </Card>
+                    <Card className="my-1 mx-auto bg-light " style={{}}>
+                        <CardBody>
+                        <RangeSliders data={this.getSurvivalCurveSlidersData()}/>
                         </CardBody>
                     </Card>
                 </Col>

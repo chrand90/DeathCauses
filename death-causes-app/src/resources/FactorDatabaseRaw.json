@@ -19,7 +19,7 @@
         "placeholder":"Status",
         "initialValue":"Status",
         "options":["Never smoked","Former smoker", "Current smoker"],
-        "optimizability":30
+        "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
     },
     {"factorname":"SmokingStopped",
         "descriptions":["Time since smoking", "Time since you stopped smoking", "Smoking end"],
@@ -30,7 +30,7 @@
         "recommendedDomain":{"min":0, "max":110},
         "requiredDomain":{"min":0},
         "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}},
-        "optimizability":30
+        "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":80}}}
     },
     {"factorname":"SmokeIntensity",
         "descriptions":["Smoking amount", "Current smoking amount", "Cigarettes"],
@@ -42,7 +42,7 @@
         "requiredDomain":{"min":0},
         "units":{"Cigarettes":1.0,"Packs":20.0},
         "derivables":{"Smoking": {"Never smoked":0, "Former smoker":0}},
-        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to their equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
         "optimizability":90
     },
     {"factorname":"SmokeDuration",
@@ -55,18 +55,18 @@
         "requiredDomain":{"min":0},
         "units":{"Years":1.0,"Months":0.083333333,"Days":0.00273785078},
         "derivables":{"Smoking": {"Never smoked":0}},
-        "optimizability":30
+        "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":80}}}
     },
     {"factorname":"SmokePastAmount",
         "descriptions":["Smoking amount(past)", "Amount smoked in the past", "Smoking past"],
         "baseUnit":"cigarettes/day",
         "type":"number",
-        "question":"During all the time smoking tobacco, what has been the average amount smoked in a normal day",
+        "question":"When you did smoke tobacco in the past, how much did you smoke in a normal day",
         "placeholder":"Cigarettes",
         "recommendedDomain":{"min":0, "max":40},
         "requiredDomain":{"min":0},
-        "derivables":{"Smoking": {"Never smoked":0}},
-        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
+        "derivables":{"Smoking": {"Never smoked":0, "Current smoker":0}},
+        "helpJson":"If you smoke tobacco in other forms than cigarettes, you should convert it to their equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) ",
         "optimizability":30
     },
     {"factorname":"Drinking",
@@ -135,7 +135,7 @@
         "options":["Former user","Current user","Never used"],
         "derivables":{"Sex": {"Male":"Never used"}},
         "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies.",
-        "optimizability":30
+        "optimizability":{"default":30, "conditionals":{"OralContraceptiveStatus": {"Current user":90}}}
     },
     {"factorname":"OralContraceptiveStopped",
         "descriptions":["Time since OCP","Time since taking oral contraceptives","OCP end"],
@@ -147,7 +147,7 @@
         "requiredDomain": {"min":0},
         "derivables":{"OralContraceptiveStatus": {"Never used":0, "Current user":0}},
         "helpJson":"Oral contraceptives are also called birth control pills and are used to preven pregnancies.",
-        "optimizability":30
+        "optimizability":{"default":30, "conditionals":{"OralContraceptiveStatus": {"Current user":80}}}
     },
     {"factorname":"OralContraceptiveTillStop",
         "descriptions":["Time till OCP stop","Time till stopping oral contraceptives", "OCP stop"],
@@ -217,6 +217,17 @@
         "requiredDomain":{"min":0},
         "units":{"Minutes":1.0, "Hours":60},
         "helpJson":"High physical activities make you lose your breath and includes running, playing high-intensity sports etc.",
+        "optimizability":90
+    },
+    {"factorname":"CognitiveActivity",
+        "descriptions":["Cognitive activity", "Cognitivity"],
+        "baseUnit":"",
+        "type":"number",
+        "question":"How cognitively active are you on a scale from 1 to 5, where 1 is 'very little' and 5 is 'very much'",
+        "placeholder":"Value",
+        "recommendedDomain":{"min":1 ,"max":5},
+        "requiredDomain":{"min":1, "max":5},
+        "helpJson":"Cognitively active is measured by how often you do the following activities: reading, playing cognitive games such as chess, attend cultural events, etc. If you do all these things daily, you should answer 5 and if you only rarely do them, you should answer 1. 80% of (older) people are between 2.2 and 4.",
         "optimizability":90
     },
     {"factorname":"Fish",

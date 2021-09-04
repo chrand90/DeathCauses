@@ -33,9 +33,9 @@ Diabetes diagnosis is a **input factor**. It means that it is one of the inputs 
 
 Diabetes diagnosis is used by the model in the following places
 
-* [Liver cancer](/model/LiverCancer)
-* [Pancreas cancer](/model/PancreasCancer)
-* [Diabetes condition](/model/DiabetesCondition)
+* as a risk factor for [Liver cancer](/model/LiverCancer)
+* as a risk factor for [Pancreas cancer](/model/PancreasCancer)
+* as a risk factor for [Diabetes condition](/model/DiabetesCondition)
 
 #### Guidance
 
@@ -51,7 +51,9 @@ The user has the following answer options
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Diabetes diagnosis is 2. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Diabetes diagnosis is [2](/model/optimizabilities#category-2). This means that it can be interpreted as
+
+
 
 > *It is impossible to change, but it could have been the consequence of your actions*
 

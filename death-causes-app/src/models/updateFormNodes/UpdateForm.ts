@@ -1,3 +1,5 @@
+import { BestValues } from "../../components/Calculations/ConsensusBestValue";
+import { KnowledgeableOptimizabilities } from "../Optimizabilities";
 import CauseNodeResult from "./CauseNodeResult";
 import RiskFactorGroupResult from "./RiskFactorGroupResult";
 
@@ -11,7 +13,8 @@ export enum TypeStatus {
   STRING = "string",
   RISKFACTORGROUPRESULT="Riskfactorgroupresult",
   CAUSERESULT="Causenode result",
-  SIMPLE_UPDATE_FORM="Simple update form"
+  CONDITIONRESULT="Condition node result",
+  OPTIMIZABILITIES="Knowledgeable optimizabilities"
 }
 
 export enum MissingStatus {
@@ -33,6 +36,13 @@ export interface ProbabilityObject {
   [factorlevel: string]: number;
 }
 
+export interface ConditionNodeResult {
+  probs: ProbabilityObject | ProbabilityObject[],
+  perYearInnerCauses: {[cause:string]:number}[] | {[cause:string]:number},
+  name: string,
+  bestValues: BestValues | undefined
+}
+
 
 export interface UpdateForm {
   change: ChangeStatus;
@@ -48,8 +58,10 @@ export interface UpdateForm {
     | number[]
     | ProbabilityObject
     | ProbabilityObject[]
+    | ConditionNodeResult
     | RiskFactorGroupResult
     | CauseNodeResult
+    | KnowledgeableOptimizabilities
 
 }
 

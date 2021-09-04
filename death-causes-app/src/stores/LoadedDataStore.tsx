@@ -3,9 +3,10 @@ import DeathCause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGrou
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
+import Optimizabilities from "../models/Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import ComputationStore from "./ComputationStore";
-import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions, loadLifeExpectancies } from "./DataLoading";
+import { loadCauseData, loadDescriptions, LoadedCauseData, LoadedDescriptions, LoadedFactors, LoadedRelationLinks, loadFactors, loadRelationLinks, loadConditions, LoadedConditions, loadLifeExpectancies, loadICD } from "./DataLoading";
 import FactorInputStore from "./FactorInputStore";
 import QuestionProgressStore from "./QuestionProgressStore";
 
@@ -27,6 +28,10 @@ export default class LoadedDataStore {
   lifeExpectancies: number[];
   conditions: {[conditionName:string]: Condition};
   rawConditions: ConditionJson;
+  loadedICD: boolean;
+  loadedRelationLinks: boolean;
+  icdDict: {[cause:string]: string[]};
+  optimizabilities: Optimizabilities;
 
   constructor() {
     this.factors= new Factors([] as InputJson);
@@ -39,19 +44,33 @@ export default class LoadedDataStore {
     this.deathCauses= [];
     this.deathCauseCategories=[];
     this.descriptions=new Descriptions({} as DescriptionsJson);
+    this.optimizabilities=new Optimizabilities({} as DescriptionsJson);
     this.rawDescriptions={} as DescriptionsJson
     this.conditions={} as {[conditionName:string]: Condition};
     this.rawConditions={} as ConditionJson
     this.lifeExpectancies=[];
+    this.icdDict={};
     this.loadedQuestionMenuData=false;
     this.loadedVizWindowData=false;
     this.loadedLifeExpectancies=false;
+    this.loadedRelationLinks=false;
+    this.loadedICD=false;
     makeObservable(this, {
       loadedVizWindowData: observable,
       loadedQuestionMenuData: observable,
       loadedLifeExpectancies: observable,
+      loadedRelationLinks: observable,
+      loadedICD: observable,
       loadAllData: action.bound,
+      loadICDfiles: action.bound
     });
+  }
+
+  loadICDfiles(){
+    loadICD().then((icdDict: {[cause: string]:string[]}) => {
+      this.icdDict=icdDict
+      this.loadedICD=true;
+    })
   }
 
   loadAllData(factorInputStore: FactorInputStore, computationStore: ComputationStore, questionProgressStore: QuestionProgressStore) {
@@ -60,9 +79,15 @@ export default class LoadedDataStore {
     const promiseOfRelationLinks= this.makePromiseOfRelationsLinks();
     const promiseOfDatabase = this.makePromiseOfDataBase();
     const promiseOfConditions=this.makePromiseOfConditions();
-    const artificialWaiting= new Promise<number>( (res) => {
-      setTimeout(()=>{ res(9)},5000)
-    })
+    // const artificialWaiting= new Promise<number>( (res) => {
+    //   setTimeout(()=>{ res(9)},500)
+    // })
+    // const artificialWaiting2= new Promise<number>( (res) => {
+    //   setTimeout(()=>{ res(9)},100)
+    // })
+    // const artificialWaiting3= new Promise<number>( (res) => {
+    //   setTimeout(()=>{ res(9)},300)
+    // })
     Promise.all([promiseOfFactors, promiseOfDescriptions]).then(() => {
       factorInputStore.attachLoadedData();
       questionProgressStore.attachLoadedData();
@@ -72,6 +97,10 @@ export default class LoadedDataStore {
     Promise.all([promiseOfRelationLinks, promiseOfDatabase, promiseOfDescriptions, promiseOfConditions]).then(() => {
       computationStore.attachLoadedData();
       this.loadedVizWindowData=true;
+      return
+    })
+    Promise.all([promiseOfRelationLinks]).then(() => {
+      this.loadedRelationLinks=true;
       return
     })
     this.makePromiseOfLifeExpectancies().then(() => {
@@ -115,6 +144,7 @@ export default class LoadedDataStore {
       loadDescriptions().then((loadedDescriptions: LoadedDescriptions ) => {
         this.descriptions=loadedDescriptions.descriptions;
         this.rawDescriptions=loadedDescriptions.rawDescriptions;
+        this.optimizabilities=loadedDescriptions.optimizabilities;
         resolve(true);
       })
     })

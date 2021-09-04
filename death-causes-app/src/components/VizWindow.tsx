@@ -1,17 +1,18 @@
 import { autorun, IReactionDisposer } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { Form } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
+import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
 import { DeathCauseContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
 import AdvancedOptionsMenu from "./AdvancedOptions";
-import BarChartWrapper from "./BarChartWrapper";
+import BarChartWrapper from "./BarChart/BarChartWrapper";
+import DeathCauseBarChartSettings from "./BarChart/DeathCauseBarChartSettings";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
+import ConditionsViz from "./ConditionsViz";
 import SummaryView from "./SummaryView";
 import "./VizWindow.css";
 
@@ -21,6 +22,7 @@ interface VizWindowProps {
 
 interface VizWindowStates {
   riskFactorContributions: DeathCauseContributions;
+  conditionsRes: ConditionsRes | null;
 }
 
 class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindowStates> {
@@ -30,6 +32,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     super(props);
     this.state = {
       riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
+      conditionsRes: this.props.store.computationStore.conditionRes
     }
   }
 
@@ -38,6 +41,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
         this.setState({
           riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
+          conditionsRes: this.props.store.computationStore.conditionRes
         }, () => {
           this.props.store.computationStateStore.setComputationState(ComputationState.READY);
         })
@@ -51,7 +55,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     }
   }
 
-
+  //this wrapping in a div is necesseray to secure  smoother transition
   renderAdvancedOptionsMenu() {
     return (
       <div>
@@ -60,110 +64,120 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     );
   }
 
-  renderDataBoundedGraph(
-    visualization: Visualization.BAR_GRAPH | Visualization.SURVIVAL_GRAPH
-  ) {
-    switch (visualization) {
-      case Visualization.BAR_GRAPH: {
-        return (
-          <div>
-            {Object.keys(this.state.riskFactorContributions.costPerCause).length>0 ? (
-              <BarChartWrapper
-                database={this.state.riskFactorContributions.costPerCause}
-                evaluationUnit={this.state.riskFactorContributions.evaluationUnit}
-              />
-            ) : (
-              "Input age to get started" 
-            )}
-          </div>
-        );
+  waitingMessage(){
+    return (<p>Input your age to get started</p>)
+  }
+
+  isResultsComputed(){
+    switch (this.props.store.uIStore.visualization) {
+      case Visualization.CONDITIONS: {
+        return this.state.conditionsRes !== null && Object.keys(this.state.conditionsRes).length > 0;
       }
-      case Visualization.SURVIVAL_GRAPH: {
-        return <BarPlotWrapper data={this.getSurvivalCurveInputData(this.state.riskFactorContributions)} />;
+      case Visualization.BAR_GRAPH: 
+      case Visualization.SURVIVAL_GRAPH:
+      case Visualization.SUMMARY_VIEW: {
+        return Object.keys(this.state.riskFactorContributions.costPerCause).length > 0
+      }
+      default: {
+        return false;
       }
     }
   }
 
-  getSurvivalCurveInputData(riskFactorContributions: DeathCauseContributions): SurvivalCurveData[] {
-    return riskFactorContributions.ages.map((e, i) => {return {age: e, prob: riskFactorContributions.survivalProbs[i]}})
+  getSurvivalCurveInputData(): SurvivalCurveData[] {
+    return this.state.riskFactorContributions.ages.map((e, i) => {return {age: e, prob: this.state.riskFactorContributions.survivalProbs[i]}})
   }
 
   renderChosenGraph() {
-    switch (this.props.store.uIStore.visualization) {
-      case Visualization.BAR_GRAPH:
-      case Visualization.SURVIVAL_GRAPH: {
-        return (
-          <div>
-            {this.renderAdvancedOptionsMenu()}
-            {this.renderDataBoundedGraph(this.props.store.uIStore.visualization)}
-          </div>
-        );
-      }
-      case Visualization.RELATION_GRAPH: {
-        return (
-          <RelationLinkVizWrapper/>
-        );
-      }
-      case Visualization.NO_GRAPH: {
-        return "Input an age to get started";
-      }
-      case Visualization.SUMMARY_VIEW: {
-        if (this.state.riskFactorContributions.costPerCause === null) {
-          return (<h3>Answer questions and compute to show results</h3>)
+    // switch (this.props.store.uIStore.visualization) {
+    //   case Visualization.BAR_GRAPH:
+    //   case Visualization.SURVIVAL_GRAPH: {
+    //     return (
+    //       <div>
+    //         {this.renderAdvancedOptionsMenu()}
+    //         {this.renderDataBoundedGraph(this.props.store.uIStore.visualization)}
+    //       </div>
+    //     );
+    //   }
+    //   case Visualization.RELATION_GRAPH: {
+    //     return (
+    //       <RelationLinkVizWrapper/>
+    //     );
+    //   }
+    //   case Visualization.NO_GRAPH: {
+    //     return "Input an age to get started";
+    //   }
+    //   case Visualization.SUMMARY_VIEW: {
+    //     if (this.state.riskFactorContributions.costPerCause === null) {
+    //       return (<h3>Answer questions and compute to show results</h3>)
+    //     }
+    //     return (
+    //       <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
+    //     )
+    //   }
+    //   default: {
+    //     return <p>'No visualizations'</p>;
+    if(this.isResultsComputed()){
+      switch (this.props.store.uIStore.visualization) {
+        case Visualization.BAR_GRAPH: {
+          return (
+          <BarChartWrapper 
+            database={this.state.riskFactorContributions.costPerCause}
+            barChartSettings={new DeathCauseBarChartSettings(false, true, this.props.store.loadedDataStore.descriptions)}
+          />)
         }
-        return (
-          <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
-        )
-      }
-      default: {
-        return <p>'No visualizations'</p>;
+        case Visualization.SUMMARY_VIEW: {
+          return <SummaryView data={this.state.riskFactorContributions}/>
+        }
+        case Visualization.SURVIVAL_GRAPH: {
+          return <BarPlotWrapper data={this.getSurvivalCurveInputData()} />
+        }
+        case Visualization.CONDITIONS: {
+          return <ConditionsViz conditionRes={this.state.conditionsRes ? this.state.conditionsRes : {
+            averageProportion: {},
+            probOfHavingWhileDying: {}
+        }} />
+        }
       }
     }
+    return this.waitingMessage();
   }
 
   renderSelectOption() {
     const orgval = this.props.store.uIStore.visualization;
     return (
-      <Form>
-        <Form.Group className="visualisation">
-          <Form.Row>
-            <select
-              value={orgval}
-              onChange={(ev) => {
-                const val = ev.currentTarget.value;
-                this.props.store.uIStore.setVisualization(
-                  val as Visualization
-                );
-              }}
-            >
-              {[
-                Visualization.SURVIVAL_GRAPH,
-                Visualization.RELATION_GRAPH,
-                Visualization.BAR_GRAPH,
-                Visualization.SUMMARY_VIEW
-
-              ].map((d: string) => {
-                return (
-                  <option value={d} key={d}>
-                    {d}
-                  </option>
-                );
-              })}
-            </select>
-          </Form.Row>
-        </Form.Group>
-      </Form>
+      <div>
+        <Tabs
+        id="select-visualization"
+        activeKey={this.props.store.uIStore.visualization}
+        onSelect={(k:any) => this.props.store.uIStore.setVisualization(k)}
+        className="mb-3"
+        >
+          {[Visualization.SURVIVAL_GRAPH,
+            Visualization.BAR_GRAPH,
+            Visualization.SUMMARY_VIEW,
+            Visualization.CONDITIONS
+          ].map((d: string) => {
+            return (
+              <Tab eventKey={d} title={d}></Tab>
+            );
+          })}
+        </Tabs>
+      </div>
     );
   }
 
   render(): React.ReactNode {
     return (
-      <div onClick={() => {
-        this.props.store.uIStore.tooltipHider()
-      }}>
-        <h4> Visualization Menu </h4>
+      <div 
+        onClick={() => {
+          this.props.store.uIStore.tooltipHider()
+        }}
+        style={{paddingTop:"18px", minHeight:"calc(100vh - 72px)"}}
+      >
+        <h3> Visualization </h3>
         {this.renderSelectOption()}
-        <hr></hr>
+        {this.renderAdvancedOptionsMenu()}
         {this.renderChosenGraph()}
       </div>
     );

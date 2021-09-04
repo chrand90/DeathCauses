@@ -2,6 +2,7 @@ import { Condition, ConditionJson, default as DeathCause, default as Deathcause,
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
 import InputJson from "../models/FactorJsonInput";
 import Factors from "../models/Factors";
+import Optimizabilities from "../models/Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 
 export interface LoadedFactors {
@@ -17,6 +18,7 @@ export interface LoadedConditions {
 export interface LoadedDescriptions {
     rawDescriptions: DescriptionsJson;
     descriptions: Descriptions;
+    optimizabilities: Optimizabilities;
 }
 
 export interface LoadedRelationLinks {
@@ -60,6 +62,11 @@ export async function loadFactors():Promise<LoadedFactors> {
     return {factors: factors, rawFactorInput: inputJson}
 }
 
+export async function loadICD():Promise<{[cause: string]: string[]}> {
+    const loadedICD=await loadFromFile<{[cause:string]:string[]}>("ICDMinimum.json")
+    return loadedICD
+}
+
 export async function loadConditions():Promise<LoadedConditions> {
     const rawConditions= await loadFromFile<ConditionJson>("Conditions.json")
     const conditions:{[k:string]:Condition}={}
@@ -82,7 +89,8 @@ export async function loadLifeExpectancies():Promise<number[]> {
 export async function loadDescriptions(): Promise<LoadedDescriptions> {
     const rawDescriptions= await loadFromFile<DescriptionsJson>("Descriptions.json");
     const descriptions= new Descriptions(rawDescriptions);
-    return {rawDescriptions: rawDescriptions, descriptions: descriptions};
+    const optimizabilities= new Optimizabilities(rawDescriptions)
+    return {rawDescriptions: rawDescriptions, descriptions: descriptions, optimizabilities: optimizabilities};
 }
 
 export async function loadCauseData():Promise<LoadedCauseData> {

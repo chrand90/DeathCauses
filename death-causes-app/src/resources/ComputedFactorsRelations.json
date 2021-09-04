@@ -3,7 +3,15 @@
     "type": "Computed factor",
     "ancestors": ["Smoking", "SmokingStopped"],
     "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."],
-    "baseUnit":"years"
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":80}}}
+  },
+  "SmokeDurationCumulative": {
+    "type":"Computed factor",
+    "ancestors":["Smoking", "SmokeDuration"],
+    "descriptions":["Projected smoke dur.","Cumulative smoke duration","Total time you have smoked per year", "Smoke dur. a"],
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "PhysicalTotal": {
     "type": "Computed factor",
@@ -26,8 +34,9 @@
       "SmokeIntensity",
       "SmokeDuration"
     ],
-    "descriptions": ["Cummulative smoking", "Total amount smoked in life", "Smoke total"],
-    "baseUnit":"cig-years"
+    "descriptions": ["Cumulative smoking", "Total amount smoked in life", "Smoke total"],
+    "baseUnit":"cig-years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "SmokeTypicalAmount": {
     "type":"Computed factor",
@@ -39,7 +48,8 @@
       "SmokingStopped"
     ],
     "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."],
-    "baseUnit":"cigarettes/day"
+    "baseUnit":"cigarettes/day",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "OralContraceptiveEver": {
     "type":"Computed factor",
@@ -49,7 +59,8 @@
       "OralContraceptiveTillStop"
     ],
     "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"],
-    "baseUnit":""
+    "baseUnit":"",
+    "optimizability":30
   },
   "WaistMale": {
     "type":"Computed factor",
@@ -68,6 +79,12 @@
       "OralContraceptiveTillStop"
     ],
     "descriptions": ["OCP stop duration", "Time since taking OCP per year", "Time since taking oral contraceptives per year", "OCP end a."],
-    "baseUnit":"years"
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"OralContraceptiveStatus": {"Current user":80}}}
+  },
+  "DiabetesCondition": {
+    "type":"Condition",
+    "baseUnit":"",
+    "optimizability:": {"default":20, "conditionals":{"DiabetesStatus":{"No":80}}}
   }
 }

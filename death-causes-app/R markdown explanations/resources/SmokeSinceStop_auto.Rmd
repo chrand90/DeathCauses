@@ -42,19 +42,18 @@ Time since you stopped smoking per year is computed with the following factors
 
 Time since you stopped smoking per year is used by the model in the following places
 
-* [Lung cancer](/model/LungCancer)
-* [Coronary heart disease](/model/Ischemic)
-* [COPD](/model/COPD)
+* as a risk factor for [Bladder cancer](/model/BladderCancer)
+* as a risk factor for [Lung cancer](/model/LungCancer)
+* as a risk factor for [Coronary heart disease](/model/Ischemic)
+* as a risk factor for [COPD](/model/COPD)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking per year is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking per year is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [4](/model/optimizabilities#category-4)).
 
 
-#### Computation
+### Computation
 
 [Place explanation for how Time since you stopped smoking per year is computed here]
 

@@ -122,15 +122,15 @@ For each category they computed an [odds ratio](#odds-ratio) (that we treat as [
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 devtools::load_all("../../../Reportgeneration/DatabaseVisualization/RRtablePlotting")
-dat=initialize_database("../../../death-causes-app/src/resources/Causes.json",
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json", "../special_input/DeprecatedCauses.json"),
                         "../../../death-causes-app/src/resources/Descriptions.json")
-plotSpecificPlots(dat, "Alzheimers", "Caffeine", "raw")
+plotSpecificPlots(dat, "AlzheimersDeprecated", "Caffeine", "raw")
 ```
 
 According to these numbers an average coffee consumption of 2.49 cups of coffees per day is more than twice as dangerous as drinking 2.51 cups of coffee per day. This is not realistic and only a result of the chosen binning. To get a more realistic and intuitive model, we fit a curve to binned categories.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plotSpecificPlots(dat, "Alzheimers", "Caffeine", "interpolated")
+plotSpecificPlots(dat, "AlzheimersDeprecated", "Caffeine", "interpolated")
 ```
 
 This curve is computed as a trade-off between being smooth and reflecting the original data. We have decided that the above curve could not exceed 1, because there is no indication that extreme coffee consumption leads to more Alzheimer's than total coffee abstinence.
@@ -473,6 +473,28 @@ It is not always as easy to compute the optimal value as in the example with hom
 * Non-multiplicative [interactions](#interaction) between risk factors. When two factors don't have a [multiplicative](#multiplicativity) interaction, the optimal value of one risk factor can depend on the value of the other. An example can be seen in [Liver cancer: BMI-HCV diagnosis](/model/LiverCancer#bmi-hcv-diagnosis), where a high BMI is only dangerous if one has hepatitis C. The optimal BMI when conditioning on a positive HCV diagnosis is 18, but in general the optimal BMI can be anything as long as one doesn't have hepatitis.
 * Age effects. If the risk ratios of a risk factor depends on age, the optimal value may also depend on age. Likewise, if the risk factor itself depends on age. 
 * Different sub death causes. If a risk factor appears in more than one death cause, it can have different optimal value in them. For example, biological sex is a risk factor in both breast cancer and prostate cancer, where the optimal value is female and male, respectively. When considering all cancers at once, the optimal value of biological sex is therefore both male and female.
+
+## No confidence intervals
+We do not compute confidence intervals on any of the estimates of the model. It is theoretically possible because all the risk ratios and population estimates comes with confidence intervals. However, it probably won't be a future feature of the model; the nature of the model means that we would have to compute the confidence intervals using simulation techniques, which requires many more computations. At the time of writing, the pre-computation step takes around 30 seconds, the pre-computed data is around 0.5 MB, and the website spends around 1 second to evaluate the user's data. Proper confidence interval estimation with simulation techniques would multiply all three numbers by a factor 100, and that would necessitate a different, more costly set-up. Besides, the bias and variance reduction from our use of [smoothing techniques](#smoothing) makes the confidence intervals less interesting.
+
+Let us consider how big the confidence intervals would be if we computed them (and if we didn't smooth the risk ratios). In the literature the confidence intervals of risk ratios are generally quite large and compared to the uncertainty on the population estimates, they are responsible for most of the uncertainty of the model. Often, a confidence interval of a risk ratio used by the model says 1) that an effect could be at least twice as big, and 2) the effect could be close to non-existent. Therefore, a rule of thumb could be that most of the [decomposed](#decomposition) probabilities could be at least twice as big or half the size of their computed value. The probability of dying of a cause is basically a product of such risk ratios and so it also has a good amount of uncertainty. The uncertainty depends on several factor but if we should make a rule of thumb, it would be at least $\pm1/3$ if there is one risk factor and at least $\pm 1/2$ if there are more than one risk factor. The life expectancy would have a relatively small confidence interval because there are so many causes. Perhaps just $\pm 1$ year.
+
+## No validation
+The model is not formally validated. All the incoming data and risk ratios are approved in peer-reviewed journals, but the way we combine the data has no checks yet. We of course appeal to the reasonability of the combination described in this document. Our model can also be compared to the studies below
+
+#### Expected lifetime studies
+There are studies that examine the relationship between several risk factors and expected lifetime. In @finland2020 they build a model on the data from a prospective cohort study. They found, among other things, that smoking 20 cigarettes a day shortens your life with 6.5 years if you are a 30 year-old Finnish man who often drinks, prefers low-fat or no spread over butter, drinks skimmed milk, rarely eats vegetables or fruits, without a family history of heart attacks in young persons, is inactive, feels stressed most of the time, lowly educated, satisfied with his accomplishments, has strenuous work, has a spouse with whom he often argues, has improving financial status, feels it is impossible to obtain his goals, doesn't have good friends and don't have diabetes. We can't match this exact profile on our website, but if we take the nearest values, we end up at 4.2 years (at the time of writing, 24/08-2021). There is a difference between 6.5 years and 4.2 years and possible explanations could be 
+
+* Our model doesn't include all relevant risk factors for smoking yet.
+* There is a difference between the baselines. For example, the Finnish non-smoker had an expected lifetime of 86.8 years, whereas the equivalent person in our model was an American non-smoker with expected lifetime 80.8.
+* The two estimates are adjusted differently for confounding factors. The estimate from @finland2020 were adjusted for the risk factors mentioned above whereas, in our model, the different risk ratios are not adjusted for the same risk factors. 
+
+There are similar studies, see the discussion in @finland2020. 
+
+#### Global disease burden project
+The [Global disease burden(GBD) project](http://www.healthdata.org/gbd/2019) aims to describe how many deaths each risk factor is responsible for worldwide [@gbd2019]. The database is a giant version of the data we have collected. They have age-adjusted death rates and risk factor distributions for all countries, and not just the US. They also have a big curated list of risk ratios and compute some themselves (which we have used in for example [Colon Cancer](/model/ColonCancer#total-physical-activity-time)). The risk ratios are directed more towards population-level concerns such as tobacco, sanitation and vitamin deficiencies whereas our model focuses on risk factors relevant for an individual in a developed country. Their computations are also focused on population-level risks making it hard to compare any numbers. However, one of their products, [GBD compare](https://vizhub.healthdata.org/gbd-compare/), can be used to compare the significance of the risk factors in GBD to their significance in our model. 
+
+
 
 # Glossary
 

@@ -1,5 +1,6 @@
-import Descriptions, { OptimizabilityToNodes } from "../../models/Descriptions";
+import Descriptions from "../../models/Descriptions";
 import { FactorAnswers } from "../../models/Factors";
+import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
 import RelationLinks from "../../models/RelationLinks";
 import { MultifactorGainType } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import {
@@ -7,6 +8,7 @@ import {
   StochasticStatus,
   UpdateDic,
 } from "../../models/updateFormNodes/UpdateForm";
+import { ConditionVizFlavor } from "../../stores/UIStore";
 import { LocationAndValue } from "../database/InterpolationLocation";
 import { WeightedLocationAndValue } from "../database/InterpolationTable";
 import { formatYears } from "../Helpers";
@@ -31,61 +33,55 @@ export interface LongConsensus {
 export class BestValues {
   optimals: { [factorName: string]: (number | string)[] };
   factorAnswers: UpdateDic;
-  optimClasses: OptimizabilityToNodes;
-  factorNameToOptimClass: { [k: string]: string } = {};
 
   constructor(
-    optimClasses: OptimizabilityToNodes,
+    nodes: string[],
     allPreviousUpdateForms: UpdateDic
   ) {
-    this.optimClasses = optimClasses;
     this.optimals = {};
-    Object.entries(optimClasses).forEach(([optimVal, fnames]) => {
-      fnames.forEach((fname) => {
-        this.optimals[fname] = [] as (number | string)[];
-        this.factorNameToOptimClass[fname] = optimVal;
-      });
+    nodes.forEach((fname) => {
+      this.optimals[fname] = [] as (number | string)[];
     });
     this.factorAnswers = allPreviousUpdateForms;
   }
 
-  getOptimizability(factorName: string): number {
-    return parseInt(this.factorNameToOptimClass[factorName]);
-  }
+  // getOptimizability(factorName: string): number {
+  //   return parseInt(this.factorNameToOptimClass[factorName]);
+  // }
 
-  getGivensAndOptimizability(factorName: string) {
-    let factorOptimClass: number = -10;
-    if (factorName in this.factorNameToOptimClass) {
-      factorOptimClass = parseInt(this.factorNameToOptimClass[factorName]);
-    }
-    if (factorOptimClass < 0) {
-      return {
-        givens: [],
-        subtracted: [],
-        sames: [],
-        optimizability: factorOptimClass,
-      };
-    }
-    const numClasses = Object.keys(this.optimClasses).map((s) => +s);
-    let givens: string[] = [];
-    let subtracted: string[] = [];
-    numClasses.forEach((optimizability) => {
-      if (optimizability < factorOptimClass) {
-        givens = givens.concat(this.optimClasses[optimizability.toString()]);
-      } else if (optimizability > factorOptimClass) {
-        subtracted = subtracted.concat(
-          this.optimClasses[optimizability.toString()]
-        );
-      }
-    });
-    const sames = this.optimClasses[factorOptimClass.toString()];
-    return {
-      givens: givens.filter((d) => d !== "Age"),
-      subtracted,
-      sames,
-      optimizability: factorOptimClass,
-    };
-  }
+  // getGivensAndOptimizability(factorName: string) {
+  //   let factorOptimClass: number = -10;
+  //   if (factorName in this.factorNameToOptimClass) {
+  //     factorOptimClass = parseInt(this.factorNameToOptimClass[factorName]);
+  //   }
+  //   if (factorOptimClass < 0) {
+  //     return {
+  //       givens: [],
+  //       subtracted: [],
+  //       sames: [],
+  //       optimizability: factorOptimClass,
+  //     };
+  //   }
+  //   const numClasses = Object.keys(this.optimClasses).map((s) => +s);
+  //   let givens: string[] = [];
+  //   let subtracted: string[] = [];
+  //   numClasses.forEach((optimizability) => {
+  //     if (optimizability < factorOptimClass) {
+  //       givens = givens.concat(this.optimClasses[optimizability.toString()]);
+  //     } else if (optimizability > factorOptimClass) {
+  //       subtracted = subtracted.concat(
+  //         this.optimClasses[optimizability.toString()]
+  //       );
+  //     }
+  //   });
+  //   const sames = this.optimClasses[factorOptimClass.toString()];
+  //   return {
+  //     givens: givens.filter((d) => d !== "Age"),
+  //     subtracted,
+  //     sames,
+  //     optimizability: factorOptimClass,
+  //   };
+  // }
 
   addContribution(
     weightedLocs: WeightedLocationAndValue[],
@@ -188,7 +184,8 @@ export class BestValues {
     causeName:string,
     factorName: string,
     factorNameDescription: string,
-    causeDescription: string
+    causeDescription: string,
+    conditionVizFlavor: ConditionVizFlavor | null
   ): {res: string, buttonCounter: number, buttonCodes: string[]}{
     let buttonCodes:string[]=[];
     const prob =
@@ -196,10 +193,11 @@ export class BestValues {
       (probability * 100).toFixed(1).replace(/\.?0+$/, "") +
       "%</strong>";
     let buttonCounter=0;
-    let res = "If you die"
+    let res = conditionVizFlavor ? "If you get" : "If you die"
     if(causeDescription.length>0){
       buttonCounter += 1;
-      res+=" from " + createButton(causeDescription, buttonCounter)
+      res+= conditionVizFlavor ? " ": " from "
+      res+= createButton(causeDescription, buttonCounter);
       buttonCodes.push(causeName)
     }
     res += ", there is a ";
@@ -254,12 +252,9 @@ export class BestValues {
     causeName: string,
     descriptions: Descriptions,
     useLifeExpectancy: boolean,
+    optimizabilities: KnowledgeableOptimizabilities,
+    conditionVizFlavor: ConditionVizFlavor | null
   ): LongConsensus {
-    const {
-      givens,
-      subtracted,
-      optimizability,
-    } = this.getGivensAndOptimizability(factorName);
     const factorNameDescription = descriptions.getDescription(factorName, 30);
     const causeDescription = descriptions.getDescription(causeName, 30);
     let {res, buttonCodes, buttonCounter} = useLifeExpectancy ? 
@@ -269,41 +264,30 @@ export class BestValues {
         factorName,
         factorNameDescription, 
         causeDescription,
-        descriptions.optimizabilities[factorName]
+        optimizabilities.getOptimizability(factorName)
       ) :
       this.makeConsensusOpenerProbability(
         proportion, 
         causeName, 
         factorName,
         factorNameDescription, 
-        causeDescription) 
+        causeDescription,
+        conditionVizFlavor) 
       
-    if (givens.length > 0 && false) {
-      res =
-        res +
-        ". This includes cases where other valid reasons were " +
-        listFormatting(givens, "or");
-      if (subtracted.length > 0) {
-        res =
-          res +
-          " but exludes those where " +
-          listFormatting(subtracted) +
-          " could also explain the death";
-      }
-    } else if (subtracted.length > 0 && false) {
-      res =
-        res +
-        ". This excludes cases where other valid reasons were " +
-        listFormatting(subtracted, "or");
-    }
     if(!(factorName in this.factorAnswers)){
       console.error("The factor "+factorName+" was not in factoranswers")
-      console.log("factoranswers:")
-      console.log(this.factorAnswers)
+      console.error("factoranswers:")
+      console.error(this.factorAnswers)
     }
     let unit=descriptions.getBaseUnit(factorName)
     if(unit!==""){
       unit=" "+unit
+    }
+    if(!(factorName in this.factorAnswers)){
+      return {
+        textWithButtons: res,
+        buttonCodes: buttonCodes
+      };
     }
     const factorAnswer = this.factorAnswers[factorName];
     if (factorAnswer.dimension === DimensionStatus.SINGLE) {
@@ -397,21 +381,21 @@ export class BestValues {
         this.optimals[factorName] = vals;
       }
     });
-    Object.entries(otherStore.optimClasses).forEach(([optimValue, nodes]) => {
-      if (optimValue in this.optimClasses) {
-        this.optimClasses[optimValue] = [
-          ...Array.from(
-            new Set<string>(this.optimClasses[optimValue].concat(nodes))
-          ),
-        ];
-      } else {
-        this.optimClasses[optimValue] = nodes;
-      }
-    });
-    this.factorNameToOptimClass = {
-      ...this.factorNameToOptimClass,
-      ...otherStore.factorNameToOptimClass,
-    };
+    // Object.entries(otherStore.optimClasses).forEach(([optimValue, nodes]) => {
+    //   if (optimValue in this.optimClasses) {
+    //     this.optimClasses[optimValue] = [
+    //       ...Array.from(
+    //         new Set<string>(this.optimClasses[optimValue].concat(nodes))
+    //       ),
+    //     ];
+    //   } else {
+    //     this.optimClasses[optimValue] = nodes;
+    //   }
+    // });
+    // this.factorNameToOptimClass = {
+    //   ...this.factorNameToOptimClass,
+    //   ...otherStore.factorNameToOptimClass,
+    // };
   }
 }
 
@@ -476,10 +460,11 @@ function listFormatting(factors: string[], finalword: string = "or") {
   }
 }
 
-export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean){
+export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean, conditionVizFlavor: ConditionVizFlavor | null){
   const causeDescription = descriptions.getDescription(cause, 30);
   let res=""
-  res+=useLifeExpectancy ? "If you could avoid the deaths" : "If you die"
+  res+=useLifeExpectancy ? "If you could avoid the deaths" : 
+    (conditionVizFlavor ? "If you get" : "If you die")
   const responsibility= useLifeExpectancy ? 
     formatYears(proportion*total) :
     (proportion*100).toFixed(1).replace(/\.?0+$/,"")
@@ -487,7 +472,8 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
   let buttonCodes: string[]=[]
   if(cause!=="any cause"){
       buttonCounter+=1
-      res+=" from "+ createButton(causeDescription, buttonCounter);
+      res+= conditionVizFlavor ? " ": " from "
+      res+= createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
   res+= useLifeExpectancy ? " where the " : ", there is " + responsibility +"% probability that the "
@@ -549,12 +535,12 @@ export function getMultifactorGainStatement(proportion: number, total: number, c
   return {
       textWithButtons: res,
       buttonCodes:  buttonCodes
-  };    
+  };
 }
 
 export function mergeBestValues(bestValues: BestValues[]): BestValues {
   const firstBestValues = bestValues[0];
-  const shell = new BestValues({}, firstBestValues.factorAnswers);
+  const shell = new BestValues([] as string[], firstBestValues.factorAnswers);
   return bestValues.reduce((first: BestValues, second: BestValues) => {
     first.merge(second);
     return first;

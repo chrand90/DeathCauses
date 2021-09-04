@@ -28,7 +28,7 @@ Depression is a **input factor**. It means that it is one of the inputs from the
 
 Depression is used by the model in the following places
 
-* [Suicide](/model/Suicide)
+* as a risk factor for [Suicide](/model/Suicide)
 
 #### Guidance
 
@@ -44,7 +44,9 @@ The user has the following answer options
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Depression is 2. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Depression is [2](/model/optimizabilities#category-2). This means that it can be interpreted as
+
+
 
 > *It is impossible to change, but it could have been the consequence of your actions*
 

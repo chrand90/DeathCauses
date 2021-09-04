@@ -1,0 +1,57 @@
+---
+title: "Total time you have smoked per year"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[partly auto-generated file]_
+
+Total time you have smoked per year is a **computed factor**. It means that it can be determined with total certainty from the user input.
+
+#### Alternative names:
+* Smoke dur. a
+* Projected smoke dur.
+* Cumulative smoke duration
+* Total time you have smoked per year
+* SmokeDurationCumulative
+
+#### Input
+
+Total time you have smoked per year is computed with the following factors
+
+* [Smoking status](/model/Smoking)
+* [Time span of smoking period](/model/SmokeDuration)
+
+#### Uses
+
+Total time you have smoked per year is used by the model in the following places
+
+* as a risk factor for [Bladder cancer](/model/BladderCancer)
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time you have smoked per year is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [5](/model/optimizabilities#category-5)).
+
+
+### Computation
+
+If one's [Smoking status](/model/Smoking) is 'Former smoker' this factor is equal to [Smoke duration](/model/SmokeDuration). If one is a 'Current smoker', it is equal to Smoke duration plus the number of years since the user's []current age](/model/Age).
+
+## References

@@ -28,7 +28,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-<p><em>[auto-generated file]</em></p>
+<p><em>[partly auto-generated file]</em></p>
 <p>Average amount smoked in smoking period is a <strong>computed factor</strong>. It means that it can be determined with total certainty from the user input.</p>
 <div id="alternative-names" class="section level4">
 <h4>Alternative names:</h4>
@@ -54,21 +54,21 @@ blockquote{
 <h4>Uses</h4>
 <p>Average amount smoked in smoking period is used by the model in the following places</p>
 <ul>
-<li><a href="/model/LungCancer">Lung cancer</a></li>
-<li><a href="/model/Ischemic">Coronary heart disease</a></li>
-<li><a href="/model/COPD">COPD</a></li>
+<li>as a risk factor for <a href="/model/BladderCancer">Bladder cancer</a></li>
+<li>as a risk factor for <a href="/model/LungCancer">Lung cancer</a></li>
+<li>as a risk factor for <a href="/model/Ischemic">Coronary heart disease</a></li>
+<li>as a risk factor for <a href="/model/COPD">COPD</a></li>
 </ul>
 </div>
 <div id="optimizability" class="section level3">
 <h3>Optimizability</h3>
-<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Average amount smoked in smoking period is 5. This means that it can be interpreted as</p>
-<blockquote>
-<p><em>It is possible to change, and it can be changed now or very soon.</em></p>
-</blockquote>
-<div id="computation" class="section level4">
-<h4>Computation</h4>
-<p>[Place explanation for how Average amount smoked in smoking period is computed here]</p>
+<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Average amount smoked in smoking period is <a href="/model/optimizabilities#category-3">3</a>(unless <a href="/model/Smoking">Smoking status</a>=‘Current smoker’ in which case the optimizability is <a href="/model/optimizabilities#category-5">5</a>).</p>
 </div>
+<div id="computation" class="section level3">
+<h3>Computation</h3>
+<p>If one’s <a href="/model/Smoking">Smoking status</a> is ‘Current smoker’ this factor is equal to <a href="/model/SmokeIntensity">Current smoking amount</a>. If one is a ‘Former smoker’, it is equal to how much one smoked in the past. That is <a href="/model/SmokePastAmount">Past smoking amount</a>. If one is a ‘never smoker’, it is equal to 0.</p>
+<p>If the user has changed the advanced settings such that the <a href="/model/advancedOptions#computation-period">computation period</a> starts before he or she began smoking, this factor will be 0. This is why computation of Average smoking also uses <a href="/model/SmokingStopped">Time since smoking</a> and <a href="/model/SmokeDuration">Time span of smoking period</a>.</p>
+<p>This factor potentially changes over time (because one can set the start of the computation period before start of smoking), so we compute a value for every year.</p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

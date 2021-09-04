@@ -82,9 +82,9 @@ $$
 
 #### Total amount smoked in life
 
-Total amount smoked in life is a risk factor for Bronchitis.
+[Total amount smoked in life](/model/SmokeCumulative) is a risk factor for Bronchitis.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Bronchitis', c('SmokeCumulative'),'raw')

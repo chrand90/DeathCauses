@@ -34,8 +34,9 @@ Time span of smoking period is a **input factor**. It means that it is one of th
 
 Time span of smoking period is used by the model in the following places
 
-* [Total amount smoked in life](/model/SmokeCumulative)
-* [Smoking average](/model/SmokeTypicalAmount)
+* to compute [Cumulative smoke duration](/model/SmokeDurationCumulative)
+* to compute [Total amount smoked in life](/model/SmokeCumulative)
+* to compute [Smoking average](/model/SmokeTypicalAmount)
 
 #### Guidance
 
@@ -48,13 +49,11 @@ The unit of the input is **Years**, but can be changed to any of the units below
 * Months (1 Years = 12.0 Months)
 * Days (1 Years = 365.25 Days)
 
-The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years. 
+The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time span of smoking period is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time span of smoking period is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [4](/model/optimizabilities#category-4)).
 
 
 

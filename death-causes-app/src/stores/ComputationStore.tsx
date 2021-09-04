@@ -1,11 +1,9 @@
-import { action, makeObservable, computed, observable, toJS } from "mobx";
-import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData";
-import { DataRow } from "../components/PlottingData";
+import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { FactorAnswers } from "../models/Factors";
 import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
-import { DeathCauseContributions, DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
-import UpdateFormController, { WrappedLifeExpectancyContributions } from "../models/updateFormNodes/UpdateFormController";
+import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
+import { DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
 import AdvancedOptionsStore, { EVALUATION_UNIT, Threading } from "./AdvancedOptionsStore";
 import ComputationStateStore, {
@@ -30,6 +28,7 @@ export default class ComputationStore {
   computationStateStore: ComputationStateStore;
   allChanges: FactorAnswerChanges[];
   lifeExpectancies: number[];
+  conditionRes: ConditionsRes;
 
   constructor(
     loadedDataStore: LoadedDataStore,
@@ -41,7 +40,8 @@ export default class ComputationStore {
     this.riskFactorContributions = {ages: [], survivalProbs: [], baseLifeExpectancy: 0, evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, costPerCause: {}, changes: {}};
     this.singeThreadComputeController = null;
     this.allChanges=[]
-    this.lifeExpectancies=[70]
+    this.lifeExpectancies=[]
+    this.conditionRes= {averageProportion: {}, probOfHavingWhileDying: {}};
     makeObservable(this, {
       submittedFactorAnswers: observable,
       lifeExpectancies: observable,
@@ -118,11 +118,16 @@ export default class ComputationStore {
         this.pushChanges(innerprobabilities)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }
+      const conditionsRes = this.singeThreadComputeController?.computeConditions();
+      if(conditionsRes !== undefined){
+        this.conditionRes = conditionsRes;
+      }
     } else {
       worker.processData(
         toJS(this.submittedFactorAnswers), toJS(this.advancedOptionsStore.submittedEvaluationUnit)
-      ).then( action("INserting results", ({ innerCauses}) => { 
+      ).then( action("INserting results", ({ innerCauses, conditionsRes}) => { 
         this.riskFactorContributions = innerCauses;
+        this.conditionRes = conditionsRes
         this.pushChanges(innerCauses)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));
@@ -138,8 +143,9 @@ export default class ComputationStore {
         this.loadedDataStore.deathCauses,
         this.loadedDataStore.deathCauseCategories,
         this.loadedDataStore.descriptions,
+        this.advancedOptionsStore.submittedEvaluationUnit,
         this.loadedDataStore.conditions,
-        this.advancedOptionsStore.submittedEvaluationUnit
+        this.loadedDataStore.optimizabilities
       );
     } else {
       worker.initializeObject(

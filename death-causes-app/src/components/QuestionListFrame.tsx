@@ -128,7 +128,7 @@ class QuestionListFrameWithoutStore extends React.Component<QuestionListFramePro
           <div className="d-flex justify-content-between flex-wrap">
             <div>
               <Button onClick={()=> this.props.store.questionProgressStore.switchView(QuestionView.NOTHING)}>
-                Back to the questions
+                Back to questions
               </Button>
             </div>
             <QuestionOptions disableGoToEnd={true}/>

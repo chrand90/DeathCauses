@@ -109,9 +109,9 @@ $$
 
 #### Depression
 
-Depression is a risk factor for Suicide.
+[Depression](/model/Depression) is a risk factor for Suicide.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'Suicide', c('Depression'),'raw')

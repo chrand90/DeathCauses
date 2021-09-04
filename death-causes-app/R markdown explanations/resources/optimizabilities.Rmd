@@ -22,11 +22,9 @@ blockquote{
 </style>
 _[partly auto-generated file]_
 
-Every risk factor is assigned an *optimizability* that describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+The measure *optimizability* describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
 
-The optimizabilities are used to [decompose](/model/intro#decomposition) the risk of dying from a disease into smaller parts representing the responsibility of each risk factor. If some factors have the same optimizability, we use [another method](/model/intro#decomposing-two-equally-optimizable-factors).
-
-The different optimizabilities are
+For most risk factors the optimizability is always the same but for some, the optimizability depends on other factors. For example, current smokers can still improve their average smoking amount, but former smokers can't. Therefore, the optimizability of [average smoking amount](/model/SmokeTypicalAmount) depends on one's [smoking status](/model/Smoking).The different optimizabilities are
 
 1. It is impossible to change and it has never been in your control
 2. It is impossible to change, but it could have been the consequence of your actions
@@ -37,7 +35,7 @@ The different optimizabilities are
 
 ## Risk factors
 
-#### Category 1
+### Category 1
 
 Description: It is impossible to change and it has never been in your control
 
@@ -49,7 +47,7 @@ Members:
 * [Biological sex](/model/Sex)
 
 
-#### Category 2
+### Category 2
 
 Description: It is impossible to change, but it could have been the consequence of your actions
 
@@ -63,55 +61,66 @@ Members:
 * [Head traumas](/model/HeadTrauma)
 
 
-#### Category 3
+### Category 3
 
 Description: It is impossible to change now, but it has once definitely been in your control
 
 Members:
 
 * [Time spent indoor tanning](/model/IndoorTanning)
-* [Oral contraceptives](/model/OralContraceptiveStatus)
-* [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver)
 * [Pesticide exposure](/model/PesticideExposure)
-* [Time span of smoking period](/model/SmokeDuration)
 * [Amount smoked in the past](/model/SmokePastAmount)
-* [Time since you stopped smoking per year](/model/SmokeSinceStop)
-* [Smoking status](/model/Smoking)
-* [Time since you stopped smoking](/model/SmokingStopped)
 
 
-#### Category 4
+### Category 4
 
 Description: It is possible to change, but it will take a lot of time.
 
 Members:
 
 * [BMI](/model/BMI)
+* [Diabetes condition](/model/DiabetesCondition)
 * [Waist circumference](/model/Waist)
 * [Waist circumference male equivalence](/model/WaistMale)
 
 
-#### Category 5
+### Category 5
 
 Description: It is possible to change, and it can be changed now or very soon.
 
 Members:
 
 * [Coffee consumption](/model/Caffeine)
+* [Cognitive activity](/model/CognitiveActivity)
 * [Alcohol consumption](/model/Drinking)
 * [Fish consumption](/model/Fish)
 * [Fluids intake](/model/Fluids)
 * [Fruit consumption](/model/Fruits)
 * [Fruits and vegetables consumption](/model/Greens)
 * [Peak Alcohol consumption](/model/MaxDrinking)
-* [Ever used oral contraceptives](/model/OralContraceptiveEver)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
 * [Time till stopping oral contraceptives](/model/OralContraceptiveTillStop)
 * [Hard physical activity time](/model/PhysicalHard)
 * [Medium physical activity time](/model/PhysicalMedium)
 * [Total time doing physical activity](/model/PhysicalTotal)
 * [Red meat consumption](/model/RedMeat)
-* [Total amount smoked in life](/model/SmokeCumulative)
 * [Current smoking amount](/model/SmokeIntensity)
-* [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
 * [Vegetable consumption](/model/Vegetables)
+
+
+### Category Mixed 
+
+* 4 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+  * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* 5 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Oral contraceptives](/model/OralContraceptiveStatus)
+* 5 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Total amount smoked in life](/model/SmokeCumulative)
+  * [Total time you have smoked per year](/model/SmokeDurationCumulative)
+  * [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
+  * [Smoking status](/model/Smoking)
+* 4 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Time span of smoking period](/model/SmokeDuration)
+  * [Time since you stopped smoking per year](/model/SmokeSinceStop)
+  * [Time since you stopped smoking](/model/SmokingStopped)

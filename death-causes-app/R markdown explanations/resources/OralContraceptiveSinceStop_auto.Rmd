@@ -43,17 +43,15 @@ Time since taking OCP per year is computed with the following factors
 
 Time since taking OCP per year is used by the model in the following places
 
-* [Breast cancer](/model/BreastCancer)
+* as a risk factor for [Breast cancer](/model/BreastCancer)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since taking OCP per year is 5. This means that it can be interpreted as
-
-> *It is possible to change, and it can be changed now or very soon.*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since taking OCP per year is [3](/model/optimizabilities#category-3)(unless [Oral contraceptives](/model/OralContraceptiveStatus)='Current user' in which case the optimizability is [4](/model/optimizabilities#category-4)).
 
 
-#### Computation
+### Computation
 
 [Place explanation for how Time since taking OCP per year is computed here]
 

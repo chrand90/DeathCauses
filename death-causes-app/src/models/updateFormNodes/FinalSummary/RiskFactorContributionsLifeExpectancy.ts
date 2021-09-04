@@ -194,6 +194,19 @@ function makeDataRow(
     }
 }
 
+function triviallyZero(toCheck: (number | number[])[]){
+    return toCheck.every(listOrNum => {
+        if(Array.isArray(listOrNum)){
+            return listOrNum.every( num => {
+                return num<1e-10
+            })
+        }
+        else {
+            return listOrNum<1e-10
+        }
+    })
+}
+
 
 function insertGainInDictionary(
     dicToInsertInto: {[key:string]: number},
@@ -205,6 +218,10 @@ function insertGainInDictionary(
     multiplier: (number | number[])[],
     insertIntoKey: string
 ){
+    if(triviallyZero(multiplier)){
+        dicToInsertInto[insertIntoKey]=0
+        return 
+    }
     const lifeExpectancyWithPerfectInnerCause=calculateLifeExpectancyMultiplied(
         survivalProbForWithoutDisease,
         ageFrom,

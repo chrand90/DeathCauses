@@ -6,7 +6,7 @@ declare module 'comlink-loader!*' {
 
     // Add any custom functions to this class.
     // Make note that the return type needs to be wrapped in a promise.
-    processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): Promise<{ innerCauses:  DeathCauseContributionsAndChanges}>; 
+    processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): Promise<{ innerCauses:  DeathCauseContributionsAndChanges, conditionsRes: ConditionsRes}>; 
   }
 
   export = WebpackWorker;

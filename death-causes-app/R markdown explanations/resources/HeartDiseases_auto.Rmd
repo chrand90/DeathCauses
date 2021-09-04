@@ -75,9 +75,9 @@ dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json",
 
 #### Greens consumption
 
-Greens consumption is a risk factor for Heart disease.
+[Greens consumption](/model/Greens) is a risk factor for Heart disease.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'HeartDiseases', c('Greens'),'raw')

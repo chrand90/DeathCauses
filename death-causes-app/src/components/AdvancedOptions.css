@@ -2,13 +2,13 @@
     max-width: 800px;
     border-radius: 2px;
     text-align: left;
-    background-color: rgb(200, 250, 239);
+    background-color: var(--background);
 }
 
 .bordereddiv.closed {
     border-style:solid;
     border-width: 2px;
-    border-color: rgb(200, 250, 239);
+    border-color: var(--background);
 }
 
 .bordereddiv.open {
@@ -24,7 +24,7 @@
 }
 
 .collapsebutton:focus {
-    background-color: rgb(200, 250, 239);
+    background-color: var(--background);
 }
 
 .submitbutton.wider {

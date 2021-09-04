@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Waist circumference male equivalence is a **computed factor**. It means that it can be determined with total certainty from the user input.
 
@@ -42,20 +42,20 @@ Waist circumference male equivalence is computed with the following factors
 
 Waist circumference male equivalence is used by the model in the following places
 
-* [Diabetes condition](/model/DiabetesCondition)
+* as a risk factor for [Diabetes condition](/model/DiabetesCondition)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Waist circumference male equivalence is 4. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Waist circumference male equivalence is [4](/model/optimizabilities#category-4). This means that it can be interpreted as
+
+
 
 > *It is possible to change, but it will take a lot of time.*
 
 
-#### Computation
+### Computation
 
-[Place explanation for how Waist circumference male equivalence is computed here]
-
-
+For males this factor is just the waist circumference. For females, it is the waist circumference plus 14 centimeters.
 
 ## References

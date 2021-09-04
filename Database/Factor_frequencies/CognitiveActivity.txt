@@ -1,0 +1,9 @@
+#credibility=775
+#data is taken from the study population in the paper prospective study "Relation of cognitive activity to risk of developing Alzheimer disease, R. S. Wilson, P. A. Scherr, J. A. Schneider, Y. Tang, D. A. Bennett, Neurology Nov 2007, 69 (20) 1911-1920; DOI: 10.1212/01.wnl.0000271087.67782.cb"
+#
+#
+CognitiveActivity	freq
+1,2	0.1
+2.2,3.2	0.4
+3.2,4.0	0.4
+4.0,5.0	0.1

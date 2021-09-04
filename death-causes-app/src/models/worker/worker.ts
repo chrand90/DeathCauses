@@ -2,8 +2,10 @@ import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGrou
 import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
+import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
 import { FactorAnswerChanges } from "../updateFormNodes/FactorAnswersToUpdateForm";
+import { ConditionsRes } from "../updateFormNodes/FinalSummary/ConditionSummary";
 import { DeathCauseContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import UpdateFormController from "../updateFormNodes/UpdateFormController";
 
@@ -27,6 +29,7 @@ class computations {
       );
     });
     const descriptions= new Descriptions(rawDescriptions);
+    const optimizabilities= new Optimizabilities(rawDescriptions)
     const conditions:{[k:string]:Condition}={};
     Object.entries(rawConditions).forEach(([conditionName, conditionObject]) => {
         conditions[conditionName]=new Condition(conditionObject, conditionName);
@@ -38,14 +41,15 @@ class computations {
       deathcauses,
       deathCauseCategories,
       descriptions,
+      evaluationUnit,
       conditions, 
-      evaluationUnit
+      optimizabilities
     );
   }
 
   processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     if(this.computer===null){
-      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}};
+      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
     }
     else{
       return this.computer.computeAll(data, evaluationUnit);
@@ -55,7 +59,7 @@ class computations {
 
 let c = new computations();
 
-export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): {innerCauses: DeathCauseContributions, changes: FactorAnswerChanges} {
+export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): {innerCauses: DeathCauseContributions, changes: FactorAnswerChanges, conditionsRes: ConditionsRes} {
   return c.processData(data, evaluationUnit);
 }
 

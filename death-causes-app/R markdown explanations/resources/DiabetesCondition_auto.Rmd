@@ -46,7 +46,8 @@ In the model Diabetes condition has the following [special factors](/model/intro
 
 Diabetes condition is used by the model in the following places
 
-* [Diabetes](/model/Diabetes)
+* as a risk factor for [Alzheimers](/model/Alzheimers)
+* as a risk factor for [Diabetes](/model/Diabetes)
 
 #### Prevalence
 
@@ -81,9 +82,9 @@ $$
 
 #### BMI
 
-BMI is a risk factor for Diabetes condition.
+[BMI](/model/BMI) is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'raw')
@@ -99,9 +100,9 @@ plotSpecificPlots(dat, 'DiabetesCondition', c('BMI'),'interpolated')
 
 #### Waist circumference as male
 
-Waist circumference as male is a risk factor for Diabetes condition.
+[Waist circumference as male](/model/WaistMale) is a risk factor for Diabetes condition.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'DiabetesCondition', c('WaistMale'),'raw')

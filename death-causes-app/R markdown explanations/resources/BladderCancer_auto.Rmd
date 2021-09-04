@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Bladder cancer is a **death cause**. It means that there is a certain probability that one dies from this.
 
@@ -40,7 +40,9 @@ Bladder cancer is part of the following death cause categories
 In the model Bladder cancer has the following [risk factors](/model/intro#risk-factor)
 
 * [Fluids intake](/model/Fluids) (Fluids)
-* [Total amount smoked in life](/model/SmokeCumulative) (Smoke total)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Cumulative smoke duration](/model/SmokeDurationCumulative) (Smoke dur. a)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 
 #### Number of deaths
 
@@ -79,21 +81,21 @@ The definition of dying from Bladder cancer is to get any of the following ICD c
 The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke total}}
+RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke dur. a,Smoke end a.}} \cdot RR_{\text{Smoke avg.}}
 $$
 
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Fluids}} \cdot P_{\text{Smoke total}}
+P=P_{\text{Fluids}} \cdot P_{\text{Smoke avg.,Smoke dur. a,Smoke end a.}}
 $$
 
 
 #### Fluids intake
 
-Fluids intake is a risk factor for Bladder cancer.
+[Fluids intake](/model/Fluids) is a risk factor for Bladder cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Higher fluid intake decreases the risk of bladder cancer. We use the numbers from @michaud1999fluid who found a significant dose-response relationship. Interestingly, when the analysis was conducted separately for each type of fluid, only water was significant. However, we will not use this fact, because the other beverages may be equally beneficial, which would also make sense if the authors' argumentation,  "fluid intake is good because it increases urination and thereby bladder cancer risk", is correct.
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'BladderCancer', c('Fluids'),'raw')
@@ -107,21 +109,39 @@ plotSpecificPlots(dat, 'BladderCancer', c('Fluids'),'interpolated')
 ```
 
 
-#### Total amount smoked in life
+#### Cumulative smoke duration, Time since smoking per year
 
-Total amount smoked in life is a risk factor for Bladder cancer.
+Cumulative smoke duration and Time since smoking per year are a group of risk factors for Bladder cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plotSpecificPlots(dat, 'BladderCancer', c('SmokeCumulative'),'raw')
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeDurationCumulative','SmokeSinceStop'),'raw')
 ```
 
 
-Because the variable Total amount smoked in life is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+Because the variables Cumulative smoke duration and Time since smoking per year are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
-plotSpecificPlots(dat, 'BladderCancer', c('SmokeCumulative'),'interpolated')
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeDurationCumulative','SmokeSinceStop'),'interpolated')
+```
+
+
+#### Smoking average
+
+[Smoking average](/model/SmokeTypicalAmount) is a risk factor for Bladder cancer.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeTypicalAmount'),'raw')
+```
+
+
+Because the variable Smoking average is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeTypicalAmount'),'interpolated')
 ```
 
 

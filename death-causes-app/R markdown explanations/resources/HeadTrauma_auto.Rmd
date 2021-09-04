@@ -32,7 +32,7 @@ Head traumas is a **input factor**. It means that it is one of the inputs from t
 
 Head traumas is used by the model in the following places
 
-* [Brain cancer](/model/BrainCancer)
+* as a risk factor for [Brain cancer](/model/BrainCancer)
 
 #### Guidance
 
@@ -42,11 +42,13 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Concussions**.
 
-The answer has to be larger than 0 Concussions. The answer is recommended to be larger than 0 Concussions. 
+The answer has to be larger than 0 Concussions.
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Head traumas is 2. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Head traumas is [2](/model/optimizabilities#category-2). This means that it can be interpreted as
+
+
 
 > *It is impossible to change, but it could have been the consequence of your actions*
 

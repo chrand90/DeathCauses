@@ -10,9 +10,10 @@ import RelationLinks, {
   NodeExtremas,
   XDivision,
 } from "../models/RelationLinks";
-import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
+import {  ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
 
+const ALTERNATING_COLORS_RELATIONLINK=[ALTERNATING_COLORS[1],DEATHCAUSES_LIGHT]
 const DESCRIPTION_LENGTH=22
 const SLIGHTLY_DARKER_GRAY="#707070"
 const BOTTOM_BUFFER_HEIGHT=16
@@ -53,8 +54,6 @@ export default class RelationLinkViz {
     changeElementInFocus: (d: string) => void
   ) {
     this.width = getDivWidth(canvas);
-    console.log("wdth");
-    console.log(this.width);
     this.rdat = rdat;
     this.descriptions=descriptions;
     this.changeElementInFocus = changeElementInFocus;
@@ -251,8 +250,6 @@ export default class RelationLinkViz {
       })
       .on("click", function(e: MouseEvent, d: ArrowPlottingObject) {
         var bbox= this.getBBox()
-        console.log(bbox)
-        console.log(e)
         var x = e.clientX; //x position within the elemen
         var y = e.clientY; //y position within the element.
         const cleanedFrom=d.from.replace("*","")
@@ -326,7 +323,6 @@ export default class RelationLinkViz {
   }
 
   clear() {
-    console.log("inside clear");
     d3.select(".arrowexplanation").remove();
     d3.select("svg").remove();
   }
@@ -530,10 +526,10 @@ function insertColor(
   selection.each(function (d: any) {
     let i = nonZeroCats.indexOf(d.cat);
     if(i===-1){
-      d.color=ALTERNATING_COLORS[1]
+      d.color=ALTERNATING_COLORS_RELATIONLINK[1]
     }
     else{
-      d.color = ALTERNATING_COLORS[i%2];
+      d.color = ALTERNATING_COLORS_RELATIONLINK[i%2];
     }
     
   });

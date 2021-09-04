@@ -9,21 +9,25 @@ enum LatestChange {
 export default class BarChartStore {
   loadedDataStore: LoadedDataStore;
   diseaseToWidth: string | null;
+  conditionToWidth: string | null;
   collectedCategories: string[];
   latestChange: LatestChange;
 
   constructor(loadedDataStore: LoadedDataStore){
     this.loadedDataStore = loadedDataStore;
     this.diseaseToWidth=null;
+    this.conditionToWidth=null;
     this.collectedCategories=[];
     this.latestChange=LatestChange.FITSCREEN;
     makeObservable(this, {
       diseaseToWidth: observable,
       collectedCategories: observable,
+      conditionToWidth: observable,
       expandCategory: action.bound,
       collectParentCategory: action.bound,
       explicitCollectedGroups: computed,
-      setDiseaseToWidth: action.bound
+      setDiseaseToWidth: action.bound,
+      setConditionToWidth: action.bound
     });
   }
 
@@ -37,11 +41,12 @@ export default class BarChartStore {
       this.collectedCategories=newCats
 		}
 		else{
-			console.log("Tried to remove a category that wasnt collapsed... Ignored.")
+			console.warn("Tried to remove a category that wasnt collapsed... Ignored.")
 		}
 	}
 
   collectParentCategory(category: string){
+	  console.log("collects", category)
 		const parent=this.loadedDataStore.rdat.getParentCategory(category)
 		let noLongerNeedsToBeCollapsed: string[];
 		let newCats:string[]=[...this.collectedCategories]
@@ -65,10 +70,14 @@ export default class BarChartStore {
     this.collectedCategories=newCollectedGroups
 	}
 
+  setConditionToWidth(newConditionToWidth: null | string){
+    this.conditionToWidth=newConditionToWidth;
+  }
+
   setDiseaseToWidth(newDiseaseToWidth: null | string){
     this.latestChange=LatestChange.FITSCREEN;
     this.diseaseToWidth=newDiseaseToWidth
-	}
+  }
 
   get explicitCollectedGroups(){
     return this.loadedDataStore.rdat.makeCollectedGroups(this.collectedCategories);

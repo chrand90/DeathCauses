@@ -43,9 +43,9 @@ blockquote{
 <h4>Uses</h4>
 <p>Time since you stopped smoking is used by the model in the following places</p>
 <ul>
-<li><a href="/model/SmokeSinceStop">Time since smoking per year</a></li>
-<li><a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
-<li><a href="/model/SmokeTypicalAmount">Smoking average</a></li>
+<li>to compute <a href="/model/SmokeSinceStop">Time since smoking per year</a></li>
+<li>to compute <a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
+<li>to compute <a href="/model/SmokeTypicalAmount">Smoking average</a></li>
 </ul>
 </div>
 <div id="guidance" class="section level4">
@@ -55,14 +55,11 @@ blockquote{
 <p>How much time has passed since you stopped smoking tobacco?</p>
 </blockquote>
 <p>The unit of the input is <strong>Years</strong>.</p>
-<p>The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years.</p>
+<p>The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.</p>
 </div>
 <div id="optimizability" class="section level3">
 <h3>Optimizability</h3>
-<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is 3. This means that it can be interpreted as</p>
-<blockquote>
-<p><em>It is impossible to change now, but it has once definitely been in your control</em></p>
-</blockquote>
+<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is <a href="/model/optimizabilities#category-3">3</a>(unless <a href="/model/Smoking">Smoking status</a>=‘Current smoker’ in which case the optimizability is <a href="/model/optimizabilities#category-4">4</a>).</p>
 </div>
 <div id="references" class="section level2">
 <h2>References</h2>

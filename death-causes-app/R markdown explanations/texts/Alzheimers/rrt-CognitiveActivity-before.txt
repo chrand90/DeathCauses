@@ -1,0 +1,15 @@
+In the meta-analysis by @Yu1201, it was estimated that cognitive activity could reduce Alzheimers by a factor 0.53. The main paper in the meta-analysis was @Wilson1911, who
+
+1. used a scale for cognitive activity that we imitate in the input factor [Cognitive activity](/model/CognitiveActivity). Its 10th percentile is 2.2, its 90th percentile is 4.0 and its mean is 3.2.
+2. assumes the Hazard ratio(HR) has the relationship $HR(x)=a\cdot \exp(b\cdot x)$ where $x$ is their definition of cognitive activity.
+
+In the paper by @Wilson1911, they have $b=log(0.58)$, but we will not use that fact because we have more faith in the factor 0.53. Therefore, ee assume that $HR(2.2)=1$ and $HR(4.0)=0.53$ and reestimate $a$ and $b$ using the assumption $HR(x)=a\cdot \exp(b\cdot x)$. That leads to the estimates
+
+$$
+b=-0.3527102\\
+\frac{1}{3.2-2.2}\int_{2.2}^{3.2} a\cdot \exp(b\cdot x) \text{ d}x=0.8426725\\
+\frac{1}{4.0-3.2}\int_{3.2}^4 a\cdot \exp(b\cdot x) \text{ d}x=0.612333
+$$
+
+We therefore obtain the risk ratios below
+

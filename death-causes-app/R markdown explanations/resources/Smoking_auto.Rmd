@@ -33,9 +33,10 @@ Smoking status is a **input factor**. It means that it is one of the inputs from
 
 Smoking status is used by the model in the following places
 
-* [Time since smoking per year](/model/SmokeSinceStop)
-* [Total amount smoked in life](/model/SmokeCumulative)
-* [Smoking average](/model/SmokeTypicalAmount)
+* to compute [Time since smoking per year](/model/SmokeSinceStop)
+* to compute [Cumulative smoke duration](/model/SmokeDurationCumulative)
+* to compute [Total amount smoked in life](/model/SmokeCumulative)
+* to compute [Smoking average](/model/SmokeTypicalAmount)
 
 #### Guidance
 
@@ -52,9 +53,7 @@ The user has the following answer options
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Smoking status is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Smoking status is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [5](/model/optimizabilities#category-5)).
 
 
 

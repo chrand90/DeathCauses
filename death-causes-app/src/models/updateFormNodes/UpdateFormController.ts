@@ -1,25 +1,23 @@
-import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import DeathCause, {
   Condition,
   RiskFactorGroupsContainer
 } from "../../components/database/Deathcause";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
-import { LollipopChartInput, LollipopChartProbabilityInput, LollipopChartYearsLostInput } from "../../components/LollipopChartInput";
-import { DataRow } from "../../components/PlottingData";
 import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions from "../Descriptions";
 import { FactorAnswers } from "../Factors";
+import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { NodeType } from "../RelationLinks";
 import CauseNode from "./CauseNode";
 import CauseNodeResult from "./CauseNodeResult";
 import { ComputedFactorClasses } from "./ComputedFactors";
 import { ConditionClasses } from "./ConditionNodes";
 import { FactorAnswerChanges, FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
+import { conditionsContributions } from "./FinalSummary/ConditionSummary";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
 import riskFactorContributionsLifeExpectancy, { DeathCauseContributions, DeathCauseContributionsAndChanges } from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { DataPoint, SummaryViewData } from "./FinalSummary/SummaryView";
-import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
+import OptimizabilitiesNode from "./OptimizabilitiesNode";
 import RiskFactorGroupNode from "./RiskFactorGroupNode";
 import { UpdateDic } from "./UpdateForm";
 
@@ -41,6 +39,7 @@ export default class UpdateFormController {
   rdat: RelationLinks;
   conditions: { [conditionName: string]: Condition };
   evaluationUnit: EVALUATION_UNIT;
+  optimizabilityNode: OptimizabilitiesNode;
 
   constructor(
     rdat: RelationLinks,
@@ -49,8 +48,9 @@ export default class UpdateFormController {
     deathCauses: DeathCause[],
     deathCauseCategories: RiskFactorGroupsContainer[],
     descriptions: Descriptions,
-    conditions: { [conditionName: string]: Condition },
-    evalutionUnit: EVALUATION_UNIT
+    evalutionUnit: EVALUATION_UNIT,
+    conditions: {[conditionName: string]: Condition},
+    optimizabilities: Optimizabilities,
   ) {
     this.rdat = rdat;
     this.formUpdaters = [];
@@ -62,19 +62,18 @@ export default class UpdateFormController {
     this.deathCauseCategories = deathCauseCategories;
     this.conditions = conditions;
     this.evaluationUnit = evalutionUnit;
+    this.optimizabilityNode=new OptimizabilitiesNode(optimizabilities);
     this.initialize(rdat, descriptions);
     this.allComputedNodes = null;
   }
 
   initializeRiskFactorGroupNode(rfg: RiskFactorGroup, descriptions: Descriptions) {
     const ancestors = [...Array.from(rfg.getAllFactorsInGroup())];
-    const optims = descriptions.getOptimizabilityClasses(ancestors);
     const riskFactorGroupNode = new RiskFactorGroupNode(
       ancestors,
       this.ageFrom,
       this.ageTo,
-      rfg,
-      optims
+      rfg
     );
     return { riskFactorGroupNode, ancestors }
   }
@@ -172,6 +171,7 @@ export default class UpdateFormController {
 
   compute(factorAnswers: FactorAnswers) {
     let res: UpdateDic = this.inputFactorTreater.update(factorAnswers);
+    res["optimizabilities"]=this.optimizabilityNode.compute(factorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
     });
@@ -185,8 +185,23 @@ export default class UpdateFormController {
     this.compute(factorAnswers)
     let innerCauses = this.computeInnerProbabilities(evaluationUnit)
     let changes: FactorAnswerChanges = this.inputFactorTreater.getRecentChanges()
-    return { innerCauses: innerCauses, changes: changes }
-    // return { survivalData: this.computeSurvivalData(), innerCauses: innerCauses, summaryView: this.computeSummaryViewData(innerCauses) }
+    return { innerCauses: innerCauses, changes: changes, conditionsRes: this.computeConditions() }
+  }
+
+  computeConditions(){
+    //Promise<SurvivalCurveData[]>{
+      if (this.allComputedNodes === null) {
+        throw Error("It is not possible to compute survival data before calling compute()")
+      }
+      const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
+        return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+      })
+      const conditionNodeResults: UpdateDic = Object.fromEntries(
+        Object.keys(this.conditions).map((condition) => {
+          return [condition, this.allComputedNodes![condition]]
+        })
+      )
+      return conditionsContributions(finalNodeResults, conditionNodeResults, this.rdat);
   }
 
   // computeSurvivalData(): SurvivalCurveData[] {

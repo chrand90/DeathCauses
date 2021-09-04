@@ -92,7 +92,7 @@ $$
 
 BMI and Coffee consumption are a group of risk factors for Uterus cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'UterusCancer', c('BMI','Caffeine'),'raw')
@@ -108,9 +108,9 @@ plotSpecificPlots(dat, 'UterusCancer', c('BMI','Caffeine'),'interpolated')
 
 #### Biological sex
 
-Biological sex is a risk factor for Uterus cancer.
+[Biological sex](/model/Sex) is a risk factor for Uterus cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'UterusCancer', c('Sex'),'raw')

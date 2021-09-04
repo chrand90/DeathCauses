@@ -8,6 +8,7 @@ import FactorInputStore from "./FactorInputStore";
 import LoadedDataStore from "./LoadedDataStore";
 import QuestionProgressStore from "./QuestionProgressStore";
 import RelationLinkVizStore from "./RelationLinkVizStore";
+import SendEmailStore from "./SendEmailStore";
 import UIStore from "./UIStore";
 
 export default class RootStore {
@@ -20,8 +21,10 @@ export default class RootStore {
   relationLinkVizStore: RelationLinkVizStore;
   barChartStore: BarChartStore
   uIStore: UIStore;
+  sendEmailStore: SendEmailStore;
 
   constructor() {
+    this.sendEmailStore= new SendEmailStore();
     this.loadedDataStore = new LoadedDataStore();
     this.uIStore = new UIStore();
     this.computationStateStore= new ComputationStateStore();

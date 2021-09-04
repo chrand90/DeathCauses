@@ -5,6 +5,7 @@ import d3Tip from "d3-tip";
 import "./BarPlotWrapper.css";
 import { useStore } from "../stores/rootStore";
 import { observer } from "mobx-react";
+import { CLICKED_COLOR, DEATHCAUSES_COLOR, DEATHCAUSES_DARK } from "./Helpers";
 
 interface BarPlotWrapperProps {
   data: SurvivalCurveData[];
@@ -17,11 +18,10 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   let width = 800
   let height = 600
 
-  const colors = { barFill: "#69b3a2", barHighlight: "#9e1986" };
+  const colors = { barFill: DEATHCAUSES_DARK, barHighlight: CLICKED_COLOR };
   const formatter = d3.format(".3p")
 
   useEffect(() => {
-    console.log("dataset changed");
     if (props.data && chartArea.current) {
       updateChart()
     }
@@ -44,7 +44,7 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
   }
 
   const getDivWidth = () => {
-    return chartArea.current.offsetWidth * 0.9 - margin.left - margin.right
+    return chartArea.current.offsetWidth - margin.left - margin.right
   }
 
   const createChart = () => {
@@ -213,8 +213,8 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
               "of surviving past: <strong>" + d.age + "</strong>"
             )
           .style("display","block")
-          .style("left", (bbox.x+margin.left+width/0.9*0.05+bbox.width).toString() + "px")
-          .style("top", (bbox.y-3).toString() + "px")
+          .style("left", (bbox.x+margin.left+bbox.width/2).toString() + "px")
+          .style("top", (bbox.y).toString() + "px")
         d3.select(this).raise().style("fill", colors.barHighlight);
       })
       .on("mouseleave", function (e: Event, d: SurvivalCurveData) {
@@ -254,6 +254,12 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
       .attr("font-weight", 700);
   };
 
-  return <div ref={chartArea} style={{position:"relative"}}></div>;
+  const colwidth= store.uIStore.windowWidth<801 ? "100%" : "90%"
+	const padding= store.uIStore.windowWidth<801 ? "0px" : ""
+  return (
+    <div className="container" style={{width:colwidth, padding: padding}}>
+      <div ref={chartArea} id="barchartcontainer" style={{position:"relative", padding:"0px",margin: "auto", top:"0px",left:"0px"}} />
+    </div>
+  )
 });
 export default BarPlotWrapper;

@@ -93,9 +93,9 @@ $$
 
 #### Time spent indoor tanning
 
-Time spent indoor tanning is a risk factor for Skin cancer.
+[Time spent indoor tanning](/model/IndoorTanning) is a risk factor for Skin cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'SkinCancer', c('IndoorTanning'),'raw')
@@ -111,9 +111,9 @@ plotSpecificPlots(dat, 'SkinCancer', c('IndoorTanning'),'interpolated')
 
 #### Race
 
-Race is a risk factor for Skin cancer.
+[Race](/model/Race) is a risk factor for Skin cancer.
 
-Below is a plot of the risk ratios we have taken from the literature adjusted to fit the model
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
 
 ```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
 plotSpecificPlots(dat, 'SkinCancer', c('Race'),'raw')

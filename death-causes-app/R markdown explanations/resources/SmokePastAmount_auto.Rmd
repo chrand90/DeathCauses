@@ -34,23 +34,25 @@ Amount smoked in the past is a **input factor**. It means that it is one of the 
 
 Amount smoked in the past is used by the model in the following places
 
-* [Total amount smoked in life](/model/SmokeCumulative)
-* [Smoking average](/model/SmokeTypicalAmount)
+* to compute [Total amount smoked in life](/model/SmokeCumulative)
+* to compute [Smoking average](/model/SmokeTypicalAmount)
 
 #### Guidance
 
 The user input is a typed number and should answer the question
 
-> During all the time smoking tobacco, what has been the average amount smoked in a normal day?
+> When you did smoke tobacco in the past, how much did you smoke in a normal day?
 
 The unit of the input is **Cigarettes**.
 
-The answer has to be larger than 0 Cigarettes. The answer is recommended to be larger than 0 Cigarettes and smaller than 40 Cigarettes. If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) 
+The answer has to be larger than 0 Cigarettes.The answer is recommended to be larger than 0 Cigarettes and smaller than 40 Cigarettes, because that is where the model is most accurate.If you smoke tobacco in other forms than cigarettes, you should convert it to their equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the [NHS Scotland website](http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html) 
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Amount smoked in the past is 3. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Amount smoked in the past is [3](/model/optimizabilities#category-3). This means that it can be interpreted as
+
+
 
 > *It is impossible to change now, but it has once definitely been in your control*
 

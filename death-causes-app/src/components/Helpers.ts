@@ -8,12 +8,13 @@ export const QUERY_STRING_START = "?inputData="
 
 const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
-
+export const DEATHCAUSES_COLOR= "#94c5b1"
+export const DEATHCAUSES_LIGHT="#c5ded4"
+export const DEATHCAUSES_DARK="#80b19d"
 
 
 
 export function getDivWidth(div: HTMLElement | null): number {
-  console.log(div);
   if (div === null) {
     return 0;
   }
@@ -70,9 +71,11 @@ export function customPrecision(inputNumber: number | string, digits: number): s
   }
   const beforeAndAfterComma=s.split(".")
   if(beforeAndAfterComma.length===1){
-    return s
+    console.log("returning without comma")
+    return beforeAndAfterComma[0]
   }
-  return beforeAndAfterComma[0]+'.'+beforeAndAfterComma[1].replace(/0+$/,"")
+  const suffix=beforeAndAfterComma[1].replace(/0+$/,"")
+  return beforeAndAfterComma[0]+ (suffix.length>0 ? '.'+suffix : "")
 }
 
 
@@ -94,4 +97,12 @@ export function hexToRgb(hex:string) {
     g: parseInt(result[2], 16),
     b: parseInt(result[3], 16)
   } : null;
+}
+
+export function createHandleChangeFunction<T>(changeElementInFocus: (d:T) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
+	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value: string = event.currentTarget.value;
+		changeElementInFocus(value as unknown as T);
+	}
+	return handleChangeFunction
 }
