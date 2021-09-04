@@ -71,7 +71,6 @@ export function customPrecision(inputNumber: number | string, digits: number): s
   }
   const beforeAndAfterComma=s.split(".")
   if(beforeAndAfterComma.length===1){
-    console.log("returning without comma")
     return beforeAndAfterComma[0]
   }
   const suffix=beforeAndAfterComma[1].replace(/0+$/,"")

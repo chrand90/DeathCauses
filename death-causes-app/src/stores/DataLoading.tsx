@@ -42,7 +42,6 @@ async function loadFromFile<T>(filename: string){
         urlStart+=""
     }
     const link=urlStart+"/api/data/"+filename
-    console.log("fetching link: "+link)
     let prom= await fetch(link).then((response) => {
         if(!response.ok){
             console.error(response.statusText)

@@ -16,7 +16,7 @@ const WIDTH = 1200;
 const ALTERNATING_COLORS_BARCHART=[ALTERNATING_COLORS[1], DEATHCAUSES_LIGHT]
 let DESIGN = "LONG";
 const BARHEIGHT = 50;
-const XBARHEIGHT = 80;
+const XBARHEIGHT = 80; 
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
@@ -586,7 +586,6 @@ export default class BarChart {
 
 
     vis.svg.on("click", (e: Event) => {
-      console.log("closing on outside click")
       e.stopPropagation();
       vis.clickedSquareSection = null
       vis.clicktip.style("display","none");
@@ -820,195 +819,6 @@ export default class BarChart {
       .style("opacity", 0.5)
       .lower();
   }
-
-  // computeExpandSquares(
-  //   dataset: DataSet | InnerCause,
-  //   removed: string[],
-  //   added: string[],
-  //   diseaseToWidth: string | null,
-  //   oldCollectedGroups: CauseGrouping
-  // ){
-  //   if(this.useLifeExpectancy){
-  //     const showingInheritanceCauseToParent: CauseToParentMapping={};
-  //     const directCauseToParent: CauseToParentMapping = {}
-  //     Object.keys(oldCollectedGroups.parentToCauses).forEach( nodeName => { 
-  //       if(!removed.includes(nodeName)){
-  //         showingInheritanceCauseToParent[nodeName]=nodeName
-  //         directCauseToParent[nodeName]=nodeName
-  //       }        
-  //     })
-  //     added.forEach( addedNode => {
-  //       showingInheritanceCauseToParent[addedNode]=removed[0]
-  //       directCauseToParent[addedNode]=addedNode
-  //     })
-  //     const showInheritanceGrouping: CauseGrouping= {
-  //       causeToParent: showingInheritanceCauseToParent,
-  //       parentToCauses: {}
-  //     }
-  //     const directGrouping: CauseGrouping = {
-  //       causeToParent: directCauseToParent,
-  //       parentToCauses: {}
-  //     }
-  //     const data=Object.entries(dataset as InnerCause).filter(
-  //       ([causeName, datrow]) => {
-  //         return causeName in this.grouping.parentToCauses
-  //       }
-  //     ).map(([causeName, datrow])=> {
-  //       return datrow
-  //     })
-  //     const structureIfNotMerged:{[key:string]: CauseGrouping}={};
-  //     structureIfNotMerged[removed[0]]=directGrouping;
-  //     const { allSquares: dataSquares, totalProbs } = make_squares(
-  //       data,
-  //       diseaseToWidth,
-  //       directGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     );
-  //     const {allSquares: noMergeSquares, totalProbs: noMergeTotals} = make_squares(
-  //       data,
-  //       diseaseToWidth,
-  //       showInheritanceGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy,
-  //       structureIfNotMerged
-  //     )
-  //     const {allSquares: preSquares, totalProbs: preTotals} = make_squares(
-  //       data,
-  //       diseaseToWidth,
-  //       showInheritanceGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     )
-  //     return {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares, preTotals}
-  //   }
-  //   else{
-  //     const { allSquares: dataSquares, totalProbs } = make_squares(
-  //       dataset as DataSet,
-  //       diseaseToWidth,
-  //       this.grouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     );
-  //     const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
-  //     const {
-  //       allSquares: noMergeSquares,
-  //       totalProbs: noMergeTotals,
-  //     } = make_squares(
-  //       dataset as DataSet,
-  //       diseaseToWidth,
-  //       oldCollectedGroups,
-  //       this.descriptions,
-  //       this.useLifeExpectancy,
-  //       notToBeMerged
-  //     );
-  //     return {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares: null, preTotals: null}
-  //   }
-  // }
-
-  // computeCollapseSquares(
-  //   dataset: DataSet | InnerCause,
-  //   removed: string[],
-  //   added: string[],
-  //   diseaseToWidth: string | null,
-  //   oldCollectedGroups: CauseGrouping
-  // ){
-  //   if(this.useLifeExpectancy){
-  //     const replacementCauseToParent: CauseToParentMapping= {}
-  //     const replacementCauseToParentNoMerge: CauseToParentMapping = {}
-  //     const finalCauseToParent: CauseToParentMapping = {}
-  //     Object.keys(this.grouping.parentToCauses).filter(
-  //       nodeName => !added.includes(nodeName)
-  //     ).forEach(nodeName => {
-  //       replacementCauseToParent[nodeName]=nodeName;
-  //       replacementCauseToParentNoMerge[nodeName]=nodeName;
-  //       finalCauseToParent[nodeName]=nodeName;
-  //     })
-  //     removed.forEach(removedNode => {
-  //       replacementCauseToParent[removedNode]=added[0]
-  //       replacementCauseToParentNoMerge[removedNode]=removedNode
-  //     })
-  //     finalCauseToParent[added[0]]=added[0];  
-  //     const replacementGrouping:CauseGrouping = {
-  //       parentToCauses: {}, 
-  //       causeToParent: replacementCauseToParent
-  //     }
-  //     const replacementGroupingNoMerge = {
-  //       parentToCauses: {}, 
-  //       causeToParent: replacementCauseToParentNoMerge
-  //     }
-  //     const finalGrouping = {
-  //       parentToCauses: {},
-  //       causeToParent: finalCauseToParent
-  //     }
-  //     const structureIfNotMerged: {[key:string]: CauseGrouping}={}
-  //     structureIfNotMerged[added[0]]=replacementGroupingNoMerge
-  //     let data= Object.entries(dataset as InnerCause).filter(
-  //       ([causeOrCategoryName, dataRow]) => {
-  //         const notHidden= causeOrCategoryName in this.grouping.parentToCauses 
-  //         const aboutToBeHidden= removed.includes(causeOrCategoryName)
-  //         const aboutToBeUnhidden = added.includes(causeOrCategoryName)
-  //         return (notHidden || aboutToBeHidden) && !aboutToBeUnhidden
-  //       }
-  //     ).map(  ([causeOrCategoryName, dataRow]) => { 
-  //       return dataRow;
-  //     }); 
-  //     let { allSquares: dataSquares, totalProbs } = make_squares(
-  //       data,
-  //       diseaseToWidth,
-  //       replacementGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     );
-  //     let { allSquares: noMergeSquares} = make_squares(
-  //       data,
-  //       diseaseToWidth,
-  //       replacementGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy,
-  //       structureIfNotMerged
-  //     );
-  //     let finalData= Object.entries(dataset as InnerCause).filter(
-  //       ([causeOrCategoryName, dataRow]) => {
-  //         return causeOrCategoryName in this.grouping.parentToCauses 
-  //       }
-  //     ).map( ([causeOrCategoryName, dataRow]) => { 
-  //       return dataRow;
-  //     }); 
-  //     let { allSquares: finalSquares, totalProbs: finalProbs} = make_squares(
-  //       finalData,
-  //       diseaseToWidth,
-  //       finalGrouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     );
-  //     return {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs}
-  //   }
-  //   else{
-  //     const notToBeMerged = getSubCollectGroup(
-  //       oldCollectedGroups,
-  //       removed,
-  //       added[0]
-  //     );
-  //     let { allSquares: dataSquares, totalProbs } = make_squares(
-  //       dataset as DataSet,
-  //       diseaseToWidth,
-  //       this.grouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy
-  //     );
-  //     let { allSquares: noMergeSquares} = make_squares(
-  //       dataset as DataSet,
-  //       diseaseToWidth,
-  //       this.grouping,
-  //       this.descriptions,
-  //       this.useLifeExpectancy,
-  //       notToBeMerged
-  //     );
-  //     return {noMergeSquares, dataSquares, totalProbs, finalSquares: null, finalProbs: null}
-
-  //   }
-  // }
 
   prepareStepBeforeExpandTransition(preSquares: SquareSection[], preTotals: DataRow[], durationPerTransition: number){
     return (designConstants: DesignConstants, callback: any) => {

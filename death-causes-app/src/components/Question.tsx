@@ -358,7 +358,6 @@ class QuestionContextWithoutStoreWithoutRouter extends React.PureComponent<Quest
   }
 
   render() {
-    console.log("rendering question context" + this.props.name);
     return (
       <Form.Row
         className={"formrow-narrow-" + (!this.props.featured).toString()}

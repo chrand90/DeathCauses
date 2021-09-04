@@ -200,7 +200,7 @@ function makeRowSquare(
 
 function computeParentToRows(res_dat: DataSet, grouping: CauseGrouping | undefined){
     let parentToRows: ParentToDataRows={}
-    res_dat.forEach((datRow) => {
+    Object.values(res_dat).forEach((datRow) => {
         const parent=grouping ? grouping.causeToParent[datRow.name] : datRow.name;
         if(parent in parentToRows){
             parentToRows[parent].push(datRow)

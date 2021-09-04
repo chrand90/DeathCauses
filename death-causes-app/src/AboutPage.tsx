@@ -60,7 +60,6 @@ class AboutPageWithoutRouter extends React.Component<AboutPageProps, AboutPageSt
           urlStart+=""
         }
         const link=urlStart+"/api/model/"+this.props.match.params.subpage
-        console.log("fetching link: "+link)
         fetch(link).then((response) => {
             if(!response.ok){
               console.error("throwing error from react frontend handler")

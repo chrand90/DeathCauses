@@ -12,7 +12,7 @@ export default class ConditionsBarChartSettings extends BarChartSettings{
     conditionFlavor: ConditionVizFlavor;
 
     constructor(conditionFlavor: ConditionVizFlavor, descriptions: Descriptions){
-        super(false, true, descriptions);
+        super(false, false, descriptions);
         this.conditionFlavor=conditionFlavor;
     }
 

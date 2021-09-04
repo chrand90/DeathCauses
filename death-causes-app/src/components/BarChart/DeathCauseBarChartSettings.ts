@@ -8,14 +8,10 @@ import BarChartSettings, { ExpandCatsData } from "./BarChartSettings";
 import make_squares from "./ComputationEngine";
 
 export default class DeathCauseBarChartSettings extends BarChartSettings{
-
-
-    
-
     useLifeExpectancy: boolean;
 
     constructor(simpleVersion: boolean, useLifeExpectancy: boolean, descriptions: Descriptions){
-        super(simpleVersion, false, descriptions);
+        super(simpleVersion, true, descriptions);
         this.useLifeExpectancy=useLifeExpectancy;
     }
 

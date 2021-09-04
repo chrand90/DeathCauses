@@ -132,18 +132,11 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
     }
 
     render() {
-        console.log(this.props.store.computationStateStore.computationState)
         if (this.props.store.computationStore.allChanges.length === 0) {
             return (
                 <div><span>Data not loaded</span></div>
             )
         }
-        console.log(this.getSurvivalCurveSlidersData())
-        console.log({
-            ages: this.props.riskFactorContributions.ages,
-            survivalProbs: [1, ...this.props.riskFactorContributions.survivalProbs]
-        })
-        console.log(this.props.riskFactorContributions)
 
         return (
             <Fragment>

@@ -90,41 +90,14 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   renderChosenGraph() {
-    // switch (this.props.store.uIStore.visualization) {
-    //   case Visualization.BAR_GRAPH:
-    //   case Visualization.SURVIVAL_GRAPH: {
-    //     return (
-    //       <div>
-    //         {this.renderAdvancedOptionsMenu()}
-    //         {this.renderDataBoundedGraph(this.props.store.uIStore.visualization)}
-    //       </div>
-    //     );
-    //   }
-    //   case Visualization.RELATION_GRAPH: {
-    //     return (
-    //       <RelationLinkVizWrapper/>
-    //     );
-    //   }
-    //   case Visualization.NO_GRAPH: {
-    //     return "Input an age to get started";
-    //   }
-    //   case Visualization.SUMMARY_VIEW: {
-    //     if (this.state.riskFactorContributions.costPerCause === null) {
-    //       return (<h3>Answer questions and compute to show results</h3>)
-    //     }
-    //     return (
-    //       <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
-    //     )
-    //   }
-    //   default: {
-    //     return <p>'No visualizations'</p>;
     if(this.isResultsComputed()){
       switch (this.props.store.uIStore.visualization) {
         case Visualization.BAR_GRAPH: {
+          let usesLifeExpectancy = this.props.store.computationStore.riskFactorContributions.evaluationUnit === EVALUATION_UNIT.YEARS_LOST
           return (
           <BarChartWrapper 
             database={this.state.riskFactorContributions.costPerCause}
-            barChartSettings={new DeathCauseBarChartSettings(false, this.props.store.computationStore.riskFactorContributions.evaluationUnit === EVALUATION_UNIT.YEARS_LOST, this.props.store.loadedDataStore.descriptions)}
+            barChartSettings={new DeathCauseBarChartSettings(false, usesLifeExpectancy, this.props.store.loadedDataStore.descriptions)}
           />)
         }
         case Visualization.SUMMARY_VIEW: {
@@ -154,9 +127,9 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         onSelect={(k:any) => this.props.store.uIStore.setVisualization(k)}
         className="mb-3"
         >
-          {[Visualization.SURVIVAL_GRAPH,
+          {[Visualization.SUMMARY_VIEW,
+            Visualization.SURVIVAL_GRAPH,
             Visualization.BAR_GRAPH,
-            Visualization.SUMMARY_VIEW,
             Visualization.CONDITIONS
           ].map((d: string) => {
             return (
