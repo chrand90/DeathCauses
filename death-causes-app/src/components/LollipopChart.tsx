@@ -14,7 +14,7 @@ export interface LollipopChartProps {
 const LollipopChart = observer((props: LollipopChartProps) => { 
   const store = useStore();
   const chartArea = useRef<any>(null);
-  const margin = {top: 40, right: 20, bottom: 40, left: 120};
+  const margin = {top: 20, right: 20, bottom: 40, left: 120};
   var width = 400 - margin.left - margin.right;
   var height = 330 - margin.top - margin.bottom;
 
@@ -22,22 +22,17 @@ const LollipopChart = observer((props: LollipopChartProps) => {
   const data = props.data;
 
   useEffect(() => {
-    console.log('updating: []');
     createChart();
   }, []);
 
   useEffect(() => {
     if (data && chartArea.current) {
-      console.log('updating: data');
-      console.log(store.uIStore.windowWidth);
       updateData();
     }
   }, [data]);
 
   useEffect(() => {
     if (chartArea.current !== null) {
-      console.log('updating: window');
-      console.log(store.uIStore.windowWidth);
       onWindowWidthUpdate();
       createChart();
     }
@@ -161,7 +156,6 @@ const LollipopChart = observer((props: LollipopChartProps) => {
     updateDivWidth();
 
     let svg = d3.select(chartArea.current).select('svg');
-    console.log(width);
 
     let x = d3
       .scaleLinear()
@@ -296,12 +290,11 @@ const LollipopChart = observer((props: LollipopChartProps) => {
     d3.selectAll('.myCircle')
       .data(data)
       .on('mouseenter', function (e: Event, d: DataPoint) {
-        const bbox = (this as any).getBBox();
         tip
-          .html(props.formatting.getTooltipText(d.value, d.name))
+          .html(props.formatting.getTooltipText(d.value, getDescription(d.name)))
           .style('display', 'block')
-          .style("left", (bbox.x+margin.left+bbox.width/2).toString() + "px")
-          .style("top", (bbox.y-3).toString() + "px")
+          .style("left", (chartArea.current.offsetWidth * 0.1)/2 + margin.left + (+d3.select(this).attr("cx")) + "px")
+          .style("top", margin.top + (+d3.select(this).attr("cy")) - 2 + "px")
         d3.select(this).raise().style('fill', colors.barHighlight);
       })
       .on('mouseleave', function (e: Event, d: DataPoint) {
