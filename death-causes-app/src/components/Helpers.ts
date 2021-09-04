@@ -10,6 +10,7 @@ const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
 export const DEATHCAUSES_COLOR= "#94c5b1"
 export const DEATHCAUSES_LIGHT="#c5ded4"
+export const DEATHCAUSES_DARK="#80b19d"
 
 
 
@@ -96,4 +97,12 @@ export function hexToRgb(hex:string) {
     g: parseInt(result[2], 16),
     b: parseInt(result[3], 16)
   } : null;
+}
+
+export function createHandleChangeFunction<T>(changeElementInFocus: (d:T) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
+	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
+		const value: string = event.currentTarget.value;
+		changeElementInFocus(value as unknown as T);
+	}
+	return handleChangeFunction
 }

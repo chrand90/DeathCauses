@@ -4,6 +4,7 @@ import { DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT } from "./components/Helpers";
 import { ContactCard } from "./ContactCard";
 import Button from "react-bootstrap/Button"
 import SendEmail from "./components/SendEmailToUs";
+import {hideAllToolTips} from "./components/Helpers";
 
 
 interface ContactPageStates {
@@ -19,12 +20,13 @@ export class ContactPage extends React.Component<any, ContactPageStates> {
         }
     }
 
+    componentDidMount(){
+        hideAllToolTips()
+    }
+
     render() {
         return (
-            <Container className="pt-3 " style={{ backgroundColor: DEATHCAUSES_LIGHT, minHeight: "calc(100vh - 73px)" }} >
-
-                
-
+            <Container className="pt-3 " style={{backgroundColor: "lightgrey",  minHeight: "calc(100vh - 73px)" }} >
                 <div className="pb-3">
                     <h2 style={{ textAlign: "center" }}>Who are we?</h2>
                 </div>
@@ -40,7 +42,7 @@ export class ContactPage extends React.Component<any, ContactPageStates> {
                 </div>
 
                 <Row  className="justify-content-center mx-auto">
-                <Card className="mx-auto" style={{ width: "80%",maxWidth:"800px", minWidth:"250px", borderColor: DEATHCAUSES_COLOR, marginBottom:"40px", borderWidth: "8px" }}>
+                <Card className="mx-auto" style={{ width: "80%",maxWidth:"800px", minWidth:"250px", borderColor: DEATHCAUSES_COLOR, marginBottom:"40px", borderWidth: "2px" }}>
                     <Card.Body >
                         <p className="justify-content-between"><strong>Twitter:</strong>
                         <Button variant="link" onClick={

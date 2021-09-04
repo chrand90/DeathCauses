@@ -5,6 +5,7 @@ import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
+import { ConditionsRes } from "../updateFormNodes/FinalSummary/ConditionSummary";
 import { LifeExpectancyContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController from "../updateFormNodes/UpdateFormController";
@@ -48,7 +49,7 @@ class computations {
 
   processData(data: FactorAnswers) {
     if(this.computer===null){
-      return {survivalData: [], innerCauses: [], summaryView: null};
+      return {survivalData: [], innerCauses: [], summaryView: null, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
     }
     else{
       return this.computer.computeAll(data);
@@ -58,7 +59,7 @@ class computations {
 
 let c = new computations();
 
-export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[] | LifeExpectancyContributions, summaryView: SummaryViewData | null} {
+export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[] | LifeExpectancyContributions, summaryView: SummaryViewData | null, conditionsRes: ConditionsRes} {
   return c.processData(data);
 }
 

@@ -113,14 +113,19 @@ export abstract class ConditionNode extends FormUpdater{
             cumprobs.push(probOfIllness)
         }
         return {
-            type: TypeStatus.STRING,
+            type: TypeStatus.CONDITIONRESULT,
             random: StochasticStatus.RANDOM,
             dimension: DimensionStatus.YEARLY,
             change: ChangeStatus.CHANGED,
             missing: MissingStatus.NONMISSING,
-            value: cumprobs.map(p => {
-                return {"No":1-p, "Yes":p}
-            })
+            value: {
+                probs: cumprobs.map(p => {
+                    return {"No":1-p, "Yes":p}
+                }),
+                name: this.condition.deathCauseName,
+                perYearInnerCauses: causeNodeResult.perYearInnerCauses,
+                bestValues: causeNodeResult.bestValues
+            }
         }
     }
 
