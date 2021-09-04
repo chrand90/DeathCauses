@@ -8,9 +8,11 @@ import Location, {
   locationAndValueSorter,
 } from "./InterpolationLocation";
 import {
+  ConditionNodeResult,
   DimensionStatus,
   ProbabilityObject,
   StochasticStatus,
+  TypeStatus,
   UpdateDic,
 } from "../../models/updateFormNodes/UpdateForm";
 
@@ -98,7 +100,15 @@ export class InterpolationTable {
         let extraRes: WeightedPoints[] = [];
         res.forEach((resObject) => {
           let probObject: ProbabilityObject;
-          if (
+          if (submittedFactorAnswers[fixedFactor].type === TypeStatus.CONDITIONRESULT){
+            if(submittedFactorAnswers[fixedFactor].dimension === DimensionStatus.YEARLY){
+              probObject = ((submittedFactorAnswers[fixedFactor].value as ConditionNodeResult).probs as ProbabilityObject[])[ageIndex]
+            }
+            else{
+              probObject = ((submittedFactorAnswers[fixedFactor].value as ConditionNodeResult).probs as ProbabilityObject)
+            }
+          }
+          else if (
             submittedFactorAnswers[fixedFactor].dimension ===
             DimensionStatus.YEARLY
           ) {

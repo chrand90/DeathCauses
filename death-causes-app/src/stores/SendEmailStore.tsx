@@ -65,7 +65,7 @@ export default class SendEmailStore {
         message: this.message
     }
     this.sendStatus=SendStatus.SENDING;
-    emailjs.send('service_fd5bzll', 'template_msewj73', sendObject)
+    emailjs.send('service_fd5bzll', 'template_vxyul09', sendObject)
     .then((result) => {
         this.sendStatus=SendStatus.SUCCESS
         console.log(result.text);

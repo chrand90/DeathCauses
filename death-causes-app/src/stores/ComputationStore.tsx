@@ -3,6 +3,7 @@ import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData"
 import { DataRow } from "../components/PlottingData";
 import { FactorAnswers } from "../models/Factors";
 import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
+import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
 import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
@@ -32,6 +33,7 @@ export default class ComputationStore {
   summaryView: SummaryViewData | null;
   allChanges: FactorAnswerChanges[];
   lifeExpectancies: number[];
+  conditionRes: ConditionsRes;
 
   constructor(
     loadedDataStore: LoadedDataStore,
@@ -46,6 +48,7 @@ export default class ComputationStore {
     this.singeThreadComputeController = null;
     this.allChanges=[]
     this.lifeExpectancies=[]
+    this.conditionRes= {averageProportion: {}, probOfHavingWhileDying: {}};
     makeObservable(this, {
       submittedFactorAnswers: observable,
       lifeExpectancies: observable,
@@ -126,14 +129,21 @@ export default class ComputationStore {
       if (summaryViewData !== undefined) {
         this.summaryView = summaryViewData;
       }
+      const conditionsRes = this.singeThreadComputeController?.computeConditions();
+      if(conditionsRes !== undefined){
+        this.conditionRes = conditionsRes;
+      }
       this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
     } else {
       worker.processData(
         toJS(this.submittedFactorAnswers)
-      ).then( action("INserting results", ({ survivalData, innerCauses, summaryView}) => {
+      ).then( action("INserting results", ({ survivalData, innerCauses, summaryView, conditionsRes}) => {
         this.survivalCurveData = survivalData;
         this.riskFactorContributions = innerCauses;
         this.summaryView = summaryView
+        this.conditionRes = conditionsRes
+        console.log("conditionsRes in computationWorker")
+        console.log(conditionsRes) 
         this.pushChanges(summaryView.changes, summaryView.lifeExpentancyData.lifeExpentancy)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));

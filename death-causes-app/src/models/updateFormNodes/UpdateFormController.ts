@@ -14,6 +14,7 @@ import CauseNodeResult from "./CauseNodeResult";
 import { ComputedFactorClasses } from "./ComputedFactors";
 import { ConditionClasses } from "./ConditionNodes";
 import { FactorAnswersToUpdateForm } from "./FactorAnswersToUpdateForm";
+import { conditionsContributions } from "./FinalSummary/ConditionSummary";
 import riskFactorContributions from "./FinalSummary/RiskFactorContributions";
 import riskFactorContributionsLifeExpectancy, { LifeExpectancyContributions } from "./FinalSummary/RiskFactorContributionsLifeExpectancy";
 import computeSummaryView, { SummaryViewData } from "./FinalSummary/SummaryView";
@@ -21,7 +22,7 @@ import survivalCurve from "./FinalSummary/SurvivalCurve";
 import FormUpdater from "./FormUpdater";
 import OptimizabilitiesNode from "./OptimizabilitiesNode";
 import RiskFactorGroupNode from "./RiskFactorGroupNode";
-import { UpdateDic } from "./UpdateForm";
+import { UpdateDic, UpdateForm } from "./UpdateForm";
 
 export default class UpdateFormController {
   formUpdaters: FormUpdater[];
@@ -176,7 +177,23 @@ export default class UpdateFormController {
 
   computeAll(factorAnswers: FactorAnswers) {
     this.compute(factorAnswers)
-    return { survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities(), summaryView: this.computeSummaryViewData() }
+    return { survivalData: this.computeSurvivalData(), innerCauses: this.computeInnerProbabilities(), summaryView: this.computeSummaryViewData(), conditionsRes: this.computeConditions() }
+  }
+
+  computeConditions(){
+    //Promise<SurvivalCurveData[]>{
+      if (this.allComputedNodes === null) {
+        throw Error("It is not possible to compute survival data before calling compute()")
+      }
+      const finalNodeResults: CauseNodeResult[] = this.deathCauses.map((deathcause) => {
+        return (this.allComputedNodes![deathcause.deathCauseName].value as CauseNodeResult)
+      })
+      const conditionNodeResults: UpdateDic = Object.fromEntries(
+        Object.keys(this.conditions).map((condition) => {
+          return [condition, this.allComputedNodes![condition]]
+        })
+      )
+      return conditionsContributions(finalNodeResults, conditionNodeResults, this.rdat);
   }
 
   computeAverage(factorAnswers: FactorAnswers) {

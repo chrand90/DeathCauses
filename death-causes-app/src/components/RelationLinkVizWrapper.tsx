@@ -6,16 +6,11 @@ import './RelationLinkVizWrapper.css';
 import { useHistory } from "react-router-dom";
 import  Button  from 'react-bootstrap/Button';
 import { Container, Spinner } from "react-bootstrap";
+import { createHandleChangeFunction } from './Helpers';
 
 const DESCRIPTION_LENGTH=22;
 
-function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
-	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
-		const value: string = event.currentTarget.value;
-		changeElementInFocus(value);
-	}
-	return handleChangeFunction
-}
+
 
 
 
@@ -71,7 +66,7 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 				<h1>
 					Graph between risk factors and death causes
 				</h1>
-				<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
+				<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction<string>(store.relationLinkVizStore.setElementInFocus)}>
 					{store.loadedDataStore.rdat.getAllPossibleNodes().map(
 						(d:string) => {
 							return [d,store.loadedDataStore.descriptions.getDescription(d,DESCRIPTION_LENGTH)]

@@ -5,7 +5,9 @@ import { Card, Col, Row } from "react-bootstrap";
 import { CardBody, CardHeader, CardTitle } from "reactstrap";
 import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import RootStore, { withStore } from "../stores/rootStore";
-import BarChartWrapper from "./BarChartWrapper";
+import BarChartWrapper from "./BarChart/BarChartWrapper";
+import DeathCauseBarChartSettings from "./BarChart/DeathCauseBarChartSettings";
+import { SimpleDeathCauseBarChartSettings } from "./BarChart/SimpleDeathCauseBarChartSettings";
 import ChangeView from "./ChangeView";
 import LollipopChart, { LollipopChartFormatting } from "./LollipopChart";
 import { probabilityLollipopChartFormatter } from "./ProbabilityLollipopChartFormatter";
@@ -83,7 +85,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                     <Card className="bg-light ">
                         <CardBody>
                             <p>The bar below represents all the time you lose to known risk factors.</p>
-                            <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} simpleVersion={true} />
+                            <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} barChartSettings={new SimpleDeathCauseBarChartSettings( true, this.props.store.loadedDataStore.descriptions)} />
                         </CardBody>
                     </Card>
                 </Col>

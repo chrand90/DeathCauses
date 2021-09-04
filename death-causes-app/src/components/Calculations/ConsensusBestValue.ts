@@ -8,6 +8,7 @@ import {
   StochasticStatus,
   UpdateDic,
 } from "../../models/updateFormNodes/UpdateForm";
+import { ConditionVizFlavor } from "../../stores/UIStore";
 import { LocationAndValue } from "../database/InterpolationLocation";
 import { WeightedLocationAndValue } from "../database/InterpolationTable";
 import { formatYears } from "../Helpers";
@@ -183,7 +184,8 @@ export class BestValues {
     causeName:string,
     factorName: string,
     factorNameDescription: string,
-    causeDescription: string
+    causeDescription: string,
+    conditionVizFlavor: ConditionVizFlavor | null
   ): {res: string, buttonCounter: number, buttonCodes: string[]}{
     let buttonCodes:string[]=[];
     const prob =
@@ -191,10 +193,11 @@ export class BestValues {
       (probability * 100).toFixed(1).replace(/\.?0+$/, "") +
       "%</strong>";
     let buttonCounter=0;
-    let res = "If you die"
+    let res = conditionVizFlavor ? "If you get" : "If you die"
     if(causeDescription.length>0){
       buttonCounter += 1;
-      res+=" from " + createButton(causeDescription, buttonCounter)
+      res+= conditionVizFlavor ? " ": " from "
+      res+= createButton(causeDescription, buttonCounter);
       buttonCodes.push(causeName)
     }
     res += ", there is a ";
@@ -249,7 +252,8 @@ export class BestValues {
     causeName: string,
     descriptions: Descriptions,
     useLifeExpectancy: boolean,
-    optimizabilities: KnowledgeableOptimizabilities
+    optimizabilities: KnowledgeableOptimizabilities,
+    conditionVizFlavor: ConditionVizFlavor | null
   ): LongConsensus {
     const factorNameDescription = descriptions.getDescription(factorName, 30);
     const causeDescription = descriptions.getDescription(causeName, 30);
@@ -267,7 +271,8 @@ export class BestValues {
         causeName, 
         factorName,
         factorNameDescription, 
-        causeDescription) 
+        causeDescription,
+        conditionVizFlavor) 
       
     if(!(factorName in this.factorAnswers)){
       console.error("The factor "+factorName+" was not in factoranswers")
@@ -277,6 +282,12 @@ export class BestValues {
     let unit=descriptions.getBaseUnit(factorName)
     if(unit!==""){
       unit=" "+unit
+    }
+    if(!(factorName in this.factorAnswers)){
+      return {
+        textWithButtons: res,
+        buttonCodes: buttonCodes
+      };
     }
     const factorAnswer = this.factorAnswers[factorName];
     if (factorAnswer.dimension === DimensionStatus.SINGLE) {
@@ -449,10 +460,11 @@ function listFormatting(factors: string[], finalword: string = "or") {
   }
 }
 
-export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean){
+export function getUnexplainedStatement(proportion: number, total: number, cause: string, descriptions: Descriptions, useLifeExpectancy: boolean, conditionVizFlavor: ConditionVizFlavor | null){
   const causeDescription = descriptions.getDescription(cause, 30);
   let res=""
-  res+=useLifeExpectancy ? "If you could avoid the deaths" : "If you die"
+  res+=useLifeExpectancy ? "If you could avoid the deaths" : 
+    (conditionVizFlavor ? "If you get" : "If you die")
   const responsibility= useLifeExpectancy ? 
     formatYears(proportion*total) :
     (proportion*100).toFixed(1).replace(/\.?0+$/,"")
@@ -460,7 +472,8 @@ export function getUnexplainedStatement(proportion: number, total: number, cause
   let buttonCodes: string[]=[]
   if(cause!=="any cause"){
       buttonCounter+=1
-      res+=" from "+ createButton(causeDescription, buttonCounter);
+      res+= conditionVizFlavor ? " ": " from "
+      res+= createButton(causeDescription, buttonCounter);
       buttonCodes.push(cause)
   }
   res+= useLifeExpectancy ? " where the " : ", there is " + responsibility +"% probability that the "
