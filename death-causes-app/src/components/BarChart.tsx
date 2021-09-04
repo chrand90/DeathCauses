@@ -2,6 +2,7 @@ import * as d3 from "d3";
 import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
 import Descriptions from "../models/Descriptions";
+import Optimizabilities, { KnowledgeableOptimizabilities } from "../models/Optimizabilities";
 import {
   CauseGrouping,
   CauseToParentMapping,
@@ -166,6 +167,7 @@ export default class BarChart {
       collapsables: { [key: string]: string[] };
       expandables: { [key: string]: string[] };
     },
+    optimizabilities: KnowledgeableOptimizabilities,
     simpleVersion: boolean = false,
     useLifeExpectancy: boolean =true,
   ) {
@@ -222,7 +224,7 @@ export default class BarChart {
         .attr("transform", `translate(0,${XBARHEIGHT})`);
     }
 
-    vis.make(database, diseaseToWidth);
+    vis.make(database, diseaseToWidth, optimizabilities);
   }
 
   hideAllToolTips() {
@@ -443,14 +445,14 @@ export default class BarChart {
       .style("fill", NOT_CLICKABLE_GRAY);
   }
 
-  make(dataset: DataSet | LifeExpectancyContributions, diseaseToWidth: string | null) {
+  make(dataset: DataSet | LifeExpectancyContributions, diseaseToWidth: string | null, optimizabilities: KnowledgeableOptimizabilities) {
     const vis = this;
 
     const {
       dataSortedTotal,
       dataSquares,
       dataIds,
-    } = this.computeRankAndSquares(dataset, diseaseToWidth);
+    } = this.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities);
 
     const n = dataSortedTotal.length;
     let designConstants =
@@ -820,7 +822,8 @@ export default class BarChart {
     removed: string[],
     added: string[],
     diseaseToWidth: string | null,
-    oldCollectedGroups: CauseGrouping
+    oldCollectedGroups: CauseGrouping,
+    optimizabilities: KnowledgeableOptimizabilities
   ){
     if(this.useLifeExpectancy){
       const showingInheritanceCauseToParent: CauseToParentMapping={};
@@ -857,6 +860,7 @@ export default class BarChart {
         diseaseToWidth,
         directGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       );
       const {allSquares: noMergeSquares, totalProbs: noMergeTotals} = make_squares(
@@ -864,6 +868,7 @@ export default class BarChart {
         diseaseToWidth,
         showInheritanceGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy,
         structureIfNotMerged
       )
@@ -872,6 +877,7 @@ export default class BarChart {
         diseaseToWidth,
         showInheritanceGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       )
       return {dataSquares, totalProbs, noMergeSquares, noMergeTotals, preSquares, preTotals}
@@ -882,6 +888,7 @@ export default class BarChart {
         diseaseToWidth,
         this.grouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       );
       const notToBeMerged = getSubCollectGroup(this.grouping, added, removed[0]);
@@ -893,6 +900,7 @@ export default class BarChart {
         diseaseToWidth,
         oldCollectedGroups,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy,
         notToBeMerged
       );
@@ -905,7 +913,8 @@ export default class BarChart {
     removed: string[],
     added: string[],
     diseaseToWidth: string | null,
-    oldCollectedGroups: CauseGrouping
+    oldCollectedGroups: CauseGrouping,
+    optimizabilities: KnowledgeableOptimizabilities
   ){
     if(this.useLifeExpectancy){
       const replacementCauseToParent: CauseToParentMapping= {}
@@ -952,6 +961,7 @@ export default class BarChart {
         diseaseToWidth,
         replacementGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       );
       let { allSquares: noMergeSquares} = make_squares(
@@ -959,6 +969,7 @@ export default class BarChart {
         diseaseToWidth,
         replacementGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy,
         structureIfNotMerged
       );
@@ -974,6 +985,7 @@ export default class BarChart {
         diseaseToWidth,
         finalGrouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       );
       return {noMergeSquares, dataSquares, totalProbs, finalSquares, finalProbs}
@@ -989,6 +1001,7 @@ export default class BarChart {
         diseaseToWidth,
         this.grouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       );
       let { allSquares: noMergeSquares} = make_squares(
@@ -996,6 +1009,7 @@ export default class BarChart {
         diseaseToWidth,
         this.grouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy,
         notToBeMerged
       );
@@ -1069,6 +1083,7 @@ export default class BarChart {
     oldCollectedGroups: CauseGrouping,
     removed: string[],
     added: string[],
+    optimizabilities: KnowledgeableOptimizabilities,
     durationPerTransition: number = 1000
   ) {
     this.disableExpandCollectButtons(removed);
@@ -1077,7 +1092,8 @@ export default class BarChart {
       removed,
       added,
       diseaseToWidth,
-      oldCollectedGroups
+      oldCollectedGroups,
+      optimizabilities
     )
     
     const sortedTotalsWithRemovedCats = insertRemovedCatsInCopy(
@@ -1315,6 +1331,7 @@ export default class BarChart {
     oldCollectedGroups: CauseGrouping,
     removed: string[],
     added: string[],
+    optimizabilities: KnowledgeableOptimizabilities,
     durationPerTransition: number = 1000
   ) {
     this.chainedTransitionInProgress = true;
@@ -1324,7 +1341,8 @@ export default class BarChart {
       removed,
       added,
       diseaseToWidth,
-      oldCollectedGroups
+      oldCollectedGroups,
+      optimizabilities
     )
 
     const preStep = this.useLifeExpectancy ? 
@@ -1457,6 +1475,7 @@ export default class BarChart {
     dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
     newCollectedGroups: CauseGrouping,
+    optimizabilities: KnowledgeableOptimizabilities,
     durationIfNoWait: number = 700
   ) {
     this.transitionsOrdered += 1;
@@ -1474,6 +1493,7 @@ export default class BarChart {
         oldCollectedGroups,
         removed,
         added,
+        optimizabilities,
         duration
       );
     } else {
@@ -1483,6 +1503,7 @@ export default class BarChart {
         oldCollectedGroups,
         removed,
         added,
+        optimizabilities,
         duration
       );
     }
@@ -1490,7 +1511,8 @@ export default class BarChart {
 
   computeRankAndSquares(
     data: DataRow[] | LifeExpectancyContributions,
-    diseaseToWidth: string | null
+    diseaseToWidth: string | null,
+    optimizabilities: KnowledgeableOptimizabilities
   ): {
     dataSortedTotal: DataRow[];
     dataSquares: SquareSection[];
@@ -1511,6 +1533,7 @@ export default class BarChart {
         diseaseToWidth,
         undefined,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       ));
     }
@@ -1520,6 +1543,7 @@ export default class BarChart {
         diseaseToWidth,
         this.grouping,
         this.descriptions,
+        optimizabilities,
         this.useLifeExpectancy
       ));
     }
@@ -1556,6 +1580,7 @@ export default class BarChart {
   async update(
     dataset: DataSet | LifeExpectancyContributions,
     diseaseToWidth: string | null,
+    optimizabilities: KnowledgeableOptimizabilities,
     instantDiseaseToWidthColoring: boolean = false,
     durationPerTransition: number = 500
   ) {
@@ -1570,7 +1595,7 @@ export default class BarChart {
       dataSortedTotal,
       dataSquares,
       dataIds,
-    } = this.computeRankAndSquares(dataset, diseaseToWidth);
+    } = this.computeRankAndSquares(dataset, diseaseToWidth, optimizabilities);
 
     const n = dataSortedTotal.length;
     const designConstants =

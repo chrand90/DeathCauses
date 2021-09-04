@@ -45,7 +45,7 @@ export default class ComputationStore {
     this.summaryView = null;
     this.singeThreadComputeController = null;
     this.allChanges=[]
-    this.lifeExpectancies=[70]
+    this.lifeExpectancies=[]
     makeObservable(this, {
       submittedFactorAnswers: observable,
       lifeExpectancies: observable,
@@ -149,7 +149,8 @@ export default class ComputationStore {
         this.loadedDataStore.deathCauses,
         this.loadedDataStore.deathCauseCategories,
         this.loadedDataStore.descriptions,
-        this.loadedDataStore.conditions
+        this.loadedDataStore.conditions,
+        this.loadedDataStore.optimizabilities
       );
     } else {
       worker.initializeObject(

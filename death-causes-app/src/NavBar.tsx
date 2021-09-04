@@ -20,8 +20,11 @@ export default class Navigation extends React.Component<NavigationProp> {
         return (
             <Navbar className="bg-dark navbar-dark pb-3 pt-3 rounded-corners" expand="lg">
                 <Navbar.Toggle aria-controls="responsive-navbar-nav" />
-                <Navbar.Brand as={Link} to="/">Death Causes</Navbar.Brand>
-                <Navbar.Collapse id="responsive-navbar-nav" className="" >
+                    <Navbar.Brand as={Link} to="/">Death Causes</Navbar.Brand>
+                    <Navbar.Collapse id="responsive-navbar-nav" className="" >
+                    <Navbar.Text style={{fontSize:"13px"}}>
+                    Model visualization of proven effects
+                    </Navbar.Text>
                     <Nav className="ml-auto" variant="pills" >
                         <Nav.Item className="px-2">
                             <NavLink to="/model" className="nav-link" id="nav-link-header" activeClassName="nav-link active">About the Model</NavLink>

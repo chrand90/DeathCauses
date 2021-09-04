@@ -8,24 +8,31 @@ import { FactorAnswerChange, FactorAnswerChanges, FactorAnswersToUpdateForm } fr
 import { Shadowing } from "../stores/ComputationStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { formatYears } from "./Helpers";
+import { useStore } from '../stores/rootStore';
+import Descriptions from "../models/Descriptions";
 
 const NEGATIVE_COLOR="#e30000"
 const POSITIVE_COLOR="#00e300"
 const NEUTRAL_COLOR="#8c8c8c"
 const SHADOWING_COLOR="#2b37a6"
 
-interface ChangeViewProps {
-  store: RootStore;
-}
 
-const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
+const ChangeViewWithoutObserver = () => {
   const [index, setIndex] = useState<number>(0);
-  const historySize = props.store.computationStore.allChanges.length;
+  const store= useStore()
+
+  const historySize = store.computationStore.allChanges.length;
 
   const getLifeExpectancyEffect = (index: number) => {
+    if(store.computationStore.lifeExpectancies.length<2){
+      return {
+        describ: "No changes yet",
+        sign:0
+      }
+    }
     const valInYears =
-      props.store.computationStore.lifeExpectancies[index+0] -
-      props.store.computationStore.lifeExpectancies[index+1];
+      store.computationStore.lifeExpectancies[index+0] -
+      store.computationStore.lifeExpectancies[index+1];
     const absDiff=Math.abs(valInYears)
     const sign=Math.sign(valInYears)
     const prefix = sign>0 ? "+":"-"
@@ -42,7 +49,7 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
         sign:0}
     }
   };
-  const shadowing= props.store.computationStore.factorShadowing
+  const shadowing= store.computationStore.factorShadowing
   const showShadowing = (
     shadowing.shadowsTheChange.length>0 || 
     shadowing.unshadowedByTheChange.length>0 || 
@@ -55,7 +62,7 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
   //   textColor=SHADOWING_COLOR
   // }
   const styleElement={color: textColor};
-  const shownChanges=props.store.computationStore.allChanges[index]
+  const shownChanges=store.computationStore.allChanges[index]
   const randomFactorOrder= Object.keys(shownChanges)
   const firstFactor=randomFactorOrder[0]
 
@@ -69,37 +76,38 @@ const ChangeViewsWithoutStore = (props: ChangeViewProps) => {
       
     <div>
             <p>
-              {getChangeDescription(shownChanges[firstFactor],firstFactor )}{
+              The effect of changing {getChangeDescription(shownChanges[firstFactor],firstFactor, store.loadedDataStore.descriptions )}{
               randomFactorOrder.length>1 ? <span>
                 <span> and </span>
                 {ChangeViewPopupLink(
                 randomFactorOrder.slice(1),
                 shownChanges,
-                (randomFactorOrder.length-1).toString()
-                )}
+                (randomFactorOrder.length-1).toString(),
+                store.loadedDataStore.descriptions)
+                }
                 <span> other factor{randomFactorOrder.length>2 ? "s" : null}</span>
                 </span>
                 : null}{":  "} 
                 <span style={styleElement}><strong>{lifeExpentancy.describ}</strong></span> 
-                {showShadowing ? shadowingButton(shadowing) : null }
+                {showShadowing ? shadowingButton(shadowing, store.loadedDataStore.descriptions) : null }
                 </p>
             </div>
   );
 };
 
-const getChangeDescription = (change: FactorAnswerChange, factorName: string) => {
+const getChangeDescription = (change: FactorAnswerChange, factorName: string, descriptions: Descriptions) => {
   return (
-    <span>Changed <strong>{factorName}</strong> from <em>{change.fromVal}</em> to <em>{change.toVal}</em></span>
+    <span><strong>{descriptions.getDescription(factorName,20)}</strong> from <em>{change.fromVal}</em> to <em>{change.toVal}{" "}{descriptions.getBaseUnit(factorName)}</em></span>
   )
 };
 
-const ChangeViewPopupLink =(factors: string[], changes: FactorAnswerChanges, buttonMessage: string) => {
+const ChangeViewPopupLink =(factors: string[], changes: FactorAnswerChanges, buttonMessage: string, descriptions: Descriptions) => {
   return (
     <OverlayTrigger
       trigger="click"
       rootClose={true}
       placement={"bottom"}
-      overlay={ChangeViewPopupMessage(factors, changes)}
+      overlay={ChangeViewPopupMessage(factors, changes, descriptions)}
     >
       <Button variant="link" className="text-link-button">
         {buttonMessage}
@@ -108,13 +116,13 @@ const ChangeViewPopupLink =(factors: string[], changes: FactorAnswerChanges, but
   );
 }
 
-const shadowingButton = (shadowing: Shadowing) => {
+const shadowingButton = (shadowing: Shadowing, descriptions: Descriptions) => {
   return (
     <OverlayTrigger
       trigger="click"
       rootClose={true}
       placement={"bottom"}
-      overlay={shadowingMessage(shadowing)}
+      overlay={shadowingMessage(shadowing, descriptions)}
     >
       <Button variant="link" className="text-link-button">
       {"\u2731"}
@@ -123,7 +131,7 @@ const shadowingButton = (shadowing: Shadowing) => {
   );
 }
 
-const shadowingMessage = (shadowing: Shadowing) => {
+const shadowingMessage = (shadowing: Shadowing, descriptions: Descriptions) => {
   return (
     <Popover id="popover-basic" style={{whiteSpace: "normal"}}>
       <Popover.Content>
@@ -134,7 +142,7 @@ const shadowingMessage = (shadowing: Shadowing) => {
         </p>
         <ul>
           {shadowing.shadowsTheChange.map((shadowedFactor) => {
-            return <li>{shadowedFactor}</li>
+            return <li>{descriptions.getDescription(shadowedFactor,20)}</li>
           })}
       </ul>
       </div>
@@ -147,7 +155,7 @@ const shadowingMessage = (shadowing: Shadowing) => {
         </p>
         <ul>
           {shadowing.unshadowedByTheChange.map((shadowedFactor) => {
-            return <li>{shadowedFactor}</li>
+            return <li>{descriptions.getDescription(shadowedFactor,20)}</li>
           })}
       </ul>
       </div>
@@ -160,7 +168,7 @@ const shadowingMessage = (shadowing: Shadowing) => {
         </p>
         <ul>
           {shadowing.shadowedByTheChange.map((shadowedFactor) => {
-            return <li>{shadowedFactor}</li>
+            return <li>{descriptions.getDescription(shadowedFactor,20)}</li>
           })}
       </ul>
       </div>
@@ -173,14 +181,14 @@ const shadowingMessage = (shadowing: Shadowing) => {
   )
 }
 
-const ChangeViewPopupMessage = (factors: string[], changes: FactorAnswerChanges) => {
+const ChangeViewPopupMessage = (factors: string[], changes: FactorAnswerChanges, descriptions: Descriptions) => {
     //the whitespace is for firefox.
     return (
       <Popover id="popover-basic" style={{whiteSpace: "normal"}}>
         <Popover.Content>
         <ul>
             {factors.map((factorName) => {
-              return <li>{getChangeDescription(changes[factorName], factorName)}</li>
+              return <li>Changed {getChangeDescription(changes[factorName], factorName, descriptions)}</li>
             })}
         </ul>
         </Popover.Content>
@@ -188,5 +196,5 @@ const ChangeViewPopupMessage = (factors: string[], changes: FactorAnswerChanges)
     )
 }
 
-const ChangeView = withStore(observer(ChangeViewsWithoutStore));
+const ChangeView = observer(ChangeViewWithoutObserver);
 export default ChangeView;

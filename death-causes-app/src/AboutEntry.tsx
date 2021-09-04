@@ -26,6 +26,8 @@ const SPECIAL_PAGES: PageInfo[] = [
   { linkText: "Optimizabilities", direct: "optimizabilities" },
   { linkText: "All references", direct: "references" },
   { linkText: "List of ICD codes", direct: "ICD", prefix:"/"},
+  { linkText: "Graphical overview", direct:"relations", prefix: "/"},
+  { linkText: "Advanced options", direct:"advancedOptions"}
 ];
 
 interface AboutEntryProps extends RouteComponentProps {
@@ -60,7 +62,7 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
       })
       .map((nestedList) => {
         return (
-          <li>
+          <li key={nestedList.key}>
             {this.linkButton(
               this.props.store.loadedDataStore.descriptions.getDescription(
                 nestedList.key,
@@ -100,7 +102,7 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
     return (
       <ul>
         {nodeInfos.map(({ longName, shortName }) => {
-          return <li> {this.linkButton(longName, shortName)} </li>;
+          return <li key={shortName}> {this.linkButton(longName, shortName)} </li>;
         })}
       </ul>
     );
@@ -131,13 +133,15 @@ class AboutEntryWithoutRouterAndWithoutStore extends React.Component<AboutEntryP
             Read first: {this.linkButton("Theory", "intro", "22px")}
             {" or "}
             {this.linkButton("Interpretation", "interpretation", "22px")}
+            {" or "}
+            see the {this.linkButton("Graphical overview", "relations", "22px", "/")}.
           </p>
           <hr></hr>
           <h3>All pages</h3>
           <h4>General concepts</h4>
           <ul>
             {SPECIAL_PAGES.map(({ linkText, direct, prefix }) => {
-              return <li> {this.linkButton(linkText, direct, null, prefix)} </li>;
+              return <li key={direct}> {this.linkButton(linkText, direct, null, prefix)} </li>;
             })}
           </ul>
           <h4>Death causes</h4>

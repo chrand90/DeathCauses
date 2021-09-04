@@ -10,9 +10,10 @@ import RelationLinks, {
   NodeExtremas,
   XDivision,
 } from "../models/RelationLinks";
-import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
+import {  DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
 
+const ALTERNATING_COLORS_RELATIONLINK=[DEATHCAUSES_COLOR,DEATHCAUSES_LIGHT]
 const DESCRIPTION_LENGTH=22
 const SLIGHTLY_DARKER_GRAY="#707070"
 const BOTTOM_BUFFER_HEIGHT=16
@@ -525,10 +526,10 @@ function insertColor(
   selection.each(function (d: any) {
     let i = nonZeroCats.indexOf(d.cat);
     if(i===-1){
-      d.color=ALTERNATING_COLORS[1]
+      d.color=ALTERNATING_COLORS_RELATIONLINK[1]
     }
     else{
-      d.color = ALTERNATING_COLORS[i%2];
+      d.color = ALTERNATING_COLORS_RELATIONLINK[i%2];
     }
     
   });

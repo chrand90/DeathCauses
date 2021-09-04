@@ -42,19 +42,21 @@ Total time doing physical activity is computed with the following factors
 
 Total time doing physical activity is used by the model in the following places
 
-* [Colon cancer](/model/ColonCancer)
-* [Coronary heart disease](/model/Ischemic)
-* [Stroke](/model/Stroke)
+* as a risk factor for [Colon cancer](/model/ColonCancer)
+* as a risk factor for [Coronary heart disease](/model/Ischemic)
+* as a risk factor for [Stroke](/model/Stroke)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time doing physical activity is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time doing physical activity is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 
 
-#### Computation
+### Computation
 
 [Place explanation for how Total time doing physical activity is computed here]
 

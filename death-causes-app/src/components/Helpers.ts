@@ -8,7 +8,8 @@ export const QUERY_STRING_START = "?inputData="
 
 const toolTipNamesShowHide=['.stip','.clicktip','.barplottip','buttontip']
 const toolTipsOpacity=['.arrowexplanation']
-
+export const DEATHCAUSES_COLOR= "#94c5b1"
+export const DEATHCAUSES_LIGHT="#c5ded4"
 
 
 
@@ -69,9 +70,11 @@ export function customPrecision(inputNumber: number | string, digits: number): s
   }
   const beforeAndAfterComma=s.split(".")
   if(beforeAndAfterComma.length===1){
-    return s
+    console.log("returning without comma")
+    return beforeAndAfterComma[0]
   }
-  return beforeAndAfterComma[0]+'.'+beforeAndAfterComma[1].replace(/0+$/,"")
+  const suffix=beforeAndAfterComma[1].replace(/0+$/,"")
+  return beforeAndAfterComma[0]+ (suffix.length>0 ? '.'+suffix : "")
 }
 
 

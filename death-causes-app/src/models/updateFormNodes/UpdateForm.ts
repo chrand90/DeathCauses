@@ -1,3 +1,4 @@
+import { KnowledgeableOptimizabilities } from "../Optimizabilities";
 import CauseNodeResult from "./CauseNodeResult";
 import RiskFactorGroupResult from "./RiskFactorGroupResult";
 
@@ -11,7 +12,8 @@ export enum TypeStatus {
   STRING = "string",
   RISKFACTORGROUPRESULT="Riskfactorgroupresult",
   CAUSERESULT="Causenode result",
-  SIMPLE_UPDATE_FORM="Simple update form"
+  SIMPLE_UPDATE_FORM="Simple update form",
+  OPTIMIZABILITIES="Knowledgeable optimizabilities"
 }
 
 export enum MissingStatus {
@@ -50,6 +52,7 @@ export interface UpdateForm {
     | ProbabilityObject[]
     | RiskFactorGroupResult
     | CauseNodeResult
+    | KnowledgeableOptimizabilities
 
 }
 

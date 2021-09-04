@@ -33,8 +33,8 @@ Diabetes condition is a **condition**. It means that the model computes probabil
 
 In the model Diabetes condition has the following [risk factors](/model/intro#risk-factor)
 
-* [Waist circumference as male](/model/WaistMale) (Waist (male))
 * [BMI](/model/BMI)
+* [Waist circumference as male](/model/WaistMale) (Waist (male))
 
 #### Special factors
 
@@ -46,8 +46,8 @@ In the model Diabetes condition has the following [special factors](/model/intro
 
 Diabetes condition is used by the model in the following places
 
-* [Alzheimers](/model/Alzheimers)
-* [Diabetes](/model/Diabetes)
+* as a risk factor for [Alzheimers](/model/Alzheimers)
+* as a risk factor for [Diabetes](/model/Diabetes)
 
 #### Prevalence
 
@@ -76,7 +76,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Waist (male),BMI}}
+P=P_{\text{BMI,Waist (male)}}
 $$
 
 

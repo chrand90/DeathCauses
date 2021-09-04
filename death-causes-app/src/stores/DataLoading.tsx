@@ -4,6 +4,7 @@ import RelationLinks, { RelationLinkJson } from "../models/RelationLinks";
 import DeathCause, { Condition, ConditionJson, DeathCauseJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../components/database/Deathcause";
 import Deathcause from "../components/database/Deathcause";
 import Descriptions, { DescriptionsJson } from "../models/Descriptions";
+import Optimizabilities from "../models/Optimizabilities";
 
 export interface LoadedFactors {
     factors: Factors;
@@ -18,6 +19,7 @@ export interface LoadedConditions {
 export interface LoadedDescriptions {
     rawDescriptions: DescriptionsJson;
     descriptions: Descriptions;
+    optimizabilities: Optimizabilities;
 }
 
 export interface LoadedRelationLinks {
@@ -92,7 +94,8 @@ export async function loadLifeExpectancies():Promise<number[]> {
 export async function loadDescriptions(): Promise<LoadedDescriptions> {
     const rawDescriptions= await loadFromFile<DescriptionsJson>("Descriptions.json");
     const descriptions= new Descriptions(rawDescriptions);
-    return {rawDescriptions: rawDescriptions, descriptions: descriptions};
+    const optimizabilities= new Optimizabilities(rawDescriptions)
+    return {rawDescriptions: rawDescriptions, descriptions: descriptions, optimizabilities: optimizabilities};
 }
 
 export async function loadCauseData():Promise<LoadedCauseData> {

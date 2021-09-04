@@ -38,12 +38,12 @@ Liver cancer is part of the following death cause categories
 
 In the model Liver cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [HCV diagnosis](/model/HCVStatus) (HCV)
 * [BMI](/model/BMI)
+* [HCV diagnosis](/model/HCVStatus) (HCV)
 * [Coffee consumption](/model/Caffeine) (Coffee)
 * [Diabetes diagnosis](/model/DiabetesStatus) (Diabetes)
-* [Alcohol consumption](/model/Drinking) (Alcohol)
 * [Biological sex](/model/Sex) (Sex)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
 
 #### Number of deaths
 
@@ -89,7 +89,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{HCV,BMI}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Alcohol,Sex}}
+P=P_{\text{BMI,HCV}} \cdot P_{\text{Coffee}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Sex,Alcohol}}
 $$
 
 

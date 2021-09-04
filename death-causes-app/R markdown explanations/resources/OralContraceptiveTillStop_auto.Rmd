@@ -34,8 +34,8 @@ Time till stopping oral contraceptives is a **input factor**. It means that it i
 
 Time till stopping oral contraceptives is used by the model in the following places
 
-* [Ever used oral contraceptives](/model/OralContraceptiveEver)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+* to compute [Ever used oral contraceptives](/model/OralContraceptiveEver)
+* to compute [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
 
 #### Guidance
 
@@ -45,12 +45,14 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Years**.
 
-The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years. Oral contraceptives are also called birth control pills and are used to preven pregnancies.
+The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.Oral contraceptives are also called birth control pills and are used to preven pregnancies.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time till stopping oral contraceptives is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time till stopping oral contraceptives is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

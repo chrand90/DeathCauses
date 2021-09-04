@@ -33,8 +33,8 @@ Oral contraceptives is a **input factor**. It means that it is one of the inputs
 
 Oral contraceptives is used by the model in the following places
 
-* [Ever used oral contraceptives](/model/OralContraceptiveEver)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+* to compute [Ever used oral contraceptives](/model/OralContraceptiveEver)
+* to compute [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
 
 #### Guidance
 
@@ -52,9 +52,7 @@ Oral contraceptives are also called birth control pills and are used to preven p
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Oral contraceptives is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Oral contraceptives is [3](/model/optimizabilities#category-3)(unless [Oral contraceptives](/model/OralContraceptiveStatus)='Current user' in which case the optimizability is [5](/model/optimizabilities#category-5)).
 
 
 

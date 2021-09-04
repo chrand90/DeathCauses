@@ -42,17 +42,19 @@ Ever used oral contraceptives is computed with the following factors
 
 Ever used oral contraceptives is used by the model in the following places
 
-* [Breast cancer](/model/BreastCancer)
+* as a risk factor for [Breast cancer](/model/BreastCancer)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Ever used oral contraceptives is 5. This means that it can be interpreted as
-
-> *It is possible to change, and it can be changed now or very soon.*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Ever used oral contraceptives is [3](/model/optimizabilities#category-3). This means that it can be interpreted as
 
 
-#### Computation
+
+> *It is impossible to change now, but it has once definitely been in your control*
+
+
+### Computation
 
 [Place explanation for how Ever used oral contraceptives is computed here]
 

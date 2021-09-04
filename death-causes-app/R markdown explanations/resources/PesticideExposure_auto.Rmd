@@ -33,7 +33,7 @@ Pesticide exposure is a **input factor**. It means that it is one of the inputs 
 
 Pesticide exposure is used by the model in the following places
 
-* [Parkinsons](/model/Parkinsons)
+* as a risk factor for [Parkinsons](/model/Parkinsons)
 
 #### Guidance
 
@@ -43,12 +43,14 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Days**.
 
-The answer has to be larger than 0 Days. The answer is recommended to be larger than 0 Days and smaller than 300 Days. Your are exposed to pesticides primarily when you apply it either in your garden or in a field.
+The answer has to be larger than 0 Days.The answer is recommended to be larger than 0 Days and smaller than 300 Days, because that is where the model is most accurate.Your are exposed to pesticides primarily when you apply it either in your garden or in a field.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Pesticide exposure is 3. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Pesticide exposure is [3](/model/optimizabilities#category-3). This means that it can be interpreted as
+
+
 
 > *It is impossible to change now, but it has once definitely been in your control*
 

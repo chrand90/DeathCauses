@@ -35,7 +35,7 @@ Medium physical activity time is a **input factor**. It means that it is one of 
 
 Medium physical activity time is used by the model in the following places
 
-* [Total physical activity time](/model/PhysicalTotal)
+* to compute [Total physical activity time](/model/PhysicalTotal)
 
 #### Guidance
 
@@ -47,12 +47,14 @@ The unit of the input is **Minutes**, but can be changed to any of the units bel
 
 * Hours (1 Hours = 60 Minutes)
 
-The answer has to be larger than 0 Minutes. The answer is recommended to be larger than 0 Minutes and smaller than 1000 Minutes. Medium physical activity includes brisk walking, gardening, golf etc.
+The answer has to be larger than 0 Minutes.The answer is recommended to be larger than 0 Minutes and smaller than 1000 Minutes, because that is where the model is most accurate.Medium physical activity includes brisk walking, gardening, golf etc.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Medium physical activity time is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Medium physical activity time is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

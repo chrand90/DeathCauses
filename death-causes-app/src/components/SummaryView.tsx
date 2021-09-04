@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import { observer } from "mobx-react";
 import React, { Fragment, useEffect, useState } from "react";
 import { Card, Col, Row } from "react-bootstrap";
-import { CardBody, CardHeader } from "reactstrap";
+import { CardBody, CardHeader, CardTitle } from "reactstrap";
 import { DataPoint } from "../models/updateFormNodes/FinalSummary/SummaryView";
 import RootStore, { withStore } from "../stores/rootStore";
 import BarChartWrapper from "./BarChartWrapper";
@@ -25,7 +25,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
             if(age===""){
                 return(
                     <p>
-                        The average life expectancy from birth is: {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
+                        The average life expectancy from birth is {this.props.store.loadedDataStore.lifeExpectancies[0].toFixed(1)} 
                     </p>
                 )
             }
@@ -36,7 +36,7 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 }
                 return (
                     <p>
-                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is: {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
+                        The average life expectancy for someone as {ageNumber>83 ? "old" : "young"} as you is {this.props.store.loadedDataStore.lifeExpectancies[ageNumber].toFixed(1)} 
                     </p>
                 )
             }
@@ -62,24 +62,27 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                 <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
-                            <h3>Your life expectancy is: <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
+                            <h3>Your life expectancy is <span style={{ color: textColor }}>{lifeExpentancy}</span> years</h3>
                             <p></p>
                             {this.lifeExpectancySentence()}
-                            <RangeSliders summaryViewData={summaryViewData}/>
+                            
                         </CardBody>
                     </Card>
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
-                            <p>Effect of your change of input</p>
-                            <ChangeView></ChangeView>
+                        <ChangeView />
+                        </CardBody>
+                    </Card>
+                    <Card className="my-1 mx-auto bg-light " style={{}}>
+                        <CardBody>
+                        <RangeSliders summaryViewData={summaryViewData}/>
                         </CardBody>
                     </Card>
                 </Col>
                 <Col className="mx-auto my-1" style={{ width: colwidth }}>
                     <Card className="bg-light ">
-                        <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
                         <CardBody>
-                            <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
+                            <p>The bar below represents all the time you lose to known risk factors.</p>
                             <BarChartWrapper database={this.props.store.computationStore.riskFactorContributions} simpleVersion={true} />
                         </CardBody>
                     </Card>

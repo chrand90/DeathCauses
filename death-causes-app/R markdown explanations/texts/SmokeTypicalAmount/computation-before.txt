@@ -1,0 +1,5 @@
+If one's [Smoking status](/model/Smoking) is 'Current smoker' this factor is equal to [Current smoking amount](/model/SmokeIntensity). If one is a 'Former smoker', it is equal to how much one smoked in the past. That is [Past smoking amount](/model/SmokePastAmount). If one is a 'never smoker', it is equal to 0. 
+
+If the user has changed the advanced settings such that the [computation period](/model/advancedOptions#computation-period) starts before he or she began smoking, this factor will be 0. This is why computation of Average smoking also uses [Time since smoking](/model/SmokingStopped) and [Time span of smoking period](/model/SmokeDuration). 
+
+This factor potentially changes over time (because one can set the start of the computation period before start of smoking), so we compute a value for every year. 

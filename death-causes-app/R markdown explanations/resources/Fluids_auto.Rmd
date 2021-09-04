@@ -32,7 +32,7 @@ Fluids intake is a **input factor**. It means that it is one of the inputs from 
 
 Fluids intake is used by the model in the following places
 
-* [Bladder cancer](/model/BladderCancer)
+* as a risk factor for [Bladder cancer](/model/BladderCancer)
 
 #### Guidance
 
@@ -44,12 +44,14 @@ The unit of the input is **Liters**, but can be changed to any of the units belo
 
 * US Cups (1 US Cups = 4.23 Liters)
 
-The answer has to be larger than 0 Liters. Anything that is drunk counts as liquid, including alcoholic beverages.
+The answer has to be larger than 0 Liters.Anything that is drunk counts as liquid, including alcoholic beverages.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fluids intake is 5. This means that it can be interpreted as
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fluids intake is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
 
 > *It is possible to change, and it can be changed now or very soon.*
 

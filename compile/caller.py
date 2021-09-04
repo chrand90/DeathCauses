@@ -43,18 +43,32 @@ def combine_relations(relations, descriptions):
     with open(COMPUTED_FACTORS_FILE, 'r') as f:
         computed_factors = json.load(f)
     for factorName, factor_info in computed_factors.items():
-        relations[factorName] = {
-            "ancestors": factor_info["ancestors"],
-            "type" : "Computed factor"
-        }
+        if not ("type" in factor_info and factor_info["type"]=="Condition"):
+            relations[factorName] = {
+                "ancestors": factor_info["ancestors"],
+                "type" : "Computed factor"
+            }
+    optimizability_lookups=descriptions.copy()
+    optimizability_lookups.update(computed_factors)   
     for factorName, factor_info in computed_factors.items():
-        descriptions[factorName]= {
-            "optimizability": compute_optimizability(relations, factorName, descriptions),
-            "descriptions": factor_info["descriptions"],
-            "baseUnit": factor_info["baseUnit"]
-        }
+        if "optimizability" in factor_info:
+            optimizability=factor_info["optimizability"]
+        else:
+            optimizability=compute_optimizability(relations, factorName, optimizability_lookups)
+        if factorName in descriptions:
+            descriptions[factorName]["baseUnit"]=factor_info["baseUnit"]
+            descriptions[factorName]["optimizability"]=optimizability
+        else:
+            descriptions[factorName]= {
+                "optimizability": optimizability,
+                "descriptions": factor_info["descriptions"],
+                "baseUnit": factor_info["baseUnit"]
+            }
+        if "color" in factor_info:
+            descriptions[factorName]["color"]=factor_info["color"]
     for node_name, node in descriptions.items():
-        descriptions[node_name]["color"]=make_hex_color(node_name)
+        if not "color" in node:
+            descriptions[node_name]["color"]=make_hex_color(node_name)
     factors_compiled=compiled_factors(relations, factors)
     return relations, descriptions, factors_compiled
 

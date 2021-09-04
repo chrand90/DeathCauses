@@ -39,8 +39,8 @@ Uterus cancer is part of the following death cause categories
 
 In the model Uterus cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [BMI](/model/BMI)
 * [Coffee consumption](/model/Caffeine) (Coffee)
+* [BMI](/model/BMI)
 * [Biological sex](/model/Sex) (Sex)
 
 #### Number of deaths
@@ -84,7 +84,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{BMI,Coffee}} \cdot P_{\text{Sex}}
+P=P_{\text{Coffee,BMI}} \cdot P_{\text{Sex}}
 $$
 
 

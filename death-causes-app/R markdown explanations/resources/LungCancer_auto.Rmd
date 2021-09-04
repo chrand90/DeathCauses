@@ -38,8 +38,8 @@ Lung cancer is part of the following death cause categories
 
 In the model Lung cancer has the following [risk factors](/model/intro#risk-factor)
 
-* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 
 #### Number of deaths
 
@@ -85,7 +85,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Smoke end a.,Smoke avg.}}
+P=P_{\text{Smoke avg.,Smoke end a.}}
 $$
 
 

@@ -69,7 +69,7 @@ const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.
 		<div>
 			<Container>
 				<h1>
-					Relation between risk factors and death causes
+					Graph between risk factors and death causes
 				</h1>
 				<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction(store.relationLinkVizStore.setElementInFocus)}>
 					{store.loadedDataStore.rdat.getAllPossibleNodes().map(

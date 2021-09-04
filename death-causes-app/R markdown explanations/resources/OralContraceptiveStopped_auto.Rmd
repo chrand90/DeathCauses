@@ -34,8 +34,8 @@ Time since taking oral contraceptives is a **input factor**. It means that it is
 
 Time since taking oral contraceptives is used by the model in the following places
 
-* [Ever used oral contraceptives](/model/OralContraceptiveEver)
-* [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+* to compute [Ever used oral contraceptives](/model/OralContraceptiveEver)
+* to compute [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
 
 #### Guidance
 
@@ -45,14 +45,12 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Years**.
 
-The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years. Oral contraceptives are also called birth control pills and are used to preven pregnancies.
+The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.Oral contraceptives are also called birth control pills and are used to preven pregnancies.
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since taking oral contraceptives is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since taking oral contraceptives is [3](/model/optimizabilities#category-3)(unless [Oral contraceptives](/model/OralContraceptiveStatus)='Current user' in which case the optimizability is [4](/model/optimizabilities#category-4)).
 
 
 

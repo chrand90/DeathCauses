@@ -34,9 +34,9 @@ Time since you stopped smoking is a **input factor**. It means that it is one of
 
 Time since you stopped smoking is used by the model in the following places
 
-* [Time since smoking per year](/model/SmokeSinceStop)
-* [Total amount smoked in life](/model/SmokeCumulative)
-* [Smoking average](/model/SmokeTypicalAmount)
+* to compute [Time since smoking per year](/model/SmokeSinceStop)
+* to compute [Total amount smoked in life](/model/SmokeCumulative)
+* to compute [Smoking average](/model/SmokeTypicalAmount)
 
 #### Guidance
 
@@ -46,13 +46,11 @@ The user input is a typed number and should answer the question
 
 The unit of the input is **Years**.
 
-The answer has to be larger than 0 Years. The answer is recommended to be larger than 0 Years and smaller than 110 Years. 
+The answer has to be larger than 0 Years.The answer is recommended to be larger than 0 Years and smaller than 110 Years, because that is where the model is most accurate.
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Time since you stopped smoking is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [4](/model/optimizabilities#category-4)).
 
 
 

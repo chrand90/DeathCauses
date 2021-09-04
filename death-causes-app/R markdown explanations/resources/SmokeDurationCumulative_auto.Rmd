@@ -20,7 +20,7 @@ blockquote{
   font-size: 18px;}
 
 </style>
-_[auto-generated file]_
+_[partly auto-generated file]_
 
 Total time you have smoked per year is a **computed factor**. It means that it can be determined with total certainty from the user input.
 
@@ -42,20 +42,16 @@ Total time you have smoked per year is computed with the following factors
 
 Total time you have smoked per year is used by the model in the following places
 
-* [Bladder cancer](/model/BladderCancer)
+* as a risk factor for [Bladder cancer](/model/BladderCancer)
 
 
 ### Optimizability
 
-[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time you have smoked per year is 3. This means that it can be interpreted as
-
-> *It is impossible to change now, but it has once definitely been in your control*
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Total time you have smoked per year is [3](/model/optimizabilities#category-3)(unless [Smoking status](/model/Smoking)='Current smoker' in which case the optimizability is [5](/model/optimizabilities#category-5)).
 
 
-#### Computation
+### Computation
 
-[Place explanation for how Total time you have smoked per year is computed here]
-
-
+If one's [Smoking status](/model/Smoking) is 'Former smoker' this factor is equal to [Smoke duration](/model/SmokeDuration). If one is a 'Current smoker', it is equal to Smoke duration plus the number of years since the user's []current age](/model/Age).
 
 ## References

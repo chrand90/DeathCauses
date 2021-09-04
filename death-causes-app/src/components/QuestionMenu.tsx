@@ -38,13 +38,13 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
       const afterStart = queryString.slice(QUERY_STRING_START.length)
       try {
         const urlJSON=JSON.parse(decodeURIComponent(afterStart)) as AllNecessaryInputs
-        //Waiting for the next update cycle to apply the changes:
+        //Waiting for the next update cycle to apply the changes (it should be enough to wait 0 seconds, but it fails too often for some reason):
         setTimeout( 
           () => {
             this.props.store.factorInputStore.insertData(urlJSON);
             this.props.store.questionProgressStore.finishQuestionnaireStartOverview();
           },
-          0
+          100
         )
               }
       catch(e: any){
@@ -129,7 +129,7 @@ class QuestionMenuWithoutStoreWithoutRouter extends React.Component<
                 ? this.props.store.factorInputStore.activelyIgnored[factorName]
                 : false
             }
-            descendantDeathCauses={this.props.store.loadedDataStore.rdat.getDeathCauseDescendants(
+            descendantDeathCauses={this.props.store.loadedDataStore.factors.getDeathCauseDescendants(
               factorName
             )}
           />

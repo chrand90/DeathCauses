@@ -9,7 +9,7 @@
 #We normalize the risk ratios such that they are divided by the number from the 60,70-group. We do this because this risk ratio table is multiplied by
 # the risk ratio table in smoketypicalamount-smokesincestop
 #
-#lambd=0.001
+#lambd=0.004
 #tails=min_bounded,max_bounded
 SmokeTypicalAmount	Age	RR
 0	,40	1.0(0)
@@ -27,12 +27,12 @@ SmokeTypicalAmount	Age	RR
 2.5,12.5	50,60	1.11
 12.5,30	50,60	1.28
 30+	50,60	1.28
-0	60,70	1.0(0)
+0	60,70	1.0
 0,2.5	60,70	1
 2.5,12.5	60,70	1
 12.5,30	60,70	1
 30+	60,70	1
-0	70+	1.0(0)
+0	70+	1.0
 0,2.5	70+	1
 2.5,12.5	70+	1
 12.5,30	70+	1

@@ -32,7 +32,7 @@ parser.add_argument('--guided', action='store_true', default=False,
 parser.add_argument('--Rpath', type=str, default="Rscript",
                         help="the path to the R executable.")
 			   
-parser.add_argument('--nodes', type=str, nargs="+", help="list of nodes to recompute html files for")
+parser.add_argument('--nodes', type=str, nargs="*", help="list of nodes to recompute html files for")
 
 options=parser.parse_args()
 
@@ -59,6 +59,9 @@ if options.nodes:
 	subprocess.run(["python","generate_Rmds.py"], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations"))
 	for node in options.nodes:
 		l=node+"_auto.Rmd"
+		file_path=os.path.join("death-causes-app", "R markdown explanations","resources",l)
+		if not os.path.isfile(file_path):
+			l=node+".Rmd"
 		command= '"rmarkdown::render(\'{filename}\')"'.format(filename=l)
 		subprocess.run([options.Rpath, "-e", command], shell=True, cwd= os.path.join("death-causes-app", "R markdown explanations","resources"))
 elif yes_no("Do you wish to recompute all html help files? [y/n]"):

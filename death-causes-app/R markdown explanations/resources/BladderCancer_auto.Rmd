@@ -40,9 +40,9 @@ Bladder cancer is part of the following death cause categories
 In the model Bladder cancer has the following [risk factors](/model/intro#risk-factor)
 
 * [Fluids intake](/model/Fluids) (Fluids)
-* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
-* [Cumulative smoke duration](/model/SmokeDurationCumulative) (Smoke dur. a)
 * [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Cumulative smoke duration](/model/SmokeDurationCumulative) (Smoke dur. a)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
 
 #### Number of deaths
 
@@ -87,7 +87,7 @@ $$
 The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
 
 $$
-P=P_{\text{Fluids}} \cdot P_{\text{Smoke end a.,Smoke dur. a,Smoke avg.}}
+P=P_{\text{Fluids}} \cdot P_{\text{Smoke avg.,Smoke dur. a,Smoke end a.}}
 $$
 
 

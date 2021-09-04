@@ -43,22 +43,22 @@ blockquote{
 <h4>Uses</h4>
 <p>Amount smoked in the past is used by the model in the following places</p>
 <ul>
-<li><a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
-<li><a href="/model/SmokeTypicalAmount">Smoking average</a></li>
+<li>to compute <a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
+<li>to compute <a href="/model/SmokeTypicalAmount">Smoking average</a></li>
 </ul>
 </div>
 <div id="guidance" class="section level4">
 <h4>Guidance</h4>
 <p>The user input is a typed number and should answer the question</p>
 <blockquote>
-<p>During all the time smoking tobacco, what has been the average amount smoked in a normal day?</p>
+<p>When you did smoke tobacco in the past, how much did you smoke in a normal day?</p>
 </blockquote>
 <p>The unit of the input is <strong>Cigarettes</strong>.</p>
-<p>The answer has to be larger than 0 Cigarettes. The answer is recommended to be larger than 0 Cigarettes and smaller than 40 Cigarettes. If you smoke tobacco in other forms than cigarettes, you should convert it to thier equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the <a href="http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html">NHS Scotland website</a></p>
+<p>The answer has to be larger than 0 Cigarettes.The answer is recommended to be larger than 0 Cigarettes and smaller than 40 Cigarettes, because that is where the model is most accurate.If you smoke tobacco in other forms than cigarettes, you should convert it to their equivalence in cigarettes. For example as a rule of thumb, one bowl of toccao in a pipe is equivalent to 2.5 cigarettes. More info on the <a href="http://www.smoking2.nes.scot.nhs.uk/module4/working-out-cigarette-equivalents.html">NHS Scotland website</a></p>
 </div>
 <div id="optimizability" class="section level3">
 <h3>Optimizability</h3>
-<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Amount smoked in the past is 3. This means that it can be interpreted as</p>
+<p><a href="/model/optimizabilities">Optimizability</a> is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Amount smoked in the past is <a href="/model/optimizabilities#category-3">3</a>. This means that it can be interpreted as</p>
 <blockquote>
 <p><em>It is impossible to change now, but it has once definitely been in your control</em></p>
 </blockquote>

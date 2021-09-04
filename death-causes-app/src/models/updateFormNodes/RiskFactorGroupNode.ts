@@ -3,32 +3,30 @@ import {
   computeUsAndSs,
 } from "../../components/Calculations/DebtInheritance";
 import { RiskFactorGroup } from "../../components/database/RickFactorGroup";
-import { OptimizabilityToNodes } from "../Descriptions";
+import { OptimizabilityToNodes } from "../Optimizabilities";
 import { OptimsToSDics, RiskRatioResult } from "./RiskFactorGroupResult";
 import { ChangeStatus, DimensionStatus, MissingStatus, StochasticStatus, TypeStatus, UpdateDic, UpdateForm } from "./UpdateForm";
 import FormUpdater from "./FormUpdater";
 
 import addDistributionsForMissing from "./ReplacementDistribution";
+import { KnowledgeableOptimizabilities } from "../Optimizabilities";
 
 export default class RiskRatioGroupNode extends FormUpdater {
   riskFactorGroup: RiskFactorGroup;
   factorNames: string[];
   ageAsFactor: boolean;
-  optimizabilityClasses: OptimizabilityToNodes;
 
   constructor(
     ancestors: string[],
     ageFrom: number | null,
     ageTo: number,
-    riskFactorGroup: RiskFactorGroup,
-    optimizabilityClasses: OptimizabilityToNodes,
+    riskFactorGroup: RiskFactorGroup
   ) {
     super(ancestors, ageFrom, ageTo);
     this.riskFactorGroup = riskFactorGroup;
     const factorNamesAsSet = riskFactorGroup.getAllFactorsInGroup();
     this.factorNames = Array.from(factorNamesAsSet);
     this.ageAsFactor = factorNamesAsSet.has("Age");
-    this.optimizabilityClasses = optimizabilityClasses;
   }
 
   //overwriting
@@ -151,18 +149,6 @@ export default class RiskRatioGroupNode extends FormUpdater {
     }
   }
 
-  thinOptimizabilityClasses(fixed: string[]): OptimizabilityToNodes{
-    fixed=[...fixed, "Age"];
-    const optimNodesPairs= Object.entries(this.optimizabilityClasses).map(
-      ([optimClass, nodes]) => {
-        return [optimClass, nodes.filter(nodeName => !fixed.includes(nodeName))]
-      }
-    ).filter(([optimClass, nodes]) => {
-      return nodes.length>0
-    })
-    return Object.fromEntries(optimNodesPairs);
-  }
-
   getSDicForAgeIndex(
     allPreviousUpdateForms: UpdateDic,
     ageIndex: number,
@@ -183,6 +169,8 @@ export default class RiskRatioGroupNode extends FormUpdater {
             .getFactorNamesWithoutAge()
             .filter((factorName: string) => {
               return nodes.includes(factorName);
+            }).filter(factorName => {
+              return !previouslyCountouredFactors.includes(factorName);
             });
             const { SDic, RRmax } = computeUsAndSs(
               rrt,
@@ -198,7 +186,9 @@ export default class RiskRatioGroupNode extends FormUpdater {
             })
           }
         );
-        previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=>d!=="Age"))
+        previouslyCountouredFactors=previouslyCountouredFactors.concat(nodes.filter(d=> {
+          return d!=="Age" && !previouslyCountouredFactors.includes(d)
+        }))
         optimToSdics[optimValue]=RRresults;
       }
     );
@@ -208,12 +198,12 @@ export default class RiskRatioGroupNode extends FormUpdater {
   //the first UpdateDic is used to initialize BestValues, whereas the other is used in computations. 
   getSDics(allPreviousUpdateForms: UpdateDic, updateFormsToUseInComputations: UpdateDic, alwaysFixed: string[]=[]) {
     const valueStore = new BestValues(
-      this.optimizabilityClasses,
+      this.ancestors,
       allPreviousUpdateForms,
     );
     let SDicsValue: OptimsToSDics | OptimsToSDics[]
     const dependsOnAge=this.inputDependsOnAge(allPreviousUpdateForms) || this.ageAsFactor;
-    const thinnedOptimClasses=this.thinOptimizabilityClasses(alwaysFixed);
+    const thinnedOptimClasses=(allPreviousUpdateForms["optimizabilities"].value as KnowledgeableOptimizabilities).getOptimizabilityClasses(this.ancestors);
     if(dependsOnAge){
       const startAge= this.getAgeFrom(allPreviousUpdateForms);
       const endAge=this.getAgeTo();
