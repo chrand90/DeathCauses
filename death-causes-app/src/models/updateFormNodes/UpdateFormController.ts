@@ -174,8 +174,10 @@ export default class UpdateFormController {
     res["optimizabilities"]=this.optimizabilityNode.compute(factorAnswers);
     this.formUpdaters.forEach((formUpdater, i) => {
       res[this.formUpdaterNames[i]] = formUpdater.update(res);
-    });
+    }); 
     this.allComputedNodes = res;
+    console.log("all computed nodes:")
+    console.log(this.allComputedNodes);
   }
 
   computeAll(factorAnswers: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {

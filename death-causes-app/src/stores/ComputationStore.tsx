@@ -37,7 +37,7 @@ export default class ComputationStore {
   ) {
     this.computationStateStore = computationStateStore;
     this.submittedFactorAnswers = {};
-    this.riskFactorContributions = {ages: [], survivalProbs: [], baseLifeExpectancy: 0, evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, costPerCause: {}, changes: {}};
+    this.riskFactorContributions = {ages: [], survivalProbs: [], baseLifeExpectancy: 0, evaluationUnit: EVALUATION_UNIT.PROBABILITY, costPerCause: {}, changes: {}};
     this.singeThreadComputeController = null;
     this.allChanges=[]
     this.lifeExpectancies=[]
@@ -111,7 +111,8 @@ export default class ComputationStore {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
       const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities(this.advancedOptionsStore.submittedEvaluationUnit);
       // const factorAnswerChange = this.singeThreadComputeController?.computeFactorAnswerChanges()
-
+      console.log("computation summaries:")
+      console.log(innerprobabilities);
       if (innerprobabilities !== undefined) {
         //will be undefined if data hasnt loaded yet.
         this.riskFactorContributions = innerprobabilities;

@@ -21,7 +21,7 @@ export const yearLostLollipopChartFormatter: LollipopChartFormatting = {
 
 export const getLollipopChartFormatting = (evaluationUnit: EVALUATION_UNIT): LollipopChartFormatting => {
     switch (evaluationUnit as EVALUATION_UNIT) {
-        case EVALUATION_UNIT.PROBAIBILITY:
+        case EVALUATION_UNIT.PROBABILITY:
             return probabilityLollipopChartFormatter;
         case EVALUATION_UNIT.YEARS_LOST:
             return yearLostLollipopChartFormatter

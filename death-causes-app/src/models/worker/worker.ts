@@ -49,7 +49,7 @@ class computations {
 
   processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     if(this.computer===null){
-      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
+      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBABILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
     }
     else{
       return this.computer.computeAll(data, evaluationUnit);

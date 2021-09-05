@@ -16,7 +16,7 @@ export default class DataPrivacyBox extends React.PureComponent {
   }
 
   getPrivacyText(){
-      return "The answers to the questions are not saved anywhere. Be careful not to refresh the page because that will erase any progress."
+      return "The answers to the questions are not saved or sent anywhere. Refreshing the page will erase the answers."
   }
 
   render() {

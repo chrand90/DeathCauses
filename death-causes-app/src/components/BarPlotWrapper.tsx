@@ -212,7 +212,7 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
             )
           .style("display","block")
           .style("left", (bbox.x+margin.left+bbox.width/2).toString() + "px")
-          .style("top", (bbox.y-3).toString() + "px")
+          .style("top", (bbox.y-4).toString() + "px")
         d3.select(this).raise().style("fill", colors.barHighlight);
       })
       .on("mouseleave", function (e: Event, d: SurvivalCurveData) {

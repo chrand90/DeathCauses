@@ -41,6 +41,6 @@ export default function riskFactorContributions(causeNodeResults: CauseNodeResul
     })
     let costPerCause = Object.fromEntries(res.map(element => [element.name, element]))
 
-    return { evaluationUnit: EVALUATION_UNIT.PROBAIBILITY, baseLifeExpectancy: lifeExpectancy, survivalProbs: survivalProb.slice(1), ages: ages, costPerCause: costPerCause};
+    return { evaluationUnit: EVALUATION_UNIT.PROBABILITY, baseLifeExpectancy: lifeExpectancy, survivalProbs: survivalProb.slice(1), ages: ages, costPerCause: costPerCause};
 }
 

@@ -66,13 +66,25 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   waitingMessage(){
-    return (<p>Input your age to get started</p>)
+    switch(this.props.store.uIStore.visualization){
+      case Visualization.CONDITIONS: {
+        return <p>Answer more question to show something here</p>;
+      }
+      case Visualization.BAR_GRAPH: 
+      case Visualization.SURVIVAL_GRAPH:
+      case Visualization.SUMMARY_VIEW: {
+        return <p>Input your age to get started</p>
+      }
+      default: {
+        return <p>Nothing to show</p>;
+      }
+    }
   }
 
   isResultsComputed(){
     switch (this.props.store.uIStore.visualization) {
       case Visualization.CONDITIONS: {
-        return this.state.conditionsRes !== null && Object.keys(this.state.conditionsRes).length > 0;
+        return this.state.conditionsRes !== null && Object.keys(this.state.conditionsRes.averageProportion).length > 0;
       }
       case Visualization.BAR_GRAPH: 
       case Visualization.SURVIVAL_GRAPH:

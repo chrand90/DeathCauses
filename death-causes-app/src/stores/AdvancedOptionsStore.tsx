@@ -15,14 +15,14 @@ export interface ValidityDic {
 }
 
 export enum EVALUATION_UNIT {
-  PROBAIBILITY = "Probability",
+  PROBABILITY = "Probability",
   YEARS_LOST = "Years lost"
 }
 
 const DEFAULT_VALUES = {
   AGE_TO: "120",
   THREADING: Threading.MULTI,
-  EVALUATION_UNIT: EVALUATION_UNIT.PROBAIBILITY
+  EVALUATION_UNIT: EVALUATION_UNIT.PROBABILITY
 }
 
 //todo: Why do we have ageFrom, ageTo etc that is used for rendering the advanced options menu in a store? 
@@ -46,12 +46,12 @@ export default class AdvancedOptionsStore {
     this.ageTo = DEFAULT_VALUES.AGE_TO;
     this.threading = DEFAULT_VALUES.THREADING;
     this.baseAgeFrom = null;
-    this.evaluationUnit = EVALUATION_UNIT.PROBAIBILITY
-    this.submittedEvaluationUnit = EVALUATION_UNIT.PROBAIBILITY
+    this.evaluationUnit = EVALUATION_UNIT.PROBABILITY
+    this.submittedEvaluationUnit = EVALUATION_UNIT.PROBABILITY
     this.submittedAgeFrom = 0;
     this.submittedAgeTo = parseInt(DEFAULT_VALUES.AGE_TO);
     this.submittedThreading = this.threading;
-    this.submittedAgeFromSet = true;
+    this.submittedAgeFromSet = false;
     this.computationStateStore = computationStateStore;
     makeObservable(this, {
       ageFrom: observable,
@@ -189,11 +189,10 @@ export default class AdvancedOptionsStore {
 
   optionsEqualToDefault() {
     return (
-      this.ageFrom === this.baseAgeFrom &&
       this.ageTo === DEFAULT_VALUES.AGE_TO &&
       this.threading === DEFAULT_VALUES.THREADING &&
       this.ageFromSet === false &&
-      this.evaluationUnit === DEFAULT_VALUES.EVALUATION_UNIT
+      this.evaluationUnit === DEFAULT_VALUES.EVALUATION_UNIT 
     );
   }
 }

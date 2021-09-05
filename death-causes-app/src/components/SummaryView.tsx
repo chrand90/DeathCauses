@@ -13,6 +13,8 @@ import { getLollipopChartFormatting } from "./LollipopChartFormatters";
 import RangeSliders, { RangeSliderInput } from "./RangerSlidersSummaryView";
 import SimpleDeathCauseBarChartSettings from "./BarChart/SimpleDeathCauseBarChartSettings"
 import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
+import BarChartSettings from "./BarChart/BarChartSettings";
+import { isFunctionTypeNode } from "typescript";
 
 
 export interface SummaryViewProps {
@@ -115,16 +117,55 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
         )
     }
 
+    isContributionsEmpty(barChartSettings: BarChartSettings){
+        if(!barChartSettings.getUseLifeExpectancy()){
+            return false;
+        }
+        if("any cause" in this.props.riskFactorContributions.costPerCause){
+            return Object.values(this.props.riskFactorContributions.costPerCause["any cause"].innerCauses).reduce((a,b)=>a+b,0)<1e-12;
+        }
+        return false;
+    }
+
+    getRiskFactorContributionExplanation(barChartSettings: BarChartSettings, emptyContributions: boolean){
+        if(barChartSettings.getUseLifeExpectancy()){
+            if(emptyContributions){
+                return (
+                    <p>
+                        <span style={{color:"grey"}}>
+                            Without answering more questions, no potential death of yours can be assigned to a known risk factor.
+                        </span>
+                    </p>
+                )
+            }
+            return (
+                <p>
+                    The bar shows how much longer you would live if you didn't die of known risk factors. Each section represents a risk factor.
+                </p>
+            )
+        }
+        else{
+            return (
+                <p>
+                    The bar represents your total probability of dying. The sections show how much each factor contributes to your total probability of dying.
+                </p>
+            )  
+        }
+    }
+
     renderRiskFactorContributions() {
         let barChartSettings = new SimpleDeathCauseBarChartSettings(this.props.riskFactorContributions.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST,
             this.props.store.loadedDataStore.descriptions)
+        const emptyContributions=this.isContributionsEmpty(barChartSettings);
         return (                
             <Col className="mx-auto my-1" style={{ width: this.colwidth }}>
                 <Card className="bg-light ">
                     <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
                     <CardBody>
-                        <p>The bar below represents your total probability of dying. Each section shows how much each factor contribute to your total probability of dying.</p>
-                        <BarChartWrapper database={this.props.riskFactorContributions.costPerCause} barChartSettings={barChartSettings}/> 
+                        {this.getRiskFactorContributionExplanation(barChartSettings, emptyContributions)}
+                        {emptyContributions ? null :
+                            <BarChartWrapper database={this.props.riskFactorContributions.costPerCause} barChartSettings={barChartSettings}/> 
+                        }
                     </CardBody>
                 </Card>
             </Col>

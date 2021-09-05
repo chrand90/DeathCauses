@@ -4,6 +4,7 @@ import {observer} from 'mobx-react';
 import React, {useEffect, useRef} from 'react';
 import {DataPoint} from '../models/updateFormNodes/FinalSummary/SummaryView';
 import {useStore} from '../stores/rootStore';
+import { CLICKED_COLOR, DEATHCAUSES_DARK } from './Helpers';
 import {LollipopChartFormatting} from './LollipopChartFormatters';
 
 export interface LollipopChartProps {
@@ -15,10 +16,10 @@ const LollipopChart = observer((props: LollipopChartProps) => {
   const store = useStore();
   const chartArea = useRef<any>(null);
   const margin = {top: 20, right: 20, bottom: 40, left: 120};
-  var width = 400 - margin.left - margin.right;
-  var height = 330 - margin.top - margin.bottom;
+  var width: number;
+  var height: number=320-margin.top-margin.bottom;
 
-  const colors = {barFill: '#69b3a2', barHighlight: '#9e1986'};
+  const colors = {barFill: DEATHCAUSES_DARK, barHighlight: CLICKED_COLOR};
   const data = props.data;
 
   useEffect(() => {
@@ -39,13 +40,13 @@ const LollipopChart = observer((props: LollipopChartProps) => {
   }, [store.uIStore.windowWidth]);
 
   const updateDivWidth = () => {
-    width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right;
+    width = chartArea.current.offsetWidth - margin.left - margin.right;
   };
 
   const onWindowWidthUpdate = () => {
     const svg = d3.select(chartArea.current).selectAll('*').remove();
     if (chartArea !== null && chartArea.current !== null) {
-      width = chartArea.current.offsetWidth * 0.9 - margin.left - margin.right;
+      width = chartArea.current.offsetWidth  - margin.left - margin.right;
     }
   };
 
@@ -286,15 +287,17 @@ const LollipopChart = observer((props: LollipopChartProps) => {
       .append('div')
       .attr('class', 'barplottip')
       .style('display', 'none');
-
+//chartArea.current.offsetWidth * 0.1)/2 +
     d3.selectAll('.myCircle')
       .data(data)
       .on('mouseenter', function (e: Event, d: DataPoint) {
+        const bbox=(this as any).getBBox();
         tip
           .html(props.formatting.getTooltipText(d.value, getDescription(d.name)))
           .style('display', 'block')
-          .style("left", (chartArea.current.offsetWidth * 0.1)/2 + margin.left + (+d3.select(this).attr("cx")) + "px")
-          .style("top", margin.top + (+d3.select(this).attr("cy")) - 2 + "px")
+          .style("left",  margin.left+(+d3.select(this).attr("cx")) + "px")
+          .style("top",  (margin.top+(+d3.select(this).attr("cy"))-16) + "px")
+          .style("transform", "translate(-50%,-100%)")
         d3.select(this).raise().style('fill', colors.barHighlight);
       })
       .on('mouseleave', function (e: Event, d: DataPoint) {
@@ -307,7 +310,7 @@ const LollipopChart = observer((props: LollipopChartProps) => {
     return store.loadedDataStore.descriptions.getDescription(causeName, length);
   };
 
-  return <div ref={chartArea} />;
+  return <div ref={chartArea} style={{position: "relative", width:"90%"}}/>
 });
 
 export default LollipopChart;

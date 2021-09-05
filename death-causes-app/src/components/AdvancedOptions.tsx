@@ -10,6 +10,7 @@ import Row from "react-bootstrap/Row";
 import { EVALUATION_UNIT, Threading } from "../stores/AdvancedOptionsStore";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
+import InternalRedirectButton from "./InternalRedirectButton";
 import "./AdvancedOptions.css";
 import {
   BACKGROUNDCOLOR_DISABLED,
@@ -106,7 +107,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col md={6}>
-            <Form.Label>Start computation at age</Form.Label>
+            <Form.Label>Start <InternalRedirectButton direct={"advancedOptions#computation-period"}> computation</InternalRedirectButton> at age</Form.Label>
           </Col>
           <Col md={6}>
             <InputGroup>
@@ -145,7 +146,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col>
-            <Form.Label>End computation at age</Form.Label>
+            <Form.Label>End <InternalRedirectButton direct={"advancedOptions#computation-period"}> computation</InternalRedirectButton> at age</Form.Label>
           </Col>
           <Col>
             <InputGroup>
@@ -227,7 +228,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col md={6}>
-            <Form.Label>Threading </Form.Label>
+            <Form.Label><InternalRedirectButton direct={"advancedOptions#threading"}> Threading</InternalRedirectButton> </Form.Label>
           </Col>
           <Col md={6}>
             <Form.Check
@@ -260,14 +261,14 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col>
-            <Form.Label>Evaluation method</Form.Label>
+            <Form.Label><InternalRedirectButton direct={"advancedOptions#evaluation-unit"}> Evaluation</InternalRedirectButton> method</Form.Label>
           </Col>
           <Col>
             <InputGroup>
               <div style={{ maxWidth: "100%" }}>
                 <Form.Control
                   as="select"
-                  defaultValue={EVALUATION_UNIT.PROBAIBILITY}
+                  defaultValue={EVALUATION_UNIT.PROBABILITY}
                   name={"test"}
                   value={value}
                   onChange={this.handleUpdateEvaluationUnit}
