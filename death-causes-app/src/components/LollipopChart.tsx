@@ -16,6 +16,7 @@ const LollipopChart = observer((props: LollipopChartProps) => {
   const store = useStore();
   const chartArea = useRef<any>(null);
   const margin = {top: 20, right: 20, bottom: 40, left: 120};
+  const circleRadius = 7
   var width: number;
   var height: number=320-margin.top-margin.bottom;
 
@@ -131,7 +132,7 @@ const LollipopChart = observer((props: LollipopChartProps) => {
       .attr('cy', function (d: any) {
         return y(d.name) as number;
       })
-      .attr('r', '7')
+      .attr('r', circleRadius)
       .style('fill', '#69b3a2')
       .attr('stroke', 'black');
 
@@ -259,7 +260,7 @@ const LollipopChart = observer((props: LollipopChartProps) => {
             .attr('cy', function (d: any) {
               return y(d.name) as number;
             })
-            .attr('r', 8)
+            .attr('r', circleRadius)
             .attr('fill', '#FFFFFF')
         );
       },
@@ -287,16 +288,15 @@ const LollipopChart = observer((props: LollipopChartProps) => {
       .append('div')
       .attr('class', 'barplottip')
       .style('display', 'none');
-//chartArea.current.offsetWidth * 0.1)/2 +
+
     d3.selectAll('.myCircle')
       .data(data)
       .on('mouseenter', function (e: Event, d: DataPoint) {
-        const bbox=(this as any).getBBox();
         tip
           .html(props.formatting.getTooltipText(d.value, getDescription(d.name)))
           .style('display', 'block')
-          .style("left",  margin.left+(+d3.select(this).attr("cx")) + "px")
-          .style("top",  (margin.top+(+d3.select(this).attr("cy"))-16) + "px")
+          .style("left", margin.left + (+d3.select(this).attr("cx")) + "px")
+          .style("top", margin.top + (+d3.select(this).attr("cy")) - circleRadius - 10 + "px") // -10 to account for the size of the tip. 
           .style("transform", "translate(-50%,-100%)")
         d3.select(this).raise().style('fill', colors.barHighlight);
       })
@@ -310,7 +310,7 @@ const LollipopChart = observer((props: LollipopChartProps) => {
     return store.loadedDataStore.descriptions.getDescription(causeName, length);
   };
 
-  return <div ref={chartArea} style={{position: "relative", width:"90%"}}/>
+  return <div ref={chartArea} style={{position: "relative", width:"90%", margin:"auto"}}/>
 });
 
 export default LollipopChart;
