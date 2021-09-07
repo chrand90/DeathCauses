@@ -76,7 +76,7 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         return <p>Input your age to get started</p>
       }
       default: {
-        return <p>Nothing to show</p>;
+        return <p>Input your age to get started</p>;
       }
     }
   }

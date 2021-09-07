@@ -24,19 +24,25 @@ const ChangeViewWithoutObserver = () => {
   const historySize = store.computationStore.allChanges.length;
 
   const getLifeExpectancyEffect = (index: number) => {
+    let valInYears: number;
     if(store.computationStore.lifeExpectancies.length<2){
-      return {
-        describ: "No changes yet",
-        sign:0
-      }
+      valInYears=store.computationStore.lifeExpectancies[index+0]
     }
-    const valInYears =
-      store.computationStore.lifeExpectancies[index+0] -
-      store.computationStore.lifeExpectancies[index+1];
+    else{
+      valInYears=
+        store.computationStore.lifeExpectancies[index+0] -
+        store.computationStore.lifeExpectancies[index+1];
+    }  
     const absDiff=Math.abs(valInYears)
     const sign=Math.sign(valInYears)
     const prefix = sign>0 ? "+":"-"
     const formatedAbsoluteValue= formatYears(absDiff)
+    if(store.computationStore.lifeExpectancies.length<2){
+      return {
+        describ: prefix+formatedAbsoluteValue,
+        sign: 0
+      }
+    }
     if(formatedAbsoluteValue!=="0"){
       return {
         describ: prefix+formatedAbsoluteValue,
