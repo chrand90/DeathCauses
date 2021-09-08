@@ -4,7 +4,7 @@ import RootStore from "../../stores/rootStore";
 import DeathCauseBarChartSettings from "./DeathCauseBarChartSettings";
 
 
-export class SimpleDeathCauseBarChartSettings extends DeathCauseBarChartSettings{
+export default class SimpleDeathCauseBarChartSettings extends DeathCauseBarChartSettings{
 
     constructor(useLifeExpectancy: boolean, descriptions: Descriptions){
         super(true, useLifeExpectancy, descriptions);

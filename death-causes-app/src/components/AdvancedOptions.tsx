@@ -7,9 +7,10 @@ import Collapse from "react-bootstrap/Collapse";
 import Form from "react-bootstrap/Form";
 import InputGroup from "react-bootstrap/InputGroup";
 import Row from "react-bootstrap/Row";
-import { Threading } from "../stores/AdvancedOptionsStore";
+import { EVALUATION_UNIT, Threading } from "../stores/AdvancedOptionsStore";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
+import InternalRedirectButton from "./InternalRedirectButton";
 import "./AdvancedOptions.css";
 import {
   BACKGROUNDCOLOR_DISABLED,
@@ -21,9 +22,6 @@ import {
 
 
 const ERROR_STYLE = { borderColor: ERROR_COLOR };
-const INPUT_NOT_WHOLE = "Input should be a whole number";
-
-
 interface AdvancedOptionsProps {
   store: RootStore
 }
@@ -34,7 +32,6 @@ enum CollapseStatus {
 }
 
 interface AdvancedOptionsStates {
-  open: boolean;
   collapseStatus: CollapseStatus;
 }
 
@@ -47,7 +44,6 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     super(props);
 
     this.state = {
-      open: false,
       collapseStatus: CollapseStatus.CLOSED,
     };
     this.handleAgeChange = this.handleAgeChange.bind(this);
@@ -55,15 +51,16 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     this.handleSubmit = this.handleSubmit.bind(this);
     this.handleRadioChange = this.handleRadioChange.bind(this);
     this.setToDefault = this.setToDefault.bind(this);
+    this.handleUpdateEvaluationUnit = this.handleUpdateEvaluationUnit.bind(this);
   }
 
   handleAgeChange(ev: React.ChangeEvent<HTMLInputElement>): void {
     const { name: factorname } = ev.currentTarget;
     const value = ev.currentTarget.value;
-    if(factorname==="ageFrom"){
+    if (factorname === "ageFrom") {
       this.props.store.advancedOptionsStore.setAgeFrom(value);
     }
-    else if(factorname==="ageTo"){
+    else if (factorname === "ageTo") {
       this.props.store.advancedOptionsStore.setAgeTo(value);
     }
   }
@@ -77,6 +74,11 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   handleAgeFromSetting(e: React.ChangeEvent<HTMLInputElement>): void {
     const checked = e.currentTarget.checked;
     this.props.store.advancedOptionsStore.setAgeFromSet(!checked)
+  }
+
+  handleUpdateEvaluationUnit(e: React.ChangeEvent<HTMLInputElement>) {
+    const value = e.currentTarget.value as EVALUATION_UNIT
+    this.props.store.advancedOptionsStore.setEvaluationUnit(value)
   }
 
   sameAsInputAgeFrom() {
@@ -94,7 +96,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
 
   ageFromRow() {
     let style: FormControlStyle = {};
-    if (this.props.store.advancedOptionsStore.validities["ageFrom"].status==="Error"){
+    if (this.props.store.advancedOptionsStore.validities["ageFrom"].status === "Error") {
       style["borderColor"] = ERROR_COLOR;
     }
     if (!this.props.store.advancedOptionsStore.ageFromSet) {
@@ -105,7 +107,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col md={6}>
-            <Form.Label>Start computation at age</Form.Label>
+            <Form.Label>Start <InternalRedirectButton direct={"advancedOptions#computation-period"}> computation</InternalRedirectButton> at age</Form.Label>
           </Col>
           <Col md={6}>
             <InputGroup>
@@ -124,11 +126,11 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 
   handleSubmit() {
-    if(this.props.store.advancedOptionsStore.submittable){
+    if (this.props.store.advancedOptionsStore.submittable) {
       this.props.store.advancedOptionsStore.submitOptions();
       this.props.store.computationStore.reset();
     }
-    if(Object.keys(this.props.store.computationStore.submittedFactorAnswers).length>0){
+    if (Object.keys(this.props.store.computationStore.submittedFactorAnswers).length > 0) {
       this.props.store.computationStore.compute();
     }
   }
@@ -138,13 +140,13 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 
   ageToRow() {
-    const style= this.props.store.advancedOptionsStore.validities["ageTo"].status==="Error" ? 
+    const style = this.props.store.advancedOptionsStore.validities["ageTo"].status === "Error" ?
       ERROR_STYLE : {};
     return (
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col>
-            <Form.Label>End computation at age</Form.Label>
+            <Form.Label>End <InternalRedirectButton direct={"advancedOptions#computation-period"}> computation</InternalRedirectButton> at age</Form.Label>
           </Col>
           <Col>
             <InputGroup>
@@ -226,7 +228,7 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
       <div style={{ marginLeft: "20px", marginRight: "20px" }}>
         <Form.Row>
           <Col md={6}>
-            <Form.Label>Threading </Form.Label>
+            <Form.Label><InternalRedirectButton direct={"advancedOptions#threading"}> Threading</InternalRedirectButton> </Form.Label>
           </Col>
           <Col md={6}>
             <Form.Check
@@ -253,6 +255,36 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
     );
   }
 
+  evaluationUnitRow() {
+    const value = this.props.store.advancedOptionsStore.evaluationUnit
+    return (
+      <div style={{ marginLeft: "20px", marginRight: "20px" }}>
+        <Form.Row>
+          <Col>
+            <Form.Label><InternalRedirectButton direct={"advancedOptions#evaluation-unit"}> Evaluation</InternalRedirectButton> method</Form.Label>
+          </Col>
+          <Col>
+            <InputGroup>
+              <div style={{ maxWidth: "100%" }}>
+                <Form.Control
+                  as="select"
+                  defaultValue={EVALUATION_UNIT.PROBABILITY}
+                  name={"test"}
+                  value={value}
+                  onChange={this.handleUpdateEvaluationUnit}
+                >
+                  {(Object.keys(EVALUATION_UNIT) as (keyof typeof EVALUATION_UNIT)[]).map(key => {
+                  return <option value = {EVALUATION_UNIT[key]}>{EVALUATION_UNIT[key]} </option> 
+                })}
+                </Form.Control>
+              </div>
+            </InputGroup>
+          </Col>
+        </Form.Row>
+      </div>
+    )
+  }
+
   render() {
     let errorMessage: string = "";
     Object.entries(this.props.store.advancedOptionsStore.validities).forEach(
@@ -267,15 +299,15 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
         style={{ paddingRight: "20px", paddingLeft: "40px", textAlign: "left" }}
       >
         <Button
-          onClick={() => this.setState({ open: !this.state.open })}
+          onClick={() => this.setState({ collapseStatus: this.state.collapseStatus === CollapseStatus.CLOSED ? CollapseStatus.OPEN : CollapseStatus.CLOSED })}
           variant="link"
           className="collapsebutton"
-          style={this.state.open ? {} : { backgroundColor: "white" }}
+          style={this.state.collapseStatus === CollapseStatus.OPEN ? {} : { backgroundColor: "white" }}
         >
-          {this.state.open ? "\u25BC" : "\u25B6"} Advanced Options
+          {this.state.collapseStatus === CollapseStatus.OPEN ? "\u25BC" : "\u25B6"} Advanced Options
         </Button>
         <Collapse
-          in={this.state.open}
+          in={this.state.collapseStatus === CollapseStatus.OPEN}
           onEntered={() => {
             this.setState({ collapseStatus: CollapseStatus.OPEN });
           }}
@@ -290,6 +322,8 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
             <hr></hr>
             {this.ageToRow()}
             <hr></hr>
+            {this.evaluationUnitRow()}
+            <hr></hr>
             {this.threadingRow()}
           </div>
         </Collapse>
@@ -298,5 +332,5 @@ class AdvancedOptionsMenuWithoutStore extends React.PureComponent<
   }
 }
 
-const AdvancedOptionsMenu= withStore(observer(AdvancedOptionsMenuWithoutStore)) 
+const AdvancedOptionsMenu = withStore(observer(AdvancedOptionsMenuWithoutStore))
 export default AdvancedOptionsMenu;

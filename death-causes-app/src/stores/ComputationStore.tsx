@@ -1,14 +1,11 @@
-import { action, makeObservable, computed, observable, toJS } from "mobx";
-import { SurvivalCurveData } from "../components/Calculations/SurvivalCurveData";
-import { DataRow } from "../components/PlottingData";
+import { action, computed, makeObservable, observable, toJS } from "mobx";
 import { FactorAnswers } from "../models/Factors";
 import { FactorAnswerChanges, UNKNOWNLABEL } from "../models/updateFormNodes/FactorAnswersToUpdateForm";
 import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
+import { DeathCauseContributionsAndChanges } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import UpdateFormController from "../models/updateFormNodes/UpdateFormController";
 import Worker from "../models/worker";
-import AdvancedOptionsStore, { Threading } from "./AdvancedOptionsStore";
+import AdvancedOptionsStore, { EVALUATION_UNIT, Threading } from "./AdvancedOptionsStore";
 import ComputationStateStore, {
   ComputationState
 } from "./ComputationStateStore";
@@ -26,11 +23,9 @@ export default class ComputationStore {
   submittedFactorAnswers: FactorAnswers;
   loadedDataStore: LoadedDataStore;
   advancedOptionsStore: AdvancedOptionsStore;
-  riskFactorContributions: DataRow[] | LifeExpectancyContributions;
-  survivalCurveData: SurvivalCurveData[];
+  riskFactorContributions: DeathCauseContributionsAndChanges;
   singeThreadComputeController: UpdateFormController | null;
   computationStateStore: ComputationStateStore;
-  summaryView: SummaryViewData | null;
   allChanges: FactorAnswerChanges[];
   lifeExpectancies: number[];
   conditionRes: ConditionsRes;
@@ -42,9 +37,7 @@ export default class ComputationStore {
   ) {
     this.computationStateStore = computationStateStore;
     this.submittedFactorAnswers = {};
-    this.riskFactorContributions = [];
-    this.survivalCurveData = [];
-    this.summaryView = null;
+    this.riskFactorContributions = {ages: [], survivalProbs: [], baseLifeExpectancy: 0, evaluationUnit: EVALUATION_UNIT.PROBABILITY, costPerCause: {}, changes: {}};
     this.singeThreadComputeController = null;
     this.allChanges=[]
     this.lifeExpectancies=[]
@@ -114,37 +107,29 @@ export default class ComputationStore {
     }
     this.computationStateStore.setComputationState(ComputationState.RUNNING);
     
-    if (this.advancedOptionsStore.threading === Threading.SINGLE) {
+    if (this.advancedOptionsStore.submittedThreading === Threading.SINGLE) {
       this.singeThreadComputeController?.compute(this.submittedFactorAnswers);
-      const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities();
+      const innerprobabilities = this.singeThreadComputeController?.computeInnerProbabilities(this.advancedOptionsStore.submittedEvaluationUnit);
+      // const factorAnswerChange = this.singeThreadComputeController?.computeFactorAnswerChanges()
+      console.log("computation summaries:")
+      console.log(innerprobabilities);
       if (innerprobabilities !== undefined) {
         //will be undefined if data hasnt loaded yet.
         this.riskFactorContributions = innerprobabilities;
-      }
-      const survivalCurveData = this.singeThreadComputeController?.computeSurvivalData();
-      if (survivalCurveData !== undefined) {
-        this.survivalCurveData = survivalCurveData;
-      }
-      const summaryViewData = this.singeThreadComputeController?.computeSummaryViewData();
-      if (summaryViewData !== undefined) {
-        this.summaryView = summaryViewData;
+        this.pushChanges(innerprobabilities)
+        this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }
       const conditionsRes = this.singeThreadComputeController?.computeConditions();
       if(conditionsRes !== undefined){
         this.conditionRes = conditionsRes;
       }
-      this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
     } else {
       worker.processData(
-        toJS(this.submittedFactorAnswers)
-      ).then( action("INserting results", ({ survivalData, innerCauses, summaryView, conditionsRes}) => {
-        this.survivalCurveData = survivalData;
+        toJS(this.submittedFactorAnswers), toJS(this.advancedOptionsStore.submittedEvaluationUnit)
+      ).then( action("INserting results", ({ innerCauses, conditionsRes}) => { 
         this.riskFactorContributions = innerCauses;
-        this.summaryView = summaryView
         this.conditionRes = conditionsRes
-        console.log("conditionsRes in computationWorker")
-        console.log(conditionsRes) 
-        this.pushChanges(summaryView.changes, summaryView.lifeExpentancyData.lifeExpentancy)
+        this.pushChanges(innerCauses)
         this.computationStateStore.setComputationState(ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS);
       }));
     }
@@ -159,6 +144,7 @@ export default class ComputationStore {
         this.loadedDataStore.deathCauses,
         this.loadedDataStore.deathCauseCategories,
         this.loadedDataStore.descriptions,
+        this.advancedOptionsStore.submittedEvaluationUnit,
         this.loadedDataStore.conditions,
         this.loadedDataStore.optimizabilities
       );
@@ -170,14 +156,15 @@ export default class ComputationStore {
         this.loadedDataStore.rawDescriptions,
         this.loadedDataStore.rawConditions,
         this.advancedOptionsStore.submittedAgeFrom,
-        this.advancedOptionsStore.submittedAgeTo
+        this.advancedOptionsStore.submittedAgeTo,
+        this.advancedOptionsStore.submittedEvaluationUnit
       );
     }
   }
 
-  pushChanges(newChanges: FactorAnswerChanges, newLifeExpectancy: number){
-    this.allChanges.unshift(newChanges);
-    this.lifeExpectancies.unshift(newLifeExpectancy);
+  pushChanges(computationResults: DeathCauseContributionsAndChanges){
+    this.allChanges.unshift(computationResults.changes);
+    this.lifeExpectancies.unshift(computationResults.baseLifeExpectancy);
   }
 
   attachLoadedData() {

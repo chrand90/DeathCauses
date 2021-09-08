@@ -32,7 +32,6 @@ export default class BarChartStore {
   }
 
   expandCategory(category: string){
-		console.log("expands "+ category)
 		let newCats=[...this.collectedCategories]
 		if(newCats.includes(category)){
 			newCats=newCats.filter(d => d!==category)
@@ -46,7 +45,6 @@ export default class BarChartStore {
 	}
 
   collectParentCategory(category: string){
-	  console.log("collects", category)
 		const parent=this.loadedDataStore.rdat.getParentCategory(category)
 		let noLongerNeedsToBeCollapsed: string[];
 		let newCats:string[]=[...this.collectedCategories]

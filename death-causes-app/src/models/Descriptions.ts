@@ -42,8 +42,8 @@ export default class Descriptions {
         this.colors[MultifactorGainType.UNKNOWN]="#fcfcfa";
         this.descriptions[MultifactorGainType.KNOWN]=["Multiple known factors bonus", "Known factors", "Knowns"]
         this.descriptions[MultifactorGainType.UNKNOWN]=["Multiple factors bonus", "Unknown factors", "Unknowns"]
-        this.descriptions["Unspecified"]=["Unspecified"]
-        this.colors["Unspecified"]="#bdbdbd"
+        this.descriptions["Pre-existing"]=["Pre-existing"]
+        this.colors["Pre-existing"]="#bdbdbd"
     }
 
     getColor(nodeName: string){

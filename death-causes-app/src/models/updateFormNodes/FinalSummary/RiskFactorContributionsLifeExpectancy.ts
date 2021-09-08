@@ -1,11 +1,25 @@
 import { BestValues, mergeBestValues } from "../../../components/Calculations/ConsensusBestValue";
 import { DataRow } from "../../../components/PlottingData";
+import { EVALUATION_UNIT } from "../../../stores/AdvancedOptionsStore";
 import { ProbabilityKeyValue } from "../../ProbabilityKeyValue";
 import RelationLinks, { NodeType } from "../../RelationLinks";
 import CauseNodeResult from "../CauseNodeResult"
-import { calculateLifeExpectancy, computeProbOfNotDying, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
+import { FactorAnswerChanges } from "../FactorAnswersToUpdateForm";
+import { calculateLifeExpectancy, getAgeArray, probOfStillBeingAlive } from "./CommonSummarizerFunctions";
 
-export interface LifeExpectancyContributions {
+export interface DeathCauseContributions {
+    evaluationUnit: EVALUATION_UNIT,
+    baseLifeExpectancy: number,
+    survivalProbs: number[],
+    ages: number[],
+    costPerCause: InnerCause
+}
+
+export interface DeathCauseContributionsAndChanges extends DeathCauseContributions {
+    changes: FactorAnswerChanges
+}
+
+export interface InnerCause {
     [key: string]: DataRow
 }
 
@@ -18,13 +32,14 @@ export enum MultifactorGainType {
 export default function riskFactorContributionsLifeExpectancy(
     causeNodeResults: CauseNodeResult[], 
     ageFrom:number,
-    rdat: RelationLinks): LifeExpectancyContributions {
+    rdat: RelationLinks): DeathCauseContributions {
 
     const survivalProb=probOfStillBeingAlive(causeNodeResults);
     const baseLifeExpectancy= calculateLifeExpectancy(survivalProb, ageFrom);
     const nameToIndex=makeCauseNodeResultDictionary(causeNodeResults);
+    const ages = getAgeArray(ageFrom, ageFrom + survivalProb.length - 2)
 
-    let res= Object.fromEntries(
+    let costPerCause= Object.fromEntries(
         rdat.sortedNodes[NodeType.CAUSE]
             .concat(rdat.sortedNodes[NodeType.CAUSE_CATEGORY])
             .map(causeName => {
@@ -43,14 +58,15 @@ export default function riskFactorContributionsLifeExpectancy(
             })
         )
     const indices= Object.values(nameToIndex)
-    res["any cause"]=makeDataRow(
+    costPerCause["any cause"]=makeDataRow(
         causeNodeResults,
         ageFrom,
         indices,
         "any cause",
         baseLifeExpectancy
-    )
-    return res;
+    ) 
+
+    return {costPerCause: costPerCause, baseLifeExpectancy: baseLifeExpectancy, ages: ages, survivalProbs: survivalProb.slice(1), evaluationUnit: EVALUATION_UNIT.YEARS_LOST};
 }
 
 function listOflistsToSet(ll: string[][]):Set<string>{

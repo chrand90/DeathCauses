@@ -1,33 +1,28 @@
 import { autorun, IReactionDisposer } from "mobx";
 import { observer } from "mobx-react";
 import React from "react";
-import { Form, Tab, Tabs } from "react-bootstrap";
+import { Tab, Tabs } from "react-bootstrap";
+import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
+import { DeathCauseContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { EVALUATION_UNIT } from "../stores/AdvancedOptionsStore";
 import { ComputationState } from "../stores/ComputationStateStore";
 import RootStore, { withStore } from "../stores/rootStore";
 import { Visualization } from "../stores/UIStore";
 import AdvancedOptionsMenu from "./AdvancedOptions";
 import BarChartWrapper from "./BarChart/BarChartWrapper";
+import DeathCauseBarChartSettings from "./BarChart/DeathCauseBarChartSettings";
 import BarPlotWrapper from "./BarPlotWrapper";
 import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import { DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, hideAllToolTips } from "./Helpers";
-import { DataRow } from "./PlottingData";
-import RelationLinkVizWrapper from "./RelationLinkVizWrapper";
-import "./VizWindow.css";
-import SummaryView, { SummaryViewWithoutStore, SummaryViewProps } from "./SummaryView";
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView";
-import { LifeExpectancyContributions } from "../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { ConditionsRes } from "../models/updateFormNodes/FinalSummary/ConditionSummary";
 import ConditionsViz from "./ConditionsViz";
-import DeathCauseBarChartSettings from "./BarChart/DeathCauseBarChartSettings";
+import SummaryView from "./SummaryView";
+import "./VizWindow.css";
 
 interface VizWindowProps {
   store: RootStore;
 }
 
 interface VizWindowStates {
-  riskFactorContributions: DataRow[] | LifeExpectancyContributions;
-  survivalCurveData: SurvivalCurveData[];
-  summaryViewData: SummaryViewData | null;
+  riskFactorContributions: DeathCauseContributions;
   conditionsRes: ConditionsRes | null;
 }
 
@@ -38,8 +33,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     super(props);
     this.state = {
       riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-      survivalCurveData: this.props.store.computationStore.survivalCurveData,
-      summaryViewData: this.props.store.computationStore.summaryView,
       conditionsRes: this.props.store.computationStore.conditionRes
     }
   }
@@ -49,8 +42,6 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
       if(this.props.store.computationStateStore.computationState===ComputationState.ARTIFICIALLY_SIGNALLING_FINISHED_COMPUTATIONS){
         this.setState({
           riskFactorContributions: this.props.store.computationStore.riskFactorContributions,
-          survivalCurveData: this.props.store.computationStore.survivalCurveData,
-          summaryViewData: this.props.store.computationStore.summaryView,
           conditionsRes: this.props.store.computationStore.conditionRes
         }, () => {
           this.props.store.computationStateStore.setComputationState(ComputationState.READY);
@@ -75,20 +66,30 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
   }
 
   waitingMessage(){
-    return (<p>Input your age to get started</p>)
+    switch(this.props.store.uIStore.visualization){
+      case Visualization.CONDITIONS: {
+        return <p>Answer more question to show something here</p>;
+      }
+      case Visualization.BAR_GRAPH: 
+      case Visualization.SURVIVAL_GRAPH:
+      case Visualization.SUMMARY_VIEW: {
+        return <p>Input your age to get started</p>
+      }
+      default: {
+        return <p>Input your age to get started</p>;
+      }
+    }
   }
 
   isResultsComputed(){
     switch (this.props.store.uIStore.visualization) {
-      case Visualization.BAR_GRAPH: 
       case Visualization.CONDITIONS: {
-        return this.state.riskFactorContributions.length>0 || Object.keys(this.state.riskFactorContributions).length>0;
+        return this.state.conditionsRes !== null && Object.keys(this.state.conditionsRes.averageProportion).length > 0;
       }
+      case Visualization.BAR_GRAPH: 
+      case Visualization.SURVIVAL_GRAPH:
       case Visualization.SUMMARY_VIEW: {
-        return this.state.summaryViewData !== null
-      }
-      case Visualization.SURVIVAL_GRAPH: {
-        return true;
+        return Object.keys(this.state.riskFactorContributions.costPerCause).length > 0
       }
       default: {
         return false;
@@ -96,21 +97,26 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
     }
   }
 
+  getSurvivalCurveInputData(): SurvivalCurveData[] {
+    return this.state.riskFactorContributions.ages.map((e, i) => {return {age: e, prob: this.state.riskFactorContributions.survivalProbs[i]}})
+  }
+
   renderChosenGraph() {
     if(this.isResultsComputed()){
       switch (this.props.store.uIStore.visualization) {
         case Visualization.BAR_GRAPH: {
+          let usesLifeExpectancy = this.props.store.computationStore.riskFactorContributions.evaluationUnit === EVALUATION_UNIT.YEARS_LOST
           return (
           <BarChartWrapper 
-            database={this.state.riskFactorContributions}
-            barChartSettings={new DeathCauseBarChartSettings(false, true, this.props.store.loadedDataStore.descriptions)}
+            database={this.state.riskFactorContributions.costPerCause}
+            barChartSettings={new DeathCauseBarChartSettings(false, usesLifeExpectancy, this.props.store.loadedDataStore.descriptions)}
           />)
         }
         case Visualization.SUMMARY_VIEW: {
-          return <SummaryView data={this.state.summaryViewData}/>
+          return <SummaryView riskFactorContributions={this.state.riskFactorContributions}/>
         }
         case Visualization.SURVIVAL_GRAPH: {
-          return <BarPlotWrapper data={this.state.survivalCurveData} />
+          return <BarPlotWrapper data={this.getSurvivalCurveInputData()} />
         }
         case Visualization.CONDITIONS: {
           return <ConditionsViz conditionRes={this.state.conditionsRes ? this.state.conditionsRes : {
@@ -133,9 +139,9 @@ class VizWindowWithoutStore extends React.PureComponent<VizWindowProps, VizWindo
         onSelect={(k:any) => this.props.store.uIStore.setVisualization(k)}
         className="mb-3"
         >
-          {[Visualization.SURVIVAL_GRAPH,
+          {[Visualization.SUMMARY_VIEW,
+            Visualization.SURVIVAL_GRAPH,
             Visualization.BAR_GRAPH,
-            Visualization.SUMMARY_VIEW,
             Visualization.CONDITIONS
           ].map((d: string) => {
             return (

@@ -42,14 +42,12 @@ const Treemap = (props: PieChartProps) => {
             .padAngle(0.005)
             .sort(null)
 
-        console.log(data)
 
         const root = d3.hierarchy({ children: data })
             .sum(function (d: any) { return d.value })
             .sort(function(a: any,b: any) {
                 return b.value - a.value;
             })
-        console.log(root.descendants())
 
         d3.treemap()
             .size([width, height])

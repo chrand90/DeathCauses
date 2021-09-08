@@ -1,11 +1,10 @@
 import * as d3 from "d3";
-import React, { useEffect, useRef, useState } from "react";
-import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
-import d3Tip from "d3-tip";
-import "./BarPlotWrapper.css";
-import { useStore } from "../stores/rootStore";
 import { observer } from "mobx-react";
-import { CLICKED_COLOR, DEATHCAUSES_COLOR, DEATHCAUSES_DARK } from "./Helpers";
+import React, { useEffect, useRef } from "react";
+import { useStore } from "../stores/rootStore";
+import "./BarPlotWrapper.css";
+import { SurvivalCurveData } from "./Calculations/SurvivalCurveData";
+import { CLICKED_COLOR, DEATHCAUSES_DARK } from "./Helpers";
 
 interface BarPlotWrapperProps {
   data: SurvivalCurveData[];
@@ -20,8 +19,6 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
 
   const colors = { barFill: DEATHCAUSES_DARK, barHighlight: CLICKED_COLOR };
   const formatter = d3.format(".3p")
-  // const [chart, setChart] = useState<BarPlot | null>(null);
-  // const { width } = useWindowSize();
 
   useEffect(() => {
     if (props.data && chartArea.current) {
@@ -181,7 +178,6 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
       .attr("height", function (d: any) {
         return height - y(d.prob);
       });
-    // .attr("fill", "#9e1986")
 
     setMouseOverTips();
   };
@@ -216,7 +212,8 @@ const BarPlotWrapper = observer((props: BarPlotWrapperProps) => {
             )
           .style("display","block")
           .style("left", (bbox.x+margin.left+bbox.width/2).toString() + "px")
-          .style("top", (bbox.y).toString() + "px")
+          .style("top", (bbox.y-4).toString() + "px")
+          .style("transform", "translate(-50%,0%)")
         d3.select(this).raise().style("fill", colors.barHighlight);
       })
       .on("mouseleave", function (e: Event, d: SurvivalCurveData) {

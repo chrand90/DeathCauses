@@ -1,13 +1,14 @@
 import { observer } from "mobx-react"
-import React from "react"
-import { useRef } from "react"
-import { useEffect, useState } from "react"
-import { FormGroup } from "reactstrap"
-import { SummaryViewData } from "../models/updateFormNodes/FinalSummary/SummaryView"
+import React, { useEffect, useRef, useState } from "react"
 import RootStore, { withStore } from "../stores/rootStore"
 
+
+export interface RangeSliderInput {
+    ages: number[],
+    survivalProbs: number[]
+}
 interface RangeSlidersProps {
-    summaryViewData: null | SummaryViewData
+    data: RangeSliderInput
     store: RootStore
 }
 
@@ -17,12 +18,12 @@ enum SliderAnchor {
 }
 
 const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
-    const ages = props.summaryViewData!.lifeExpentancyData.ages
-    const survivalProbs = props.summaryViewData!.lifeExpentancyData.probabilities
+    const ages = props.data.ages
+    const survivalProbs = props.data.survivalProbs
 
     const [sliderAge, setSliderAge] = useState<number>(0)
     const [sliderProb, setSliderProb] = useState<number>(50)
-    const ageMax = props.store.advancedOptionsStore.ageTo;
+    const ageMax = props.store.advancedOptionsStore.submittedAgeTo;
     const sliderInCenter = useRef<SliderAnchor>(SliderAnchor.PROB);
 
     useEffect(() => {
@@ -39,7 +40,6 @@ const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
         sliderInCenter.current=SliderAnchor.AGE
         setSliderAge(ageValue)
         setSliderProb(survivalProbs[ages.findIndex(element => element === ageValue)] * 100)
-        // setSliderProb(Math.round(props.survivalProbs[props.ages.findIndex(element => element === ageValue)] * 1000) / 10)
     }
 
     const updateProbSlider = (value: number) => {
@@ -63,7 +63,6 @@ const RangeSlidersWithoutStore = (props: RangeSlidersProps) => {
             <span>There is a </span>
             <label htmlFor="id2"><span style={{ fontWeight: 700 }}>{sliderProb.toFixed(1)}%</span> probability</label>  <br />
             <input type="range" value={sliderProb} min="1" max="100" step="1" onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateProbSlider(+event.target.value)} id="id2" /> 
-            {/* <input className="col-1" type="number" value={sliderProb} onChange={(event: any) => updateProbSlider(+event.target.value)}></input> */}
             <br />
             <label htmlFor="id1">that you will live to be at least <span style={{ fontWeight: 700 }}>{sliderAge}</span> years</label> <br />
             <input type="range" value={sliderAge} min={ages[0]} max={ageMax} step="1" onChange={(event: React.ChangeEvent<HTMLInputElement>) => updateAgeSlider(+event.target.value)} id="id1" />

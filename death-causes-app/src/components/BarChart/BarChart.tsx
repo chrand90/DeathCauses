@@ -2,26 +2,21 @@ import * as d3 from "d3";
 import { ScaleBand, ScaleLinear } from "d3";
 import d3Tip from "d3-tip";
 import Descriptions from "../../models/Descriptions";
-import Optimizabilities, { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
-import {
-  CauseGrouping,
-  CauseToParentMapping,
-  ParentToCausesMapping
-} from "../../models/RelationLinks";
-import { LifeExpectancyContributions } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { ConditionVizFlavor } from "../../stores/UIStore";
-import "./BarChart.css";
-import make_squares, { SquareSection } from "./ComputationEngine";
-import { ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "../Helpers";
+import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
+import { CauseGrouping } from "../../models/RelationLinks";
+import { InnerCause } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { ALTERNATING_COLORS, DEATHCAUSES_DARK, DEATHCAUSES_LIGHT, formatYears, LINK_COLOR } from "../Helpers";
 import { DataRow, DataSet } from "../PlottingData";
+import "./BarChart.css";
 import BarChartSettings from "./BarChartSettings";
+import { SquareSection } from "./ComputationEngine";
 
 const MARGIN = { TOP: 2, BOTTOM: 2, LEFT: 10, RIGHT: 10 };
 const WIDTH = 1200;
 const ALTERNATING_COLORS_BARCHART=[ALTERNATING_COLORS[1], DEATHCAUSES_LIGHT]
 let DESIGN = "LONG";
 const BARHEIGHT = 50;
-const XBARHEIGHT = 80;
+const XBARHEIGHT = 80; 
 const PADDING = 0.3;
 const TEXT_COLUMN_SIZE = 100;
 const TEXT_GRAY = "#666666";
@@ -159,7 +154,7 @@ export default class BarChart {
 
   constructor(
     element: HTMLElement | null,
-    database: DataSet | LifeExpectancyContributions,
+    database: DataSet | InnerCause,
     descriptions: Descriptions,
     diseaseToWidth: string | null,
     setDiseaseToWidth: (newDiseaseToWidth: string | null) => void,
@@ -454,7 +449,7 @@ export default class BarChart {
       .style("fill", NOT_CLICKABLE_GRAY);
   }
 
-  make(dataset: DataSet | LifeExpectancyContributions, diseaseToWidth: string | null, optimizabilities: KnowledgeableOptimizabilities) {
+  make(dataset: DataSet | InnerCause, diseaseToWidth: string | null, optimizabilities: KnowledgeableOptimizabilities) {
     const vis = this;
 
     const {
@@ -591,7 +586,6 @@ export default class BarChart {
 
 
     vis.svg.on("click", (e: Event) => {
-      console.log("closing on outside click")
       e.stopPropagation();
       vis.clickedSquareSection = null
       vis.clicktip.style("display","none");
@@ -826,7 +820,6 @@ export default class BarChart {
       .lower();
   }
 
-
   prepareStepBeforeExpandTransition(preSquares: SquareSection[], preTotals: DataRow[], durationPerTransition: number){
     return (designConstants: DesignConstants, callback: any) => {
       const newMaxX = this.transitionXAxis(
@@ -887,7 +880,7 @@ export default class BarChart {
   }
 
   collapseCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -1136,7 +1129,7 @@ export default class BarChart {
   }
 
   expandCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     oldCollectedGroups: CauseGrouping,
     removed: string[],
@@ -1283,7 +1276,7 @@ export default class BarChart {
   }
 
   async changeCats(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     newCollectedGroups: CauseGrouping,
     optimizabilities: KnowledgeableOptimizabilities,
@@ -1308,7 +1301,7 @@ export default class BarChart {
         duration
       );
     } else {
-      this.expandCats(
+      this.expandCats( 
         dataset,
         diseaseToWidth,
         oldCollectedGroups,
@@ -1319,6 +1312,51 @@ export default class BarChart {
       );
     }
   }
+
+  // computeRankAndSquares(
+  //   data: DataRow[] | InnerCause,
+  //   diseaseToWidth: string | null
+  // ): {
+  //   dataSortedTotal: DataRow[];
+  //   dataSquares: SquareSection[];
+  //   dataIds: number[];
+  // } {
+  //   let totalProbs: DataRow[];
+  //   let dataSquares: SquareSection[];
+  //   if(this.useLifeExpectancy){
+  //     let dataset= Object.entries(data as InnerCause).filter(
+  //       ([causeOrCategoryName, dataRow]) => {
+  //         return causeOrCategoryName in this.grouping.parentToCauses
+  //       }
+  //     ).map(  ([causeOrCategoryName, dataRow]) => { 
+  //       return dataRow;
+  //     }); 
+  //     ({ allSquares: dataSquares, totalProbs } = make_squares(
+  //       dataset,
+  //       diseaseToWidth,
+  //       undefined,
+  //       this.descriptions,
+  //       this.useLifeExpectancy
+  //     ));
+  //   }
+  //   else{
+  //     let dataset= Object.entries(data as InnerCause).map(  ([causeOrCategoryName, dataRow]) => { 
+  //       return dataRow;
+  //     }); 
+  //     ({ allSquares: dataSquares, totalProbs } = make_squares(
+  //       dataset,
+  //       diseaseToWidth,
+  //       this.grouping,
+  //       this.descriptions,
+  //       this.useLifeExpectancy
+  //     ));
+  //   }
+  //   const dataSortedTotal = copyOfSortedDataset(totalProbs, "totalProb");
+  //   const dataIds = dataSortedTotal.map((v: any, index: number) => {
+  //     return index;
+  //   });
+  //   return { dataSortedTotal, dataSquares, dataIds };
+  // }
 
   updatePercentagesXaxis(dataTotals: DataRow[], durationPerTransition: number){
     this.svg
@@ -1344,7 +1382,7 @@ export default class BarChart {
   }
 
   async update(
-    dataset: DataSet | LifeExpectancyContributions,
+    dataset: DataSet | InnerCause,
     diseaseToWidth: string | null,
     optimizabilities: KnowledgeableOptimizabilities,
     instantDiseaseToWidthColoring: boolean = false,

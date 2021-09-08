@@ -1,13 +1,12 @@
-import { SurvivalCurveData } from "../../components/Calculations/SurvivalCurveData";
 import Deathcause, { Condition, ConditionJson, RawDeathCauseJson, RiskFactorGroupsContainer } from "../../components/database/Deathcause";
-import { DataRow } from "../../components/PlottingData";
+import { EVALUATION_UNIT } from "../../stores/AdvancedOptionsStore";
 import Descriptions, { DescriptionsJson } from "../Descriptions";
 import { FactorAnswers } from "../Factors";
 import Optimizabilities from "../Optimizabilities";
 import RelationLinks, { RelationLinkJson } from "../RelationLinks";
+import { FactorAnswerChanges } from "../updateFormNodes/FactorAnswersToUpdateForm";
 import { ConditionsRes } from "../updateFormNodes/FinalSummary/ConditionSummary";
-import { LifeExpectancyContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import { SummaryViewData } from "../updateFormNodes/FinalSummary/SummaryView";
+import { DeathCauseContributions } from "../updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import UpdateFormController from "../updateFormNodes/UpdateFormController";
 
 class computations {
@@ -17,7 +16,7 @@ class computations {
     this.computer = null;
   }
 
-  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson) {
+  initialize(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, ageFrom: number | null, ageTo: number, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson, evaluationUnit: EVALUATION_UNIT) {
     const rlinks = new RelationLinks(json);
     const deathcauses: Deathcause[]=[];
     Object.entries(rawData).forEach(([key, deathcause]) => {
@@ -42,27 +41,28 @@ class computations {
       deathcauses,
       deathCauseCategories,
       descriptions,
-      conditions,
+      evaluationUnit,
+      conditions, 
       optimizabilities
     );
   }
 
-  processData(data: FactorAnswers) {
+  processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT) {
     if(this.computer===null){
-      return {survivalData: [], innerCauses: [], summaryView: null, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
+      return {innerCauses: {evaluationUnit: EVALUATION_UNIT.PROBABILITY, survivalProbs: [],ages : [], costPerCause: {}, baseLifeExpectancy: 0 }, changes: {}, conditionsRes:{averageProportion: {}, probOfHavingWhileDying: {}}};
     }
     else{
-      return this.computer.computeAll(data);
+      return this.computer.computeAll(data, evaluationUnit);
     }
   }
 }
 
 let c = new computations();
 
-export function processData(data: FactorAnswers):{survivalData: SurvivalCurveData[], innerCauses: DataRow[] | LifeExpectancyContributions, summaryView: SummaryViewData | null, conditionsRes: ConditionsRes} {
-  return c.processData(data);
+export function processData(data: FactorAnswers, evaluationUnit: EVALUATION_UNIT): {innerCauses: DeathCauseContributions, changes: FactorAnswerChanges, conditionsRes: ConditionsRes} {
+  return c.processData(data, evaluationUnit);
 }
 
-export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson, ageFrom: number | null, ageTo: number) {
-  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo, rawDescriptions, rawConditions);
+export function initializeObject(json: RelationLinkJson, rawData: RawDeathCauseJson, rawCategoryData: RawDeathCauseJson, rawDescriptions: DescriptionsJson, rawConditions: ConditionJson, ageFrom: number | null, ageTo: number, evaluationUnit: EVALUATION_UNIT) {
+  c.initialize(json, rawData, rawCategoryData, ageFrom, ageTo, rawDescriptions, rawConditions, evaluationUnit);
 }

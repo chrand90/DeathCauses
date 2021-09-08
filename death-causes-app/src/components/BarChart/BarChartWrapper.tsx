@@ -1,13 +1,11 @@
 import { observer } from 'mobx-react';
 import React, { useEffect, useRef, useState } from 'react';
+import { useHistory } from 'react-router';
+import { KnowledgeableOptimizabilities } from '../../models/Optimizabilities';
+import { InnerCause } from '../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
+import { EVALUATION_UNIT } from '../../stores/AdvancedOptionsStore';
 import { useStore } from '../../stores/rootStore';
 import BarChart from './BarChart';
-import { DataSet } from '../PlottingData';
-import "./BarChartWrapper.css";
-import { useHistory } from 'react-router';
-import { LifeExpectancyContributions } from '../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
-import { KnowledgeableOptimizabilities } from '../../models/Optimizabilities';
-import { Visualization } from '../../stores/UIStore';
 import BarChartSettings from './BarChartSettings';
 import "./BarChartWrapper.css";
 
@@ -17,7 +15,7 @@ enum LatestChange {
 }
 
 interface BarChartWrapperProps {
-	database: DataSet | LifeExpectancyContributions;
+	database: InnerCause;
 	barChartSettings: BarChartSettings;
 }
 
@@ -68,7 +66,7 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 	const createNewChart = function () {
 		setChart(new BarChart(
 			chartArea.current, 
-			database, 
+			database,
 			store.loadedDataStore.descriptions, 
 			props.barChartSettings.getElementToWidth(store),
 			props.barChartSettings.setElementToWidth(store),
@@ -97,10 +95,10 @@ const BarChartWrapper = observer((props: BarChartWrapperProps) => { //class Char
 			chart.clear();
 			createNewChart();
 		}
-	}, [store.uIStore.windowWidth, store.uIStore.conditionVizFlavor])
+	}, [store.uIStore.windowWidth, store.computationStore.riskFactorContributions.evaluationUnit, store.uIStore.conditionVizFlavor])
 
 	useEffect(() => {
-		if (chart) {
+		if (chart && chart.useLifeExpectancy === (store.computationStore.riskFactorContributions.evaluationUnit as EVALUATION_UNIT === EVALUATION_UNIT.YEARS_LOST ) ) {
 			chart.update(database, props.barChartSettings.getElementToWidth(store), newOptims());
 		}
 	}, [database]);

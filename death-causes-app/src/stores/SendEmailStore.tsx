@@ -68,7 +68,6 @@ export default class SendEmailStore {
     emailjs.send('service_fd5bzll', 'template_vxyul09', sendObject)
     .then((result) => {
         this.sendStatus=SendStatus.SUCCESS
-        console.log(result.text);
     }, (error) => {
         this.sendStatus=SendStatus.ERROR
         console.error(error.text);

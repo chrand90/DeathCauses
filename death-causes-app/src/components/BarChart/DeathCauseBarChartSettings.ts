@@ -1,23 +1,17 @@
 import Descriptions from "../../models/Descriptions";
 import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
-import { CauseGrouping, CauseToParentMapping, NodeType, ParentToCausesMapping } from "../../models/RelationLinks";
-import { LifeExpectancyContributions } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
-import BarChartStore from "../../stores/BarChartOptionsStore";
+import { CauseGrouping, CauseToParentMapping, ParentToCausesMapping } from "../../models/RelationLinks";
+import { InnerCause } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import RootStore from "../../stores/rootStore";
-import { ConditionVizFlavor, Visualization } from "../../stores/UIStore";
-import { DataRow, DataSet } from "../PlottingData";
+import { DataSet } from "../PlottingData";
 import BarChartSettings, { ExpandCatsData } from "./BarChartSettings";
-import make_squares, { SquareSection } from "./ComputationEngine";
+import make_squares from "./ComputationEngine";
 
 export default class DeathCauseBarChartSettings extends BarChartSettings{
-
-
-    
-
     useLifeExpectancy: boolean;
 
     constructor(simpleVersion: boolean, useLifeExpectancy: boolean, descriptions: Descriptions){
-        super(simpleVersion, false, descriptions);
+        super(simpleVersion, true, descriptions);
         this.useLifeExpectancy=useLifeExpectancy;
     }
 
@@ -46,7 +40,7 @@ export default class DeathCauseBarChartSettings extends BarChartSettings{
     }
 
     computeExpandSquares(
-        dataset: DataSet | LifeExpectancyContributions, 
+        dataset: DataSet | InnerCause, 
         removed: string[], 
         added: string[], 
         diseaseToWidth: string | null, 
@@ -75,7 +69,7 @@ export default class DeathCauseBarChartSettings extends BarChartSettings{
               causeToParent: directCauseToParent,
               parentToCauses: {}
             }
-            const data=Object.entries(dataset as LifeExpectancyContributions).filter(
+            const data=Object.entries(dataset as InnerCause).filter(
               ([causeName, datrow]) => {
                 return causeName in newCollectedGroups.parentToCauses
               }
@@ -133,7 +127,7 @@ export default class DeathCauseBarChartSettings extends BarChartSettings{
     }
 
     computeCollapseSquares(
-        dataset: DataSet | LifeExpectancyContributions, 
+        dataset: DataSet | InnerCause, 
         removed: string[], 
         added: string[],
         diseaseToWidth: string | null, 
@@ -171,7 +165,7 @@ export default class DeathCauseBarChartSettings extends BarChartSettings{
             }
             const structureIfNotMerged: {[key:string]: CauseGrouping}={}
             structureIfNotMerged[added[0]]=replacementGroupingNoMerge
-            let data= Object.entries(dataset as LifeExpectancyContributions).filter(
+            let data= Object.entries(dataset as InnerCause).filter(
               ([causeOrCategoryName, dataRow]) => {
                 const notHidden= causeOrCategoryName in newCollectedGroups.parentToCauses 
                 const aboutToBeHidden= removed.includes(causeOrCategoryName)
@@ -196,7 +190,7 @@ export default class DeathCauseBarChartSettings extends BarChartSettings{
               this,
               structureIfNotMerged
             );
-            let finalData= Object.entries(dataset as LifeExpectancyContributions).filter(
+            let finalData= Object.entries(dataset as InnerCause).filter(
               ([causeOrCategoryName, dataRow]) => {
                 return causeOrCategoryName in newCollectedGroups.parentToCauses 
               }

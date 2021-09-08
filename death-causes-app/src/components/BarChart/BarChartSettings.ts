@@ -2,7 +2,7 @@ import * as d3 from "d3";
 import Descriptions from "../../models/Descriptions";
 import { KnowledgeableOptimizabilities } from "../../models/Optimizabilities";
 import { CauseGrouping } from "../../models/RelationLinks";
-import { LifeExpectancyContributions } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
+import { InnerCause } from "../../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy";
 import BarChartStore from "../../stores/BarChartOptionsStore";
 import RootStore from "../../stores/rootStore";
 import { ConditionVizFlavor, Visualization } from "../../stores/UIStore";
@@ -51,7 +51,7 @@ export default abstract class BarChartSettings {
     abstract getConditionVizFlavor(): ConditionVizFlavor | null;
 
     abstract computeExpandSquares(
-        dataset: DataSet | LifeExpectancyContributions,
+        dataset: DataSet | InnerCause,
         removed: string[],
         added: string[],
         diseaseToWidth: string | null,
@@ -61,7 +61,7 @@ export default abstract class BarChartSettings {
       ): ExpandCatsData;
 
     abstract computeCollapseSquares(
-        dataset: DataSet | LifeExpectancyContributions,
+        dataset: DataSet | InnerCause,
         removed: string[],
         added: string[],
         diseaseToWidth: string | null,
@@ -71,7 +71,7 @@ export default abstract class BarChartSettings {
       ): CollapseCatsData; 
 
     computeRankAndSquares(
-        data: DataRow[] | LifeExpectancyContributions,
+        data: DataRow[] | InnerCause,
         diseaseToWidth: string | null,
         optimizabilities: KnowledgeableOptimizabilities,
         grouping: CauseGrouping,
@@ -83,7 +83,7 @@ export default abstract class BarChartSettings {
         let totalProbs: DataRow[];
         let dataSquares: SquareSection[];
         if(this.getUseLifeExpectancy()){
-          let dataset= Object.entries(data as LifeExpectancyContributions).filter(
+          let dataset= Object.entries(data as InnerCause).filter(
             ([causeOrCategoryName, dataRow]) => {
               return causeOrCategoryName in grouping.parentToCauses
             }
@@ -100,7 +100,7 @@ export default abstract class BarChartSettings {
         }
         else{
           ({ allSquares: dataSquares, totalProbs } = make_squares(
-            data as DataSet,
+            Object.values(data as InnerCause),
             diseaseToWidth,
             grouping,
             optimizabilities,

@@ -34,7 +34,7 @@ export function conditionsContributions(
         const basicInnerCauses=Object.fromEntries(
             ancestors.map(ancestor => [ancestor, 0.0])
         )
-        basicInnerCauses["Unspecified"]=0.0
+        basicInnerCauses["Pre-existing"]=0.0
         if(conditionNode.type===TypeStatus.STRING){
             if(conditionNode.dimension === DimensionStatus.YEARLY){
                 averageProportion[key]=yearlyConstants(conditionNode.value as string[], survivalWeights, key, basicInnerCauses);
@@ -44,7 +44,7 @@ export function conditionsContributions(
                 averageProportion[key] = {
                     totalProb: 1.0,
                     name: key,
-                    innerCauses: {...basicInnerCauses, Unspecified: 1.0}
+                    innerCauses: {...basicInnerCauses, "Pre-existing": 1.0}
                 }
                 probOfHavingWhileDying[key]=averageProportion[key];
             }
@@ -76,7 +76,7 @@ function yearlyConstants(constants: string[], multiplier: number[], conditionNam
     return {
         name: conditionName,
         totalProb: res,
-        innerCauses: {...basicInnerCauses, Unspecified: 1}
+        innerCauses: {...basicInnerCauses, "Pre-existing": 1}
     }
 }
 

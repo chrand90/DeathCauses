@@ -7,6 +7,7 @@ import { ConditionVizFlavor } from '../stores/UIStore';
 import { DataSet } from './PlottingData';
 import ConditionsBarChartSettings from './BarChart/ConditionsBarChartSettings';
 import { createHandleChangeFunction } from './Helpers';
+import { InnerCause } from '../models/updateFormNodes/FinalSummary/RiskFactorContributionsLifeExpectancy';
 
 
 interface ConditionsResProps {
@@ -20,11 +21,11 @@ class ConditionsVizWithoutStore extends React.PureComponent<ConditionsResProps> 
 		super(props);
 	}
 
-	getDataSet(): DataSet{
+	getDataSet(): InnerCause {
 		if(this.props.store.uIStore.conditionVizFlavor===ConditionVizFlavor.AVERAGE_PROPORTION){
-			return Object.values(this.props.conditionRes.averageProportion)
+			return this.props.conditionRes.averageProportion
 		}
-		return Object.values(this.props.conditionRes.probOfHavingWhileDying);
+		return this.props.conditionRes.probOfHavingWhileDying;
 	}
 
 	makeConditionVizFlavorOptions(){
