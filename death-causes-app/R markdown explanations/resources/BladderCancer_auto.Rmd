@@ -1,0 +1,149 @@
+---
+title: "Bladder cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[partly auto-generated file]_
+
+Bladder cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Bladder ca.
+* Bladder cancer
+* BladderCancer
+
+#### Categories
+
+Bladder cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Bladder cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [Fluids intake](/model/Fluids) (Fluids)
+* [Smoking average](/model/SmokeTypicalAmount) (Smoke avg.)
+* [Cumulative smoke duration](/model/SmokeDurationCumulative) (Smoke dur. a)
+* [Time since smoking per year](/model/SmokeSinceStop) (Smoke end a.)
+
+#### Number of deaths
+
+In 2014 Bladder cancer was responsible for 0.6% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Bladder cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Bladder cancer who falls under the ICD code 
+
+* <details><summary> C67: Malignant neoplasm of bladder (100.0%)</summary>
+    * C670: Malignant neoplasm of trigone of bladder (0.013%)
+    * C671: Malignant neoplasm of dome of bladder (0.0063%)
+    * C674: Malignant neoplasm of posterior wall of bladder (0.0063%)
+    * C675: Malignant neoplasm of bladder neck (0.032%)
+    * C677: Malignant neoplasm of urachus (0.2%)
+    * **C679: Malignant neoplasm of bladder, unspecified (99.75%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{Fluids}} \cdot RR_{\text{Smoke dur. a,Smoke end a.}} \cdot RR_{\text{Smoke avg.}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{Fluids}} \cdot P_{\text{Smoke avg.,Smoke dur. a,Smoke end a.}}
+$$
+
+
+#### Fluids intake
+
+[Fluids intake](/model/Fluids) is a risk factor for Bladder cancer.
+
+Higher fluid intake decreases the risk of bladder cancer. We use the numbers from @michaud1999fluid who found a significant dose-response relationship. Interestingly, when the analysis was conducted separately for each type of fluid, only water was significant. However, we will not use this fact, because the other beverages may be equally beneficial, which would also make sense if the authors' argumentation,  "fluid intake is good because it increases urination and thereby bladder cancer risk", is correct.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('Fluids'),'raw')
+```
+
+
+Because the variable Fluids intake is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('Fluids'),'interpolated')
+```
+
+
+#### Cumulative smoke duration, Time since smoking per year
+
+Cumulative smoke duration and Time since smoking per year are a group of risk factors for Bladder cancer.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeDurationCumulative','SmokeSinceStop'),'raw')
+```
+
+
+Because the variables Cumulative smoke duration and Time since smoking per year are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeDurationCumulative','SmokeSinceStop'),'interpolated')
+```
+
+
+#### Smoking average
+
+[Smoking average](/model/SmokeTypicalAmount) is a risk factor for Bladder cancer.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeTypicalAmount'),'raw')
+```
+
+
+Because the variable Smoking average is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'BladderCancer', c('SmokeTypicalAmount'),'interpolated')
+```
+
+
+
+## References

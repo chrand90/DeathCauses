@@ -1,0 +1,66 @@
+---
+title: "Coffee consumption"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Coffee consumption is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Coffee
+* Coffee consumption
+* Caffeine
+
+#### Uses
+
+Coffee consumption is used by the model in the following places
+
+* as a risk factor for [Liver cancer](/model/LiverCancer)
+* as a risk factor for [Pancreas cancer](/model/PancreasCancer)
+* as a risk factor for [Uterus cancer](/model/UterusCancer)
+* as a risk factor for [Coronary heart disease](/model/Ischemic)
+* as a risk factor for [Parkinsons](/model/Parkinsons)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much coffee do you consume in a normal day?
+
+The unit of the input is **Cups**, but can be changed to any of the units below
+
+* Liters (1 Liters = 6.67 Cups)
+* Ounces (1 Cups = 5.07 Ounces)
+
+The answer has to be larger than 0 Cups.The answer is recommended to be larger than 0 Cups and smaller than 10 Cups, because that is where the model is most accurate.A standard cup is arond 150 ml (=5 ounces) of coffee made of 7 grams of coffee beans. Espressos are normally made with around 7 grams of coffee beans as well, so they should also be considered full cups.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Coffee consumption is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+
+## References

@@ -1,0 +1,133 @@
+---
+title: "Diabetes"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Diabetes is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Diabetes is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+In the model Diabetes has the following [risk factors](/model/intro#risk-factor)
+
+* [Diabetes condition](/model/DiabetesCondition) (Diabetes)
+
+#### Number of deaths
+
+In 2014 Diabetes was responsible for 2.91% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Diabetes')
+```
+
+
+#### Definition
+
+The definition of dying from Diabetes is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Diabetes who falls under the ICD code 
+
+* <details><summary> E10: Type 1 diabetes mellitus (4.8%)</summary>
+    * E100 (0.03%)
+    * E101: Type 1 diabetes mellitus with ketoacidosis (0.31%)
+    * **E102: Type 1 diabetes mellitus with kidney complications (1.4%)**
+    * E103: Type 1 diabetes mellitus with ophthalmic complications (0.0026%)
+    * E104: Type 1 diabetes mellitus with neurological complications (0.051%)
+    * E105: Type 1 diabetes mellitus with circulatory complications (0.2%)
+    * E106: Type 1 diabetes mellitus with other specified complications (0.018%)
+    * E107 (0.35%)
+    * **E109: Type 1 diabetes mellitus without complications (2.5%)**
+</details>
+* <details><summary> E11: Type 2 diabetes mellitus (27.1%)</summary>
+    * E110: Type 2 diabetes mellitus with hyperosmolarity (0.065%)
+    * E111 (0.21%)
+    * **E112: Type 2 diabetes mellitus with kidney complications (9%)**
+    * E113: Type 2 diabetes mellitus with ophthalmic complications (0.0039%)
+    * E114: Type 2 diabetes mellitus with neurological complications (0.19%)
+    * E115: Type 2 diabetes mellitus with circulatory complications (1.4%)
+    * E116: Type 2 diabetes mellitus with other specified complications (0.23%)
+    * E117 (1.4%)
+    * **E119: Type 2 diabetes mellitus without complications (14.6%)**
+</details>
+* <details><summary> E12 (0.038%)</summary>
+    * E122 (0.0091%)
+    * E125 (0.0026%)
+    * E127 (0.0013%)
+    * E129 (0.025%)
+</details>
+* <details><summary> E13: Other specified diabetes mellitus (0.0039%)</summary>
+    * E132: Other specified diabetes mellitus with kidney complications (0.0026%)
+    * E137 (0.0013%)
+</details>
+* <details><summary> **E14 (68%)**</summary>
+    * E140 (0.24%)
+    * E141 (2.9%)
+    * **E142 (18.9%)**
+    * E143 (0.0078%)
+    * E144 (0.27%)
+    * E145 (3%)
+    * E146 (0.4%)
+    * E147 (2.9%)
+    * **E149 (39.3%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{Diabetes}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{Diabetes}}
+$$
+
+
+#### Diabetes condition
+
+[Diabetes condition](/model/DiabetesCondition) is a risk factor for Diabetes.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Diabetes', c('DiabetesCondition'),'raw')
+```
+
+
+
+## References

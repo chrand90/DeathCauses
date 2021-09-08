@@ -99,7 +99,8 @@ export default class NumericFactorPermanent extends GeneralFactor {
       recommendedDomain: Domain | null = null,
       unitOptions: UnitOptions,
       helpJson: string | null = null,
-      derivableStates: DerivableOptions
+      derivableStates: DerivableOptions,
+      descendants: string[]
     ) {
       super(
         factorName,
@@ -107,7 +108,8 @@ export default class NumericFactorPermanent extends GeneralFactor {
         phrasing,
         placeholder,
         derivableStates,
-        helpJson
+        helpJson,
+        descendants
       );
       this.unitOptions = unitOptions;
       this.unitStrings = Object.keys(unitOptions);

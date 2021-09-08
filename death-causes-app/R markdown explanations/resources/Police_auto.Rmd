@@ -1,0 +1,72 @@
+---
+title: "Killed by police"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Killed by police is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Police
+* Killed by police
+
+#### Categories
+
+Killed by police is part of the following death cause categories
+
+* [Violent death](/model/ViolentDeath)
+
+#### Risk factors
+
+Killed by police has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Killed by police was responsible for 0.0197% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Police')
+```
+
+
+#### Definition
+
+The definition of dying from Killed by police is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Killed by police who falls under the ICD code 
+
+* <details><summary> Y35: Legal intervention (99.42%)</summary>
+    * Y350: Legal intervention involving firearm discharge (90%)
+    * Y355 (6.6%)
+    * Y356 (2.5%)
+    * Y357 (0.39%)
+</details>
+* Y890 (0.58%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

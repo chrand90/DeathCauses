@@ -11,7 +11,6 @@ import {
 import { InputValidity } from '../models/FactorAbstract';
 import React from "react";
 import {Form} from "react-bootstrap";
-import { OrderVisualization } from "./Helpers";
 
 interface StringQuestionProps extends QuestionProps<string> {
   placeholder: string;
@@ -53,7 +52,6 @@ export default class SimpleStringQuestion extends React.PureComponent<
   }
 
   render() {
-    console.log("Renders Question" + this.props.name);
     const {
       formControlStyle,
       showmessage,
@@ -70,9 +68,7 @@ export default class SimpleStringQuestion extends React.PureComponent<
         helpText={this.props.helpText}
         validityStatus={this.props.inputvalidity.status}
         secondLine={showmessage ? this.props.inputvalidity.message : ""}
-        windowWidth={this.props.windowWidth}
         descendantDeathCauses={this.props.descendantDeathCauses}
-        orderVisualization={this.props.orderVisualization}
       >
         <Form.Control
           as="select"

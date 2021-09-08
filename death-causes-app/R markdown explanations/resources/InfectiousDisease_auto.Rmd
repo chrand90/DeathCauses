@@ -1,0 +1,58 @@
+---
+title: "Infectious disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Infectious disease is a **death cause category**. It means that it is a collection of **death causes** and so one can compute the probability of dying from this death cause category by adding up all of its death causes. 
+
+#### Alternative names:
+* Inf. disease
+* Infectious disease
+* InfectiousDisease
+
+#### Death causes
+
+Infectious disease consists of the following causes
+
+* [Flu](/model/Flu)
+* [Hepatitis](/model/Hepatitis)
+* [HIV](/model/HIV)
+* [Malaria](/model/Malaria)
+* [Menigitis](/model/Menigitis)
+* [Pneumonia](/model/Pneumonia)
+* [Salmonella](/model/Salmonella)
+* [Syphilis](/model/Syphilis)
+* [Tubercolosis](/model/Tubercolosis)
+* [Whooping cough](/model/Whooping_Cough)
+
+#### Categories
+
+Infectious disease is itself part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Infectious disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+
+## References

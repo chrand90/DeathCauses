@@ -1,0 +1,51 @@
+#credibiliy=76667
+#the credibiliy comes from 76669-1-1 where the -1 means that BMI and gender is not taken into account. 
+#
+#This data comes from healthbehaviour.pdf aka
+#Schoenborn CA, Adams PF, Peregoy JA. Health behaviors of adults:
+#United States, 2008–2010. National Center for Health Statistics. Vital Health
+#Stat 10(257). 2013.
+#
+#The lowest possible BMI is set to 14, because there has to be a lowest value
+#
+Age	Sex	BMI	freq
+,25	Male	14,18.5	0.0155
+25,45	Male	14,18.5	0.003
+45,65	Male	14,18.5	0.0025
+65,75	Male	14,18.5	0.003
+75+	Male	14,18.5	0.0075
+,25	Female	14,18.5	0.0155
+25,45	Female	14,18.5	0.003
+45,65	Female	14,18.5	0.0025
+65,75	Female	14,18.5	0.003
+75+	Female	14,18.5	0.0075
+,25	Male	18.5,25	0.2515
+25,45	Male	18.5,25	0.1405
+45,65	Male	18.5,25	0.1135
+65,75	Male	18.5,25	0.1215
+75+	Male	18.5,25	0.194
+,25	Female	18.5,25	0.2515
+25,45	Female	18.5,25	0.1405
+45,65	Female	18.5,25	0.1135
+65,75	Female	18.5,25	0.1215
+75+	Female	18.5,25	0.194
+,25	Male	25,30	0.145
+25,45	Male	25,30	0.2135
+45,65	Male	25,30	0.2215
+65,75	Male	25,30	0.226
+75+	Male	25,30	0.217
+,25	Female	25,30	0.145
+25,45	Female	25,30	0.2135
+45,65	Female	25,30	0.2215
+65,75	Female	25,30	0.226
+75+	Female	25,30	0.217
+,25	Male	30,50	0.0885
+25,45	Male	30,50	0.143
+45,65	Male	30,50	0.1625
+65,75	Male	30,50	0.149
+75+	Male	30,50	0.082
+,25	Female	30,50	0.0885
+25,45	Female	30,50	0.143
+45,65	Female	30,50	0.1625
+65,75	Female	30,50	0.149
+75+	Female	30,50	0.082

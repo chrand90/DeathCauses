@@ -1,0 +1,436 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Death causes</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="intro_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Death causes</h1>
+</div>
+<div id="TOC">
+<ul>
+<li><a href="#introduction">Introduction</a>
+<ul>
+<li><a href="#motivating-example">Motivating example</a></li>
+</ul></li>
+<li><a href="#the-mathematical-model">The mathematical model</a>
+<ul>
+<li><a href="#the-neutral-model">The neutral model</a></li>
+<li><a href="#including-risk-factors">Including risk factors</a>
+<ul>
+<li><a href="#normalization-factor">Normalization factor</a></li>
+<li><a href="#smoothing">Smoothing</a></li>
+</ul></li>
+<li><a href="#interactions-between-risk-factors">Interactions between risk factors</a>
+<ul>
+<li><a href="#combining-physical-violence-and-guns.">Combining physical violence and guns.</a></li>
+<li><a href="#combining-normalization-factors">Combining normalization factors</a></li>
+<li><a href="#interaction-formulas">Interaction formulas</a></li>
+</ul></li>
+<li><a href="#decomposition">Decomposition</a>
+<ul>
+<li><a href="#decomposition-with-two-risk-factors">Decomposition with two risk factors</a></li>
+<li><a href="#decomposition-of-n-factors">Decomposition of <span class="math inline">\(n\)</span> factors</a></li>
+<li><a href="#optimal-values">Optimal values</a></li>
+</ul></li>
+<li><a href="#no-confidence-intervals">No confidence intervals</a></li>
+<li><a href="#no-validation">No validation</a></li>
+</ul></li>
+<li><a href="#glossary">Glossary</a></li>
+<li><a href="#references">References</a></li>
+</ul>
+</div>
+<style type="text/css">
+
+body{   
+    background:#F0F0F0;}
+    
+details{
+    background:#e1f9fa;}
+    
+.infobox{
+    background:#FFFFFF;
+    border: solid 2px #304b80;
+    border-radius:5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+</style>
+<div id="introduction" class="section level1">
+<h1>Introduction</h1>
+<!-- Technical level: der er to slags læsere; 1. dem der ikke er interesseret i de matematiske detaljer, og dem der er. -->
+<p>Humanity’s ability to prevent death has improved tremendously in the last 150 years. Not only can we save many more sick and injured people but we also know more about preventing illness and accidents. For example, it is well known that both drinking and smoking increase the risk of an early death while eating vegetables and wearing seatbelts, likewise, decrease the risk. It is great that people know what is good and what is bad for their health, however there is a lot more to learn. How much does the bad habits increase one’s risk of death? And what types of illness and tragedies are related to each habit? On this website you can based on your specific circumstances and habits, get an estimated age of death and a breakdown of how responsible each disease or habit is for your death. These numbers are computed by our mathematical model based on results from a compiled list of <a href="/model/references">scientific papers</a>.</p>
+<p>In this document we present how the mathematical model works. We try to introduce the technical terms along the way, but it is an advantage for the reader to have a strong mathematical foundation. The blue expandable sections provide extra details for readers comfortable with advanced mathematical terms.</p>
+<p>If you are more interested in how to interpret the results on this website, you could read the page <a href="/model/interpretation">Interpretation</a>, which is less technical.</p>
+<div id="motivating-example" class="section level2">
+<h2>Motivating example</h2>
+<p>Imagine a world where we kept track of cause of death but there was no research in their underlying causes. Furthermore, imagine that you were an old person living in a nice house in a quiet suburb and you asked the scientists to come up with an estimate of your risk of dying from homicide. Naturally, one would think that you would have less risk of dying from homicide than, say, a drug dealer. However, the scientists would not have any information about such tendencies as there is no research about the underlying cause in this hypothetical world. Therefore, their best estimate would be the crude rate; for example, in America the murder rate is 5.0 out of 100,000 per year, so the scientist would tell everyone that their chance of dying from homicide was 5/100,000=0.005% each year. Now, imagine that the scientists decided to actually do some research in the subject; they examined how many people who were murdered in their house had a gun, and compared it to how many people who weren’t murdered, had guns in their house. They might find that the gun-owners had approximately 1.9 times higher risk of death from homicide in their home than non-owners (as found by the researchers <span class="citation">Dahlberg, Ikeda, and Kresnow (<a href="#ref-dahlberg2004guns" role="doc-biblioref">2004</a>)</span>). If our hypothetical world had a gun ownership rate of 40% of households and 50% of homicides occurring in the home (like America has today), the scientists could then give 3 different answers to the question about your risk of dying from homicide:</p>
+<ul>
+<li>If they know that your household has a gun, each year the risk of you dying from homicide is <span class="math inline">\(0.00599\%\)</span>.</li>
+<li>If they know that your household doesn’t have a gun, each year the risk of you dying from homicide is <span class="math inline">\(0.00434\%\)</span></li>
+<li>If they don’t know whether your household has a gun, they have to use the default rate and say that each year your risk of dying from homicide is <span class="math inline">\(0.005\%\)</span></li>
+</ul>
+<p>The formulas are explained in <a href="#including-risk-factors">Including risk factors</a>.</p>
+<p>The mathematical model that we use works similarly. We start with a [neutral model] that only knows the rates of each death cause for each age. As we put more scientific results into the model, we can more accurately estimate the risks for the individual person. Finding these results is a never-ending task and a task filled with hard decisions. We have to decide which numbers to include in the model and how to combine the results. For example, what happens to your risk of homicide if you are both a drug addict and has a gun in your home? We deal with this case by case and describe our considerations in our <a href="/model#death-causes">archive</a>.</p>
+</div>
+</div>
+<div id="the-mathematical-model" class="section level1">
+<h1>The mathematical model</h1>
+<div id="the-neutral-model" class="section level2">
+<h2>The neutral model</h2>
+<p>When a user haven’t filled out any personal data, the program will use the <em>neutral</em> model. For every deadly illness and accident type, the neutral model knows what proportion of the American population dies in each 5-year age bracket every year. This data comes from the <a href="https://wonder.cdc.gov/">Underlying Cause of Death data set on the CDC website</a>, more specifically the product <span class="citation">Xu et al. (<a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span>. The illnesses and accidents are split into ICD10 codes, which is a standardized system used by doctors to classify cause of death. There are thousands of different ICD codes so we group them into sensible groups that we call <em>death causes</em>. Using this data we can compute the probability of dying from each death cause and expected age of death. In the neutral model those numbers will describe the average American, but as the user inputs more and more data, the results will be more personal. How personal it can become depends on the size and quality of our collection of risk factors and as we add more risk factors, the fact that the neutral model is American means less and less.</p>
+<!-- #Wherever something is not explained by risk factors, the program uses the neutral model. An example is the death cause *meningitis*. Since we haven't added any risk factors for this death cause yet, the program gives everyone the same American rate of dying from it. Meningitis is an infectious disease so its occurrence depends on both place and time. the neutral probability and so many people filling out the quesThere will probably always be death causes that are hard to make more specific to the country.  where Wherever something is not specified by risk factors, the program will use the neutral model. For example we haven't included any risk factors for being killed by the police yet. This means that the reported probability of dying from meningitis is the same no matter vaccination status. This probability will be a function of the The probability tInstead it uses the average amount of alc -->
+<!-- #In, but instead the    that as we includde risk factors If our collection of As we continously improve on the full model, we will betterThis also means that wherever the full model lacks any information, it will resort to the neutral model. For example, we haven't added meningitis vaccinations to the full model yet. When it computes the probability of dying from meningitis, it will therefore only use the age of  because v but bec in the distributed in the world and the vaccinations against This means If you are fully vaccinated For meningitis  Wherever the full model lacks any without personal user data the computed probabilities and expected lifetime will only describe the average American. As the user answers more questions, the program will depart from the neutral model and using the methods described in [Including risk factors](#including-risk-factors).   [det lyder ret meget som om vores model kun kan bruges på amerikanere, kan vi ikke skrive lidt om hvorfor vi synes det giver mening at bruge den generelt?]. -->
+<details>
+<summary>
+Formulas
+</summary>
+For completeness, the formula that we use to compute the probability of dying from a death cause is <span class="math display">\[
+P(\text{die from }d)=\sum_{a=0}^{119} P(d|a) \prod_{b=0}^{a-1} \Bigl(1-\sum_{d\in D}^b P(d|a) \Bigr)
+\]</span> where <span class="math inline">\(P(d|a)\)</span> is the probability of dying from the death cause <span class="math inline">\(d\)</span> between your <span class="math inline">\(a\)</span>’th and <span class="math inline">\(a+1\)</span>’th birthday. By <span class="math inline">\(D\)</span> we denote the set of all death causes. The sum goes to 119, because there is very little chance of living past 120. In the neutral model we use the proportions from the CDC as the <span class="math inline">\(P(d|a)\)</span> numbers, but when we start including risk factors we scale them using <a href="#risk-ratios">risk ratios</a> or similar.
+</details>
+</div>
+<div id="including-risk-factors" class="section level2">
+<h2>Including risk factors</h2>
+<p>In order to compute personalized probabilities, we use <em>risk factors</em> which are different behaviors or circumstances that influence the probability of dying.</p>
+<p>When the scientists in our hypothetical example computed the risk of dying from homicide, they used the following formula that we will unpack. <span class="math display">\[0.005\%\cdot 50\%+50\% \cdot 0.005\%\cdot \frac{1.9}{1.9\cdot 40 \%+1.0\cdot 60\%}\]</span> The first part <span class="math inline">\(0.005\%\cdot 50\%\)</span> is the risk of dying of homicide outside of your your home. For those <span class="math inline">\(50\%\)</span> of homicides we knew nothing about their underlying causes so we simply use their base rate of <span class="math inline">\(0.005\%\)</span>. This means that we have effectively split up homicides into two sub death causes - homicides in your home with yearly rate <span class="math inline">\(0.005\%\cdot 50\%=0.0025\%\)</span> and homicides elsewhere with yearly rate <span class="math inline">\(0.0025\%\)</span>. In this example the rates (<span class="math inline">\(0.005\%\)</span>, <span class="math inline">\(0.0025\%\)</span>) are the combined rate of Americans of all ages but in the actual model we use the rates specific to a certain age.</p>
+<div id="normalization-factor" class="section level3">
+<h3>Normalization factor</h3>
+Looking at the more complicated part of the above equation, we are left with <span class="math display">\[0.0025\%\cdot \frac{1.9}{1.9\cdot 40 \%+1.0\cdot 60\%} \]</span>
+<details>
+<summary>
+Derivation
+</summary>
+<p>Let us look at where it comes from. We know that the overall risk for homicides in the home is <span class="math inline">\(0.0025\%\)</span> and we know that the group that has a gun in their house should have 1.9 times higher risk of being murdered. This means that if the risk in the non-owner group is <span class="math inline">\(x\)</span>, the risk of the gun-owner group is <span class="math inline">\(x\cdot 1.9\)</span>. The question is now what <span class="math inline">\(x\)</span> is. To find <span class="math inline">\(x\)</span> we use that the overall risk is <span class="math inline">\(0.0025\%\)</span>. Some of these <span class="math inline">\(0.0025\%\)</span> must come from the gun owner group. If we use the fact that <span class="math inline">\(40\%\)</span> of the population owns a gun, they would contribute with <span class="math inline">\(x\cdot 1.9\cdot 40\%\)</span> of the <span class="math inline">\(0.0025\%\)</span> and likewise the non-owners will contribute with <span class="math inline">\(x\cdot1.0\cdot60\%\)</span>. In total we get an equation where we can isolate <span class="math inline">\(x\)</span>.</p>
+<p><span class="math display">\[
+x\cdot 1.0 \cdot  60\%+x\cdot 1.9\cdot 40\%=0.0025\%
+\]</span> <span class="math display">\[
+x \cdot (60\%+ 1.9\cdot 40\%)=0.0025\%
+\]</span> <span class="math display">\[
+x=0.0025\%\frac{1}{1.0\cdot 60\%+ 1.9\cdot 40\%}
+\]</span></p>
+This last equation is the formula for the risk of dying from homicide in the home for non-owners. The risk in the gun-owning group is then <span class="math display">\[
+x\cdot 1.9=0.0025\%\frac{1.9}{1.0\cdot 60\%+ 1.9\cdot 40\%}
+\]</span> We have hereby shown the formulas.
+</details>
+<p><span class="math inline">\(~\)</span><br />
+One way to think about the denominator <span class="math inline">\(60\%+1.9\cdot 40\%=1.36\)</span> is as the relative risk of dying from homicide in the home. This means that the average American is 1.36 times more likely to die from homicide in their home than an American who does not own a gun (because when we consider an average American there is a certain chance they have a gun in their home). Consequently, the fraction <span class="math inline">\(1.9/1.36\approx1.397\)</span> means that if you own a gun, you are 1.397 times more likely to die from homicide in your home than the average American. Because the rate <span class="math inline">\(0.0025\%\)</span> applies to the average American, the product <span class="math inline">\(0.0025\%\cdot 1.397\approx0.0014\%\)</span> will be the risk of dying from homicide in the home if you own a gun. Henceforth, the denominator will be called the <strong>normalization factor</strong>, because it scales the risks such that the overall risk is correct.</p>
+</div>
+<div id="smoothing" class="section level3">
+<h3>Smoothing</h3>
+<p>Many results in health research are presented with <em>binned</em> categories. An example can be taken from <span class="citation">Eskelinen and Kivipelto (<a href="#ref-eskelinen2010caffeine" role="doc-biblioref">2010</a>)</span>, where they had examined the relation between Alzheimer’s and Coffee consumption. In the their analysis they divided people into three “bins”, namely people drinking</p>
+<ul>
+<li>0-2 cups of coffee per day,</li>
+<li>3-5 cups of coffee per day, and</li>
+<li>5 or more cups of coffee per day.</li>
+</ul>
+<p>For each category they computed an <a href="#odds-ratio">odds ratio</a> (that we treat as <a href="#risk-ratio">risk ratios</a>). Below is the input data to our program.</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-1-1.png" width="672" /></p>
+<p>According to these numbers an average coffee consumption of 2.49 cups of coffees per day is more than twice as dangerous as drinking 2.51 cups of coffee per day. This is not realistic and only a result of the chosen binning. To get a more realistic and intuitive model, we fit a curve to binned categories.</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+<p>This curve is computed as a trade-off between being smooth and reflecting the original data. We have decided that the above curve could not exceed 1, because there is no indication that extreme coffee consumption leads to more Alzheimer’s than total coffee abstinence.</p>
+<details>
+<summary>
+Technical details
+</summary>
+<p>We fit the curve by finding the natural cubic splines <span class="math inline">\(\{N_i\}_{i=1, \dots, n}\)</span> that minimizes the expression <span class="math display">\[
+\sum_{f} \frac{1}{\sigma_f^2}\biggl(RR(f)-\frac{1}{|f|}\int_f\sum_{i=1}^n N_i(X) \text{ d}X\biggr)^2+\lambda\int_f \Bigl|\sum_{i=1}^n N_i&#39;&#39;(X)\Bigr|^2 \text{ d}X
+\]</span> where <span class="math inline">\(f\)</span> is a binned category, <span class="math inline">\(|f|\)</span> is the size of the bin and <span class="math inline">\(\lambda\)</span> is a tuning parameter and <span class="math inline">\(\sigma_f\)</span> is the standard deviation of the <a href="#risk-ratio">risk ratio</a> <span class="math inline">\(RR(f)\)</span>. The outer sum goes through only the finite bins and the natural cubic splines have knots around every finite bin. The tuning parameter <span class="math inline">\(\lambda\)</span> is chosen manually based on visual inspection of the fitted curve.</p>
+<p>For the <span class="math inline">\(\sigma_f\)</span>-values we should remember that the estimated spline function will be multiplied with the inverse normalization factor in the program. This means that we are really making this fit for the normalized risk ratios and so we should set <span class="math inline">\(\sigma_f\)</span> equal to <em>their</em> standard deviations. They are unfortunately not easily computed and since we adjust the tuning parameter manually anyway, we mostly set <span class="math inline">\(\sigma_f=1\)</span>. One exception is that many risk ratio tables have a <em>base category</em> which are used to compare against all other categories. This base category has, by construction, risk ratio 1 with standard deviation 0. In these cases we often constrain the spline to take that value (by using Lagrange multiplier method on the above expression). However, the <em>normalized</em> risk ratio of the base category does not have standard deviation 0, so the constraint does not make the computation more correct. We do it to make the resemblance between the interpolated curve and the risk ratio histogram more clear to humans.</p>
+<p>When the input risk ratios are arranged in a multidimensional grid, we use cross products of one-dimensional splines. The basis is <span class="math display">\[
+\{D_k(X_i)D_l(X_j)\}_{(i,j,k,l)\in I}\cup \{D_k(X_i)\}_{(k,i)\in J}
+\]</span> where <span class="math inline">\(D_k(X_i)\)</span> is the <span class="math inline">\(k\)</span>’th spline base function of the <span class="math inline">\(i\)</span>’th variable. The index set <span class="math inline">\(I\)</span> includes all combinations such that <span class="math inline">\(i\neq j\)</span> and <span class="math inline">\(J\)</span> is all combinations. Let <span class="math inline">\(\mathcal{N}(X)\)</span> be the spline of the multidimensional input <span class="math inline">\(X=(X_1, \dots, X_m)\)</span>. The penalization term is then <span class="math display">\[
+\lambda \int_f \sum_{i=1}^m\sum_{j=1}^m\biggl|\frac{\partial}{\partial X_i \partial X_j}\mathcal N(X)\biggr|^2 \text{ d}X
+\]</span></p>
+<p>The loss function term is the same as the in the one-dimensional case except the integral is also multidimensional.</p>
+</details>
+</div>
+</div>
+<div id="interactions-between-risk-factors" class="section level2">
+<h2>Interactions between risk factors</h2>
+<p>Often there are much more than one <a href="#risk-factor">risk factor</a> for a specific death cause. An example could be that both gun ownership and living in a violent household increase your risk of dying from a homicide in the home. The question is now, what happens if one does both? In other words, what is the <em>interaction</em> between household violence and gun ownership?</p>
+<details>
+<summary>
+Homicide and physical violence in the home
+</summary>
+<p>The researchers <span class="citation">Kellermann et al. (<a href="#ref-kellermann1993gun" role="doc-biblioref">1993</a>)</span> found that the odds of dying from homicide was <span class="math inline">\(4.4\)</span> times higher if there had ever been a fight where someone was physically hurt in the home. In the same process they found that <span class="math inline">\(5.7\%\)</span> of their controls had ever had such a violent fight. If we say that number represents the American population, we can compute the normalization factor as <span class="math inline">\(1.19=5.7\%\cdot 4.4 + 94.3\%\cdot 1\)</span>, which we can use to compute the following</p>
+<ul>
+<li>If you live in a home where someone has been physically hurt in a fight, the risk of dying from homicide in the home is <span class="math inline">\(0.0025\%\cdot\frac{4.4}{1.19}=\)</span> <strong>0.00924%</strong> (per year)</li>
+<li>If you live in a home where no one has been physically hurt in a fight, the risk of dying from homicide in the home is <span class="math inline">\(0.0025\%\cdot\frac{1.0}{1.19}=\)</span> <strong>0.00210%</strong> (per year)</li>
+<li>If you don’t consider physical violence in your home, the best guess of your risk of dying from homicide in the home is the default <strong>0.0025%</strong> (per year)</li>
+</ul>
+</details>
+<div id="combining-physical-violence-and-guns." class="section level3">
+<h3>Combining physical violence and guns.</h3>
+<p>In the <a href="#motivating-example">motivating example</a> we talked about the research from <span class="citation">Dahlberg, Ikeda, and Kresnow (<a href="#ref-dahlberg2004guns" role="doc-biblioref">2004</a>)</span> who found that a gun in one’s home makes one 1.9 times more likely to be killed in the home. Other research papers have examined the same issue and they were combined in a <a href="#meta-analysis">meta analysis</a> by <span class="citation">Anglemyer, Horvath, and Rutherford (<a href="#ref-anglemyer2014accessability" role="doc-biblioref">2014</a>)</span>, where they estimated the risk ratio to be 2.0 - rather than 1.9. Since much more data has been used to estimate the meta analysis estimate, we will use it from now on.</p>
+<p>We want to combine the risk ratio for gun ownership with the results of <span class="citation">Kellermann et al. (<a href="#ref-kellermann1993gun" role="doc-biblioref">1993</a>)</span>, who found that a history of domestic physical fights increases the risk of dying from homicide in the home by a factor of 4.4. If one does both, we would want our model to say that the risk is even higher than either, but how much exactly? In this example, and in many others, we have decided that we multiply the risk ratios. We call this multiplicative interaction.</p>
+<div id="multiplicativity" class="infobox">
+<p><strong>Multiplicative interaction: </strong> The interaction between two risk factors is multiplicative when their joint risk ratio is equal to the risk ratio of one risk factor multiplied by the risk ratio of the other risk factor. (In survival analysis and logistic regression, this interaction would be called additive because they consider the effects in log-space).</p>
+</div>
+<p>In the homicide example multiplicative interaction means:</p>
+<ul>
+<li>If you both live in a household with physical violent fights and gun(s), your risk of dying from homicide in the home is <span class="math inline">\(2.0\cdot 4.4=8.8\)</span> times higher than if you did neither.</li>
+<li>If there is only physical violent fights but no guns, your risk is <span class="math inline">\(4.4\)</span> times higher than if you did neither.</li>
+<li>If there is only guns but no physical violence, your risk is <span class="math inline">\(2.0\)</span> times higher than if you did neither.</li>
+</ul>
+<p>We justify this choice by how the odds ratios were computed in the original papers. In <span class="citation">Kellermann et al. (<a href="#ref-kellermann1993gun" role="doc-biblioref">1993</a>)</span> they computed the odds ratio <span class="math inline">\(4.4\)</span> using a method that <em>adjusted for gun ownership</em>. They assumed that odds ratios for gun ownership, physical violence, race etc. should be multiplied together and then they estimated all odds ratios at once. Consequently, <span class="math inline">\(4.4\)</span> is the most correct odds ratio when multiplied together with the gun ownership odds ratio (and all the other odds ratios in their model). That is good, because that is how we use it!</p>
+<p>However, the odds ratio 2.0 from <span class="citation">(Anglemyer, Horvath, and Rutherford <a href="#ref-anglemyer2014accessability" role="doc-biblioref">2014</a>)</span> was computed from other papers where only some adjusted for physical violence. That should ideally be all the papers now that we multiply the two odds ratios. Fortunately, it doesn’t seem to matter that much;</p>
+<ul>
+<li>In <span class="citation">Kellermann et al. (<a href="#ref-kellermann1993gun" role="doc-biblioref">1993</a>)</span> they estimated the odds ratio for gun ownership adjusted for physical violence to be 2.6, which is quite near the meta analysis estimate 2.0.</li>
+<li>By combining the studies, the authors <span class="citation">Anglemyer, Horvath, and Rutherford (<a href="#ref-anglemyer2014accessability" role="doc-biblioref">2014</a>)</span> implicitly assumes that odds ratios adjusted for physical violence are statistically the same as those that are not adjusted. They didn’t report any considerations or checks on this assumption (which is not strange because it is not normal in these types of meta analysis), but we can assume that they would have made a different analysis if it had become clear to them that it would be very wrong to combine them.</li>
+</ul>
+<p>In general our interactions are multiplicative. The above considerations about how estimates are adjusted repeats many times for the different <a href="/model#death-causes">death causes</a>. It is not always possible to find studies that adjust for every relevant risk factor. In these cases we will often assume that they combine multiplicatively anyway, but the behavior of the program will be more speculative.</p>
+</div>
+<div id="combining-normalization-factors" class="section level3">
+<h3>Combining normalization factors</h3>
+<p>To use the combined risk or odds ratio, we have to compute a new normalizing factor. Let us continue the homicide example where we multiplied the odds ratio for gun ownership (2.0) and physical violence (4.4).</p>
+<p>To compute the normalizing factor we need to know the proportion of Americans who belong to each combination of gun ownership and physical violence. For example we need the proportion of the American population who lives in a household where there is a gun and a history of physical violence. If gun ownership were unrelated to whether there are physical violence, we would say that gun ownership and physical violence are <em>independent</em>.</p>
+<div id="independence-definition" class="infobox">
+<p><strong>Independence: </strong> Two risk factors are independent if they are unrelated in the sense that knowledge of one risk factor doesn’t give us any information of the other risk factor and vice-versa. One useful consequence of this is that we can compute the probability that the risk factors have any specific combination of values as the product of 1) the probability that the first factor has its specific value, and 2) the probability that the second factor has its specific factor. See <a href="#independence">examples</a>.</p>
+</div>
+<p>This independence assumption means that gun owners and non-gun owners are equally likely to have a violent household. Recall that the proportion of households that owns a gun is <span class="math inline">\(40\%\)</span>, and the proportion that has a history of violence is <span class="math inline">\(5.7\%\)</span>. Then we could simply compute the joint proportion - the proportion of people who both owns a gun and lives in a violent house - as <span class="math inline">\(40\%\cdot 5.7\%=2.3\%\)</span>. It doesn’t sound outrageous that gun ownership and physical violence in the home should be independent and since we are unlikely to find the actual joint proportions, we assume that they are independent. Then the normalizing factor is <span class="math display">\[
+4.4\cdot 2.0 \cdot 40\% \cdot 5.7\%+4.4\cdot 1.0 \cdot 60\% \cdot 5.7\%+1.0\cdot 2.0 \cdot 40\% \cdot 94.3\% \\+ 1.0\cdot 1.0\cdot 60\%\cdot 94.3\%\approx 1.67
+\]</span> Notice that we could have also gotten <span class="math inline">\(1.67\)</span> by multiplying the two normalization factors of physical violence and gun ownership. That is <span class="math inline">\(1.67=1.19\cdot (60\%+40\%\cdot 2)\)</span>.</p>
+<p>We do not always assume independence between risk factors, but it will be handled on a case-by-case and put in the relevant death cause page (See <a href="/model#death-causes">list</a>.</p>
+<details>
+<summary>
+Why assuming incorrect independence is not disastrous
+</summary>
+<p>The potential caveat to assuming that they are independent is that we get a more imprecise estimate of the normalizing factor. On one hand the normalizing factor and in particular, the normalized risk are already uncertain estimates. Considering the homicide example, the normalizing factor when assuming independence was <span class="math inline">\(1.67\)</span>. If we don’t assume independence but still assume that <span class="math inline">\(5.7\%\)</span> of homes have experienced physical violence and <span class="math inline">\(40\%\)</span> have guns, the lowest possible normalization factor would occur if there were no overlap between the two categories. That is,</p>
+<p><span class="math display">\[4.4\cdot 2.0\cdot 0\%+4.4\cdot 1.0 \cdot 5.7\%+1.0\cdot 2.0\cdot 40\%+1.0\cdot 1.0\cdot 54.3\%=1.59.\]</span> The highest possible normalization factor would happen if there were complete overlap between the two. That is,</p>
+<p><span class="math display">\[4.4\cdot 2.0\cdot 5.7\%+4.4\cdot 1.0 \cdot 0\%+1.0\cdot 2.0\cdot 34.3\%+1.0\cdot 1.0\cdot 60\%=1.78.\]</span></p>
+<p>This means that the normalization factor will always be in the interval (1.59,1.78). For comparison the confidence interval of the 4.4-odds ratio of physical violence is <span class="math inline">\((2.2,8.8)\)</span> <span class="citation">(Kellermann et al. <a href="#ref-kellermann1993gun" role="doc-biblioref">1993</a>)</span> and the confidence interval of the 2.0-odds ratio of gun ownership is <span class="math inline">\((1.56,3.02)\)</span> <span class="citation">(Anglemyer, Horvath, and Rutherford <a href="#ref-anglemyer2014accessability" role="doc-biblioref">2014</a>)</span>. The error from incorrectly assuming independence is therefore not the biggest source of error in this case. In general the independence assumption will matter less when the risk factors are rare or when the risk ratios are similar.</p>
+<!-- Even though the error on the normalized risk may not be important when we don't -->
+<!-- have the correct joint proportions, we lose a pleasant property. Correct -->
+<!-- proportions would ensure that if all Americans filled out the program and we -->
+<!-- averaged all their results, we would get the neutral model. In other words, the -->
+<!-- program would be correct on average. The uncertainty in the odds and risk ratios -->
+<!-- would still lead to overestimation of, say, some people's risk of dying from -->
+<!-- homicide, but with the correct joint proportions some other people's homicide -->
+<!-- risk would be correspondingly underestimated. [jeg er ikke sikker på hvorfor det -->
+<!-- er en behagelig egenskab?] -->
+</details>
+</div>
+<div id="interaction-formulas" class="section level3">
+<h3>Interaction formulas</h3>
+<p>Throughout the library we use formulas to communicate the interaction between risk factors. If the interaction between factor A and factor B is <a href="#multiplicativity">multiplicative</a>, we write</p>
+<p><span class="math display">\[
+RR=RR_A\cdot RR_B
+\]</span> where <span class="math inline">\(RR_A\)</span> and <span class="math inline">\(RR_B\)</span> are the risk ratio of factor A and B, respectively. The number <span class="math inline">\(RR\)</span> is the joint risk ratio, which we use to compute the risk of dying from the death cause. If the interaction is not multiplicative, we only write</p>
+<p><span class="math display">\[
+RR=RR_{A,B}.
+\]</span> That doesn’t provide a lot of information but it does say that the interaction between A and B is not multiplicative. Also, we put a visualization of <span class="math inline">\(RR_{A,B}\)</span> on the relevant <a href="/model#death-causes">death cause page</a>.</p>
+<p>There can be more than two factors in the formula. For example, the formula could read</p>
+<p><span class="math display">\[
+RR=RR_A\cdot RR_{B,C}\cdot RR_D.
+\]</span> In this case, there is a multiplicative interaction between</p>
+<ul>
+<li>factor A,</li>
+<li>the factors B and C, but not between factor B and C,</li>
+<li>factor D.</li>
+</ul>
+<p>We also use formulas to show how we compute the proportions of people belonging to every combination of the risk factors because it is needed to calculate the <a href="#normalization-factor">normalization factor</a>. For more than one risk factor, all these proportions together is also called the <em>joint distribution</em>. Very similar to the formula for the joint risk ratio, the joint distribution formula only says which factors are <em><a href="#independence-definition">independent</a></em>. It could read</p>
+<p><span class="math display">\[
+P=P_A\cdot P_{B,C,D},
+\]</span> In this situation the factor A is independent of B,C and D, but none of B,C and D are independent with each other.</p>
+</div>
+</div>
+<div id="decomposition" class="section level2">
+<h2>Decomposition</h2>
+<p>In the previous example we saw that gun-owners have twice as big a probability of dying from homicide in the home compared to non-owners. This means that half of the deaths of gun-owners can be <em>explained</em> by gun ownership in the sense that they wouldn’t have taken place if the killed persons hadn’t owned a gun. To communicate this interesting aspect to the user, we visually <em>decompose</em> the bar that represents the probability of dying from a death cause into smaller parts that explains the death. See the example below</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Be aware that the visualizations of the website only shows the decomposed bar relevant to the user and so users who answer that they don’t own a gun will not see any colored bars about gun ownership.</p>
+<div id="decomposition-with-two-risk-factors" class="section level3">
+<h3>Decomposition with two risk factors</h3>
+<p>If there are two different risk factors, things get more complicated. If we go back to the example about homicide in the home, gun ownership and domestic violence, the non-decomposed probabilities would look like this</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+<p>We could decompose each of them as before</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+<p>While the “domestic violence AND gun owner” is correct, it doesn’t say anything that lets the user distinguish between the effect of domestic violence and gun ownership. Therefore, we decompose that section further. When comparing the “domestic violence, no gun” bar to the “domestic violence, gun owner” bar, we can see that the gun owner factor doubles the risk, and so we could argue that the gun owner section should constitute half of the risk for the group “domestic violence, gun owner”. We call this approach Gun owner-<em>centered</em> because it computes the gun owner risk increase last. A domestic violence centered decomposition will look differently as shown below.</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>In the domestic violence centered decomposed probability, the interpretation of the two sections are</p>
+<ul>
+<li>The size of the Gun ownership section is the risk increase when owning a gun <em>given that there is no domestic violence</em></li>
+<li>The size of the Domestic violence section is the risk increase when living in a violent household <em>given that there is a gun</em></li>
+</ul>
+<p>In the Gun ownership centered decomposed probability, it is opposite;</p>
+<ul>
+<li>The size of the Gun ownership section is the risk increase when owning a gun <em>given that there is domestic violence</em></li>
+<li>The size of the Domestic violence section is the risk increase when living in a violent household <em>given that there is a no gun</em></li>
+</ul>
+<p>So how do we actually compute the decomposed probability? Gun ownership centered or domestic violence centered? And how do we handle this in general? The answer is that we make the decomposition centered around the factors that are easier to <em>optimize</em>. For example in skin cancer, there are two main factors; your race and your sun exposure. It is clearly not possible to change your race, but you can change your (future) sun exposure. Therefore we decompose skin cancer centered on sun exposure. For domestic violence and gun ownership, it is a bit harder to judge which is easier to optimize. Both can be changed by moving which, in theory, can be done tomorrow. They are tied in our <a href="/model/optimizabilities#optimizability">optimizability ranking</a>, and we therefore use another decomposition strategy.</p>
+<div id="decomposing-two-equally-optimizable-factors" class="section level4">
+<h4>Decomposing two equally optimizable factors</h4>
+<p>When two factors are equally optimizable, we don’t center the decomposition on either factor. Instead, we divide the <em>extra</em> risk equally between them. Consider the example with gun ownership, domestic violence and their relation to homicide in the home and say that we want to decompose the probability for the group that both owns a gun and has a violent household. By comparing those with neither violence nor guns to those with guns, we can get the risk increase from purely guns, and likewise we can obtain the risk increase for purely domestic violence. If we add these pure risk increases, it doesn’t add up to the risk increase when comparing those with neither guns nor violence to those with both guns and violence. It is surely better illustrated graphically;</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+<p>The extra part can be interpreted as the risk increase that arises from the combination of domestic violence and gun ownership. Gun ownership and domestic violence are bad by themselves, but the combination is worse than the sum of them. In a Gun ownership centered decomposition, we would assign the extra part to the “Gun ownership” category and in a Domestic violence centered decomposition, we would assign the extra part to the “Domestic ownership” category. However, as we don’t prioritize one over the other, it is shared equally.</p>
+<p><img src="intro_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Though it rarely happens, be aware that the extra part can be negative. It may occur when two factors are similar or measuring the same effect. In this case the negative extra part is subtracted equally among the two risk factors.</p>
+</div>
+</div>
+<div id="decomposition-of-n-factors" class="section level3">
+<h3>Decomposition of <span class="math inline">\(n\)</span> factors</h3>
+<p>Decomposition of a risk with <span class="math inline">\(n\)</span> risk factors is not very different from decomposition of a risk with 2 risk factors. Instead of only centering on the factor with highest <a href="/model/optimizabilities">optimizability</a>, we make scheme where we consecutively center on the with second-lowest optimizability, third-lowest optimizability and so on until the highest optimizable factor. Ties in optimizability can also be resolved in a similar way (see below).</p>
+<details>
+<summary>
+Algorithm and relation to other methods
+</summary>
+<p>Let <span class="math inline">\(F_1, \dots, F_n\)</span> be the <span class="math inline">\(n\)</span> factors (and random variables). Let <span class="math inline">\(\psi_1, \dots, \psi_n\)</span> be the user’s <span class="math inline">\(n\)</span> values on the <span class="math inline">\(n\)</span> factors. Now let <span class="math inline">\(U(I)\)</span>, <span class="math inline">\(I\subseteq \{1, \dots, n\}\)</span> be the smallest risk possible that satisfy</p>
+<p><span class="math display">\[
+F_i=\psi_i \text{ for all } i\in I.
+\]</span></p>
+<p>Define recursively for a set <span class="math inline">\(K\subseteq \{1, \dots, n\}\)</span>,<span class="math inline">\(I\subseteq \{1, \dots, n\}\setminus K\)</span></p>
+<p><span class="math display">\[
+S(\emptyset| K)=U(K)\\
+S(I|K)=U(I\cup K)-\sum_{J\subset I, J\neq I} S(J|K), \quad \text{for } |I|&gt;0
+\]</span></p>
+<p>For <span class="math inline">\(I=\{i\}\)</span>, we can interpret <span class="math inline">\(S(I|\emptyset)\)</span> as the pure contribution of factor <span class="math inline">\(i\)</span>. For <span class="math inline">\(|I|=2\)</span>, <span class="math inline">\(S(I|\emptyset)\)</span> can be interpreted as the “extra part” discussed in the previous section. For <span class="math inline">\(|I|&gt;2\)</span> the interpretation is more complex but it will still be some “extra part” to make the sum of all the previous factors add up.</p>
+<p>For <span class="math inline">\(|K|&gt;0\)</span>, the quantity <span class="math inline">\(S(I|K)\)</span> should be interpreted in the same way as <span class="math inline">\(S(I|\emptyset)\)</span> but with the extra condition that it is conditioned on the factors <span class="math inline">\(F_k, k\in K\)</span>.</p>
+<p>Let <span class="math inline">\(J_1, \dots, J_m\subseteq \{1, \dots, n\}\)</span> be disjoint sets such that the set <span class="math inline">\(J_i\)</span> contains the indices of all factors that share the <span class="math inline">\(i\)</span>’th lowest optimizability.</p>
+<p>Then, we compute the total risk increase associated with factor <span class="math inline">\(i\)</span> using the formula</p>
+<p><span class="math display">\[
+V(i)=\sum_{I\subseteq J_1, i\in I} \frac{S(I|\emptyset)}{|I|} \quad \text{if } i\in J_1\\
+V(i)=\sum_{I\subseteq J_k, k\in I} \frac{S(I|J_1 \cup \cdots \cup J_{k-1})}{|I|} \quad \text{if } i\in J_k, k&gt;1
+\]</span></p>
+<p>Our decomposition method can also be seen as a modified version of the multi-risk factor attributable risk proposed by <span class="citation">Eide and Gefeller (<a href="#ref-eide1995sequential" role="doc-biblioref">1995</a>)</span>. Their method attributes says how responsible a risk factor is for a general population, and not just for a single individual as we do. On the other hand, they do not rank the risk factors according to their optimizability. For a fixed optimizability our decomposition method is a special case of the method by <span class="citation">Eide and Gefeller (<a href="#ref-eide1995sequential" role="doc-biblioref">1995</a>)</span> where the population is just a single individual.</p>
+</details>
+</div>
+<div id="optimal-values" class="section level3">
+<h3>Optimal values</h3>
+<p>In order to know how much risk can be prevented by optimizing a single <a href="#risk-factor">risk factor</a>, we need to know the optimal value of that risk factor. Only then can we compare the risk of the user to the lowest possible risk and communicate this difference in the <a href="#decomposition">decomposition</a> described in the previous section.</p>
+<p>It is not always as easy to compute the optimal value as in the example with homicide in the home, gun ownership and domestic violence. In that example there were only four different risks corresponding to the four combinations of gun ownership and domestic violence and so we could easily see that in all cases it was better to not own a gun and better to not have domestic violence. Things that complicate the calculation of optimal values are</p>
+<ul>
+<li><a href="#smoothing">Smoothing</a>. When smoothing, we compute the risks from a continuous curve which means that there are infinitely many different risks. In these cases we compute the optimal values using differential calculus.</li>
+<li>Non-multiplicative <a href="#interaction">interactions</a> between risk factors. When two factors don’t have a <a href="#multiplicativity">multiplicative</a> interaction, the optimal value of one risk factor can depend on the value of the other. An example can be seen in <a href="/model/LiverCancer#bmi-hcv-diagnosis">Liver cancer: BMI-HCV diagnosis</a>, where a high BMI is only dangerous if one has hepatitis C. The optimal BMI when conditioning on a positive HCV diagnosis is 18, but in general the optimal BMI can be anything as long as one doesn’t have hepatitis.</li>
+<li>Age effects. If the risk ratios of a risk factor depends on age, the optimal value may also depend on age. Likewise, if the risk factor itself depends on age.</li>
+<li>Different sub death causes. If a risk factor appears in more than one death cause, it can have different optimal value in them. For example, biological sex is a risk factor in both breast cancer and prostate cancer, where the optimal value is female and male, respectively. When considering all cancers at once, the optimal value of biological sex is therefore both male and female.</li>
+</ul>
+</div>
+</div>
+<div id="no-confidence-intervals" class="section level2">
+<h2>No confidence intervals</h2>
+<p>We do not compute confidence intervals on any of the estimates of the model. It is theoretically possible because all the risk ratios and population estimates comes with confidence intervals. However, it probably won’t be a future feature of the model; the nature of the model means that we would have to compute the confidence intervals using simulation techniques, which requires many more computations. At the time of writing, the pre-computation step takes around 30 seconds, the pre-computed data is around 0.5 MB, and the website spends around 1 second to evaluate the user’s data. Proper confidence interval estimation with simulation techniques would multiply all three numbers by a factor 100, and that would necessitate a different, more costly set-up. Besides, the bias and variance reduction from our use of <a href="#smoothing">smoothing techniques</a> makes the confidence intervals less interesting.</p>
+<p>Let us consider how big the confidence intervals would be if we computed them (and if we didn’t smooth the risk ratios). In the literature the confidence intervals of risk ratios are generally quite large and compared to the uncertainty on the population estimates, they are responsible for most of the uncertainty of the model. Often, a confidence interval of a risk ratio used by the model says 1) that an effect could be at least twice as big, and 2) the effect could be close to non-existent. Therefore, a rule of thumb could be that most of the <a href="#decomposition">decomposed</a> probabilities could be at least twice as big or half the size of their computed value. The probability of dying of a cause is basically a product of such risk ratios and so it also has a good amount of uncertainty. The uncertainty depends on several factor but if we should make a rule of thumb, it would be at least <span class="math inline">\(\pm1/3\)</span> if there is one risk factor and at least <span class="math inline">\(\pm 1/2\)</span> if there are more than one risk factor. The life expectancy would have a relatively small confidence interval because there are so many causes. Perhaps just <span class="math inline">\(\pm 1\)</span> year.</p>
+</div>
+<div id="no-validation" class="section level2">
+<h2>No validation</h2>
+<p>The model is not formally validated. All the incoming data and risk ratios are approved in peer-reviewed journals, but the way we combine the data has no checks yet. We of course appeal to the reasonability of the combination described in this document. Our model can also be compared to the studies below</p>
+<div id="expected-lifetime-studies" class="section level4">
+<h4>Expected lifetime studies</h4>
+<p>There are studies that examine the relationship between several risk factors and expected lifetime. In <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span> they build a model on the data from a prospective cohort study. They found, among other things, that smoking 20 cigarettes a day shortens your life with 6.5 years if you are a 30 year-old Finnish man who often drinks, prefers low-fat or no spread over butter, drinks skimmed milk, rarely eats vegetables or fruits, without a family history of heart attacks in young persons, is inactive, feels stressed most of the time, lowly educated, satisfied with his accomplishments, has strenuous work, has a spouse with whom he often argues, has improving financial status, feels it is impossible to obtain his goals, doesn’t have good friends and don’t have diabetes. We can’t match this exact profile on our website, but if we take the nearest values, we end up at 4.2 years (at the time of writing, 24/08-2021). There is a difference between 6.5 years and 4.2 years and possible explanations could be</p>
+<ul>
+<li>Our model doesn’t include all relevant risk factors for smoking yet.</li>
+<li>There is a difference between the baselines. For example, the Finnish non-smoker had an expected lifetime of 86.8 years, whereas the equivalent person in our model was an American non-smoker with expected lifetime 80.8.</li>
+<li>The two estimates are adjusted differently for confounding factors. The estimate from <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span> were adjusted for the risk factors mentioned above whereas, in our model, the different risk ratios are not adjusted for the same risk factors.</li>
+</ul>
+<p>There are similar studies, see the discussion in <span class="citation">Härkänen et al. (<a href="#ref-finland2020" role="doc-biblioref">2020</a>)</span>.</p>
+</div>
+<div id="global-disease-burden-project" class="section level4">
+<h4>Global disease burden project</h4>
+<p>The <a href="http://www.healthdata.org/gbd/2019">Global disease burden(GBD) project</a> aims to describe how many deaths each risk factor is responsible for worldwide <span class="citation">(Murray et al. <a href="#ref-gbd2019" role="doc-biblioref">2020</a>)</span>. The database is a giant version of the data we have collected. They have age-adjusted death rates and risk factor distributions for all countries, and not just the US. They also have a big curated list of risk ratios and compute some themselves (which we have used in for example <a href="/model/ColonCancer#total-physical-activity-time">Colon Cancer</a>). The risk ratios are directed more towards population-level concerns such as tobacco, sanitation and vitamin deficiencies whereas our model focuses on risk factors relevant for an individual in a developed country. Their computations are also focused on population-level risks making it hard to compare any numbers. However, one of their products, <a href="https://vizhub.healthdata.org/gbd-compare/">GBD compare</a>, can be used to compare the significance of the risk factors in GBD to their significance in our model.</p>
+</div>
+</div>
+</div>
+<div id="glossary" class="section level1">
+<h1>Glossary</h1>
+<div id="dose-response" class="section level4">
+<h4>Dose-response</h4>
+<p>A dose-response is a special type of analysis that are often made when considering just one <a href="#risk-factor">risk factor</a> that can be infinitely many different numbers. This numeric risk factor is the dose. For example, the dose could be the number of alcohol drinks per week, because it can be 0, 10, 3.4, 0.02, etc. The response is most often risk ratio, odds ratio or similar. The dose-response relationship is often presented using binned dose-intervals like the example we saw in section <a href="#smoothing">Smoothing</a>.</p>
+</div>
+<div id="independence" class="section level4">
+<h4>Independence</h4>
+<p>Variables are independent, when there is absolutely no relation between them. This is equivalent to saying that if you know one (or some) of the variables, you are not any wiser about the other variables. One example is two consecutive die rolls. The result of the first die roll, doesn’t tell you anything about the result of the second, so they are independent. <a href="#risk-factor">Risk factors</a>, on the other hand, are rarely completely independent. Consider for example sex and eye color. At first they may seem independent, but remember that</p>
+<ul>
+<li>The proportions of different eye colors changes from country to country.</li>
+<li>The ratio between males and females also depends on the country</li>
+</ul>
+<p>Imagine that we draw a random person in the world and we only know that he or she has brown eyes. With this tiny bit of information, we know that the person is more likely to come from a country with many brown-eyed people, and because the countries with many brown-eyed people generally have more males than females, we should now think there is a higher change that the person is male. This means that the person’s eye color affected our expectation of their sex, and so eye color and sex is not independent. It didn’t change our expectation by a lot, so we would say that they are almost independent.</p>
+<p>The benefit of independent variables is that it makes computations easier and faster. We will therefore assume risk factors are independent when it is not too wrong (see considerations in Section <a href="#combining-normalization-factors">Combining normalization factors</a>).</p>
+</div>
+<div id="meta-analysis" class="section level4">
+<h4>Meta analysis</h4>
+<p>In health research the same risk ratios, odds ratios or similar are often estimated in many different studies that varies by location and methods. The meta analysis finds these studies, removes those with unwanted methodology, and takes a kind of average of all the estimates. This averaged estimate will normally have a smaller error than any of the original estimates. A downside is that is much harder to determine the methodology behind the averaged estimate, because it will be some combination of methodology of all the included studies.</p>
+</div>
+<div id="odds-ratio" class="section level4">
+<h4>Odds ratio</h4>
+<p>An odds ratio is two odds divided by each other. In this document, an odds is a probability divided by the complementary probability. That is, if the probability is <span class="math inline">\(p=0.2=20\%\)</span>, the odds is <span class="math display">\[
+\frac{p}{1-p}=\frac{0.2}{1-0.2}=\frac{1}{4}=25\%
+\]</span></p>
+<p>An odds ratio is then <span class="math display">\[
+OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}
+\]</span></p>
+<p>We will almost consequently make the approximation <span class="math display">\[
+OR=\frac{\frac{p_1}{1-p_1}}{\frac{p_2}{1-p_2}}\approx \frac{p_1}{p_2}=RR
+\]</span> which is justified when <span class="math inline">\(p_1\)</span> and <span class="math inline">\(p_2\)</span> are small or close to each other. The RR is notation for <a href="#risk-ratio">Risk Ratio</a></p>
+</div>
+<div id="probability" class="section level4">
+<h4>Probability</h4>
+<p>See <a href="#risk">Risk</a>.</p>
+</div>
+<div id="risk" class="section level4">
+<h4>Risk</h4>
+<p>Risk is the same as probability. It represents the certainty of some event (which could be dying from homicide). It is a number between <span class="math inline">\(0\%=0\)</span> and <span class="math inline">\(100\%=1\)</span>, where <span class="math inline">\(0\%\)</span> means that the event will definitely not happen and <span class="math inline">\(100\%\)</span> means that it definitely will.</p>
+</div>
+<div id="risk-factor" class="section level4">
+<h4>Risk factor</h4>
+<p>A risk factor is a variable that affects a risk. For example, physical activity is a risk factor <em>for</em> colorectal cancer because one’s risk of dying from colorectal cancer depends on one’s level of physical activity.</p>
+</div>
+<div id="risk-ratio" class="section level4">
+<h4>Risk ratio</h4>
+<p>A risk ratio is two probabilities divided by each other. Risk ratios normally occur in studies where some people have been divided into different categories that have different risks of something. If there are 3 categories, there are 3 risks <span class="math inline">\(p_1, p_2\)</span> and <span class="math inline">\(p_3\)</span>. If category number one is the <em>base category</em>, the risk ratios are computed as <span class="math display">\[
+\text{RR}_1=\frac{p_1}{p_1}, \, \text{RR}_2=\frac{p_2}{p_1}, \, \text{RR}_3=\frac{p_3}{p_1} 
+\]</span></p>
+<p>Notice that <span class="math inline">\(\text{RR}_1\)</span> will always be <span class="math inline">\(1.0\)</span> using this definition.</p>
+</div>
+</div>
+<div id="references" class="section level1 unnumbered">
+<h1 class="unnumbered">References</h1>
+<div id="refs" class="references hanging-indent">
+<div id="ref-anglemyer2014accessability">
+<p>Anglemyer, Andrew, Tara Horvath, and George Rutherford. 2014. “The Accessibility of Firearms and Risk for Suicide and Homicide Victimization Among Household Members.” <em>Annals of Internal Medicine</em> 160 (2): 101–10. <a href="https://doi.org/10.7326/M13-1301">https://doi.org/10.7326/M13-1301</a>.</p>
+</div>
+<div id="ref-dahlberg2004guns">
+<p>Dahlberg, Linda L, Robin M Ikeda, and Marcie-jo Kresnow. 2004. “Guns in the Home and Risk of a Violent Death in the Home: Findings from a National Study.” <em>American Journal of Epidemiology</em> 160 (10): 929–36.</p>
+</div>
+<div id="ref-eide1995sequential">
+<p>Eide, Geir Egil, and Olaf Gefeller. 1995. “Sequential and Average Attributable Fractions as Aids in the Selection of Preventive Strategies.” <em>Journal of Clinical Epidemiology</em> 48 (5): 645–55.</p>
+</div>
+<div id="ref-eskelinen2010caffeine">
+<p>Eskelinen, Marjo H, and Miia Kivipelto. 2010. “Caffeine as a Protective Factor in Dementia and Alzheimer’s Disease.” <em>Journal of Alzheimer’s Disease</em> 20 (s1): S167–S174.</p>
+</div>
+<div id="ref-finland2020">
+<p>Härkänen, Tommi, Kari Kuulasmaa, Laura Sares-Jäske, Pekka Jousilahti, Markku Peltonen, Katja Borodulin, Paul Knekt, and Seppo Koskinen. 2020. “Estimating Expected Life-Years and Risk Factor Associations with Mortality in Finland: Cohort Study.” <em>BMJ Open</em> 10 (3). <a href="https://doi.org/10.1136/bmjopen-2019-033741">https://doi.org/10.1136/bmjopen-2019-033741</a>.</p>
+</div>
+<div id="ref-kellermann1993gun">
+<p>Kellermann, Arthur L., Frederick P. Rivara, Norman B. Rushforth, Joyce G. Banton, Donald T. Reay, Jerry T. Francisco, Ana B. Locci, Janice Prodzinski, Bela B. Hackman, and Grant Somes. 1993. “Gun Ownership as a Risk Factor for Homicide in the Home.” <em>New England Journal of Medicine</em> 329 (15): 1084–91. <a href="https://doi.org/10.1056/NEJM199310073291506">https://doi.org/10.1056/NEJM199310073291506</a>.</p>
+</div>
+<div id="ref-gbd2019">
+<p>Murray, Christopher J L, Aleksandr Y Aravkin, Peng Zheng, Cristiana Abbafati, and et al. 2020. “Global Burden of 87 Risk Factors in 204 Countries and Territories, 1990–2019: A Systematic Analysis for the Global Burden of Disease Study 2019.” <em>The Lancet</em> 396 (10258): 1223–49. <a href="https://doi.org/https://doi.org/10.1016/S0140-6736(20)30752-2">https://doi.org/https://doi.org/10.1016/S0140-6736(20)30752-2</a>.</p>
+</div>
+<div id="ref-CDCreport">
+<p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>
+</div>
+</div>
+</div>
+</body>
+</html>

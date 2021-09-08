@@ -1,0 +1,94 @@
+---
+title: "Pneumonia"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Pneumonia is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Pneumonia is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Pneumonia has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Pneumonia was responsible for 1.93% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Pneumonia')
+```
+
+
+#### Definition
+
+The definition of dying from Pneumonia is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Pneumonia who falls under the ICD code 
+
+* <details><summary> J12: Viral pneumonia, not elsewhere classified (0.63%)</summary>
+    * J120: Adenoviral pneumonia (0.024%)
+    * J121: Respiratory syncytial virus pneumonia (0.039%)
+    * J122: Parainfluenza virus pneumonia (0.026%)
+    * J123: Human metapneumovirus pneumonia (0.012%)
+    * J128: Other viral pneumonia (0.039%)
+    * J129: Viral pneumonia, unspecified (0.49%)
+</details>
+* J13: Pneumonia due to Streptococcus pneumoniae (0.51%)
+* J14: Pneumonia due to Hemophilus influenzae (0.099%)
+* <details><summary> J15: Bacterial pneumonia, not elsewhere classified (5.9%)</summary>
+    * J150: Pneumonia due to Klebsiella pneumoniae (0.26%)
+    * J151: Pneumonia due to Pseudomonas (0.5%)
+    * **J152: Pneumonia due to staphylococcus (1.4%)**
+    * J153: Pneumonia due to streptococcus, group B (0.0059%)
+    * J154: Pneumonia due to other streptococci (0.32%)
+    * J155: Pneumonia due to Escherichia coli (0.067%)
+    * J156: Pneumonia due to other aerobic Gram-negative bacteria (0.089%)
+    * J157: Pneumonia due to Mycoplasma pneumoniae (0.051%)
+    * J158: Pneumonia due to other specified bacteria (0.063%)
+    * **J159: Unspecified bacterial pneumonia (3.2%)**
+</details>
+* <details><summary> J16: Pneumonia due to other infectious organisms, not elsewhere classified (0.0039%)</summary>
+    * J160: Chlamydial pneumonia (0.002%)
+    * J168: Pneumonia due to other specified infectious organisms (0.002%)
+</details>
+* <details><summary> **J18: Pneumonia, unspecified organism (92.8%)**</summary>
+    * J180: Bronchopneumonia, unspecified organism (1.5%)
+    * J181: Lobar pneumonia, unspecified organism (3.1%)
+    * J182: Hypostatic pneumonia, unspecified organism (0.079%)
+    * J188: Other pneumonia, unspecified organism (0.0059%)
+    * **J189: Pneumonia, unspecified organism (88.1%)**
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

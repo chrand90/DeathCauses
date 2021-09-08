@@ -150,13 +150,23 @@ make_factor_object= function(fourcolumned_matrix){
 create_data_frame_from_interpolation_table=function(interpolationtable, riskratio_names){
   table_content=matrix(0, nrow=0, ncol=length(riskratio_names)*5+3)
   nfacts=length(riskratio_names)
-  for(i in 1:length(interpolationtable)){
-    row=interpolationtable[[i]]
-    factor_values=row[[1]]
-    included_in_interpolation=sapply(riskratio_names,
-                                     function(x){
-                                       return(x %in% row[[2]][[1]])
-                                     })
+  for(i in 1:length(interpolationtable$cells)){
+    row=interpolationtable$cells[[i]]
+    factor_values=c()
+    if("interpolation_domains" %in% names(row)){
+      int_domains=row$interpolation_domains
+    }
+    else{
+      int_domains=c()
+    }
+    if("non_interpolation_domains" %in% names(row)){
+      non_int_domains=row$non_interpolation_domains
+    }
+    else{
+      non_int_domains=c()
+    }
+    factor_values=c(int_domains, non_int_domains)
+    included_in_interpolation=c(rep(1,length(int_domains)), rep(0,length(non_int_domains)))
     factor_limits=sapply(factor_values, read_limits)
     to_add_vector=c()
     for(j in 1:nfacts){
@@ -164,10 +174,16 @@ create_data_frame_from_interpolation_table=function(interpolationtable, riskrati
                       factor_limits[,j], 
                       as.character(included_in_interpolation[j]))
     }
+    if("interpolation_polynomial" %in% names(row)){
+      value=row$interpolation_polynomial
+    }
+    else{
+      value=row$value
+    }
     to_add_vector=c(to_add_vector,
-                    row[[2]][[2]],
-                    ifelse(is.null(row[[2]][[3]]),"NULL",row[[2]][[3]]),
-                    ifelse(is.null(row[[2]][[4]]), "NULL",row[[2]][[4]]))
+                    value,
+                    "NULL",
+                    "NULL")
     table_content=rbind(table_content, to_add_vector)
   }
   factor_objects=list()
@@ -629,7 +645,7 @@ standard_ages=c(0,1,seq(5,105,5))
 standard_ages_string=as.character(standard_ages)
 standard_ages_string[length(standard_ages_string)]='Inf'
 barwidths=diff(standard_ages)
-dat=fromJSON(file = '../../compile/Causes.json')
+dat=fromJSON(file = '../../death-causes-app/src/resources/Causes.json')
 
 get_info = function(ca) {
   subdat = dat[[ca]]

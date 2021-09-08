@@ -1,0 +1,161 @@
+---
+title: "Mouth cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Mouth cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Mouth ca.
+* Mouth cancer
+* MouthCancer
+
+#### Categories
+
+Mouth cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Mouth cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [Current smoking amount](/model/SmokeIntensity) (Cigarettes)
+* [Alcohol consumption](/model/Drinking) (Alcohol)
+
+#### Number of deaths
+
+In 2014 Mouth cancer was responsible for 0.358% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'MouthCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Mouth cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Mouth cancer who falls under the ICD code 
+
+* <details><summary> **C0 (61.6%)**</summary>
+    * C00: Malignant neoplasm of lip (0.84%)
+        * C000: Malignant neoplasm of external upper lip (0.021%)
+        * C001: Malignant neoplasm of external lower lip (0.053%)
+        * C005: Malignant neoplasm of lip, unspecified, inner aspect (0.011%)
+        * C009: Malignant neoplasm of lip, unspecified (0.75%)
+    * C01: Malignant neoplasm of base of tongue (1.7%)
+    * **C02: Malignant neoplasm of other and unspecified parts of tongue (23.6%)**
+        * C020: Malignant neoplasm of dorsal surface of tongue (0.021%)
+        * C021: Malignant neoplasm of border of tongue (0.011%)
+        * C022: Malignant neoplasm of ventral surface of tongue (0.011%)
+        * C024: Malignant neoplasm of lingual tonsil (0.053%)
+        * **C029: Malignant neoplasm of tongue, unspecified (23.5%)**
+    * C03: Malignant neoplasm of gum (0.46%)
+        * C030: Malignant neoplasm of upper gum (0.16%)
+        * C031: Malignant neoplasm of lower gum (0.085%)
+        * C039: Malignant neoplasm of gum, unspecified (0.21%)
+    * C04: Malignant neoplasm of floor of mouth (0.89%)
+        * C049: Malignant neoplasm of floor of mouth, unspecified (0.89%)
+    * C05: Malignant neoplasm of palate (1.8%)
+        * C050: Malignant neoplasm of hard palate (0.41%)
+        * C051: Malignant neoplasm of soft palate (0.47%)
+        * C052: Malignant neoplasm of uvula (0.064%)
+        * C058: Malignant neoplasm of overlapping sites of palate (0.011%)
+        * C059: Malignant neoplasm of palate, unspecified (0.89%)
+    * **C06: Malignant neoplasm of other and unspecified parts of mouth (12.2%)**
+        * C060: Malignant neoplasm of cheek mucosa (0.42%)
+        * C062: Malignant neoplasm of retromolar area (0.21%)
+        * C069: Malignant neoplasm of mouth, unspecified (11.6%)
+    * **C07: Malignant neoplasm of parotid gland (7.2%)**
+    * C08: Malignant neoplasm of other and unspecified major salivary glands (2.9%)
+        * C080: Malignant neoplasm of submandibular gland (0.4%)
+        * C089: Malignant neoplasm of major salivary gland, unspecified (2.5%)
+    * **C09: Malignant neoplasm of tonsil (9.8%)**
+        * C090: Malignant neoplasm of tonsillar fossa (0.21%)
+        * C091: Malignant neoplasm of tonsillar pillar (anterior) (posterior) (0.053%)
+        * C099: Malignant neoplasm of tonsil, unspecified (9.5%)
+</details>
+* <details><summary> C10: Malignant neoplasm of oropharynx (11%)</summary>
+    * C100: Malignant neoplasm of vallecula (0.085%)
+    * C104: Malignant neoplasm of branchial cleft (0.011%)
+    * C108: Malignant neoplasm of overlapping sites of oropharynx (0.011%)
+    * C109: Malignant neoplasm of oropharynx, unspecified (10.9%)
+</details>
+* <details><summary> C11: Malignant neoplasm of nasopharynx (7.1%)</summary>
+    * C111: Malignant neoplasm of posterior wall of nasopharynx (0.17%)
+    * C112: Malignant neoplasm of lateral wall of nasopharynx (0.021%)
+    * C119: Malignant neoplasm of nasopharynx, unspecified (7%)
+</details>
+* C12: Malignant neoplasm of pyriform sinus (0.72%)
+* <details><summary> C13: Malignant neoplasm of hypopharynx (2.9%)</summary>
+    * C130: Malignant neoplasm of postcricoid region (0.011%)
+    * C131: Malignant neoplasm of aryepiglottic fold, hypopharyngeal aspect (0.021%)
+    * C139: Malignant neoplasm of hypopharynx, unspecified (2.8%)
+</details>
+* <details><summary> C14: Malignant neoplasm of other and ill-defined sites in the lip, oral cavity and pharynx (16.7%)</summary>
+    * C140: Malignant neoplasm of pharynx, unspecified (16.7%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{Alcohol,Cigarettes}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{Cigarettes,Alcohol}}
+$$
+
+
+#### Alcohol consumption, Current smoking amount
+
+Alcohol consumption and Current smoking amount are a group of risk factors for Mouth cancer.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'MouthCancer', c('Drinking','SmokeIntensity'),'raw')
+```
+
+
+Because the variables Alcohol consumption and Current smoking amount are numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'MouthCancer', c('Drinking','SmokeIntensity'),'interpolated')
+```
+
+
+
+## References

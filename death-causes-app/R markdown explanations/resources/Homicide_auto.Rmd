@@ -1,0 +1,98 @@
+---
+title: "Homicide"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Homicide is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Homicide is part of the following death cause categories
+
+* [Violent death](/model/ViolentDeath)
+
+#### Risk factors
+
+Homicide has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Homicide was responsible for 0.604% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Homicide')
+```
+
+
+#### Definition
+
+The definition of dying from Homicide is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Homicide who falls under the ICD code 
+
+* X85 (0.52%)
+* X88 (0.076%)
+* X89 (0.038%)
+* <details><summary> X9 (84.2%)</summary>
+    * X90 (0.0063%)
+    * X91 (3.3%)
+    * X92: Assault by drowning and submersion (0.2%)
+    * X93: Assault by handgun discharge (5%)
+    * X94: Assault by rifle, shotgun and larger firearm discharge (2.9%)
+    * **X95: Assault by other and unspecified firearm and gun discharge (61.3%)**
+    * X96: Assault by explosive material (0.0063%)
+    * X97: Assault by smoke, fire and flames (0.54%)
+    * X98: Assault by steam, hot vapors and hot objects (0.019%)
+    * X99: Assault by sharp object (11%)
+</details>
+  
+---- 
+
+* <details><summary> Y0 (13.6%)</summary>
+    * Y00: Assault by blunt object (0.28%)
+    * Y01: Assault by pushing from high place (0.025%)
+    * Y02: Assault by pushing or placing victim in front of moving object (0.031%)
+    * Y03: Assault by crashing of motor vehicle (0.37%)
+    * Y04: Assault by bodily force (0.42%)
+    * Y05 (0.0063%)
+    * Y06 (0.22%)
+        * Y061 (0.0063%)
+        * Y068 (0.025%)
+        * Y069 (0.19%)
+    * Y07: Perpetrator of assault, maltreatment and neglect (1%)
+        * Y071: 0 Parent (adoptive) (biological), perp of maltreat and neglect Parent (adoptive) (biological), perpetrator of maltreatment and neglect (0.031%)
+        * Y078 (0.013%)
+        * Y079: Unspecified perpetrator of maltreatment and neglect (0.96%)
+    * Y08: Assault by other specified means (1.1%)
+    * **Y09: Assault by unspecified means (10.1%)**
+</details>
+* Y871 (1.6%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

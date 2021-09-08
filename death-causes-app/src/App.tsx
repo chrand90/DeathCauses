@@ -1,127 +1,70 @@
-import {json} from "d3";
-import React from "react";
-import { Col, Container, Row } from "reactstrap";
-import "./App.css";
-import Header from "./components/Header";
-import QuestionMenu from "./components/QuestionMenu";
-import VizWindow from "./components/VizWindow";
-import  { FactorAnswers } from "./models/Factors";
-import RelationLinks, { RelationLinkJson } from "./models/RelationLinks";
-import Spinner from "react-bootstrap/Spinner";
-import { Visualization } from "./components/Helpers";
-import relationLinkFile from "./resources/Relations.json";
+import { observer } from "mobx-react";
+import React from 'react';
+import { Container } from 'react-bootstrap';
+import { BrowserRouter, Route, Switch } from 'react-router-dom';
+import AboutEntry from "./AboutEntry";
+import AboutPage from "./AboutPage";
+import RelationLinkWrapper from "./components/RelationLinkVizWrapper";
+import { ContactPage } from './ContactPage';
+import ICDPage from "./ICDpage";
+import Main from './Main';
+import Navigation from './NavBar';
+import { store, StoreContext } from "./stores/rootStore";
 
 
-
-
-interface AppState {
-  factorAnswersSubmitted: FactorAnswers | null;
-  elementInFocus: string;
-  relationLinkData: RelationLinks | null;
-  visualization: Visualization;
-}
-
-class App extends React.Component<any, AppState> {
-  constructor(props: any) {
-    super(props);
-
-    this.state = {
-      factorAnswersSubmitted: null,
-      elementInFocus: "BMI",
-      relationLinkData: null,
-      visualization: Visualization.NO_GRAPH
-    };
-    
-    this.handleSuccessfulSubmit = this.handleSuccessfulSubmit.bind(this);
-    this.orderVisualization = this.orderVisualization.bind(this);
-  }
-
-  handleSuccessfulSubmit(factorAnswers: FactorAnswers): void {
-    console.log("submitted factoranswers")
-    console.log(factorAnswers);
-    this.setState({
-      factorAnswersSubmitted: factorAnswers,
-    }, () => {
-      if((this.state.visualization!==Visualization.SURVIVAL_GRAPH && this.state.visualization!==Visualization.BAR_GRAPH)){
-        this.orderVisualization(this.state.elementInFocus, Visualization.BAR_GRAPH);
-      }
-    });
-  }
-
-  // loadFactorAnswers() {
-  //   this.setState({
-  //     factorAnswers: new Factors()
-  //   })
-  //   // load_factor_answers.then((loaded_factor_answers)=> this.setState({hasLoadedFactorAnswers: false, factor_answers:loaded_factor_answers})).
-  //   // This will load the factor answers and then it will update the rendered view using setState.
-  // }
-
-  // loadDatabase() {
-  //   // load_data.then((loaded_data)=> this.setState({hasLoadedDatabase: false, factor_answers:loaded_data})).
-  //   // This will load the data and then it will update the rendered view using setState.
-  //   // this.setState({ database: json('../compile/Causes_for_json'), hasLoadedDatabase: true });
-  // }
-
-
-  loadRelationLinks() {
-    setTimeout(
-      () => {
-        this.setState({ relationLinkData: new RelationLinks(relationLinkFile as RelationLinkJson)})
-      },
-      300
-    )
-  }
-
-  componentDidMount() {
-    this.loadRelationLinks()
-  }
-
-  orderVisualization(elementInFocus: string, visualizationType: Visualization): void {
-    this.setState({ visualization: visualizationType, elementInFocus: elementInFocus} );
-  }
-
-  renderQuestionMenu() {
-    return (
-      <QuestionMenu 
-        handleSuccessfulSubmit={this.handleSuccessfulSubmit} 
-        relationLinkData={this.state.relationLinkData!}
-        orderVisualization={this.orderVisualization}          
-    />
-    );
-  }
-
-  renderVizWindow() {
-    return (
-      <VizWindow
-        factorAnswersSubmitted={this.state.factorAnswersSubmitted}
-        relationLinkData={this.state.relationLinkData!}
-        elementInFocus={this.state.elementInFocus}
-        visualization={this.state.visualization}
-        orderVisualization={this.orderVisualization}
-      />
-    );
-  }
+class AppWithoutObserver extends React.Component {
 
   render() {
+
     return (
-      <div className="App">
-        <Header />
-        <Container fluid>
-          <Row>
-            <Col lg={5} xl={4} style={{ padding: "0px" }}>
-              {this.state.relationLinkData!== null ? this.renderQuestionMenu() : <Spinner animation="grow" />}
-            </Col>
-            <Col lg={7} xl={8} style={{ padding: "0px" }}>
-              { this.state.relationLinkData !== null
-                ? this.renderVizWindow()
-                : <Spinner animation="grow" />}
-            </Col>
-          </Row>
-        </Container>
-      </div>
+      <StoreContext.Provider value={store}>
+        <script data-goatcounter="https://deathcauses.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+        <BrowserRouter>
+          <Switch>
+            <Route exact path="/">
+              <Navigation fullWidth={true} />
+              <Main />
+            </Route>
+            <Route exact path="/model/:subpage">
+              <Navigation fullWidth={true} />
+              <AboutPage />
+            </Route>
+            <Route exact path="/model">
+              <Navigation fullWidth={true} />
+              <AboutEntry />
+            </Route>
+            <Route exact path="/ICD">
+              <Navigation fullWidth={true} />
+              <ICDPage />
+            </Route>
+            <Route exact path="/relations">
+              <Navigation fullWidth={true} />
+              <RelationLinkWrapper />
+            </Route>
+            <Route exact path="/contact">
+              <Navigation fullWidth={true} />
+              <ContactPage />
+            </Route>
+            <Route exact>
+              <Navigation fullWidth={true} />
+              <Error />
+            </Route>
+          </Switch>
+        </BrowserRouter>
+      </StoreContext.Provider >
     );
   }
-
 }
 
+function Error() {
+  return (
+    <Container>
+      <div>
+        <h2>Error</h2>
+      </div>
+    </Container>
+  );
+}
+
+const App = observer(AppWithoutObserver);
 export default App;

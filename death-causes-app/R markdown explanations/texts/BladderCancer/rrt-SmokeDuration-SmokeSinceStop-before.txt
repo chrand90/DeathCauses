@@ -1,0 +1,13 @@
+Smoking for a longer period is worse than smoking the same amount of cigarettes in a shorter time span [@baris2009case]. We use the numbers from @pitard2001cigar to estimate the effect of duartion of smoking. We prefer this study because it has good categories and because they report joint estimates with the amount of cigarettes smoked. 
+
+Assessing the effect of Smoking cessation has not been the focus of much literature. We did however find a reference to a paper by @BURGER2013234 hidden behind a paywall. The referencing paper was @saginala2020epidemiology and they reported
+
+> "However, smoking cessation has been shown to reduce the risk of bladder cancer by approximately 40% within only 1-4 years, and complete return to baseline risk by 20 years, suggesting a non-linear relationship between incidence and pack-years"
+
+To use this information we expand with the assumptions
+
+* If smoking cessation happened between 4 and 20 years ago, the risk increase from smoking duration is reduced by 70%
+* If smoking cessation happened between 0 and 1 years ago, the risk increase from smoking duration is reduced by 0%
+
+This leads to the risk ratios below.
+

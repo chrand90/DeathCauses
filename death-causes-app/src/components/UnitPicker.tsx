@@ -11,7 +11,7 @@ export interface UnitPickerProps {
 
 class UnitPicker extends React.PureComponent<UnitPickerProps> {
   chosenValue: string;
-  constructor(props: UnitPickerProps) {
+  constructor(props: UnitPickerProps) { 
     super(props);
     this.chosenValue=this.props.options[0];
     this.handleToggleUnit=this.handleToggleUnit.bind(this);

@@ -1,0 +1,12 @@
+#credibility=10000
+#
+#taken from Hepatitis C Virus Prevalence in 50 US states and dc by sex birth cohort and race 2013-2016
+#
+#
+HCVStatus	Age	freq
+Yes	,50	0.0051
+No	,50	0.9949
+Yes	50,75	0.0163
+No	50,75	0.9837
+Yes	75+	0.0021
+No	75+	0.9979

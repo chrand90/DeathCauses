@@ -1,0 +1,126 @@
+---
+title: "Optimizabilities"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[partly auto-generated file]_
+
+The measure *optimizability* describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+
+For most risk factors the optimizability is always the same but for some, the optimizability depends on other factors. For example, current smokers can still improve their average smoking amount, but former smokers can't. Therefore, the optimizability of [average smoking amount](/model/SmokeTypicalAmount) depends on one's [smoking status](/model/Smoking).The different optimizabilities are
+
+1. It is impossible to change and it has never been in your control
+2. It is impossible to change, but it could have been the consequence of your actions
+3. It is impossible to change now, but it has once definitely been in your control
+4. It is possible to change, but it will take a lot of time.
+5. It is possible to change, and it can be changed now or very soon.
+
+
+## Risk factors
+
+### Category 1
+
+Description: It is impossible to change and it has never been in your control
+
+Members:
+
+* [Age](/model/Age)
+* [Family history parkinsons](/model/FamilyHistoryParkinson)
+* [Race](/model/Race)
+* [Biological sex](/model/Sex)
+
+
+### Category 2
+
+Description: It is impossible to change, but it could have been the consequence of your actions
+
+Members:
+
+* [Depression](/model/Depression)
+* [Diabetes diagnosis](/model/DiabetesStatus)
+* [HCV diagnosis](/model/HCVStatus)
+* [HIV/AIDS diagnosis](/model/HIVStatus)
+* [HPV vaccine](/model/HPVVaccine)
+* [Head traumas](/model/HeadTrauma)
+
+
+### Category 3
+
+Description: It is impossible to change now, but it has once definitely been in your control
+
+Members:
+
+* [Time spent indoor tanning](/model/IndoorTanning)
+* [Ever used oral contraceptives](/model/OralContraceptiveEver)
+* [Pesticide exposure](/model/PesticideExposure)
+* [Amount smoked in the past](/model/SmokePastAmount)
+
+
+### Category 4
+
+Description: It is possible to change, but it will take a lot of time.
+
+Members:
+
+* [BMI](/model/BMI)
+* [Diabetes condition](/model/DiabetesCondition)
+* [Waist circumference](/model/Waist)
+* [Waist circumference male equivalence](/model/WaistMale)
+
+
+### Category 5
+
+Description: It is possible to change, and it can be changed now or very soon.
+
+Members:
+
+* [Coffee consumption](/model/Caffeine)
+* [Cognitive activity](/model/CognitiveActivity)
+* [Alcohol consumption](/model/Drinking)
+* [Fish consumption](/model/Fish)
+* [Fluids intake](/model/Fluids)
+* [Fruit consumption](/model/Fruits)
+* [Fruits and vegetables consumption](/model/Greens)
+* [Peak Alcohol consumption](/model/MaxDrinking)
+* [Time till stopping oral contraceptives](/model/OralContraceptiveTillStop)
+* [Hard physical activity time](/model/PhysicalHard)
+* [Medium physical activity time](/model/PhysicalMedium)
+* [Total time doing physical activity](/model/PhysicalTotal)
+* [Red meat consumption](/model/RedMeat)
+* [Current smoking amount](/model/SmokeIntensity)
+* [Vegetable consumption](/model/Vegetables)
+
+
+### Category Mixed 
+
+* 4 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Time since taking OCP per year](/model/OralContraceptiveSinceStop)
+  * [Time since taking oral contraceptives](/model/OralContraceptiveStopped)
+* 5 if [Oral contraceptives](/model/OralContraceptiveStatus)='Current user', else 3
+  * [Oral contraceptives](/model/OralContraceptiveStatus)
+* 5 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Total amount smoked in life](/model/SmokeCumulative)
+  * [Total time you have smoked per year](/model/SmokeDurationCumulative)
+  * [Average amount smoked in smoking period](/model/SmokeTypicalAmount)
+  * [Smoking status](/model/Smoking)
+* 4 if [Smoking status](/model/Smoking)='Current smoker', else 3
+  * [Time span of smoking period](/model/SmokeDuration)
+  * [Time since you stopped smoking per year](/model/SmokeSinceStop)
+  * [Time since you stopped smoking](/model/SmokingStopped)

@@ -1,0 +1,167 @@
+---
+title: "Alzheimers"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[partly auto-generated file]_
+
+Alzheimers is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Alzheimers is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+In the model Alzheimers has the following [risk factors](/model/intro#risk-factor)
+
+* [Cognitive activity](/model/CognitiveActivity) (Cognitivity)
+* [Diabetes condition](/model/DiabetesCondition) (Diabetes)
+* [Fish consumption](/model/Fish) (Fish)
+* [Vegetable consumption](/model/Vegetables) (Vegetables)
+
+#### Number of deaths
+
+In 2014 Alzheimers was responsible for 3.56% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers')
+```
+
+
+#### Definition
+
+The definition of dying from Alzheimers is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Alzheimers who falls under the ICD code 
+
+* <details><summary> G30: Alzheimer's disease (100.0%)</summary>
+    * G300: Alzheimer's disease with early onset (0.028%)
+    * G301: Alzheimer's disease with late onset (2.3%)
+    * G308: Other Alzheimer's disease (0.0086%)
+    * G309: Alzheimer's disease, unspecified (97.6%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{Cognitivity}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Fish}} \cdot RR_{\text{Vegetables}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{Cognitivity}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Fish}} \cdot P_{\text{Vegetables}}
+$$
+
+
+#### Cognitive activity
+
+[Cognitive activity](/model/CognitiveActivity) is a risk factor for Alzheimers.
+
+In the meta-analysis by @Yu1201, it was estimated that cognitive activity could reduce Alzheimers by a factor 0.53. The main paper in the meta-analysis was @Wilson1911, who
+
+1. used a scale for cognitive activity that we imitate in the input factor [Cognitive activity](/model/CognitiveActivity). Its 10th percentile is 2.2, its 90th percentile is 4.0 and its mean is 3.2.
+2. assumes the Hazard ratio(HR) has the relationship $HR(x)=a\cdot \exp(b\cdot x)$ where $x$ is their definition of cognitive activity.
+
+In the paper by @Wilson1911, they have $b=log(0.58)$, but we will not use that fact because we have more faith in the factor 0.53. Therefore, ee assume that $HR(2.2)=1$ and $HR(4.0)=0.53$ and reestimate $a$ and $b$ using the assumption $HR(x)=a\cdot \exp(b\cdot x)$. That leads to the estimates
+
+$$
+b=-0.3527102\\
+\frac{1}{3.2-2.2}\int_{2.2}^{3.2} a\cdot \exp(b\cdot x) \text{ d}x=0.8426725\\
+\frac{1}{4.0-3.2}\int_{3.2}^4 a\cdot \exp(b\cdot x) \text{ d}x=0.612333
+$$
+
+We therefore obtain the risk ratios below
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('CognitiveActivity'),'raw')
+```
+
+
+Because the variable Cognitive activity is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('CognitiveActivity'),'interpolated')
+```
+
+
+#### Diabetes condition
+
+[Diabetes condition](/model/DiabetesCondition) is a risk factor for Alzheimers.
+
+@Yu1201 estimated that having diabetes increases risk of Alzheimers by a factor 1.69.
+
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('DiabetesCondition'),'raw')
+```
+
+
+#### Fish consumption
+
+[Fish consumption](/model/Fish) is a risk factor for Alzheimers.
+
+It seems that Omega-3 intake could be the real reason, but the results are not as clear [@wu2015omega]. We therefore use the fish consumption effects from @wu2015omega, where they estimate a minimum risk ratio of 0.64 and a 11% decrease per 100 grams of fish consumed per week. Those numbers indicates a line of exponential decrease from 0 grams of fish at $RR=1.0$ to $\log(0.64)/\log(0.89)\cdot 100=382$ grams of fish. Dividing this line into arbitrary segments, we obtain the distrubtion below.
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'raw')
+```
+
+
+Because the variable Fish consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Fish'),'interpolated')
+```
+
+
+#### Vegetable consumption
+
+[Vegetable consumption](/model/Vegetables) is a risk factor for Alzheimers.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Vegetables'),'raw')
+```
+
+
+Because the variable Vegetable consumption is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Alzheimers', c('Vegetables'),'interpolated')
+```
+
+
+
+## References

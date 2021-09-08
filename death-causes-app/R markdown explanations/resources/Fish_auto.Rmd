@@ -1,0 +1,60 @@
+---
+title: "Fish consumption"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Fish consumption is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Fish
+* Fish consumption
+
+#### Uses
+
+Fish consumption is used by the model in the following places
+
+* as a risk factor for [Alzheimers](/model/Alzheimers)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much fish do you eat in a normal week?
+
+The unit of the input is **Servings**, but can be changed to any of the units below
+
+* Grams (1 Servings = 100.0 Grams)
+
+The answer has to be larger than 0 Servings.A serving is 100 grams (=0.22 pounds) of fish or shellfish.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fish consumption is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+
+## References

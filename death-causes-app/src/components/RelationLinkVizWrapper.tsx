@@ -1,99 +1,97 @@
-import React, { useRef, useState, useEffect } from 'react';
-import RelationLinks, { RelationLinkJson } from '../models/RelationLinks';
+import { observer } from 'mobx-react';
+import React, { useEffect, useRef, useState } from 'react';
+import { useStore } from '../stores/rootStore';
 import RelationLinkViz from './RelationLinkViz';
 import './RelationLinkVizWrapper.css';
-import DropdownButton from "react-bootstrap/DropdownButton";
+import { useHistory } from "react-router-dom";
+import  Button  from 'react-bootstrap/Button';
+import { Container, Spinner } from "react-bootstrap";
+import { createHandleChangeFunction } from './Helpers';
 
-interface RelationLinkWrapperProps {
-	rdat: RelationLinks;
-	elementInFocus: string;
-	changeElementInFocus: (d:string) => void,
-}
-
-function createHandleChangeFunction(changeElementInFocus: (d:string) => void): (ev: React.ChangeEvent<HTMLSelectElement>) => void {
-	const handleChangeFunction = (event: React.ChangeEvent<HTMLSelectElement>) => {
-		const value: string = event.currentTarget.value;
-		changeElementInFocus(value);
-	}
-	return handleChangeFunction
-}
+const DESCRIPTION_LENGTH=22;
 
 
 
 
-const RelationLinkWrapper = (props: RelationLinkWrapperProps) => { //class ChartWrapper extends React.PureComponent<any,any> {
+
+
+const RelationLinkWrapper = observer(() => { //class ChartWrapper extends React.PureComponent<any,any> {
 	const chartArea = useRef(null);
-	const elementInFocus= props.elementInFocus;
+	const store = useStore();
+	let history = useHistory();
 	const [chart, setChart] = useState<RelationLinkViz | null>(null);
-	const { width } = useWindowSize();
+
+	const onRedirectToLibrary = (name: string) => {
+		history.push("/model/"+name)
+	} 
 
 	const createNewChart = function () {
-		setChart(new RelationLinkViz(chartArea.current, props.rdat, props.elementInFocus, props.changeElementInFocus));
+		if(store.loadedDataStore.loadedRelationLinks){
+			setChart(new RelationLinkViz(
+				chartArea.current, 
+				store.loadedDataStore.rdat,
+				store.loadedDataStore.descriptions,
+				store.relationLinkVizStore.elementInFocus, 
+				store.relationLinkVizStore.setElementInFocus));
+		}
 	}
 
 	useEffect(() => {
-		console.log('width changed');
 		if (chart) {
 			chart.clear();
 			createNewChart();
 		}
-	}, [width])
+	}, [store.uIStore.windowWidth])
 
 	useEffect(() => {
 		createNewChart();
 		return () => {
-			console.log("indside unmounter hook");
-			console.log(chart);
 			chart?.clear();
 		}
-	}, []);
+	}, [store.loadedDataStore.loadedRelationLinks]);
 
 	useEffect(() => {
-		console.log('dataset changed');
 		if (chart) {
-			chart.clear();
-			createNewChart()
+			chart.update(store.relationLinkVizStore.elementInFocus);
 		}
-	}, [elementInFocus]);
+	}, [store.relationLinkVizStore.elementInFocus]);
+
+	if(!store.loadedDataStore.loadedRelationLinks){
+		return (<div><Spinner animation="grow"></Spinner><small>Loading database</small></div>)
+	}
 
 	return (
 		<div>
-			<p>Graph showing how we use <select value={elementInFocus} onChange={createHandleChangeFunction(props.changeElementInFocus)}>
-				{props.rdat.getAllPossibleNodes().map((d:string) => {
-					return <option value={d}>{d}</option>
-				})}
-				</select> in the model</p>
-		<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
+			<Container>
+				<h1>
+					Graph between risk factors and death causes
+				</h1>
+				<p>Graph showing how we use <select value={store.relationLinkVizStore.elementInFocus} onChange={createHandleChangeFunction<string>(store.relationLinkVizStore.setElementInFocus)}>
+					{store.loadedDataStore.rdat.getAllPossibleNodes().map(
+						(d:string) => {
+							return [d,store.loadedDataStore.descriptions.getDescription(d,DESCRIPTION_LENGTH)]
+						}
+					 ).sort(function(a,b){return a[1].localeCompare(b[1])}).map(
+						 ([nodeComputationName, nodeHumanName]) => {
+							return <option value={nodeComputationName}>{nodeHumanName}</option>
+						 }
+					 )
+					}
+					</select> in the model</p>
+				<p> Visit its page in the library <Button 
+					className="text-link-button" 
+					variant="link"
+					onClick={()=> onRedirectToLibrary(store.relationLinkVizStore.elementInFocus)}> 
+					{store.loadedDataStore.descriptions.getDescription(store.relationLinkVizStore.elementInFocus, DESCRIPTION_LENGTH)} </Button></p>
+			</Container>
+			<div style={{overflowX:"auto", width: "100%", maxWidth:"1600px", margin:"auto"}}>
+				<div className="containerRelationLink" ref={chartArea} id="relationlinkcontainer"/>
+			</div>
 		</div>
+			
 	)
 
-}
+});
 
-function useWindowSize() {
-	const [windowSize, setWindowSize] = useState({
-		width: window.innerWidth,
-	});
-
-	let resize_graphic = true;
-	function changeWindowSize() {
-		if (resize_graphic) {
-			resize_graphic = false;
-			setTimeout(() => {
-				setWindowSize({ width: window.innerWidth });
-				resize_graphic = true;
-			}, 400);
-		}
-	}
-
-	useEffect(() => {
-		window.addEventListener("resize", changeWindowSize);
-
-		return () => {
-			window.removeEventListener("resize", changeWindowSize);
-		};
-	}, []);
-
-	return windowSize;
-}
 
 export default RelationLinkWrapper;

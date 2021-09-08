@@ -1,0 +1,104 @@
+---
+title: "Kidney cancer"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Kidney cancer is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Kidney ca.
+* Kidney cancer
+* KidneyCancer
+
+#### Categories
+
+Kidney cancer is part of the following death cause categories
+
+* [Cancer](/model/Cancer)
+
+#### Risk factors
+
+In the model Kidney cancer has the following [risk factors](/model/intro#risk-factor)
+
+* [BMI](/model/BMI)
+
+#### Number of deaths
+
+In 2014 Kidney cancer was responsible for 0.529% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'KidneyCancer')
+```
+
+
+#### Definition
+
+The definition of dying from Kidney cancer is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Kidney cancer who falls under the ICD code 
+
+* C64: Malignant neoplasm of kidney, except renal pelvis (98.8%)
+* C65: Malignant neoplasm of renal pelvis (1.2%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{BMI}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{BMI}}
+$$
+
+
+#### BMI
+
+[BMI](/model/BMI) is a risk factor for Kidney cancer.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'KidneyCancer', c('BMI'),'raw')
+```
+
+
+Because the variable BMI is numeric, we have computed a [smoothed approximation](/model/intro#smoothing).
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'KidneyCancer', c('BMI'),'interpolated')
+```
+
+
+
+## References

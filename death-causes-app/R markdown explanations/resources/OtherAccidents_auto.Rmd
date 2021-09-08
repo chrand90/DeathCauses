@@ -1,0 +1,223 @@
+---
+title: "Other accidents"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Other accidents is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Other Accid.
+* Other accidents
+* OtherAccidents
+
+#### Categories
+
+Other accidents is part of the following death cause categories
+
+* [Accidents](/model/Accidents)
+
+#### Risk factors
+
+Other accidents has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Other accidents was responsible for 3.75% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'OtherAccidents')
+```
+
+
+#### Definition
+
+The definition of dying from Other accidents is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Other accidents who falls under the ICD code 
+
+* <details><summary> W (45.7%)</summary>
+    * W0 (2.7%)
+        * W00: Fall due to ice and snow (0.14%)
+        * W01: Fall on same level from slipping, tripping and stumbling (0.75%)
+        * W02 (0.054%)
+        * W03: Other fall on same level due to collision with another person (0.0051%)
+        * W04: Fall while being carried or supported by other persons (0.034%)
+        * W05: Fall from non-moving wheelchair, nonmotorized scooter and motorized mobility scooter (0.5%)
+        * W06: Fall from bed (0.85%)
+        * W07: Fall from chair (0.33%)
+        * W08: Fall from other furniture (0.078%)
+        * W09: Fall on and from playground equipment (0.001%)
+    * **W1 (29.8%)**
+        * W10: Fall on and from stairs and steps (2.3%)
+        * W11: Fall on and from ladder (0.48%)
+        * W12: Fall on and from scaffolding (0.051%)
+        * W13: Fall from, out of or through building or structure (0.51%)
+        * W14: Fall from tree (0.075%)
+        * W15: Fall from cliff (0.084%)
+        * W16: Fall, jump or diving into water (0.031%)
+        * W17: Other fall from one level to another (0.49%)
+        * **W18: Other slipping, tripping and stumbling and falls (11%)**
+        * **W19: Unspecified fall (14.7%)**
+    * W2 (1.2%)
+        * W20: Struck by thrown, projected or falling object (0.76%)
+        * W21: Striking against or struck by sports equipment (0.0051%)
+        * W22: Striking against or struck by other objects (0.15%)
+        * W23: Caught, crushed, jammed or pinched in or between objects (0.093%)
+        * W24: Contact with lifting and transmission devices, not elsewhere classified (0.11%)
+        * W25: Contact with sharp glass (0.022%)
+        * W26: Contact with knife, sword or dagger (0.0051%)
+        * W27: Contact with nonpowered hand tool (0.003%)
+        * W28: Contact with powered lawn mower (0.073%)
+        * W29: Contact with other powered hand tools and household machinery (0.0041%)
+    * W3 (1.1%)
+        * W30: Contact with agricultural machinery (0.19%)
+        * W31: Contact with other and unspecified machinery (0.31%)
+        * W32: Accidental handgun discharge and malfunction (0.097%)
+        * W33: 0 Acc rifle, shotgun and larger firearm discharge and malfunct Accidental rifle, shotgun and larger firearm discharge and malfunction (0.066%)
+        * W34: Accidental discharge and malfunction from other and unspecified firearms and guns (0.43%)
+        * W35: Explosion and rupture of boiler (0.003%)
+        * W36: Explosion and rupture of gas cylinder (0.0071%)
+        * W37: Explosion and rupture of pressurized tire, pipe or hose (0.0091%)
+        * W38: 0 Explosion and rupture of other specified pressurized devices Explosion and rupture of other specified pressurized devices (0.002%)
+        * W39: Discharge of firework (0.0061%)
+    * W4 (0.21%)
+        * W40: Explosion of other materials (0.12%)
+        * W41 (0.001%)
+        * W44 (0.027%)
+        * W45: Foreign body or object entering through skin (0.003%)
+        * W49: Exposure to other inanimate mechanical forces (0.064%)
+    * W5 (0.14%)
+        * W50: Accidental hit, strike, kick, twist, bite or scratch by another person (0.002%)
+        * W51: 0 Accidental striking against or bumped into by another person Accidental striking against or bumped into by another person (0.0071%)
+        * W54: Contact with dog (0.038%)
+        * W55: Contact with other mammals (0.084%)
+        * W57: Bitten or stung by nonvenomous insect and other nonvenomous arthropods (0.0061%)
+    * W6 (2.8%)
+        * W64: Exposure to other animate mechanical forces (0.0091%)
+        * W65: Accidental drowning and submersion while in bath-tub (0.42%)
+        * W66 (0.024%)
+        * W67: Accidental drowning and submersion while in swimming-pool (0.67%)
+        * W68 (0.056%)
+        * **W69: Accidental drowning and submersion while in natural water (1.6%)**
+    * W7 (3.4%)
+        * W70 (0.17%)
+        * W73: Other specified cause of accidental non-transport drowning and submersion (0.13%)
+        * W74: Unspecified cause of accidental drowning and submersion (0.47%)
+        * W75 (0.93%)
+        * W76 (0.24%)
+        * W77 (0.013%)
+        * W78 (0.3%)
+        * **W79 (1.2%)**
+    * W8 (4.3%)
+        * **W80 (3.4%)**
+        * W81 (0.01%)
+        * W83 (0.089%)
+        * W84 (0.52%)
+        * W85: Exposure to electric transmission lines (0.061%)
+        * W86: Exposure to other specified electric current (0.049%)
+        * W87 (0.15%)
+    * W9 (0.0091%)
+        * W92: Exposure to excessive heat of man-made origin (0.0041%)
+        * W93: Exposure to excessive cold of man-made origin (0.0041%)
+        * W94: 0 Expsr to high and low air pressr and changes in air pressure Exposure to high and low air pressure and changes in air pressure (0.001%)
+</details>
+  
+---- 
+
+* <details><summary> X0 (2.8%)</summary>
+    * **X00: Exposure to uncontrolled fire in building or structure (2.2%)**
+    * X01: Exposure to uncontrolled fire, not in building or structure (0.038%)
+    * X02: Exposure to controlled fire in building or structure (0.015%)
+    * X03: Exposure to controlled fire, not in building or structure (0.043%)
+    * X04: Exposure to ignition of highly flammable material (0.049%)
+    * X05: Exposure to ignition or melting of nightwear (0.002%)
+    * X06: Exposure to ignition or melting of other clothing and apparel (0.094%)
+    * X08: Exposure to other specified smoke, fire and flames (0.047%)
+    * X09 (0.23%)
+</details>
+* <details><summary> X1 (0.073%)</summary>
+    * X10: Contact with hot drinks, food, fats and cooking oils (0.001%)
+    * X11: Contact with hot tap-water (0.027%)
+    * X12: Contact with other hot fluids (0.013%)
+    * X13: Contact with steam and other hot vapors (0.002%)
+    * X14: Contact with hot air and other hot gases (0.001%)
+    * X15: Contact with hot household appliances (0.0051%)
+    * X16: Contact with hot heating appliances, radiators and pipes (0.014%)
+    * X17: Contact with hot engines, machinery and tools (0.002%)
+    * X18: Contact with other hot metals (0.002%)
+    * X19: Contact with other heat and hot substances (0.0051%)
+</details>
+* <details><summary> X2 (0.093%)</summary>
+    * X20 (0.0051%)
+    * X21 (0.0071%)
+    * X23 (0.066%)
+    * X25 (0.011%)
+    * X29 (0.0041%)
+</details>
+* <details><summary> X3 (1.5%)</summary>
+    * X30: Exposure to excessive natural heat (0.3%)
+    * X31: Exposure to excessive natural cold (0.96%)
+    * X32: Exposure to sunlight (0.001%)
+    * X33 (0.026%)
+    * X34: Earthquake (0.001%)
+        * X349 (0.001%)
+    * X36: Avalanche, landslide and other earth movements (0.086%)
+    * X37: Cataclysmic storm (0.062%)
+    * X38: Flood (0.0081%)
+    * X39: Exposure to other forces of nature (0.031%)
+</details>
+* <details><summary> **X4 (42.8%)**</summary>
+    * X40 (0.23%)
+    * X41 (3.1%)
+    * **X42 (17.1%)**
+    * X43 (0.021%)
+    * **X44 (18.9%)**
+    * X45 (2.3%)
+    * X46 (0.047%)
+    * X47 (0.81%)
+    * X48 (0.0061%)
+    * X49 (0.18%)
+</details>
+* <details><summary> X5 (6%)</summary>
+    * X50 (0.0091%)
+    * X53 (0.012%)
+    * X54 (0.001%)
+    * X57 (0.001%)
+    * X58: Exposure to other specified factors (0.048%)
+    * **X59 (5.9%)**
+        * X590 (3%)
+        * X599 (2.9%)
+</details>
+  
+---- 
+
+* Y86 (1.1%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

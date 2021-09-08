@@ -1,16 +1,22 @@
 import * as d3 from "d3";
 import d3Tip from "d3-tip";
+import Descriptions from "../models/Descriptions";
 import RelationLinks, {
   Arrow,
   NodeType,
   NODE_ORDER,
   PlottingInfo,
   TransformedLabel,
-  NodeExtremas
+  NodeExtremas,
+  XDivision,
 } from "../models/RelationLinks";
-import { ALTERNATING_COLORS, getDivWidth } from "./Helpers";
+import {  ALTERNATING_COLORS, DEATHCAUSES_COLOR, DEATHCAUSES_LIGHT, getDivWidth } from "./Helpers";
 import "./RelationLinkViz.css";
 
+const ALTERNATING_COLORS_RELATIONLINK=[ALTERNATING_COLORS[1],DEATHCAUSES_LIGHT]
+const DESCRIPTION_LENGTH=22
+const SLIGHTLY_DARKER_GRAY="#707070"
+const BOTTOM_BUFFER_HEIGHT=16
 interface PlottingNodeDicValue {
   bbox: SVGRect;
   x: number;
@@ -19,7 +25,6 @@ interface PlottingNodeDicValue {
   cat: string;
   nodeName: string;
 }
-
 
 interface PlottingNodeDic {
   [key: string]: PlottingNodeDicValue;
@@ -34,112 +39,103 @@ interface ArrowExtender {
 
 interface ArrowPlottingObject extends Arrow, ArrowExtender {}
 
-
-
 export default class RelationLinkViz {
+  rdat: RelationLinks;
+  descriptions: Descriptions;
+  changeElementInFocus: (d: string) => void;
+  width: number = 0;
+  svg!: d3.Selection<SVGSVGElement, unknown, null, undefined>;
+
   constructor(
     canvas: HTMLElement | null,
     rdat: RelationLinks,
+    descriptions: Descriptions,
     elementInFocus: string,
     changeElementInFocus: (d: string) => void
   ) {
-    const width = getDivWidth(canvas);
-    console.log("wdth");
-    console.log(width);
-    const pdat: PlottingInfo = rdat.makePlottingInstructions(elementInFocus);
-    const transformedLabels = pdat.transformedLabels;
-    const arrows = pdat.arrows;
-    let nodeExtremas= pdat.nodeExtremas
-    if(nodeExtremas.min===nodeExtremas.max){
-      nodeExtremas.min=NODE_ORDER[0]
-      nodeExtremas.max=NODE_ORDER[NODE_ORDER.length-1]
-    }
+    this.width = getDivWidth(canvas);
+    this.rdat = rdat;
+    this.descriptions=descriptions;
+    this.changeElementInFocus = changeElementInFocus;
 
-    console.log("transformedlabels");
-    console.log(transformedLabels);
-    console.log(pdat.xDivisions);
-
-    const xDivisions = pdat.xDivisions;
-    const svg = d3
+    this.svg = d3
       .select(canvas)
       .append("svg")
-      .attr("width", Math.max(width - 10, 800))
-      .attr("height", 1000);
+      .attr("width", Math.max(this.width - 25, 800))
+      .attr("height", 1000)
+      .style("position","relative");
+    const vis = this;
 
-    const maxX = Math.max(getMax(transformedLabels, "x"),0.01); //making sure that x is positive to handle the case where there are only one variable.
-    const maxY = getMax(transformedLabels, "y");
+    const {
+      transformedLabels,
+      arrows,
+      nodeExtremas,
+      xDivisions,
+    } = this.computeDataTransformations(elementInFocus);
 
-    const x = d3
-      .scaleLinear()
-      .domain([-maxX * 0.05, maxX * 1.05])
-      .range([0.1, Math.max(width - 10, 800) * 0.9]);
+    const { x, y, yfromDomain, ytoDomain } = this.computeAxes(
+      transformedLabels
+    );
 
-    const yfromDomain = -0.5;
-    const ytoDomain = Math.max(10, maxY);
-    const y = d3.scaleLinear().domain([yfromDomain, ytoDomain]).range([0, 800]);
-
-    const backgroundBoxes = svg
-      .selectAll("rect")
-      .data(xDivisions)
+    const backgroundBoxes = this.svg
+      .selectAll(".darkrect")
+      .data(xDivisions, function (d: any) {
+        return d.cat;
+      })
       .enter()
       .append("rect")
+      .call((selection) => {
+        insertColor(selection, xDivisions);
+      })
+      .attr("class", "darkrect")
       .attr("x", (d: any) => x(d.x0))
       .attr("width", (d: any) => x(d.x0 + d.width) - x(d.x0))
-      .attr("y", y(yfromDomain))
-      .attr("height", y(ytoDomain) - y(yfromDomain))
-      .attr("fill", function (d: any, i: number) {
-        return ALTERNATING_COLORS[i % 2];
+      .attr("y", 0)
+      .attr("height", y(ytoDomain) - y(yfromDomain)+BOTTOM_BUFFER_HEIGHT*2)
+      .style("fill", (d: any) => d.color)
+      .style("opacity", 0.8);
+
+    const categoryText = this.svg.selectAll(".cattext")
+      .data(xDivisions, function (d: any) {
+        return d.cat;
       })
-      .attr("opacity", 0.5);
+      .enter()
+      .append("text")
+      .attr("class","cattext")
+      .attr("x", (d:any) => x(d.x0))
+      .attr("y", 0)
+      .text( function(d:any){
+        if(d.width>0){
+          return d.cat;
+        }
+        return undefined;
+      })
+      .style("fill", SLIGHTLY_DARKER_GRAY)
+      .style("font-size","14px")
+      .attr("text-anchor", "start")
+      .attr("dominant-baseline", "hanging")
+      .style("opacity", function(d:any){
+        if(d.width>0){
+          return 1;
+        }
+        return 0;
+      })
 
 
 
-    const stext = svg
-      .selectAll("text")
+    const stext = this.svg
+      .selectAll(".linktext")
       .data(transformedLabels, function (d: any) {
         return d.nodeName;
       })
       .enter()
       .append("text")
+      .attr("class", "linktext")
       .attr("y", (d: any) => y(d.y) as number)
       .attr("x", (d: any) => x(d.x) as number)
-      .text((d: any) => d.nodeName)
-      .attr("text-anchor", (d: any) => {
-        if (d.cat === nodeExtremas.min) {
-          return "start";
-        }
-        if (d.cat === nodeExtremas.max) {
-          return "end";
-        } else {
-          return "middle";
-        }
-      })
-      .style("fill", function (d: any) {
-        return d.cat === NodeType.CAUSE_CATEGORY
-          ? null
-          : d.nodeName === elementInFocus
-          ? "#551A8B"
-          : "#0000EE";
-      })
-      .style("text-decoration", function (d: any) {
-        return d.cat === NodeType.CAUSE_CATEGORY ? null : "underline";
-      })
-      .style("font-weight", function (d: any) {
-        return d.nodeName === elementInFocus ? 700 : null;
-      })
-      .style("cursor", function (d: any) {
-        return d.cat === NodeType.CAUSE_CATEGORY ? null : "pointer";
-      })
-      .attr("alignment-baseline", "central")
-      .on("click", function (e: Event, d: TransformedLabel) {
-        changeElementInFocus(d.nodeName);
-      })
-      .call(insertBB);
-    stext.each(function (d: any, i: number) {
-      console.log(this.getBBox());
-    });
+      .text((d: any) => this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH));
 
-    console.log(transformedLabels);
+    this.addTextProperties(stext, elementInFocus, nodeExtremas);
 
     let nodeDic: PlottingNodeDic = {};
 
@@ -150,14 +146,18 @@ export default class RelationLinkViz {
     let adjustedArrows = arrows.map((a: Arrow) => {
       return {
         ...a,
-        ...computeArrowEndPoints(nodeDic[a.from], nodeDic[a.to], x, y, nodeExtremas),
+        ...computeArrowEndPoints(
+          nodeDic[a.from],
+          nodeDic[a.to],
+          x,
+          y,
+          nodeExtremas
+        ),
       };
     });
-    console.log(adjustedArrows);
-    console.log(nodeDic);
 
     //taken from https://stackoverflow.com/questions/36579339/how-to-draw-line-with-arrow-using-d3-js
-    svg
+    this.svg
       .append("svg:defs")
       .append("svg:marker")
       .attr("id", "triangle")
@@ -172,12 +172,13 @@ export default class RelationLinkViz {
 
     d3.select(".arrowexplanation").remove(); //removes any old visible tooltips that was perhaps not removed by a mouseout event (for example because the mouse teleported instantanously by entering/exiting a full-screen).
 
-    var tooltipdiv = d3.select('body')
+    var tooltipdiv = d3
+      .select("#relationlinkcontainer")
       .append("div")
       .attr("class", "arrowexplanation")
       .style("opacity", 0);
 
-    const underlines = svg
+    const underlines = this.svg
       .selectAll(".underlines")
       .data(adjustedArrows, function (d: any) {
         return d.from + " - " + d.to;
@@ -195,7 +196,7 @@ export default class RelationLinkViz {
         return d.type === "arrow" ? "url(#triangle)" : null;
       });
 
-    const overlines = svg
+    const overlines = this.svg
       .selectAll(".overlines")
       .data(adjustedArrows, function (d: any) {
         return d.from + " - " + d.to;
@@ -211,8 +212,24 @@ export default class RelationLinkViz {
       .attr("stroke", "black")
       .attr("opacity", 0)
       .attr("cursor", "pointer")
+      .call((select) => {
+        this.addFunctionalityToOverLines(select);
+      });
+
+    vis.svg.on("click", () => {
+      tooltipdiv.style("opacity", 0);
+    });
+    vis.svg.on("mouseleave", () => {
+      tooltipdiv.style("opacity", 0);
+    });
+  }
+
+  addFunctionalityToOverLines(overlines: d3.Selection<any, any, any, any>) {
+    const vis = this;
+    const tooltipdiv = d3.select(".arrowexplanation");
+    overlines
       .on("mouseover", function (e: Event, d: ArrowPlottingObject) {
-        svg
+        vis.svg
           .selectAll(".underlines")
           .filter(function (ud: any) {
             {
@@ -222,7 +239,7 @@ export default class RelationLinkViz {
           .attr("stroke-width", 3);
       })
       .on("mouseout", function (e: Event, d: ArrowPlottingObject) {
-        svg
+        vis.svg
           .selectAll(".underlines")
           .filter(function (ud: any) {
             {
@@ -231,33 +248,291 @@ export default class RelationLinkViz {
           })
           .attr("stroke-width", 1);
       })
-      .on("click", function (e: MouseEvent, d: ArrowPlottingObject) {
-        var x = e.pageX; //x position within the element.
-        var y = e.pageY;  //y position within the element.
+      .on("click", function(e: MouseEvent, d: ArrowPlottingObject) {
+        var bbox= this.getBBox()
+        var x = e.clientX; //x position within the elemen
+        var y = e.clientY; //y position within the element.
+        const cleanedFrom=d.from.replace("*","")
+        const cleanedTo=d.to.replace("*","")
         tooltipdiv
           .style("opacity", 1)
-          .html(`${rdat.arrowInterpretation(d.from, d.to)}`)
-          .style("left", x + "px")
-          .style("top", y + "px");
+          .html(`${vis.rdat.arrowInterpretation(
+            d.from, 
+            d.to,
+            vis.descriptions.getDescription(cleanedFrom, DESCRIPTION_LENGTH),
+            vis.descriptions.getDescription(cleanedTo, DESCRIPTION_LENGTH)
+            )}`)
+          .style("position","absolute")
+          .style("left", e.offsetX + "px")
+          .style("top", e.offsetY + "px");
         e.stopPropagation();
       });
-    svg.on("click", () => {
-      tooltipdiv.style("opacity", 0);
-    });
-    svg.on("mouseleave", () => {
-      tooltipdiv.style("opacity", 0);
-    });
+  }
+
+  addTextProperties(
+    stexts: d3.Selection<any, any, any, any>,
+    elementInFocus: string,
+    nodeExtremas: NodeExtremas
+  ) {
+    const vis = this;
+    stexts
+      .attr("text-anchor", (d: any) => {
+        if (d.cat === nodeExtremas.min) {
+          return "start";
+        }
+        if (d.cat === nodeExtremas.max) {
+          return "end";
+        } else {
+          return "middle";
+        }
+      })
+      .style("fill", function (d: any) {
+        return d.nodeName === elementInFocus
+          ? "#551A8B"
+          : "#0000EE";
+      })
+      .style("text-decoration", function (d: any) {
+        return  "underline";
+      })
+      .style("font-weight", function (d: any) {
+        return d.nodeName === elementInFocus ? 700 : null;
+      })
+      .style("cursor", function (d: any) {
+        return  "pointer";
+      })
+      .attr("dominant-baseline", "central")
+      .on("click", function (e: Event, d: TransformedLabel) {
+        vis.changeElementInFocus(d.nodeName);
+      })
+      .call(insertBB);
+  }
+
+  computeAxes(transformedLabels: TransformedLabel[]) {
+    const maxX = Math.max(getMax(transformedLabels, "x"), 0.01); //making sure that x is positive to handle the case where there are only one variable.
+    const maxY = getMax(transformedLabels, "y");
+
+    const x = d3
+      .scaleLinear()
+      .domain([-maxX * 0.05, maxX * 1.05])
+      .range([0.1, Math.max(this.width - 10, 800)]);
+
+    const yfromDomain = -0.5;
+    const ytoDomain = Math.max(10, maxY);
+    const y = d3.scaleLinear().domain([yfromDomain, ytoDomain]).range([BOTTOM_BUFFER_HEIGHT, 1000- BOTTOM_BUFFER_HEIGHT]);
+    return { x, y, yfromDomain, ytoDomain, maxX };
   }
 
   clear() {
-    console.log("inside clear");
     d3.select(".arrowexplanation").remove();
-    d3.select('body')
-      .append("div")
-      .attr("class", "arrowexplanation")
-      .style("opacity", 0);
     d3.select("svg").remove();
   }
+
+  computeDataTransformations(elementInFocus: string) {
+    const pdat: PlottingInfo = this.rdat.makePlottingInstructions(
+      elementInFocus
+    );
+    const transformedLabels = pdat.transformedLabels;
+    const arrows = pdat.arrows;
+    let nodeExtremas = pdat.nodeExtremas;
+    if (nodeExtremas.min === nodeExtremas.max) {
+      nodeExtremas.min = NODE_ORDER[0];
+      nodeExtremas.max = NODE_ORDER[NODE_ORDER.length - 1];
+    }
+    const xDivisions = pdat.xDivisions;
+    return { transformedLabels, arrows, nodeExtremas, xDivisions };
+  }
+
+  update(newElementInFocus: string) {
+    const {
+      transformedLabels,
+      arrows,
+      nodeExtremas,
+      xDivisions,
+    } = this.computeDataTransformations(newElementInFocus);
+    const { x, y, yfromDomain, ytoDomain, maxX } = this.computeAxes(
+      transformedLabels
+    );
+
+    const backgroundBoxes = this.svg
+      .selectAll(".darkrect")
+      .data(xDivisions, function (d: any) {
+        return d.cat;
+      });
+    backgroundBoxes
+      .call((selection) => {
+        insertColor(selection, xDivisions);
+      })
+      .lower()
+      .transition("appearNewBackgrounds")
+      .duration(500)
+      .attr("x", (d: any) => x(d.x0))
+      .attr("width", (d: any) => x(d.x0 + d.width) - x(d.x0))
+      .style("fill", (d: any) => d.color)
+      .style("opacity", 0.8);
+
+
+    const categoryText = this.svg.selectAll(".cattext")
+      .data(xDivisions, function (d: any) {
+        return d.cat;
+      })
+      .transition("adjuse_top_labels")
+      .duration(500)
+      .attr("x", (d:any) => x(d.x0))
+      .attr("y", (d:any) => 0)
+      .text( function(d:any){
+        if(d.width>0){
+          return d.cat;
+        }
+        return undefined;
+      })
+      .style("opacity", function(d:any){
+        if(d.width>0){
+          return 1;
+        }
+        return 0;
+      })
+
+
+    const stext = this.svg
+      .selectAll(".linktext")
+      .data(transformedLabels, function (d: any) {
+        return d.nodeName;
+      });
+
+    stext
+      .join(
+        (enter: any) => {
+          return enter
+            .append("text")
+            .attr("class", "linktext")
+            .attr("y", (d: any) => y(d.y) as number)
+            .attr("x", (d: any) => x(d.x) as number)
+            .text((d: any) => this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH))
+            .style("opacity", 0);
+        },
+        (exit) => {
+          return exit;
+        },
+        (update) => {
+          return update;
+        }
+      )
+      .call((select) => {
+        this.addTextProperties(select, newElementInFocus, nodeExtremas);
+      })
+      .transition("move_labels")
+      .duration(500)
+      .attr("y", (d: any) => y(d.y) as number)
+      .attr("x", (d: any) => x(d.x) as number)
+      .text((d: any) =>  this.descriptions.getDescription(d.nodeName,DESCRIPTION_LENGTH))
+      .style("opacity", 1);
+
+    stext
+      .exit()
+      .transition("fadeout_labels")
+      .duration(250)
+      .style("opacity", 0)
+      .remove();
+
+    let nodeDic: PlottingNodeDic = {};
+
+    transformedLabels.forEach((ut: any) => {
+      nodeDic[ut.key] = ut;
+    });
+
+    let adjustedArrows = arrows.map((a: Arrow) => {
+      return {
+        ...a,
+        ...computeArrowEndPoints(
+          nodeDic[a.from],
+          nodeDic[a.to],
+          x,
+          y,
+          nodeExtremas
+        ),
+      };
+    });
+
+    const underlines = this.svg
+      .selectAll(".underlines")
+      .data(adjustedArrows, function (d: any) {
+        return d.from + " - " + d.to;
+      });
+    underlines
+      .join((enter) => {
+        return enter
+          .append("line")
+          .attr("class", "underlines")
+          .attr("x1", (d: any) => d.x1)
+          .attr("y1", (d: any) => d.y1)
+          .attr("x2", (d: any) => d.x2)
+          .attr("y2", (d: any) => d.y2)
+          .attr("stroke-width", "1")
+          .attr("stroke", "black")
+          .attr("marker-end", (d: any) => {
+            return d.type === "arrow" ? "url(#triangle)" : null;
+          })
+          .style("opacity", 0);
+      })
+      .transition("lines_move")
+      .duration(500)
+      .attr("x1", (d: any) => d.x1)
+      .attr("y1", (d: any) => d.y1)
+      .attr("x2", (d: any) => d.x2)
+      .attr("y2", (d: any) => d.y2)
+      .transition()
+      .duration(250)
+      .style("opacity", 1);
+
+    const overlines = this.svg
+      .selectAll(".overlines")
+      .data(adjustedArrows, function (d: any) {
+        return d.from + " - " + d.to;
+      });
+
+    overlines
+      .join((enter) => {
+        return enter
+          .append("line")
+          .attr("class", "overlines")
+          .attr("x1", (d: any) => d.x1)
+          .attr("y1", (d: any) => d.y1)
+          .attr("x2", (d: any) => d.x2)
+          .attr("y2", (d: any) => d.y2)
+          .attr("stroke-width", "15")
+          .attr("stroke", "black")
+          .attr("opacity", 0)
+          .attr("cursor", "pointer")
+          .call((select) => {
+            this.addFunctionalityToOverLines(select);
+          });
+      })
+      .transition("overlines_move")
+      .duration(500)
+      .attr("x1", (d: any) => d.x1)
+      .attr("y1", (d: any) => d.y1)
+      .attr("x2", (d: any) => d.x2)
+      .attr("y2", (d: any) => d.y2);
+
+    overlines.exit().remove();
+  }
+}
+
+function insertColor(
+  selection: d3.Selection<any, any, any, any>,
+  xDivisions: XDivision[]
+) {
+  const nonZeroCats = xDivisions.filter((v: XDivision) => v.width > 0).map(v=>  v.cat);
+  selection.each(function (d: any) {
+    let i = nonZeroCats.indexOf(d.cat);
+    if(i===-1){
+      d.color=ALTERNATING_COLORS_RELATIONLINK[1]
+    }
+    else{
+      d.color = ALTERNATING_COLORS_RELATIONLINK[i%2];
+    }
+    
+  });
 }
 
 function insertBB(selection: d3.Selection<any, any, any, any>) {

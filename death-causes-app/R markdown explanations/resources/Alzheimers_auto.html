@@ -1,0 +1,147 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Alzheimers</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" type="text/javascript"></script>
+  <script src="Alzheimers_auto_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Alzheimers</h1>
+</div>
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+<p><em>[partly auto-generated file]</em></p>
+<p>Alzheimers is a <strong>death cause</strong>. It means that there is a certain probability that one dies from this.</p>
+<div id="categories" class="section level4">
+<h4>Categories</h4>
+<p>Alzheimers is part of the following death cause categories</p>
+<ul>
+<li><a href="/model/NonViolentDeath">Non-violent death</a></li>
+</ul>
+</div>
+<div id="risk-factors" class="section level4">
+<h4>Risk factors</h4>
+<p>In the model Alzheimers has the following <a href="/model/intro#risk-factor">risk factors</a></p>
+<ul>
+<li><a href="/model/CognitiveActivity">Cognitive activity</a> (Cognitivity)</li>
+<li><a href="/model/DiabetesCondition">Diabetes condition</a> (Diabetes)</li>
+<li><a href="/model/Fish">Fish consumption</a> (Fish)</li>
+<li><a href="/model/Vegetables">Vegetable consumption</a> (Vegetables)</li>
+</ul>
+</div>
+<div id="number-of-deaths" class="section level4">
+<h4>Number of deaths</h4>
+<p>In 2014 Alzheimers was responsible for 3.56% of the deaths in the US. Below is a plot of how prevalent the death was for different ages <span class="citation">(Xu et al. <a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span></p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-2-1.png" width="672" /></p>
+</div>
+<div id="definition" class="section level4">
+<h4>Definition</h4>
+<p>The definition of dying from Alzheimers is to get any of the following ICD codes as the main cause of death on one’s death certificate. The percentage is the proportion of the deaths from Alzheimers who falls under the ICD code</p>
+<ul>
+<li><details>
+<summary>
+G30: Alzheimer’s disease (100.0%)
+</summary>
+<ul>
+<li>G300: Alzheimer’s disease with early onset (0.028%)</li>
+<li>G301: Alzheimer’s disease with late onset (2.3%)</li>
+<li>G308: Other Alzheimer’s disease (0.0086%)</li>
+<li>G309: Alzheimer’s disease, unspecified (97.6%)</li>
+</ul>
+</details></li>
+</ul>
+<p>Source: <span class="citation">Xu et al. (<a href="#ref-CDCreport" role="doc-biblioref">2016</a>)</span>, <span class="citation">(“ICD Order Files 2014,” <a href="#ref-ICDcodes" role="doc-biblioref">n.d.</a>)</span></p>
+</div>
+<div id="interaction" class="section level4">
+<h4>Interaction</h4>
+<p>The combined risk ratio of all risk factors is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
+<p><span class="math display">\[
+RR=RR_{\text{Cognitivity}} \cdot RR_{\text{Diabetes}} \cdot RR_{\text{Fish}} \cdot RR_{\text{Vegetables}}
+\]</span></p>
+<p>The normalization factor is based on the joint distribution of all the risk factors and is computed using the <a href="/model/intro#interaction-formulas">formula</a></p>
+<p><span class="math display">\[
+P=P_{\text{Cognitivity}} \cdot P_{\text{Diabetes}} \cdot P_{\text{Fish}} \cdot P_{\text{Vegetables}}
+\]</span></p>
+</div>
+<div id="cognitive-activity" class="section level4">
+<h4>Cognitive activity</h4>
+<p><a href="/model/CognitiveActivity">Cognitive activity</a> is a risk factor for Alzheimers.</p>
+<p>In the meta-analysis by <span class="citation">Yu et al. (<a href="#ref-Yu1201" role="doc-biblioref">2020</a>)</span>, it was estimated that cognitive activity could reduce Alzheimers by a factor 0.53. The main paper in the meta-analysis was <span class="citation">Wilson et al. (<a href="#ref-Wilson1911" role="doc-biblioref">2007</a>)</span>, who</p>
+<ol style="list-style-type: decimal">
+<li>used a scale for cognitive activity that we imitate in the input factor <a href="/model/CognitiveActivity">Cognitive activity</a>. Its 10th percentile is 2.2, its 90th percentile is 4.0 and its mean is 3.2.</li>
+<li>assumes the Hazard ratio(HR) has the relationship <span class="math inline">\(HR(x)=a\cdot \exp(b\cdot x)\)</span> where <span class="math inline">\(x\)</span> is their definition of cognitive activity.</li>
+</ol>
+<p>In the paper by <span class="citation">Wilson et al. (<a href="#ref-Wilson1911" role="doc-biblioref">2007</a>)</span>, they have <span class="math inline">\(b=log(0.58)\)</span>, but we will not use that fact because we have more faith in the factor 0.53. Therefore, ee assume that <span class="math inline">\(HR(2.2)=1\)</span> and <span class="math inline">\(HR(4.0)=0.53\)</span> and reestimate <span class="math inline">\(a\)</span> and <span class="math inline">\(b\)</span> using the assumption <span class="math inline">\(HR(x)=a\cdot \exp(b\cdot x)\)</span>. That leads to the estimates</p>
+<p><span class="math display">\[
+b=-0.3527102\\
+\frac{1}{3.2-2.2}\int_{2.2}^{3.2} a\cdot \exp(b\cdot x) \text{ d}x=0.8426725\\
+\frac{1}{4.0-3.2}\int_{3.2}^4 a\cdot \exp(b\cdot x) \text{ d}x=0.612333
+\]</span></p>
+<p>We therefore obtain the risk ratios below</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-3-1.png" width="672" /></p>
+<p>Because the variable Cognitive activity is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-4-1.png" width="672" /></p>
+</div>
+<div id="diabetes-condition" class="section level4">
+<h4>Diabetes condition</h4>
+<p><a href="/model/DiabetesCondition">Diabetes condition</a> is a risk factor for Alzheimers.</p>
+<p><span class="citation">Yu et al. (<a href="#ref-Yu1201" role="doc-biblioref">2020</a>)</span> estimated that having diabetes increases risk of Alzheimers by a factor 1.69.</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-5-1.png" width="672" /></p>
+</div>
+<div id="fish-consumption" class="section level4">
+<h4>Fish consumption</h4>
+<p><a href="/model/Fish">Fish consumption</a> is a risk factor for Alzheimers.</p>
+<p>It seems that Omega-3 intake could be the real reason, but the results are not as clear <span class="citation">(Wu et al. <a href="#ref-wu2015omega" role="doc-biblioref">2015</a>)</span>. We therefore use the fish consumption effects from <span class="citation">Wu et al. (<a href="#ref-wu2015omega" role="doc-biblioref">2015</a>)</span>, where they estimate a minimum risk ratio of 0.64 and a 11% decrease per 100 grams of fish consumed per week. Those numbers indicates a line of exponential decrease from 0 grams of fish at <span class="math inline">\(RR=1.0\)</span> to <span class="math inline">\(\log(0.64)/\log(0.89)\cdot 100=382\)</span> grams of fish. Dividing this line into arbitrary segments, we obtain the distrubtion below.</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-6-1.png" width="672" /></p>
+<p>Because the variable Fish consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-7-1.png" width="672" /></p>
+</div>
+<div id="vegetable-consumption" class="section level4">
+<h4>Vegetable consumption</h4>
+<p><a href="/model/Vegetables">Vegetable consumption</a> is a risk factor for Alzheimers.</p>
+<p>Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-8-1.png" width="672" /></p>
+<p>Because the variable Vegetable consumption is numeric, we have computed a <a href="/model/intro#smoothing">smoothed approximation</a>.</p>
+<p><img src="Alzheimers_auto_files/figure-html/unnamed-chunk-9-1.png" width="672" /></p>
+</div>
+<div id="references" class="section level2 unnumbered">
+<h2 class="unnumbered">References</h2>
+<div id="refs" class="references hanging-indent">
+<div id="ref-ICDcodes">
+<p>“ICD Order Files 2014.” n.d. <a href="https://www.cdc.gov/nchs/icd/icd10cm.htm">https://www.cdc.gov/nchs/icd/icd10cm.htm</a>.</p>
+</div>
+<div id="ref-Wilson1911">
+<p>Wilson, R. S., P. A. Scherr, J. A. Schneider, Y. Tang, and D. A. Bennett. 2007. “Relation of Cognitive Activity to Risk of Developing Alzheimer Disease.” <em>Neurology</em> 69 (20): 1911–20. <a href="https://doi.org/10.1212/01.wnl.0000271087.67782.cb">https://doi.org/10.1212/01.wnl.0000271087.67782.cb</a>.</p>
+</div>
+<div id="ref-wu2015omega">
+<p>Wu, Shunquan, Yingying Ding, Fuquan Wu, Ruisheng Li, Jun Hou, and Panyong Mao. 2015. “Omega-3 Fatty Acids Intake and Risks of Dementia and Alzheimer’s Disease: A Meta-Analysis.” <em>Neuroscience &amp; Biobehavioral Reviews</em> 48: 1–9.</p>
+</div>
+<div id="ref-CDCreport">
+<p>Xu, Jiaquan, Kenneth D Kochanek, Sherry L Murphy, and Betzaida Tejada-Vera. 2016. “Deaths: Final Data for 2014.” <em>National Vital Statistics Reports</em> 65 (4).</p>
+</div>
+<div id="ref-Yu1201">
+<p>Yu, Jin-Tai, Wei Xu, Chen-Chen Tan, Sandrine Andrieu, John Suckling, Evangelos Evangelou, An Pan, et al. 2020. “Evidence-Based Prevention of Alzheimers Disease: Systematic Review and Meta-Analysis of 243 Observational Prospective Studies and 153 Randomised Controlled Trials.” <em>Journal of Neurology, Neurosurgery &amp; Psychiatry</em> 91 (11): 1201–9. <a href="https://doi.org/10.1136/jnnp-2019-321913">https://doi.org/10.1136/jnnp-2019-321913</a>.</p>
+</div>
+</div>
+</div>
+</body>
+</html>

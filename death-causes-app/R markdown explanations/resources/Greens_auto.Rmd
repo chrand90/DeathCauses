@@ -1,0 +1,61 @@
+---
+title: "Fruits and vegetables consumption"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Fruits and vegetables consumption is a **computed factor**. It means that it can be determined with total certainty from the user input.
+
+#### Alternative names:
+* Greens
+* Greens consumption
+* Fruits and vegetables consumption
+
+#### Input
+
+Fruits and vegetables consumption is computed with the following factors
+
+* [Fruit consumption](/model/Fruits)
+* [Vegetable consumption](/model/Vegetables)
+
+#### Uses
+
+Fruits and vegetables consumption is used by the model in the following places
+
+* as a risk factor for [Heart disease](/model/HeartDiseases)
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Fruits and vegetables consumption is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+### Computation
+
+[Place explanation for how Fruits and vegetables consumption is computed here]
+
+
+
+## References

@@ -1,0 +1,97 @@
+---
+title: "Interpretation"
+output: 
+    html_document:
+        toc: yes
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;  
+}
+
+.infobox{
+    background:#FFFFFF;
+    border: solid 2px #304b80;
+    border-radius:5px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    margin-right: 40px;
+    margin-left: 40px;
+    margin-bottom: 15px;
+    margin-top: 15px;
+}
+
+</style>
+
+This document is a guide for how to interpret the results on this website. As you may have guessed, we use a mathematical model to compute all the interesting numbers such as life expectancy, probability of dying of a cause, how much is caused by alcohol etc. The [main document](/model/intro) explains the data and assumptions so that you can form your own appropriately critical view of the model. Here, we only present the intended interpretation of the results.
+
+## Probabilities and general assumptions
+When the program says that one has a certain [probability](/model/intro#risk) of dying of a certain cause, it is naturally under the assumption that the mathematical model is correct. If, for example, the program reports a $10\%$ probability of dying from Alzheimer's, we suggest the interpretation
+
+> "My probability of dying from Alzheimers is 10% given the program's collection of risk ratios and my answers to the questions (and given that I lived in the US)."
+
+Note two things:
+
+1. The information that the program has about the real world comes from the collection of [risk ratios](/model/intro#risk-ratio). The good thing about having a collection is that we can expand it indefinitely, but in contrast to probabilities calculated from a single experiment, it is harder to understand and trust a collection. Therefore, we put a lot of effort into documenting the collection. 
+
+2. As discussed in the [neutral model](/model/intro#the-neutral-model) section, the base numbers come from the US. Ideally, the collection of risk factors were so good that it could explain the differences between the US and the user. When it doesn't, it is good to know that the numbers come from the US. For example, we have not added any risk factors for being killed by the police (yet), so if you are a European, your risk of dying from this may not be as big as the program says.
+
+## Life expectancy
+The life expectancy is the average life span. Imagine that there were many copies of an individual. The life expectancy would then be the average age of death of all these copies. 
+
+Life expectancy should not be confused with the estimates that kids today will more than [100 years](https://www.weforum.org/agenda/2016/09/you-ll-probably-live-to-be-100-here-s-how-you-need-to-prepare-for-it/). The more-than-100-year estimate is based on the assumption that the technological advances in medicine continues at the same rate (which is quite optimistic). In contrast, life expectancy is computed under the assumption that the world remains the same. 
+
+The life expectancy of this website should be interpreted under the same assumptions as the [probabilities](#probabilities-and-general-assumptions)
+
+## Years lost to cause
+The number of years lost to a death cause, is defined as the increase in life expectancy if that cause didn't exist. For example, if the user loses 1.93 years to [cancer](/model/Cancer), it means that the user would - on average - live 1.93 years longer in the imaginary world where cancer is nonfatal. It may very well happen that the user doesn't even die of cancer and in these cases the user doesn't lose any lifetime to cancer. However, there are many other possible futures where the user dies sooner because of cancer and if we take the average across all possible futures, it will amount to 1.93 years.
+
+### Years lost because of a risk factor
+The number of years lost to a cause *because of a risk factor* has to be interpreted in a way that may be unexpected. One might think that the number should be the increase in life expectancy if the user obtained the [optimal value](#optimal-value) of the risk factor, but that is not exactly how we compute it. Instead, the number of years lost to a cause because of a risk factor is the increase in life expectancy if the user avoids having that risk factor as the [best explanation](#best-explanation) of the death cause. One way to avoid that a risk factor is the best explanation of one's death is, of course, to have the optimal value of that risk factor. However, the optimal value would also prevent deaths where the risk factor was one of the true explanations, but not *the* best explanation. 
+
+If we focused on the true explanations, the years lost to different risk factors should overlap because they would refer to the same death. When we let the deaths of a risk factor be only the deaths where that risk factor is the best explanation, it makes sense to add the years lost different risk factors.
+
+### Multiple factor bonus
+Sometimes the program will say that a user loses lifetime to *multiple factors* or *multiple unknown factors*. To see why this is necessary, imagine that for lung cancer, you lose 1 month to smoking and 1 month to [unknown risk factors](#unexplained). One might think that you would then lose 2 months to both risk factors as a whole, but you actually lose a little bit more than 2 months. The reason is that when you avoid the deaths of say, smoking, there is one less reason for you to die. Death is unavoidable, so all the other reasons, such as dying from lung cancer because of unknown factors, become slightly more probable. When dying from lung cancer from unknown factors is more likely, the significance of avoiding it becomes greater and so the increase in life expectancy from avoiding it becomes more than 1 month. It is similar to how interests accumulate in an untouched savings account; Every time you receive interests the amount is larger than last time because you collect interests on the interests.
+
+The extra lifetime gained when avoiding deaths from more than one risk factor is what we call a *bonus*. When the bonus comes from adding known factors (that is, everything except the [unknown factor](#unexplained)), we call it "Multiple known factors", and when it comes from adding the unknown factor with the known factors, we call it simply "Multiple factors". 
+
+
+## Best explanation
+There will always be many reasons for why someone dies of something. For example to die of [lung cancer](/model/LungCancer), one obviously have to be alive and have lungs. In addition many lung cancer deaths wouldn't have happened if the patient was younger or if they hadn't smoked tobacco. These four reasons - alive, human, old and tobacco - are all true *explanations* for the majority of lung cancer deaths but they are not equally interesting. Most people would probably agree that tobacco is the more interesting explanation because, unlike the others, we can actually do something about how much we smoke. Therefore, we say that tobacco is the *best* explanation for most lung cancer deaths. 
+
+Not all lung cancer deaths happen to smokers, so for those cases tobacco can't be the best explanation. Furthermore, some of the smokers who die from lung cancer would have died from lung cancer anyway, so the best explanation for their cases is not tobacco either. For these cases we look towards the less interesting, true explanations to find their best explanation. In theory it could be either being alive, being human or being old, but we have decided that none of those explanations is interesting enough to visualize. Instead we assign their cases to the category [Unexplained](#unexplained).
+
+<div class="infobox" id="unexplained">
+**Unexplained: ** All the risk that can't be explained by the risk factors are assigned to the category *unexplained*. Furthermore, when the user hasn't answered all the questions, the model will assume that the corresponding risk factors doesn't exist, which means that their hidden risk is also assigned to unexplained. 
+
+
+If we were to explain this unexplained category, we would use the explanations:
+
+* Old age. [Age](/model/Age) is not counted as a risk factor, but if it were, it could explain most of the unexplained.
+* Risk factors that are not in the model. We have not (yet) included all the risk factors that science have found, and even if we had, there would be risk factors that science hasn't found yet. 
+* Bad luck.  
+
+</div>
+
+To read more about how we compute the number of deaths belonging to each explanations, read the [Decomposition](/model/intro#decomposition) section. Also, the ranking of the "interestingness" of the explanations is handled by our custom measure *optimizability* which we describe on the page [Optimizabilities](/model/optimizabilities).
+
+## Optimal values
+The optimal value of a risk factor is the value that minimizes the risk ratio of that factor. For example the optimal value of [biological sex](/model/Sex) in relation to [breast cancer](/model/BreastCancer) is male because it is the sex with the lowest risk of breast cancer. 
+
+The optimal value depends on the context. For example, in [prostate cancer](/model/ProstateCancer) female is the optimal sex and not male as in breast cancer. The context is also the value of the other risk factors and the age, which can affect the optimal values (See [here for more explanation](/model/intro#optimal-values)). Most results, such as the probability of dying from a certain cause, is computed from many different contexts and so the optimal value is not unique. Therefore, the model sometimes report more than one optimal value.
+
+# References

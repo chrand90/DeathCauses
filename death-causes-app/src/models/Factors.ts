@@ -1,8 +1,15 @@
-import GeneralFactor, {DeriveMapping, DerivableOptions, FactorTypes, InputValidity} from "./FactorAbstract";
+import GeneralFactor, {
+  DeriveMapping,
+  DerivableOptions,
+  FactorTypes,
+  InputValidity,
+} from "./FactorAbstract";
 import NumericFactorPermanent from "./FactorNumber";
 import StringFactorPermanent from "./FactorString";
 import InputJson from "./FactorJsonInput";
-import RelationLinks from './RelationLinks';
+import RelationLinks from "./RelationLinks";
+import FactorString from "./FactorString";
+import { IgnoreList } from "../stores/FactorInputStore";
 
 export interface FactorAnswers {
   [id: string]: string | number;
@@ -75,7 +82,9 @@ function reverseDeriveMapping(dos: DerivableOptionsSet) {
   return res;
 }
 
-function filterNullsFromFactorMaskings(fin: FactorMaskingsWithNulls): FactorMaskings {
+function filterNullsFromFactorMaskings(
+  fin: FactorMaskingsWithNulls
+): FactorMaskings {
   let res: FactorMaskings = {};
   Object.entries(fin).forEach(([factorname, maskValue]) => {
     if (maskValue) {
@@ -88,19 +97,21 @@ function filterNullsFromFactorMaskings(fin: FactorMaskingsWithNulls): FactorMask
 class Factors {
   factorList: FactorList = {};
   reverseDerivables: DerivableOptionsSet = {};
+  factorOrder: string[];
 
   constructor(data: InputJson | null) {
     this.factorList = {};
+    this.factorOrder = [];
     if (data) {
-      Object.entries(data).forEach(([factorname, factorobject]) => {
+      data.forEach((factorobject) => {
+        const factorname = factorobject.factorname;
+        this.factorOrder.push(factorname);
         switch (factorobject.type) {
           case FactorTypes.NUMERIC: {
             this.factorList[factorname] = new NumericFactorPermanent(
               factorname,
-              factorobject.initialValue
-                ? factorobject.initialValue
-                : "",
-              factorobject.longExplanation,
+              factorobject.initialValue ? factorobject.initialValue : "",
+              factorobject.question,
               factorobject.placeholder,
               factorobject.requiredDomain ? factorobject.requiredDomain : null,
               factorobject.recommendedDomain
@@ -108,7 +119,8 @@ class Factors {
                 : null,
               factorobject.units ? factorobject.units : {},
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -116,11 +128,12 @@ class Factors {
             this.factorList[factorname] = new StringFactorPermanent(
               factorname,
               factorobject.initialValue ? factorobject.initialValue : "",
-              factorobject.longExplanation,
+              factorobject.question,
               factorobject.placeholder,
               factorobject.options ? factorobject.options : [],
               factorobject.helpJson ? factorobject.helpJson : null,
-              factorobject.derivables ? factorobject.derivables : {}
+              factorobject.derivables ? factorobject.derivables : {},
+              factorobject.descendants ? factorobject.descendants : []
             );
             break;
           }
@@ -173,6 +186,10 @@ class Factors {
     }
   }
 
+  getDeathCauseDescendants(nodeName: string) {
+    return this.factorList[nodeName].getDeathCauseDescendants();
+  }
+
   updateMasked(
     factorAnswers: FactorAnswers,
     changedFactor: string,
@@ -208,7 +225,7 @@ class Factors {
     return factorAnswers;
   }
 
-  simulateFactorAnswersAndMaskings() {
+  simulateFactorAnswersAndMaskings(simulateMissing: boolean = true) {
     let factorMaskings: FactorMaskings = {};
     let factorAnswers = this.initializedFactorAnswers();
     let factorMaskingCandidate: FactorMaskings | "nothing changed";
@@ -234,75 +251,89 @@ class Factors {
     return { factorAnswers, factorMaskings };
   }
 
+  simulateNonAnswered(oldFactorAnswers: FactorAnswers, ignored: IgnoreList) {
+    let factorMaskings: FactorMaskings = {};
+    let factorAnswers = this.initializedFactorAnswers();
+    let factorMaskingCandidate: FactorMaskings | "nothing changed";
+    Object.entries(this.factorList).forEach(([factorName, factorobject]) => {
+      if (factorName in factorMaskings) {
+        factorAnswers[factorName] = String(
+          factorMaskings[factorName].effectiveValue
+        );
+      }else{
+        const isIgnored=factorName in ignored && ignored[factorName]
+        const numericNonMissing=factorName in oldFactorAnswers && oldFactorAnswers[factorName] !== ""
+        const stringNonMissing=( factorobject.factorType !== "string" ||
+        (factorobject as FactorString).options.includes(oldFactorAnswers[factorName] as string))
+        if(isIgnored || (numericNonMissing && stringNonMissing)){
+          factorAnswers[factorName] = oldFactorAnswers[factorName];
+        } else {
+          factorAnswers[factorName] = factorobject.simulateValue();
+        }
+      } 
+      if (factorobject.factorType === "string") {
+        factorMaskingCandidate = this.updateMasked(
+          factorAnswers,
+          factorName,
+          factorMaskings
+        );
+        if (factorMaskingCandidate !== "nothing changed") {
+          factorMaskings = factorMaskingCandidate;
+        }
+      }
+    });
+    return { factorAnswers, factorMaskings };
+  }
+
   getRandomFactorOrder() {
     return Object.keys(this.factorList);
   }
 
-  makeParentList(){
-    let parentList: DerivableParentsChain={};
+  makeParentList() {
+    let parentList: DerivableParentsChain = {};
     Object.entries(this.factorList).forEach(([factorname, factorobject]) => {
-      let causativeFactors= Object.keys(factorobject.derivableStates)
-      parentList[factorname]=[factorname]
-      while(causativeFactors.length>0){
-        let theOneCausativeFactor=causativeFactors[0]
+      let causativeFactors = Object.keys(factorobject.derivableStates);
+      parentList[factorname] = [factorname];
+      while (causativeFactors.length > 0) {
+        let theOneCausativeFactor = causativeFactors[0];
         parentList[factorname].unshift(theOneCausativeFactor);
-        causativeFactors=Object.keys(this.factorList[theOneCausativeFactor].derivableStates)
+        causativeFactors = Object.keys(
+          this.factorList[theOneCausativeFactor].derivableStates
+        );
       }
     });
-    return parentList
+    return parentList;
   }
 
-  findMaxDescendants(causativeFactor: string, rdat:RelationLinks):number{
-    if(!(causativeFactor in this.reverseDerivables)){
+  findMaxDescendants(causativeFactor: string, rdat: RelationLinks): number {
+    if (!(causativeFactor in this.reverseDerivables)) {
       return rdat.getSuperDescendantCount(causativeFactor);
-    }
-    else{
-      let descendants= Object.keys(this.reverseDerivables[causativeFactor])
-      return Math.max(...descendants.map((d: string) => { return this.findMaxDescendants(d, rdat)}));
+    } else {
+      let descendants = Object.keys(this.reverseDerivables[causativeFactor]);
+      return Math.max(
+        ...descendants.map((d: string) => {
+          return this.findMaxDescendants(d, rdat);
+        })
+      );
     }
   }
 
-  getMaxDescendants(rdat: RelationLinks){
-    let res: DescendantCountsInDeriveGroups= {}
+  getMaxDescendants(rdat: RelationLinks) {
+    let res: DescendantCountsInDeriveGroups = {};
     Object.keys(this.factorList).forEach((causativeFactor) => {
-      res[causativeFactor]=this.findMaxDescendants(causativeFactor, rdat)
+      res[causativeFactor] = this.findMaxDescendants(causativeFactor, rdat);
     });
-    return res
+    return res;
   }
 
-  getSortedOrder(rdat: RelationLinks): string[] {
-    const parentList= this.makeParentList()
-    const maxDescendants= this.getMaxDescendants(rdat);
-    const compare = (factorname1: string, factorname2: string) => {
-      let topParent1=parentList[factorname1][0]
-      let topParent2=parentList[factorname2][0]
-      let count=0
-      while(topParent1===topParent2){
-        count=count+1
-        topParent1=parentList[factorname1][count]
-        topParent2=parentList[factorname2][count]
-      }
-      if(maxDescendants[topParent1]===maxDescendants[topParent2]){
-        return topParent1.localeCompare(topParent2);
-      }
-      else{
-        return maxDescendants[topParent2]-maxDescendants[topParent1]
-      }
-    }
-    let factornames=Object.keys(this.factorList)
-    const ageIndex= factornames.indexOf("Age")
-    if(ageIndex>-1){
-      factornames.splice(ageIndex, 1)
-      factornames.sort(compare).unshift("Age");
-      return factornames
-    }
-    return factornames.sort(compare) //not sure if ever needed
+  getSortedOrder(): string[] {
+    return this.factorOrder;
   }
 
-  getHelpJson(factorname: string): string {
+  getHelpJson(factorname: string): string | null {
     return this.factorList[factorname].helpJson
       ? (this.factorList[factorname].helpJson as string)
-      : "No help available";
+      : null;
   }
 
   getFactorsAsStateObject() {
@@ -323,6 +354,10 @@ class Factors {
 
   getScalingFactor(name: string, unitName: string): number {
     return this.factorList[name].getScalingFactor(unitName);
+  }
+
+  getDescendants(factorName: string){
+    return this.factorList[factorName].getDeathCauseDescendants();
   }
 }
 

@@ -1,0 +1,4 @@
+#not important, this is just to tell which distribution to add to conditions.json
+DiabetesStatus	RR
+Yes	1.0
+No	1.0

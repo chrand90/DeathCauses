@@ -1,0 +1,122 @@
+---
+title: "Suicide"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Suicide is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Categories
+
+Suicide is part of the following death cause categories
+
+* [Violent death](/model/ViolentDeath)
+
+#### Risk factors
+
+In the model Suicide has the following [risk factors](/model/intro#risk-factor)
+
+* [Depression](/model/Depression)
+
+#### Number of deaths
+
+In 2014 Suicide was responsible for 1.63% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Suicide')
+```
+
+
+#### Definition
+
+The definition of dying from Suicide is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Suicide who falls under the ICD code 
+
+* <details><summary> X6 (15.9%)</summary>
+    * X60 (0.33%)
+    * X61 (2.4%)
+    * X62 (1.7%)
+    * X63 (0.11%)
+    * **X64 (8.2%)**
+    * X65 (0.086%)
+    * X66 (0.26%)
+    * **X67 (2.6%)**
+    * X68 (0.03%)
+    * X69 (0.19%)
+</details>
+* <details><summary> **X7 (79.5%)**</summary>
+    * **X70 (26.7%)**
+    * X71: Intentional self-harm by drowning and submersion (0.88%)
+    * **X72: Intentional self-harm by handgun discharge (12.6%)**
+    * X73: Intentional self-harm by rifle, shotgun and larger firearm discharge (7.1%)
+    * **X74: Intentional self-harm by other and unspecified firearm and gun discharge (30.1%)**
+    * X75: Intentional self-harm by explosive material (0.016%)
+    * X76: Intentional self-harm by smoke, fire and flames (0.42%)
+    * X78: Intentional self-harm by sharp object (1.7%)
+    * X79: Intentional self-harm by blunt object (0.0023%)
+</details>
+* X80: Intentional self-harm by jumping from a high place (2.4%)
+* X81: Intentional self-harm by jumping or lying in front of moving object (1.2%)
+* X82: Intentional self-harm by crashing of motor vehicle (0.41%)
+* X83: Intentional self-harm by other specified means (0.22%)
+* X84 (0.19%)
+  
+---- 
+
+* Y870 (0.16%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+#### Interaction
+
+The combined risk ratio of all risk factors is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+RR=RR_{\text{Depression}}
+$$
+
+The normalization factor is based on the joint distribution of all the risk factors and is computed using the [formula](/model/intro#interaction-formulas)
+
+$$
+P=P_{\text{Depression}}
+$$
+
+
+#### Depression
+
+[Depression](/model/Depression) is a risk factor for Suicide.
+
+Below is a plot of the risk ratios we have taken from the literature (possibly adjusted to fit the model)
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Suicide', c('Depression'),'raw')
+```
+
+
+
+## References

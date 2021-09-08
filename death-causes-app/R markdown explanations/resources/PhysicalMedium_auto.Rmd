@@ -1,0 +1,63 @@
+---
+title: "Medium physical activity time"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Medium physical activity time is a **input factor**. It means that it is one of the inputs from the user to the model.
+
+#### Alternative names:
+* Phys. Medium
+* Physical medium
+* Medium physical activity time
+* Time doing medium intensity physical activity
+* PhysicalMedium
+
+#### Uses
+
+Medium physical activity time is used by the model in the following places
+
+* to compute [Total physical activity time](/model/PhysicalTotal)
+
+#### Guidance
+
+The user input is a typed number and should answer the question
+
+> How much time do you spend making medium intensity physical activity in a normal week?
+
+The unit of the input is **Minutes**, but can be changed to any of the units below
+
+* Hours (1 Hours = 60 Minutes)
+
+The answer has to be larger than 0 Minutes.The answer is recommended to be larger than 0 Minutes and smaller than 1000 Minutes, because that is where the model is most accurate.Medium physical activity includes brisk walking, gardening, golf etc.
+
+
+### Optimizability
+
+[Optimizability](/model/optimizabilities) is a subjective measure used to describe how easy it is to optimize a certain factor of your life. The optimizability of Medium physical activity time is [5](/model/optimizabilities#category-5). This means that it can be interpreted as
+
+
+
+> *It is possible to change, and it can be changed now or very soon.*
+
+
+
+## References

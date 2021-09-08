@@ -1,0 +1,7 @@
+#lambda=0.002
+#tails=unbounded,max_bounded
+Caffeine	RR
+0,2.5	1.0
+2.5,5	0.35
+5,10	0.62
+10+	0.62

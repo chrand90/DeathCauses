@@ -1,3 +1,4 @@
+import { TypeStatus } from "../../../models/updateFormNodes/UpdateForm";
 import { RiskRatioTableCellInterface } from "./RiskRatioTableCellInterface";
 
 export class EnumeratedValue implements RiskRatioTableCellInterface {
@@ -12,7 +13,10 @@ export class EnumeratedValue implements RiskRatioTableCellInterface {
     }
 
     isInputWithinCell(input: string): boolean {
-        //console.log("input="+ input.toString()+ "("+ (typeof input).toString() +")");
         return (input as string)=== this.value;
+    }
+
+    getType(): TypeStatus {
+        return TypeStatus.STRING
     }
 }

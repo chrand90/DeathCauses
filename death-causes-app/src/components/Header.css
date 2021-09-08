@@ -4,4 +4,6 @@
     background: rgb(97, 153, 134);
     color: white;
     font-size: 20px;
+    box-sizing: border-box;
+    height: 72px;
   }

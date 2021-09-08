@@ -2,8 +2,9 @@ import { Domain, UnitOptions } from "./FactorNumber";
 import { DerivableOptions } from "./FactorAbstract";
 
 interface FactorAsJson {
+  factorname: string;
   type: "string" | "number";
-  longExplanation: string;
+  question: string;
   placeholder: string;
   recommendedDomain?: Domain;
   requiredDomain?: Domain;
@@ -12,7 +13,8 @@ interface FactorAsJson {
   options?: string[];
   units?: UnitOptions;
   derivables?: DerivableOptions;
+  descendants?: string[];
 }
-export default interface InputJson {
-  [factorname: string]: FactorAsJson;
-}
+
+type InputJson = FactorAsJson[];
+export default InputJson;

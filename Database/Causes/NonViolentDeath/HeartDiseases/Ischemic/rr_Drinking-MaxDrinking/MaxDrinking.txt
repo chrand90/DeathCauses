@@ -1,0 +1,22 @@
+# data is taken from Relation between heavy and binge drinking and all-cause and cardiovascular mortality in Novosibirsk, Russia: a prospective cohort study
+#
+# we use the risk ratio for chd that were only adjusted for age because the other were adjusted for high blood pressure and therefore not used in the paper Alcohol consumption, drinking patterns, and ischemic heart disease: a narrative review of meta-analyses and a systematic review and meta-analysis of the impact of heavy drinking occasions on risk for moderate drinkers
+#
+# data is read from a table and converted to us standard alcoholic units per week and not grams pure alcohol per day as in the paper. 
+# the raw numbers were ([0,80 gram]: 1.0, [80,infinity]:1.37, [120,infinity]: 1.37, [160,infinity]: 1.53 
+#that is, overlapping intervals (probably to hide the fact that they wouldnt make a monotone graph). Solving the system
+#
+# 63/133 x+ 34/133 y + 36/133 z : 1.37
+# 34/70y+36/70z : 1.37
+# z : 1.53
+# gives 
+# z: 1.53, y:1.20, x: 1.37
+# the categories are converted to standard units of us alcohol
+#
+#lambda=0.01
+MaxDrinking	RR
+0,5.7	1.0(0)
+5.7,8.6	1.53
+8.6,11.4	1.20
+11.4,17.1	1.37
+17.1+	1.37

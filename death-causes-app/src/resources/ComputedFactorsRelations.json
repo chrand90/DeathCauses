@@ -1,11 +1,29 @@
 {
   "SmokeSinceStop": {
     "type": "Computed factor",
-    "ancestors": ["SmokingStopped"]
+    "ancestors": ["Smoking", "SmokingStopped"],
+    "descriptions": ["Smokestop duration", "Time since smoking per year", "Time since you stopped smoking per year", "Smoke end a."],
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":80}}}
+  },
+  "SmokeDurationCumulative": {
+    "type":"Computed factor",
+    "ancestors":["Smoking", "SmokeDuration"],
+    "descriptions":["Projected smoke dur.","Cumulative smoke duration","Total time you have smoked per year", "Smoke dur. a"],
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "PhysicalTotal": {
     "type": "Computed factor",
-    "ancestors": ["PhysicalMedium", "PhysicalHard"]
+    "ancestors": ["PhysicalMedium", "PhysicalHard"],
+    "descriptions":["Physical total","Total time doing physical activity", "Total physical activity time","Phys. total"],
+    "baseUnit":"MET minutes/week"
+  },
+  "Greens": {
+    "type": "Computed factor",
+    "ancestors": ["Fruits", "Vegetables"],
+    "descriptions": ["Greens consumption", "Fruits and vegetables consumption", "Greens"],
+    "baseUnit":"1 green=100 grams"
   },
   "SmokeCumulative": {
     "type": "Computed factor",
@@ -15,7 +33,10 @@
       "SmokePastAmount",
       "SmokeIntensity",
       "SmokeDuration"
-    ]
+    ],
+    "descriptions": ["Cumulative smoking", "Total amount smoked in life", "Smoke total"],
+    "baseUnit":"cig-years",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "SmokeTypicalAmount": {
     "type":"Computed factor",
@@ -25,7 +46,10 @@
       "SmokeDuration",
       "SmokeIntensity",
       "SmokingStopped"
-    ]
+    ],
+    "descriptions": ["Smoking average", "Average amount smoked in smoking period", "Smoke avg."],
+    "baseUnit":"cigarettes/day",
+    "optimizability":{"default":30, "conditionals":{"Smoking": {"Current smoker":90}}}
   },
   "OralContraceptiveEver": {
     "type":"Computed factor",
@@ -33,7 +57,19 @@
       "OralContraceptiveStatus",
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
-    ]
+    ],
+    "descriptions": ["Ever used OCP", "OCP ever", "Ever used oral contraceptives"],
+    "baseUnit":"",
+    "optimizability":30
+  },
+  "WaistMale": {
+    "type":"Computed factor",
+    "ancestors": [
+      "Sex",
+      "Waist"
+    ],
+    "descriptions": ["Waist size as male","Waist circumference male equivalence","Waist circumference as male", "Waist (male)"],
+    "baseUnit":"cm"
   },
   "OralContraceptiveSinceStop": {
     "type":"Computed factor",
@@ -41,6 +77,14 @@
       "OralContraceptiveStatus",
       "OralContraceptiveStopped",
       "OralContraceptiveTillStop"
-    ]
+    ],
+    "descriptions": ["OCP stop duration", "Time since taking OCP per year", "Time since taking oral contraceptives per year", "OCP end a."],
+    "baseUnit":"years",
+    "optimizability":{"default":30, "conditionals":{"OralContraceptiveStatus": {"Current user":80}}}
+  },
+  "DiabetesCondition": {
+    "type":"Condition",
+    "baseUnit":"",
+    "optimizability:": {"default":20, "conditionals":{"DiabetesStatus":{"No":80}}}
   }
 }

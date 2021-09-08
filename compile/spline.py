@@ -715,8 +715,8 @@ class spline_system(object):
                 intervals_for_variable.append([d])
             per_variable_lims.append(intervals_for_variable)
 
-        for t in itertools.product(*per_variable_lims):
-            print(t)
+        # for t in itertools.product(*per_variable_lims):
+        #     print(t)
 
 def get_maximum_likelihood_estimate(W,X, yvals, lambdaval=1.0, scales=None,
                                                 Xfixed=[],

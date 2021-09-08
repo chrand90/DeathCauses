@@ -1,0 +1,26 @@
+---
+title: "References"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+nocite: |
+   @cho2004alcohol, @eskelinen2010caffeine, @dahlberg2004guns, @campbell2007intimate, @black2011national, @kellermann1993gun, @anglemyer2014accessability, @samad2005meta, @liu2016leisure, @mctiernan2019physical, @kyui2016physical, @schwingshackl2018food, @piazza2012examining, @hackshaw2018low, @shields2013smoking, @roerecke2014alcohol, @malyutina2002relation, @CDCreport, @ICDcodes, @eide1995sequential, @di2020attributable, @Yu1201, @Wilson1911, @wu2015omega, @michaud1999fluid, @baris2009case, @pitard2001cigar, @BURGER2013234, @saginala2020epidemiology, @gbd2013, @finland2020, @gbd2019
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+

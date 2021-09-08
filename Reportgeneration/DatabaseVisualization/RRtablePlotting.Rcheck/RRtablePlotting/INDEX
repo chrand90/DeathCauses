@@ -1,0 +1,7 @@
+generateSpecificPlots   Make a specific plot
+initialize_database     Initializes the database
+initialize_descriptions
+                        Initializes the descriptions file
+makePlot,Disease,ANY-method
+                        Makes plots
+plotSpecificPlots       Plot a specific plot

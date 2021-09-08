@@ -1,0 +1,140 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title>Optimizabilities</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+  </style>
+  <script src="optimizabilities_files/header-attrs-2.8/header-attrs.js"></script>
+</head>
+<body>
+<div id="header">
+<h1 class="title">Optimizabilities</h1>
+</div>
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+<p><em>[partly auto-generated file]</em></p>
+<p>The measure <em>optimizability</em> describes how easy the factor is to optimize. For example, it is impossible to change your <a href="/model/Sex">biological sex</a>, but it is possible to change your <a href="/model/Drinking">alcohol intake</a>. Therefore we have given drinking habits a higher optmizability than the biological sex.</p>
+<p>For most risk factors the optimizability is always the same but for some, the optimizability depends on other factors. For example, current smokers can still improve their average smoking amount, but former smokers can’t. Therefore, the optimizability of <a href="/model/SmokeTypicalAmount">average smoking amount</a> depends on one’s <a href="/model/Smoking">smoking status</a>.The different optimizabilities are</p>
+<ol style="list-style-type: decimal">
+<li>It is impossible to change and it has never been in your control</li>
+<li>It is impossible to change, but it could have been the consequence of your actions</li>
+<li>It is impossible to change now, but it has once definitely been in your control</li>
+<li>It is possible to change, but it will take a lot of time.</li>
+<li>It is possible to change, and it can be changed now or very soon.</li>
+</ol>
+<div id="risk-factors" class="section level2">
+<h2>Risk factors</h2>
+<div id="category-1" class="section level3">
+<h3>Category 1</h3>
+<p>Description: It is impossible to change and it has never been in your control</p>
+<p>Members:</p>
+<ul>
+<li><a href="/model/Age">Age</a></li>
+<li><a href="/model/FamilyHistoryParkinson">Family history parkinsons</a></li>
+<li><a href="/model/Race">Race</a></li>
+<li><a href="/model/Sex">Biological sex</a></li>
+</ul>
+</div>
+<div id="category-2" class="section level3">
+<h3>Category 2</h3>
+<p>Description: It is impossible to change, but it could have been the consequence of your actions</p>
+<p>Members:</p>
+<ul>
+<li><a href="/model/Depression">Depression</a></li>
+<li><a href="/model/DiabetesStatus">Diabetes diagnosis</a></li>
+<li><a href="/model/HCVStatus">HCV diagnosis</a></li>
+<li><a href="/model/HIVStatus">HIV/AIDS diagnosis</a></li>
+<li><a href="/model/HPVVaccine">HPV vaccine</a></li>
+<li><a href="/model/HeadTrauma">Head traumas</a></li>
+</ul>
+</div>
+<div id="category-3" class="section level3">
+<h3>Category 3</h3>
+<p>Description: It is impossible to change now, but it has once definitely been in your control</p>
+<p>Members:</p>
+<ul>
+<li><a href="/model/IndoorTanning">Time spent indoor tanning</a></li>
+<li><a href="/model/OralContraceptiveEver">Ever used oral contraceptives</a></li>
+<li><a href="/model/PesticideExposure">Pesticide exposure</a></li>
+<li><a href="/model/SmokePastAmount">Amount smoked in the past</a></li>
+</ul>
+</div>
+<div id="category-4" class="section level3">
+<h3>Category 4</h3>
+<p>Description: It is possible to change, but it will take a lot of time.</p>
+<p>Members:</p>
+<ul>
+<li><a href="/model/BMI">BMI</a></li>
+<li><a href="/model/DiabetesCondition">Diabetes condition</a></li>
+<li><a href="/model/Waist">Waist circumference</a></li>
+<li><a href="/model/WaistMale">Waist circumference male equivalence</a></li>
+</ul>
+</div>
+<div id="category-5" class="section level3">
+<h3>Category 5</h3>
+<p>Description: It is possible to change, and it can be changed now or very soon.</p>
+<p>Members:</p>
+<ul>
+<li><a href="/model/Caffeine">Coffee consumption</a></li>
+<li><a href="/model/CognitiveActivity">Cognitive activity</a></li>
+<li><a href="/model/Drinking">Alcohol consumption</a></li>
+<li><a href="/model/Fish">Fish consumption</a></li>
+<li><a href="/model/Fluids">Fluids intake</a></li>
+<li><a href="/model/Fruits">Fruit consumption</a></li>
+<li><a href="/model/Greens">Fruits and vegetables consumption</a></li>
+<li><a href="/model/MaxDrinking">Peak Alcohol consumption</a></li>
+<li><a href="/model/OralContraceptiveTillStop">Time till stopping oral contraceptives</a></li>
+<li><a href="/model/PhysicalHard">Hard physical activity time</a></li>
+<li><a href="/model/PhysicalMedium">Medium physical activity time</a></li>
+<li><a href="/model/PhysicalTotal">Total time doing physical activity</a></li>
+<li><a href="/model/RedMeat">Red meat consumption</a></li>
+<li><a href="/model/SmokeIntensity">Current smoking amount</a></li>
+<li><a href="/model/Vegetables">Vegetable consumption</a></li>
+</ul>
+</div>
+<div id="category-mixed" class="section level3">
+<h3>Category Mixed</h3>
+<ul>
+<li>4 if <a href="/model/OralContraceptiveStatus">Oral contraceptives</a>=‘Current user’, else 3
+<ul>
+<li><a href="/model/OralContraceptiveSinceStop">Time since taking OCP per year</a></li>
+<li><a href="/model/OralContraceptiveStopped">Time since taking oral contraceptives</a></li>
+</ul></li>
+<li>5 if <a href="/model/OralContraceptiveStatus">Oral contraceptives</a>=‘Current user’, else 3
+<ul>
+<li><a href="/model/OralContraceptiveStatus">Oral contraceptives</a></li>
+</ul></li>
+<li>5 if <a href="/model/Smoking">Smoking status</a>=‘Current smoker’, else 3
+<ul>
+<li><a href="/model/SmokeCumulative">Total amount smoked in life</a></li>
+<li><a href="/model/SmokeDurationCumulative">Total time you have smoked per year</a></li>
+<li><a href="/model/SmokeTypicalAmount">Average amount smoked in smoking period</a></li>
+<li><a href="/model/Smoking">Smoking status</a></li>
+</ul></li>
+<li>4 if <a href="/model/Smoking">Smoking status</a>=‘Current smoker’, else 3
+<ul>
+<li><a href="/model/SmokeDuration">Time span of smoking period</a></li>
+<li><a href="/model/SmokeSinceStop">Time since you stopped smoking per year</a></li>
+<li><a href="/model/SmokingStopped">Time since you stopped smoking</a></li>
+</ul></li>
+</ul>
+</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+    "name": "expressbackend",
+    "version": "1.0.0",
+    "description": "express backend for deathcauses",
+    "main": "index.js",
+    "author": "Svend Nielsen",
+    "scripts": {
+      "start": "node index.js"
+    },
+    "keywords": [],
+    "dependencies": {
+        "express": "^4.17.1"
+    }
+  }

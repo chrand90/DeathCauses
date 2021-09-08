@@ -1,0 +1,67 @@
+---
+title: "Prostate disease"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Prostate disease is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Prostate dis.
+* Prostate disease
+* Prostate_Disease
+
+#### Categories
+
+Prostate disease is part of the following death cause categories
+
+* [Non-violent death](/model/NonViolentDeath)
+
+#### Risk factors
+
+Prostate disease has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Prostate disease was responsible for 0.0209% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Prostate_Disease')
+```
+
+
+#### Definition
+
+The definition of dying from Prostate disease is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Prostate disease who falls under the ICD code 
+
+* N40: Enlarged prostate (100.0%)
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References

@@ -78,6 +78,16 @@ class data_frame:  # svend
         for row in self.listOfRowsInTheDataFrame:
             res[ tuple( row[indices[i]] for i in range(len(row)-1)) ]= row[-1]
         return res
+
+    def getDictionaryToIndex(self, factornames):
+        assert set(factornames) == set(
+            self.factornames), "the dictionary requested does not match that of the dataframe"
+        res = {}
+        indices = [i for _, oth in enumerate(factornames) for i, sel in enumerate(self.factornames) if
+                   sel == oth]  # this is the order in which to put the columns of self.
+        for n,row in enumerate(self.listOfRowsInTheDataFrame):
+            res[tuple(row[indices[i]] for i in range(len(row) - 1))] = n
+        return res
     
     def get_last_column_in_specific_order(self, factor_keys):
         df_dic=self.getDataframeAsDictionary(self.factornames)
@@ -103,7 +113,18 @@ class data_frame:  # svend
 
     def hasVariances(self):
         return False
-                
+
+    def join(self, other):
+        assert set(self.factornames)==set(other.factornames), "Not compatible for join"
+        other.order_columns(self.factornames)
+        for row in other.listOfRowsInTheDataFrame:
+            self.addRow(row)
+
+    def insert_column(self, column_name, column):
+        assert len(column)==len(self.listOfRowsInTheDataFrame), "Tried to add a column of wrong length"
+        for n,row in enumerate(self.listOfRowsInTheDataFrame):
+            row.insert(-1, column[n])
+        self.factornames.append(column_name)
         
     def __dict__(self):
         self.getDataframeAsList()

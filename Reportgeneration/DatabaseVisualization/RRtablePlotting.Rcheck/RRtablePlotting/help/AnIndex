@@ -1,0 +1,6 @@
+%>%	pipe
+generateSpecificPlots	generateSpecificPlots
+initialize_database	initialize_database
+initialize_descriptions	initialize_descriptions
+makePlot,Disease,ANY-method	makePlot-Disease-ANY-method
+plotSpecificPlots	plotSpecificPlots

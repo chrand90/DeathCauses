@@ -108,6 +108,8 @@
 
 .popover {
   white-space: pre-wrap;
+  max-height: 350px;
+  overflow-y: auto;
 }
 
 .form-control::-moz-placeholder {
@@ -157,9 +159,4 @@
   vertical-align: baseline;
 }
 
-.text-with-button {
-  font-size: small;
-  line-height: 20px;
-  height: 20px;
-  vertical-align: baseline;
-}
+

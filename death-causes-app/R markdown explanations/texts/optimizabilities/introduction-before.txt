@@ -1,0 +1,3 @@
+The measure *optimizability* describes how easy the factor is to optimize. For example, it is impossible to change your [biological sex](/model/Sex), but it is possible to change your [alcohol intake](/model/Drinking). Therefore we have given drinking habits a higher optmizability than the biological sex.
+
+For most risk factors the optimizability is always the same but for some, the optimizability depends on other factors. For example, current smokers can still improve their average smoking amount, but former smokers can't. Therefore, the optimizability of [average smoking amount](/model/SmokeTypicalAmount) depends on one's [smoking status](/model/Smoking).

@@ -1,0 +1,70 @@
+---
+title: "Whooping cough"
+output:
+    html_document:
+        theme: null
+        template: null
+        self_contained: false
+        pandoc_args: ["--no-highlight"]
+bibliography: references.bib
+link-citations: true
+---
+
+
+<style type="text/css">
+
+body{
+    background:#F0F0F0;}
+blockquote{
+  text-align: center;
+  font-size: 18px;}
+
+</style>
+_[auto-generated file]_
+
+Whooping cough is a **death cause**. It means that there is a certain probability that one dies from this.
+
+#### Alternative names:
+* Whop. cough
+* Whooping cough
+* Whooping_Cough
+
+#### Categories
+
+Whooping cough is part of the following death cause categories
+
+* [Infectious disease](/model/InfectiousDisease)
+
+#### Risk factors
+
+Whooping cough has no [risk factors](/model/intro#risk-factor) in the model (yet).
+
+#### Number of deaths
+
+In 2014 Whooping cough was responsible for 0.000532% of the deaths in the US. Below is a plot of how prevalent the death was for different ages [@CDCreport]
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+library(devtools)
+devtools::load_all('../../../Reportgeneration/DatabaseVisualization/RRtablePlotting')
+dat=initialize_database(c("../../../death-causes-app/src/resources/Causes.json"),
+"../../../death-causes-app/src/resources/Descriptions.json")
+```
+
+```{r echo=FALSE, message=FALSE, warning=FALSE, paged.print=FALSE}
+plotSpecificPlots(dat, 'Whooping_Cough')
+```
+
+
+#### Definition
+
+The definition of dying from Whooping cough is to get any of the following ICD codes as the main cause of death on one's death certificate. The percentage is the proportion of the deaths from Whooping cough who falls under the ICD code 
+
+* <details><summary> A37: Whooping cough (100.0%)</summary>
+    * A370: Whooping cough due to Bordetella pertussis (50%)
+    * A379: Whooping cough, unspecified species (50%)
+</details>
+
+ Source: @CDCreport, @ICDcodes
+
+
+
+## References
