@@ -23,11 +23,9 @@ export interface SummaryViewProps {
 }
 
 export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
-    colwidth = ""
 
     constructor(props: SummaryViewProps) {
         super(props)
-        this.colwidth = this.props.store.uIStore.windowWidth>501 ? "70%" : "100%"
     }
     
     getLollipopChartData(): DataPoint[] {
@@ -106,14 +104,10 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
     renderLollipopChart() {
         const lollipopChartFormatting = getLollipopChartFormatting(this.props.riskFactorContributions.evaluationUnit)
         return (
-        <Row className="mx-auto my-1" style={{ width: "70%" }}>
-                    <Col className="col-xs-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
-                        <Card className="bg-light" style={{}}> 
+                        <Card className="my-1 mx-auto bg-light" style={{}}> 
                             <CardHeader><h5 style={{ fontWeight: 600 }}>{lollipopChartFormatting.getHeaderTitle()}</h5></CardHeader>
                             <LollipopChart data={this.getLollipopChartData()} formatting={lollipopChartFormatting}/>
                         </Card>
-                    </Col>
-                </Row>
         )
     }
 
@@ -158,9 +152,8 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
             this.props.store.loadedDataStore.descriptions)
         const emptyContributions=this.isContributionsEmpty(barChartSettings);
         return (                
-            <Col className="mx-auto my-1" style={{ width: this.colwidth }}>
                 <Card className="bg-light ">
-                    <CardHeader><h4>Contribution from risk Factors</h4></CardHeader>
+                    <CardHeader><h4>Contributions from risk factors</h4></CardHeader>
                     <CardBody>
                         {this.getRiskFactorContributionExplanation(barChartSettings, emptyContributions)}
                         {emptyContributions ? null :
@@ -168,7 +161,6 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         }
                     </CardBody>
                 </Card>
-            </Col>
         )
     }
 
@@ -179,9 +171,10 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
             )
         }
 
+        const colwidth = this.props.store.uIStore.windowWidth>650  ? "70%" : "100%"
         return (
             <Fragment>
-                <Col className="mx-auto my-1" style={{ width: this.colwidth }}> 
+                <Col className="mx-auto my-1" style={{ width: colwidth }}> 
                     <Card className="my-1 mx-auto bg-light " style={{}}>
                         <CardBody>
                             {this.lifeExpectancySentence()}
@@ -197,9 +190,9 @@ export class SummaryViewWithoutStore extends React.Component<SummaryViewProps> {
                         <RangeSliders data={this.getSurvivalCurveSlidersData()}/>
                         </CardBody>
                     </Card>
+                    {this.renderRiskFactorContributions()}
+                    {this.renderLollipopChart()}
                 </Col>
-                {this.renderRiskFactorContributions()}
-                {this.renderLollipopChart()}
             </Fragment>
         )
     }
